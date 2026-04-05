@@ -7,108 +7,145 @@
     xmlns:models="clr-namespace:Tally_AestheticBudget.Models"
     x:DataType="vm:FeedViewModel"
     Shell.NavBarIsVisible="False"
-    BackgroundColor="#F7F6F2">
+    BackgroundColor="#f5f5f7">
 
     <Grid RowDefinitions="Auto,Auto,*">
 
-        <!-- ── Header ──────────────────────────────────────────────────── -->
-        <VerticalStackLayout Grid.Row="0" Padding="20,56,20,0" Spacing="2">
-            <Label
-                Text="Expenses"
-                FontSize="28"
-                FontAttributes="Bold"
-                TextColor="#1A1A18" />
-            <Label
-                Text="{Binding SummaryLabel}"
-                FontSize="13"
-                TextColor="#9E9D98" />
-        </VerticalStackLayout>
+        <!-- ── Header ─────────────────────────────────────────────────────── -->
+        <Grid
+            Grid.Row="0"
+            Padding="24,52,24,0"
+            ColumnDefinitions="*,Auto">
 
-        <!-- ── Filter chips ────────────────────────────────────────────── -->
+            <!-- Left: title + subtitle -->
+            <VerticalStackLayout Grid.Column="0" Spacing="2">
+                <Label
+                    Text="My Spending Journal"
+                    FontFamily="DisplayFont"
+                    FontSize="28"
+                    TextColor="#1d1d1f" />
+                <Label
+                    Text="{Binding SummaryLabel}"
+                    FontSize="13"
+                    TextColor="#6e6e73" />
+            </VerticalStackLayout>
+
+            <!-- Right: "Spent: ₱0.00" pill — matches .feed-summary-pill -->
+            <Border
+                Grid.Column="1"
+                BackgroundColor="#1FFBB4B4"
+                Stroke="#ff6b6b"
+                StrokeThickness="0.8"
+                StrokeShape="RoundRectangle 980"
+                Padding="16,8"
+                VerticalOptions="Center">
+                <HorizontalStackLayout Spacing="4">
+                    <Label
+                        Text="Spent: "
+                        FontSize="14"
+                        TextColor="#1d1d1f" />
+                    <Label
+                        Text="{Binding TotalSpentFormatted}"
+                        FontSize="14"
+                        FontAttributes="Bold"
+                        TextColor="#ff6b6b" />
+                </HorizontalStackLayout>
+            </Border>
+
+        </Grid>
+
+        <!-- ── Filter chips ───────────────────────────────────────────────── -->
         <ScrollView
             Grid.Row="1"
             Orientation="Horizontal"
             HorizontalScrollBarVisibility="Never"
-            Margin="0,14,0,6">
-            <HorizontalStackLayout Padding="20,0" Spacing="8">
+            Margin="0,14,0,4">
+            <HorizontalStackLayout Padding="24,0" Spacing="8">
 
                 <!-- All -->
                 <Border
                     BackgroundColor="{Binding IsFilterAll, Converter={StaticResource BoolToChipBg}}"
                     Stroke="{Binding IsFilterAll, Converter={StaticResource BoolToChipBorder}}"
-                    StrokeShape="RoundRectangle 20"
-                    StrokeThickness="0.5"
-                    Padding="14,7">
+                    StrokeShape="RoundRectangle 980"
+                    StrokeThickness="0.8"
+                    Padding="16,7">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding FilterAllCommand}" />
                     </Border.GestureRecognizers>
                     <Label
                         Text="All"
-                        FontSize="13"
+                        FontSize="14"
                         FontAttributes="{Binding IsFilterAll, Converter={StaticResource BoolToFontAttr}}"
                         TextColor="{Binding IsFilterAll, Converter={StaticResource BoolToChipText}}" />
                 </Border>
 
-                <!-- This Year -->
-                <Border
-                    BackgroundColor="{Binding IsFilterYear, Converter={StaticResource BoolToChipBg}}"
-                    Stroke="{Binding IsFilterYear, Converter={StaticResource BoolToChipBorder}}"
-                    StrokeShape="RoundRectangle 20"
-                    StrokeThickness="0.5"
-                    Padding="14,7">
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding FilterYearCommand}" />
-                    </Border.GestureRecognizers>
-                    <Label
-                        Text="This Year"
-                        FontSize="13"
-                        FontAttributes="{Binding IsFilterYear, Converter={StaticResource BoolToFontAttr}}"
-                        TextColor="{Binding IsFilterYear, Converter={StaticResource BoolToChipText}}" />
-                </Border>
-
-                <!-- Month picker chip -->
+                <!-- Month -->
                 <Border
                     BackgroundColor="{Binding IsFilterMonth, Converter={StaticResource BoolToChipBg}}"
                     Stroke="{Binding IsFilterMonth, Converter={StaticResource BoolToChipBorder}}"
-                    StrokeShape="RoundRectangle 20"
-                    StrokeThickness="0.5"
-                    Padding="14,7">
+                    StrokeShape="RoundRectangle 980"
+                    StrokeThickness="0.8"
+                    Padding="16,7">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding ShowMonthPickerCommand}" />
                     </Border.GestureRecognizers>
                     <HorizontalStackLayout Spacing="5">
                         <Label
                             Text="{Binding SelectedMonthLabel}"
-                            FontSize="13"
+                            FontSize="14"
                             FontAttributes="{Binding IsFilterMonth, Converter={StaticResource BoolToFontAttr}}"
                             TextColor="{Binding IsFilterMonth, Converter={StaticResource BoolToChipText}}" />
-                        <Label Text="▾" FontSize="11"
-                               TextColor="{Binding IsFilterMonth, Converter={StaticResource BoolToChipText}}"
-                               VerticalOptions="Center" />
+                        <Label
+                            Text="▾"
+                            FontSize="11"
+                            TextColor="{Binding IsFilterMonth, Converter={StaticResource BoolToChipText}}"
+                            VerticalOptions="Center" />
                     </HorizontalStackLayout>
+                </Border>
+
+                <!-- This Year -->
+                <Border
+                    BackgroundColor="{Binding IsFilterYear, Converter={StaticResource BoolToChipBg}}"
+                    Stroke="{Binding IsFilterYear, Converter={StaticResource BoolToChipBorder}}"
+                    StrokeShape="RoundRectangle 980"
+                    StrokeThickness="0.8"
+                    Padding="16,7">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding FilterYearCommand}" />
+                    </Border.GestureRecognizers>
+                    <Label
+                        Text="{Binding ThisYearLabel}"
+                        FontSize="14"
+                        FontAttributes="{Binding IsFilterYear, Converter={StaticResource BoolToFontAttr}}"
+                        TextColor="{Binding IsFilterYear, Converter={StaticResource BoolToChipText}}" />
                 </Border>
 
             </HorizontalStackLayout>
         </ScrollView>
 
-        <!-- ── Feed content ────────────────────────────────────────────── -->
+        <!-- ── Feed content ───────────────────────────────────────────────── -->
         <RefreshView
             Grid.Row="2"
             Command="{Binding RefreshCommand}"
             IsRefreshing="{Binding IsRefreshing}">
             <Grid>
 
-                <!-- Empty state -->
+                <!-- Empty state — matches .empty-state in your CSS -->
                 <VerticalStackLayout
                     IsVisible="{Binding HasNoEntries}"
                     HorizontalOptions="Center"
                     VerticalOptions="Center"
-                    Spacing="8"
+                    Spacing="12"
                     Padding="40">
-                    <Label Text="No expenses yet" FontSize="17" FontAttributes="Bold"
-                           HorizontalOptions="Center" TextColor="#5F5E5A" />
-                    <Label Text="Tap + to log your first expense"
-                           FontSize="14" HorizontalOptions="Center" TextColor="#9E9D98" />
+                    <Label
+                        Text="🌸"
+                        FontSize="48"
+                        HorizontalOptions="Center" />
+                    <Label
+                        Text="No entries yet. Add your first expense!"
+                        FontSize="15"
+                        HorizontalOptions="Center"
+                        TextColor="#6e6e73" />
                 </VerticalStackLayout>
 
                 <!-- 2-column card grid -->
@@ -120,15 +157,16 @@
                         <GridItemsLayout
                             Orientation="Vertical"
                             Span="2"
-                            HorizontalItemSpacing="10"
-                            VerticalItemSpacing="10" />
+                            HorizontalItemSpacing="12"
+                            VerticalItemSpacing="12" />
                     </CollectionView.ItemsLayout>
                     <CollectionView.Header>
-                        <BoxView HeightRequest="4" Color="Transparent" />
+                        <BoxView HeightRequest="8" Color="Transparent" />
                     </CollectionView.Header>
                     <CollectionView.Footer>
                         <BoxView HeightRequest="100" Color="Transparent" />
                     </CollectionView.Footer>
+
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:FeedCardItem">
                             <ContentView Padding="0">
@@ -137,12 +175,15 @@
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type vm:FeedViewModel}}, Path=OpenDetailCommand}"
                                         CommandParameter="{Binding .}" />
                                 </ContentView.GestureRecognizers>
+
+                                <!-- .card in your CSS: white bg, border-radius 18px, box-shadow -->
                                 <Border
-                                    BackgroundColor="White"
-                                    StrokeThickness="0.5"
-                                    Stroke="#E8E7E1"
-                                    StrokeShape="RoundRectangle 16"
+                                    BackgroundColor="#ffffff"
+                                    StrokeThickness="0.8"
+                                    Stroke="#E8E8ED"
+                                    StrokeShape="RoundRectangle 18"
                                     Padding="0">
+
                                     <Grid RowDefinitions="Auto,Auto,Auto">
 
                                         <!-- Photo -->
@@ -151,63 +192,66 @@
                                             Source="{Binding PhotoPath}"
                                             IsVisible="{Binding HasPhoto}"
                                             Aspect="AspectFill"
-                                            HeightRequest="110">
+                                            HeightRequest="120">
                                             <Image.Clip>
-                                                <RoundRectangleGeometry Rect="0,0,1000,110" CornerRadius="16,16,0,0" />
+                                                <RoundRectangleGeometry Rect="0,0,1000,120" CornerRadius="18,18,0,0" />
                                             </Image.Clip>
                                         </Image>
 
-                                        <!-- Body -->
-                                        <VerticalStackLayout Grid.Row="1" Padding="12,12,12,6" Spacing="4">
+                                        <!-- Card body — .card-body { padding: 12px 14px 14px } -->
+                                        <VerticalStackLayout
+                                            Grid.Row="1"
+                                            Padding="{Binding HasPhoto, Converter={StaticResource PhotoToPadding}}"
+                                            Spacing="4">
 
-                                            <!-- Category row -->
+                                            <!-- Category label — .card-cat: accent color, uppercase, small -->
                                             <HorizontalStackLayout Spacing="6">
-                                                <BoxView
-                                                    Color="{Binding Category, Converter={StaticResource CategoryToColor}}"
-                                                    WidthRequest="8" HeightRequest="8"
-                                                    CornerRadius="4"
-                                                    VerticalOptions="Center" />
                                                 <Label
                                                     Text="{Binding CategoryLabel}"
                                                     FontSize="11"
-                                                    TextColor="#9E9D98"
-                                                    VerticalOptions="Center" />
+                                                    FontAttributes="Bold"
+                                                    CharacterSpacing="0.5"
+                                                    TextTransform="Uppercase"
+                                                    TextColor="#ff6b6b" />
                                                 <!-- Grocery item count badge -->
                                                 <Border
                                                     IsVisible="{Binding IsGroceryGroup}"
-                                                    BackgroundColor="#F0F0EC"
+                                                    BackgroundColor="#1Fff6b6b"
                                                     StrokeThickness="0"
-                                                    StrokeShape="RoundRectangle 8"
-                                                    Padding="5,2">
-                                                    <Label Text="{Binding GroceryItemCountLabel}"
-                                                           FontSize="10" TextColor="#5F5E5A" />
+                                                    StrokeShape="RoundRectangle 980"
+                                                    Padding="6,2">
+                                                    <Label
+                                                        Text="{Binding GroceryItemCountLabel}"
+                                                        FontSize="10"
+                                                        TextColor="#ff6b6b" />
                                                 </Border>
                                             </HorizontalStackLayout>
 
-                                            <!-- Amount -->
-                                            <Label
-                                                Text="{Binding AmountFormatted}"
-                                                FontSize="20"
-                                                FontAttributes="Bold"
-                                                TextColor="#1A1A18" />
-
-                                            <!-- Note -->
+                                            <!-- Note — .card-note -->
                                             <Label
                                                 Text="{Binding Note}"
                                                 IsVisible="{Binding HasNote}"
                                                 FontSize="13"
                                                 LineBreakMode="TailTruncation"
                                                 MaxLines="2"
-                                                TextColor="#5F5E5A" />
+                                                TextColor="#1d1d1f" />
+
+                                            <!-- Amount — .card-amount -->
+                                            <Label
+                                                Text="{Binding AmountFormatted}"
+                                                FontSize="18"
+                                                FontAttributes="Bold"
+                                                TextColor="#1d1d1f" />
+
                                         </VerticalStackLayout>
 
-                                        <!-- Date -->
+                                        <!-- Date — .card-date -->
                                         <Label
                                             Grid.Row="2"
                                             Text="{Binding Date, Converter={StaticResource DateToDisplay}}"
                                             FontSize="11"
-                                            Margin="12,0,12,10"
-                                            TextColor="#9E9D98" />
+                                            Margin="14,0,14,14"
+                                            TextColor="#6e6e73" />
 
                                     </Grid>
                                 </Border>
@@ -219,37 +263,44 @@
             </Grid>
         </RefreshView>
 
-        <!-- ── Month picker overlay ─────────────────────────────────────── -->
+        <!-- ── Month picker overlay ────────────────────────────────────────── -->
         <Grid Grid.RowSpan="3" IsVisible="{Binding IsMonthPickerVisible}" BackgroundColor="#80000000">
             <Grid.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding DismissMonthPickerCommand}" />
             </Grid.GestureRecognizers>
             <Border
-                BackgroundColor="White"
+                BackgroundColor="#ffffff"
                 StrokeThickness="0"
                 StrokeShape="RoundRectangle 20"
                 HorizontalOptions="Center"
                 VerticalOptions="End"
                 Margin="16,0,16,48"
-                Padding="20,24">
+                Padding="24,24">
                 <VerticalStackLayout Spacing="16">
-                    <Label Text="Select month" FontSize="16" FontAttributes="Bold" TextColor="#1A1A18" />
-                    <!-- Year selector -->
-                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="24">
-                        <Label Text="‹" FontSize="22" TextColor="#1A1A18">
+
+                    <Label
+                        Text="Select month"
+                        FontSize="17"
+                        FontAttributes="Bold"
+                        TextColor="#1d1d1f" />
+
+                    <!-- Year row -->
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="28">
+                        <Label Text="‹" FontSize="24" TextColor="#1d1d1f" VerticalOptions="Center">
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding PreviousYearCommand}" />
                             </Label.GestureRecognizers>
                         </Label>
-                        <Label Text="{Binding PickerYear}" FontSize="16" VerticalOptions="Center" TextColor="#1A1A18" />
-                        <Label Text="›" FontSize="22" TextColor="#1A1A18">
+                        <Label Text="{Binding PickerYear}" FontSize="16" VerticalOptions="Center" TextColor="#1d1d1f" />
+                        <Label Text="›" FontSize="24" TextColor="#1d1d1f" VerticalOptions="Center">
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding NextYearCommand}" />
                             </Label.GestureRecognizers>
                         </Label>
                     </HorizontalStackLayout>
+
                     <!-- Month grid -->
-                    <CollectionView ItemsSource="{Binding MonthOptions}" SelectionMode="None" HeightRequest="176">
+                    <CollectionView ItemsSource="{Binding MonthOptions}" SelectionMode="None" HeightRequest="180">
                         <CollectionView.ItemsLayout>
                             <GridItemsLayout Orientation="Vertical" Span="4"
                                              HorizontalItemSpacing="8" VerticalItemSpacing="8" />
@@ -259,9 +310,9 @@
                                 <Border
                                     BackgroundColor="{Binding IsSelected, Converter={StaticResource BoolToChipBg}}"
                                     Stroke="{Binding IsSelected, Converter={StaticResource BoolToChipBorder}}"
-                                    StrokeShape="RoundRectangle 10"
-                                    StrokeThickness="0.5"
-                                    Padding="0,8">
+                                    StrokeShape="RoundRectangle 12"
+                                    StrokeThickness="0.8"
+                                    Padding="0,9">
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:FeedViewModel}}, Path=SelectMonthCommand}"
@@ -276,92 +327,107 @@
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
+
                 </VerticalStackLayout>
             </Border>
         </Grid>
 
-        <!-- ── Detail bottom sheet ──────────────────────────────────────── -->
+        <!-- ── Detail bottom sheet ─────────────────────────────────────────── -->
         <Grid Grid.RowSpan="3" IsVisible="{Binding IsDetailVisible}" BackgroundColor="#80000000">
             <Grid.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding DismissDetailCommand}" />
             </Grid.GestureRecognizers>
             <Border
-                BackgroundColor="White"
+                BackgroundColor="#ffffff"
                 StrokeThickness="0"
                 StrokeShape="RoundRectangle 24,24,0,0"
                 VerticalOptions="End">
                 <Grid RowDefinitions="Auto,Auto,*">
 
                     <!-- Drag handle -->
-                    <BoxView Grid.Row="0"
-                             WidthRequest="36" HeightRequest="4" CornerRadius="2"
-                             Color="#DDDDD8" HorizontalOptions="Center" Margin="0,12,0,0" />
+                    <BoxView
+                        Grid.Row="0"
+                        WidthRequest="36" HeightRequest="4" CornerRadius="2"
+                        Color="#DDDDE0"
+                        HorizontalOptions="Center"
+                        Margin="0,12,0,0" />
 
                     <!-- Detail header -->
-                    <Grid Grid.Row="1" Padding="20,14,20,0" ColumnDefinitions="*,Auto">
-                        <VerticalStackLayout Grid.Column="0" Spacing="3">
-                            <HorizontalStackLayout Spacing="8">
-                                <BoxView
-                                    Color="{Binding SelectedItem.Category, Converter={StaticResource CategoryToColor}}"
-                                    WidthRequest="10" HeightRequest="10" CornerRadius="5"
-                                    VerticalOptions="Center" />
-                                <Label Text="{Binding SelectedItem.CategoryLabel}"
-                                       FontSize="13" TextColor="#9E9D98" VerticalOptions="Center" />
-                            </HorizontalStackLayout>
-                            <Label Text="{Binding SelectedItem.AmountFormatted}"
-                                   FontSize="30" FontAttributes="Bold" TextColor="#1A1A18" />
+                    <Grid Grid.Row="1" Padding="24,16,24,0" ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <Label
+                                Text="{Binding SelectedItem.CategoryLabel}"
+                                FontSize="12"
+                                FontAttributes="Bold"
+                                CharacterSpacing="0.5"
+                                TextTransform="Uppercase"
+                                TextColor="#ff6b6b" />
+                            <Label
+                                Text="{Binding SelectedItem.AmountFormatted}"
+                                FontSize="30"
+                                FontAttributes="Bold"
+                                TextColor="#1d1d1f" />
                         </VerticalStackLayout>
-                        <Border Grid.Column="1"
-                                BackgroundColor="#FEF0EF" StrokeThickness="0"
-                                StrokeShape="RoundRectangle 12"
-                                Padding="12,8" VerticalOptions="Start">
+
+                        <!-- Delete button -->
+                        <Border
+                            Grid.Column="1"
+                            BackgroundColor="#1Fff3b30"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="14,9"
+                            VerticalOptions="Start">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding DeleteSelectedCommand}" />
                             </Border.GestureRecognizers>
-                            <Label Text="Delete" FontSize="13" TextColor="#D9534F" />
+                            <Label Text="Delete Entry" FontSize="13" TextColor="#ff3b30" />
                         </Border>
                     </Grid>
 
-                    <!-- Detail scroll content -->
-                    <ScrollView Grid.Row="2" Padding="20,14,20,48">
+                    <!-- Scrollable detail content -->
+                    <ScrollView Grid.Row="2" Padding="24,14,24,48">
                         <VerticalStackLayout Spacing="0">
 
                             <!-- Photo -->
-                            <Image Source="{Binding SelectedItem.PhotoPath}"
-                                   IsVisible="{Binding SelectedItem.HasPhoto}"
-                                   Aspect="AspectFill" HeightRequest="200" Margin="0,0,0,16">
+                            <Image
+                                Source="{Binding SelectedItem.PhotoPath}"
+                                IsVisible="{Binding SelectedItem.HasPhoto}"
+                                Aspect="AspectFill"
+                                HeightRequest="220"
+                                Margin="0,0,0,16">
                                 <Image.Clip>
-                                    <RoundRectangleGeometry Rect="0,0,1000,200" CornerRadius="12" />
+                                    <RoundRectangleGeometry Rect="0,0,1000,220" CornerRadius="14" />
                                 </Image.Clip>
                             </Image>
 
-                            <BoxView HeightRequest="0.5" Color="#EBEBEB" Margin="0,0,0,14" />
+                            <BoxView HeightRequest="0.5" Color="#E8E8ED" Margin="0,0,0,16" />
 
-                            <!-- Date + category row -->
-                            <Grid ColumnDefinitions="*,*" Margin="0,0,0,14">
-                                <VerticalStackLayout Grid.Column="0">
-                                    <Label Text="Date" FontSize="12" TextColor="#9E9D98" />
-                                    <Label Text="{Binding SelectedItem.DateFormatted}" FontSize="15" TextColor="#1A1A18" />
+                            <!-- Date + category -->
+                            <Grid ColumnDefinitions="*,*" Margin="0,0,0,16">
+                                <VerticalStackLayout Grid.Column="0" Spacing="3">
+                                    <Label Text="Date" FontSize="12" TextColor="#6e6e73" />
+                                    <Label Text="{Binding SelectedItem.DateFormatted}" FontSize="15" TextColor="#1d1d1f" />
                                 </VerticalStackLayout>
-                                <VerticalStackLayout Grid.Column="1">
-                                    <Label Text="Category" FontSize="12" TextColor="#9E9D98" />
-                                    <Label Text="{Binding SelectedItem.CategoryLabel}" FontSize="15" TextColor="#1A1A18" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="3">
+                                    <Label Text="Category" FontSize="12" TextColor="#6e6e73" />
+                                    <Label Text="{Binding SelectedItem.CategoryLabel}" FontSize="15" TextColor="#1d1d1f" />
                                 </VerticalStackLayout>
                             </Grid>
 
                             <!-- Note -->
-                            <VerticalStackLayout IsVisible="{Binding SelectedItem.HasNote}" Margin="0,0,0,14">
-                                <Label Text="Note" FontSize="12" TextColor="#9E9D98" />
-                                <Label Text="{Binding SelectedItem.Note}" FontSize="15" TextColor="#1A1A18" />
+                            <VerticalStackLayout IsVisible="{Binding SelectedItem.HasNote}" Margin="0,0,0,16" Spacing="3">
+                                <Label Text="Note" FontSize="12" TextColor="#6e6e73" />
+                                <Label Text="{Binding SelectedItem.Note}" FontSize="15" TextColor="#1d1d1f" />
                             </VerticalStackLayout>
 
-                            <!-- Grocery items list -->
+                            <!-- Grocery items -->
                             <VerticalStackLayout IsVisible="{Binding SelectedItem.IsGroceryGroup}">
-                                <BoxView HeightRequest="0.5" Color="#EBEBEB" Margin="0,0,0,12" />
+                                <BoxView HeightRequest="0.5" Color="#E8E8ED" Margin="0,0,0,14" />
                                 <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,10">
-                                    <Label Grid.Column="0" Text="Items" FontSize="14"
-                                           FontAttributes="Bold" TextColor="#1A1A18" />
-                                    <Label Grid.Column="1" Text="Delete all" FontSize="13" TextColor="#D9534F">
+                                    <Label Grid.Column="0" Text="Items"
+                                           FontSize="15" FontAttributes="Bold" TextColor="#1d1d1f" />
+                                    <Label Grid.Column="1" Text="Delete all"
+                                           FontSize="13" TextColor="#ff3b30">
                                         <Label.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding DeleteAllGroceryItemsCommand}" />
                                         </Label.GestureRecognizers>
@@ -371,12 +437,15 @@
                                     <CollectionView.ItemTemplate>
                                         <DataTemplate x:DataType="models:GroceryLineItem">
                                             <Grid ColumnDefinitions="*,Auto,Auto" Padding="0,10,0,10">
+                                                <BoxView Grid.ColumnSpan="3" HeightRequest="0.5"
+                                                         VerticalOptions="End" Color="#F0F0F5" />
                                                 <Label Grid.Column="0" Text="{Binding Name}"
-                                                       FontSize="14" VerticalOptions="Center" TextColor="#1A1A18" />
+                                                       FontSize="14" VerticalOptions="Center" TextColor="#1d1d1f" />
                                                 <Label Grid.Column="1" Text="{Binding PriceFormatted}"
-                                                       FontSize="14" Margin="0,0,14,0"
-                                                       VerticalOptions="Center" TextColor="#5F5E5A" />
-                                                <Label Grid.Column="2" Text="✕" FontSize="13" TextColor="#9E9D98">
+                                                       FontSize="14" FontAttributes="Bold"
+                                                       TextColor="#ff6b6b"
+                                                       Margin="0,0,14,0" VerticalOptions="Center" />
+                                                <Label Grid.Column="2" Text="✕" FontSize="14" TextColor="#6e6e73">
                                                     <Label.GestureRecognizers>
                                                         <TapGestureRecognizer
                                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:FeedViewModel}}, Path=DeleteGroceryItemCommand}"
@@ -391,6 +460,7 @@
 
                         </VerticalStackLayout>
                     </ScrollView>
+
                 </Grid>
             </Border>
         </Grid>

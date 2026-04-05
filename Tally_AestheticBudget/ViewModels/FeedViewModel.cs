@@ -1,8 +1,8 @@
-﻿using Tally_AestheticBudget.Models;
-using Tally_AestheticBudget.Services;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Collections.ObjectModel;
+using Tally_AestheticBudget.Models;
+using Tally_AestheticBudget.Services;
 
 namespace Tally_AestheticBudget.ViewModels;
 
@@ -13,14 +13,9 @@ public partial class FeedViewModel : ObservableObject
     public FeedViewModel(IExpenseService expenseService)
     {
         _expenseService = expenseService;
-
         PickerYear = DateTime.Now.Year;
         _selectedPickerMonth = DateTime.Now.Month;
-
         BuildMonthOptions();
-
-        // Fire-and-forget initial load.
-        // We do this instead of async constructor because constructors can't be async.
         _ = LoadFeedAsync();
     }
 
@@ -36,8 +31,16 @@ public partial class FeedViewModel : ObservableObject
     [ObservableProperty]
     private bool _isRefreshing;
 
+    // Subtitle under the title e.g. "March 2026" or "42 entries"
     [ObservableProperty]
     private string _summaryLabel = string.Empty;
+
+    // The pill in the top right: "Spent: ₱0.00"
+    [ObservableProperty]
+    private string _totalSpentFormatted = "₱0.00";
+
+    // "This Year (2026)" — matches your HTML: `This Year (${now.getFullYear()})`
+    public string ThisYearLabel => $"This Year ({DateTime.Now.Year})";
 
     public bool HasNoEntries => !IsLoading && FeedItems.Count == 0;
 
@@ -175,8 +178,8 @@ public partial class FeedViewModel : ObservableObject
     {
         if (SelectedItem is null) return;
 
-        bool confirmed = await Shell.Current.DisplayAlert(
-            "Delete Expense",
+        bool confirmed = await Shell.Current.DisplayAlertAsync(
+            "Delete Entry",
             "Are you sure you want to delete this?",
             "Delete", "Cancel");
 
@@ -196,7 +199,7 @@ public partial class FeedViewModel : ObservableObject
     {
         if (SelectedItem is null) return;
 
-        bool confirmed = await Shell.Current.DisplayAlert(
+        bool confirmed = await Shell.Current.DisplayAlertAsync(
             "Delete All", "Delete this entire grocery run?", "Delete All", "Cancel");
 
         if (!confirmed) return;
@@ -216,7 +219,6 @@ public partial class FeedViewModel : ObservableObject
 
         if (SelectedItem.GroceryItems.Count == 0)
         {
-            // Group is now empty — clean up the header row too
             await _expenseService.DeleteGroceryGroupAsync(SelectedItem.Id);
             IsDetailVisible = false;
             await LoadFeedAsync();
@@ -242,7 +244,7 @@ public partial class FeedViewModel : ObservableObject
             };
 
             FeedItems = new ObservableCollection<FeedCardItem>(items);
-            UpdateSummaryLabel();
+            UpdateLabels();
         }
         finally
         {
@@ -251,14 +253,19 @@ public partial class FeedViewModel : ObservableObject
         }
     }
 
-    private void UpdateSummaryLabel()
+    private void UpdateLabels()
     {
-        var total = FeedItems.Sum(x => x.Amount).ToString("C0");
+        var total = FeedItems.Sum(x => x.Amount);
+
+        // Pill: "Spent: ₱1,234.00"
+        TotalSpentFormatted = $"₱{total:N2}";
+
+        // Subtitle under title — matches feed-subtitle in your HTML
         SummaryLabel = _activeFilter switch
         {
-            FilterMode.Month => $"{SelectedMonthLabel}  ·  {total} total",
-            FilterMode.Year => $"{PickerYear}  ·  {total} total",
-            _ => $"{FeedItems.Count} entries  ·  {total} total"
+            FilterMode.Month => new DateTime(PickerYear, _selectedPickerMonth, 1).ToString("MMMM yyyy"),
+            FilterMode.Year => PickerYear.ToString(),
+            _ => DateTime.Now.ToString("MMMM yyyy")   // default: current month name
         };
     }
 }

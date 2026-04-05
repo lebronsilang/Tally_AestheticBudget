@@ -6,7 +6,7 @@ namespace Tally_AestheticBudget.Models;
 public enum ExpenseCategory
 {
     Food, Transport, Shopping, Health, Fun, Other,
-    Grocery   // internal — used for grouped grocery run cards
+    Grocery
 }
 
 public partial class FeedCardItem : ObservableObject
@@ -28,10 +28,11 @@ public partial class FeedCardItem : ObservableObject
     public bool HasPhoto => !string.IsNullOrEmpty(PhotoPath);
     public bool HasNote => !string.IsNullOrEmpty(Note);
 
-    public string AmountFormatted => Amount.ToString("C2");
+    // ₱ symbol, 2 decimal places
+    public string AmountFormatted => $"₱{Amount:N2}";
     public string DateFormatted => Date.ToString("dd MMM yyyy");
 
-    public string CategoryLabel => IsGroceryGroup ? "Grocery run" : Category switch
+    public string CategoryLabel => IsGroceryGroup ? "Grocery" : Category switch
     {
         ExpenseCategory.Food => "Food",
         ExpenseCategory.Transport => "Transport",
@@ -58,7 +59,8 @@ public class GroceryLineItem
     public string Name { get; set; } = string.Empty;
     public decimal Price { get; set; }
     public int Quantity { get; set; } = 1;
-    public string PriceFormatted => (Price * Quantity).ToString("C2");
+    // ₱ symbol
+    public string PriceFormatted => $"₱{Price * Quantity:N2}";
 }
 
 public class MonthOption

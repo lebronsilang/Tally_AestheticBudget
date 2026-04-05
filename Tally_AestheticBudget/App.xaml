@@ -1,14 +1,28 @@
 ﻿<?xml version = "1.0" encoding = "UTF-8" ?>
-<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:Tally_AestheticBudget"
-             x:Class="Tally_AestheticBudget.App">
+<Application
+    x:Class="Tally_AestheticBudget.App"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:Tally_AestheticBudget.Converters">
+
     <Application.Resources>
         <ResourceDictionary>
+
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <converters:CategoryToColorConverter      x:Key="CategoryToColor" />
+            <converters:CategoryToDotColorConverter   x:Key="CategoryToDot" />
+            <converters:DateToDisplayConverter        x:Key="DateToDisplay" />
+            <converters:BoolToChipBgConverter         x:Key="BoolToChipBg" />
+            <converters:BoolToChipBorderConverter     x:Key="BoolToChipBorder" />
+            <converters:BoolToChipTextConverter       x:Key="BoolToChipText" />
+            <converters:BoolToFontAttributesConverter x:Key="BoolToFontAttr" />
+            <converters:InverseBoolConverter          x:Key="InverseBool" />
+
         </ResourceDictionary>
     </Application.Resources>
+
 </Application>
