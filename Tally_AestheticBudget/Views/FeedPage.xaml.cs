@@ -4,11 +4,20 @@ namespace Tally_AestheticBudget.Views;
 
 public partial class FeedPage : ContentPage
 {
-    // The ViewModel is injected automatically by MAUI's DI container
-    // because we registered both FeedPage and FeedViewModel in MauiProgram.cs
+    private readonly FeedViewModel _viewModel;
+
     public FeedPage(FeedViewModel viewModel)
     {
         InitializeComponent();
+        _viewModel = viewModel;
         BindingContext = viewModel;
+    }
+
+    // Fires every time the Feed screen becomes visible —
+    // including when returning from AddExpensePage after saving.
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await _viewModel.OnPageAppearingAsync();
     }
 }

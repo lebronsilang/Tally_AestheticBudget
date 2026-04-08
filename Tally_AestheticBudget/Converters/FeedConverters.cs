@@ -111,8 +111,6 @@ public class InverseBoolConverter : IValueConverter
 public class PhotoToPaddingConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-        // hasPhoto = true  → photo sits above, so normal padding: 12,14,14
-        // hasPhoto = false → no photo, needs more top breathing room: 18,14,14
         => value is true
             ? new Thickness(14, 12, 14, 6)
             : new Thickness(14, 18, 14, 6);

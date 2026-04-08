@@ -33,11 +33,13 @@ public static class MauiProgram
         builder.Services.AddSingleton<DatabaseService>();
         builder.Services.AddSingleton<IExpenseService, ExpenseService>();
 
-        // ── ViewModels ────────────────────────────────────────────────────────
+        // ── ViewModels ────────────────────────────────────────────────────────────
         builder.Services.AddTransient<FeedViewModel>();
+        builder.Services.AddTransient<AddExpenseViewModel>();
 
-        // ── Pages/Views ───────────────────────────────────────────────────────
+        // ── Pages ─────────────────────────────────────────────────────────────────
         builder.Services.AddTransient<FeedPage>();
+        builder.Services.AddTransient<AddExpensePage>();
 
 #if DEBUG
         builder.Logging.AddDebug();

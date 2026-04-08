@@ -21,6 +21,7 @@
             <converters:BoolToChipTextConverter       x:Key="BoolToChipText" />
             <converters:BoolToFontAttributesConverter x:Key="BoolToFontAttr" />
             <converters:InverseBoolConverter          x:Key="InverseBool" />
+            <converters:PhotoToPaddingConverter x:Key="PhotoToPadding" />
 
         </ResourceDictionary>
     </Application.Resources>

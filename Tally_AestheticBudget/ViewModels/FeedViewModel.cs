@@ -1,8 +1,9 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Collections.ObjectModel;
 using Tally_AestheticBudget.Models;
 using Tally_AestheticBudget.Services;
+using Tally_AestheticBudget.Views;
 
 namespace Tally_AestheticBudget.ViewModels;
 
@@ -43,6 +44,19 @@ public partial class FeedViewModel : ObservableObject
     public string ThisYearLabel => $"This Year ({DateTime.Now.Year})";
 
     public bool HasNoEntries => !IsLoading && FeedItems.Count == 0;
+
+    // ── Navigation ────────────────────────────────────────────────────────────
+
+    [RelayCommand]
+    private async Task GoToAddExpenseAsync()
+    {
+        await Shell.Current.GoToAsync(nameof(AddExpensePage));
+    }
+
+    public async Task OnPageAppearingAsync()
+    {
+        await LoadFeedAsync();
+    }
 
     // ── Filter state ──────────────────────────────────────────────────────────
 

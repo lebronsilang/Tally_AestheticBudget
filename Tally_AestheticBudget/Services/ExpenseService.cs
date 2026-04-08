@@ -1,5 +1,4 @@
 ﻿using Tally_AestheticBudget.Models;
-using Tally_AestheticBudget.Services;
 
 namespace Tally_AestheticBudget.Services;
 
@@ -8,6 +7,7 @@ public interface IExpenseService
     Task<IEnumerable<FeedCardItem>> GetAllFeedItemsAsync();
     Task<IEnumerable<FeedCardItem>> GetFeedItemsForYearAsync(int year);
     Task<IEnumerable<FeedCardItem>> GetFeedItemsForMonthAsync(int year, int month);
+    Task SaveExpenseAsync(ExpenseEntity expense);
     Task DeleteExpenseAsync(int id);
     Task DeleteGroceryGroupAsync(int groupId);
     Task DeleteGroceryLineItemAsync(int lineItemId);
@@ -52,6 +52,7 @@ public class ExpenseService : IExpenseService
                 Id = e.Id,
                 Amount = e.Amount,
                 Category = ParseCategory(e.Category),
+                Title = e.Title,       // ← mapped here
                 Note = e.Note,
                 Date = e.Date,
                 PhotoPath = e.PhotoPath
@@ -71,7 +72,7 @@ public class ExpenseService : IExpenseService
             {
                 Id = li.Id,
                 GroceryGroupId = group.Id,
-                Name = li.Note ?? "Item",
+                Name = li.Title ?? li.Note ?? "Item",  // grocery items use Title as name
                 Price = li.Amount
             }).ToList();
 
@@ -89,6 +90,12 @@ public class ExpenseService : IExpenseService
         }
 
         return cards.OrderByDescending(c => c.Date);
+    }
+
+    public async Task SaveExpenseAsync(ExpenseEntity expense)
+    {
+        var db = await _db.GetConnectionAsync();
+        await db.InsertAsync(expense);
     }
 
     public async Task DeleteExpenseAsync(int id)

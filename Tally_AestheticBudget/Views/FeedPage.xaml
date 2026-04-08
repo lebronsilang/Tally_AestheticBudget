@@ -15,7 +15,8 @@
         <Grid
             Grid.Row="0"
             Padding="24,52,24,0"
-            ColumnDefinitions="*,Auto">
+            ColumnDefinitions="*,Auto,Auto"
+            ColumnSpacing="10">
 
             <!-- Left: title + subtitle -->
             <VerticalStackLayout Grid.Column="0" Spacing="2">
@@ -30,29 +31,45 @@
                     TextColor="#6e6e73" />
             </VerticalStackLayout>
 
-            <!-- Right: "Spent: ₱0.00" pill — matches .feed-summary-pill -->
+            <!-- Middle: Spent pill -->
             <Border
                 Grid.Column="1"
-                BackgroundColor="#1FFBB4B4"
+                BackgroundColor="#1Fff6b6b"
                 Stroke="#ff6b6b"
                 StrokeThickness="0.8"
                 StrokeShape="RoundRectangle 980"
-                Padding="16,8"
+                Padding="14,8"
                 VerticalOptions="Center">
                 <HorizontalStackLayout Spacing="4">
-                    <Label
-                        Text="Spent: "
-                        FontSize="14"
-                        TextColor="#1d1d1f" />
+                    <Label Text="Spent: " FontSize="13" TextColor="#1d1d1f" />
                     <Label
                         Text="{Binding TotalSpentFormatted}"
-                        FontSize="14"
+                        FontSize="13"
                         FontAttributes="Bold"
                         TextColor="#ff6b6b" />
                 </HorizontalStackLayout>
             </Border>
 
+            <!-- Right: + Add button -->
+            <Border
+                Grid.Column="2"
+                BackgroundColor="#ff6b6b"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 980"
+                Padding="16,8"
+                VerticalOptions="Center">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoToAddExpenseCommand}" />
+                </Border.GestureRecognizers>
+                <Label
+                    Text="+ Add"
+                    FontSize="14"
+                    FontAttributes="Bold"
+                    TextColor="White" />
+            </Border>
+
         </Grid>
+
 
         <!-- ── Filter chips ───────────────────────────────────────────────── -->
         <ScrollView

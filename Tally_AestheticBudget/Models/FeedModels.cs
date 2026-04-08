@@ -21,14 +21,20 @@ public partial class FeedCardItem : ObservableObject
     private decimal _amount;
 
     public ExpenseCategory Category { get; set; }
+
+    // Short label — shown prominently on the card
+    public string? Title { get; set; }
+
+    // Longer detail — shown in the bottom sheet only
     public string? Note { get; set; }
+
     public DateTime Date { get; set; }
     public string? PhotoPath { get; set; }
 
     public bool HasPhoto => !string.IsNullOrEmpty(PhotoPath);
+    public bool HasTitle => !string.IsNullOrEmpty(Title);
     public bool HasNote => !string.IsNullOrEmpty(Note);
 
-    // ₱ symbol, 2 decimal places
     public string AmountFormatted => $"₱{Amount:N2}";
     public string DateFormatted => Date.ToString("dd MMM yyyy");
 
@@ -59,7 +65,6 @@ public class GroceryLineItem
     public string Name { get; set; } = string.Empty;
     public decimal Price { get; set; }
     public int Quantity { get; set; } = 1;
-    // ₱ symbol
     public string PriceFormatted => $"₱{Price * Quantity:N2}";
 }
 

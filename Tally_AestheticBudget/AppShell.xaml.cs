@@ -1,10 +1,12 @@
-﻿namespace Tally_AestheticBudget
+﻿using Tally_AestheticBudget.Views;
+
+namespace Tally_AestheticBudget;
+
+public partial class AppShell : Shell
 {
-    public partial class AppShell : Shell
+    public AppShell()
     {
-        public AppShell()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+        Routing.RegisterRoute(nameof(AddExpensePage), typeof(AddExpensePage));
     }
 }
