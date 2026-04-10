@@ -31,8 +31,6 @@ public class ExpenseEntity
     // Null = standalone expense.
     // Non-null = this row is a line item inside a grocery group with this Id.
     public int? GroceryGroupId { get; set; }
-
-    
 }
 
 /// <summary>
@@ -50,7 +48,6 @@ public class GroceryGroupEntity
     public string? Note { get; set; }
 }
 
-
 /// <summary>
 /// One row per category per month.
 /// e.g. Food · April 2026 · limit ₱3,000
@@ -60,7 +57,6 @@ public class BudgetEntity
 {
     [PrimaryKey, AutoIncrement]
     public int Id { get; set; }
-
     public string Category { get; set; } = string.Empty;
     public decimal Limit { get; set; }
     public int Month { get; set; }
@@ -77,10 +73,29 @@ public class GroceryItemEntity
 {
     [PrimaryKey, AutoIncrement]
     public int Id { get; set; }
-
     public string Name { get; set; } = string.Empty;
     public decimal Price { get; set; }
     public int Quantity { get; set; } = 1;
     public bool IsChecked { get; set; }
     public DateTime CreatedAt { get; set; }
+}
+
+[Table("wish_items")]
+public class WishItemEntity
+{
+    [PrimaryKey, AutoIncrement]
+    public int Id { get; set; }
+
+    public string Name { get; set; } = string.Empty;
+    public decimal Price { get; set; }
+    public string Priority { get; set; } = "Want";  // Want / Need / Someday
+    public string Category { get; set; } = string.Empty;
+    public string? Caption { get; set; }
+    public string? PhotoPath { get; set; }
+    public string? TargetMonth { get; set; }         // "2026-06" format
+    public string Status { get; set; } = "Planned";  // Planned / Bought
+    public string? RegretRating { get; set; }         // Worth / Regret
+    public bool IsPinned { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 }

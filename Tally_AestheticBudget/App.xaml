@@ -21,14 +21,31 @@
             <converters:BoolToChipTextConverter       x:Key="BoolToChipText" />
             <converters:BoolToFontAttributesConverter x:Key="BoolToFontAttr" />
             <converters:InverseBoolConverter          x:Key="InverseBool" />
+            
+            
             <converters:PhotoToPaddingConverter x:Key="PhotoToPadding" />
             <converters:BoolToEditSubtitleConverter x:Key="BoolToEditSubtitle" />
             <converters:BoolToProgressColorConverter x:Key="BoolToProgressColor" />
             <converters:PercentToWidthConverter      x:Key="PercentToWidth" />
+            
+            
             <converters:BoolToOpacityConverter      x:Key="BoolToOpacity" />
             <converters:BoolToStrikethroughConverter x:Key="BoolToStrikethrough" />
             <converters:ZeroToBoolConverter         x:Key="ZeroToBool" />
             <converters:StringToBoolConverter       x:Key="StringToBool" />
+            
+            
+            <converters:BoolToAffordBgConverter      x:Key="BoolToAffordBg" />
+            <converters:BoolToAffordTextConverter    x:Key="BoolToAffordText" />
+            <converters:StatusToPlannedBgConverter   x:Key="StatusToPlannedBg" />
+            <converters:StatusToPlannedTextConverter x:Key="StatusToPlannedText" />
+            <converters:StatusToBoughtBgConverter    x:Key="StatusToBoughtBg" />
+            <converters:StatusToBoughtTextConverter  x:Key="StatusToBoughtText" />
+            <converters:BoolToPinLabelConverter      x:Key="BoolToPinLabel" />
+            <converters:CategoryMatchConverter x:Key="CategoryMatch" />
+
+            
+            <converters:ThemeActiveBorderConverter x:Key="ThemeActiveBorder" />
 
         </ResourceDictionary>
     </Application.Resources>

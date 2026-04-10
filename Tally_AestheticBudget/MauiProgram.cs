@@ -20,10 +20,11 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 
-                // Add these later when you download DM Sans / DM Serif Display
+                // Add later DM Sans / DM Serif Display
                 // fonts.AddFont("DMSerifDisplay-Regular.ttf", "DisplayFont");
                 // fonts.AddFont("DMSans-Regular.ttf", "BodyFont");
             });
+
 
         // ── Services ──────────────────────────────────────────────────────────
         // AddSingleton = one instance for the whole app lifetime (good for DB)
@@ -33,20 +34,27 @@ public static class MauiProgram
         builder.Services.AddSingleton<IExpenseService, ExpenseService>();
         builder.Services.AddSingleton<IBudgetService, BudgetService>();
         builder.Services.AddSingleton<IGroceryService, GroceryService>();
+        builder.Services.AddSingleton<IWishService, WishService>();
+        builder.Services.AddSingleton<IThemeService, ThemeService>();
 
         // ── ViewModels ────────────────────────────────────────────────────────────
         builder.Services.AddTransient<FeedViewModel>();
         builder.Services.AddTransient<AddExpenseViewModel>();
         builder.Services.AddTransient<BudgetViewModel>();
         builder.Services.AddTransient<GroceryViewModel>();
+        builder.Services.AddTransient<WishlistViewModel>();
+        builder.Services.AddTransient<ThemesViewModel>();
 
         // ── Pages ─────────────────────────────────────────────────────────────────
         builder.Services.AddTransient<FeedPage>();
         builder.Services.AddTransient<AddExpensePage>();
         builder.Services.AddTransient<BudgetPage>();
         builder.Services.AddTransient<GroceryPage>();
+        builder.Services.AddTransient<WishlistPage>();
+        builder.Services.AddTransient<ThemesPage>();
 
-        
+
+
 #if DEBUG
         builder.Logging.AddDebug();
 #endif

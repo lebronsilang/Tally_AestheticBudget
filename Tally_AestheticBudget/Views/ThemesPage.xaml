@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Tally_AestheticBudget.Views.ThemesPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Tally_AestheticBudget.ViewModels"
+    xmlns:models="clr-namespace:Tally_AestheticBudget.Models"
+    x:DataType="vm:ThemesViewModel"
+    Shell.NavBarIsVisible="False"
+    BackgroundColor="#f5f5f7">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="0">
+
+            <!-- ── Header ─────────────────────────────────────────────────── -->
+            <VerticalStackLayout
+                BackgroundColor="#ffffff"
+                Padding="24,52,24,20"
+                Spacing="2">
+                <Label
+                    Text="Aesthetic Themes"
+                    FontFamily="DisplayFont"
+                    FontSize="28"
+                    TextColor="#1d1d1f" />
+                <Label
+                    Text="Pick a vibe for your app"
+                    FontSize="13"
+                    TextColor="#6e6e73" />
+            </VerticalStackLayout>
+
+            <BoxView HeightRequest="0.5" Color="#E8E8ED" />
+
+            <VerticalStackLayout Padding="20,24,20,48" Spacing="24">
+
+                <!-- ── Preset theme grid ───────────────────────────────────── -->
+                <Label Text="Presets" FontSize="16" FontAttributes="Bold" TextColor="#1d1d1f" />
+
+                <CollectionView
+                    ItemsSource="{Binding ThemeCards}"
+                    SelectionMode="None"
+                    HeightRequest="340">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout
+                            Orientation="Vertical"
+                            Span="3"
+                            HorizontalItemSpacing="12"
+                            VerticalItemSpacing="12" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:ThemeCardItem">
+                            <ContentView>
+                                <ContentView.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ThemesViewModel}}, Path=ApplyThemeCommand}"
+                                        CommandParameter="{Binding Id}" />
+                                </ContentView.GestureRecognizers>
+
+                                <Border
+                                    BackgroundColor="#ffffff"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding IsActive, Converter={StaticResource BoolToChipBorder}}"
+                                    StrokeShape="RoundRectangle 16"
+                                    Padding="10,10,10,12">
+                                    <VerticalStackLayout Spacing="8">
+
+                                        <!-- Color swatch -->
+                                        <Border
+                                            HeightRequest="56"
+                                            StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 10"
+                                            BackgroundColor="{Binding PreviewFrom}" />
+
+                                        <!-- Theme name -->
+                                        <Label
+                                            Text="{Binding DisplayName}"
+                                            FontSize="11"
+                                            FontAttributes="{Binding IsActive, Converter={StaticResource BoolToFontAttr}}"
+                                            HorizontalOptions="Center"
+                                            TextColor="#1d1d1f"
+                                            LineBreakMode="TailTruncation" />
+
+                                    </VerticalStackLayout>
+                                </Border>
+                            </ContentView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <BoxView HeightRequest="0.5" Color="#E8E8ED" />
+
+                <!-- ── Custom palette ──────────────────────────────────────── -->
+                <Label Text="Custom Palette" FontSize="16" FontAttributes="Bold" TextColor="#1d1d1f" />
+
+                <VerticalStackLayout Spacing="16">
+
+                    <!-- Color preview swatches -->
+                    <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="10">
+                        <VerticalStackLayout Grid.Column="0" Spacing="4" HorizontalOptions="Center">
+                            <Border BackgroundColor="{Binding CustomBg}"
+                                    StrokeThickness="0.5" Stroke="#E8E8ED"
+                                    StrokeShape="RoundRectangle 10"
+                                    WidthRequest="48" HeightRequest="48" HorizontalOptions="Center" />
+                            <Label Text="BG" FontSize="11" TextColor="#6e6e73" HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="4" HorizontalOptions="Center">
+                            <Border BackgroundColor="{Binding CustomAccent}"
+                                    StrokeThickness="0.5" Stroke="#E8E8ED"
+                                    StrokeShape="RoundRectangle 10"
+                                    WidthRequest="48" HeightRequest="48" HorizontalOptions="Center" />
+                            <Label Text="Accent" FontSize="11" TextColor="#6e6e73" HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="2" Spacing="4" HorizontalOptions="Center">
+                            <Border BackgroundColor="{Binding CustomCard}"
+                                    StrokeThickness="0.5" Stroke="#E8E8ED"
+                                    StrokeShape="RoundRectangle 10"
+                                    WidthRequest="48" HeightRequest="48" HorizontalOptions="Center" />
+                            <Label Text="Card" FontSize="11" TextColor="#6e6e73" HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="3" Spacing="4" HorizontalOptions="Center">
+                            <Border BackgroundColor="{Binding CustomText}"
+                                    StrokeThickness="0.5" Stroke="#E8E8ED"
+                                    StrokeShape="RoundRectangle 10"
+                                    WidthRequest="48" HeightRequest="48" HorizontalOptions="Center" />
+                            <Label Text="Text" FontSize="11" TextColor="#6e6e73" HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <!-- Hex input fields -->
+                    <VerticalStackLayout Spacing="10">
+
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Background" FontSize="12" TextColor="#6e6e73" />
+                            <Border BackgroundColor="#ffffff" Stroke="#E8E8ED"
+                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 12" Padding="16,0">
+                                <Entry Text="{Binding CustomBg}" Placeholder="#f5f5f7"
+                                       PlaceholderColor="#C0C0C5" FontSize="14"
+                                       TextColor="#1d1d1f" BackgroundColor="Transparent" HeightRequest="44" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Accent" FontSize="12" TextColor="#6e6e73" />
+                            <Border BackgroundColor="#ffffff" Stroke="#E8E8ED"
+                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 12" Padding="16,0">
+                                <Entry Text="{Binding CustomAccent}" Placeholder="#ff6b6b"
+                                       PlaceholderColor="#C0C0C5" FontSize="14"
+                                       TextColor="#1d1d1f" BackgroundColor="Transparent" HeightRequest="44" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Card" FontSize="12" TextColor="#6e6e73" />
+                            <Border BackgroundColor="#ffffff" Stroke="#E8E8ED"
+                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 12" Padding="16,0">
+                                <Entry Text="{Binding CustomCard}" Placeholder="#ffffff"
+                                       PlaceholderColor="#C0C0C5" FontSize="14"
+                                       TextColor="#1d1d1f" BackgroundColor="Transparent" HeightRequest="44" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Text" FontSize="12" TextColor="#6e6e73" />
+                            <Border BackgroundColor="#ffffff" Stroke="#E8E8ED"
+                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 12" Padding="16,0">
+                                <Entry Text="{Binding CustomText}" Placeholder="#1d1d1f"
+                                       PlaceholderColor="#C0C0C5" FontSize="14"
+                                       TextColor="#1d1d1f" BackgroundColor="Transparent" HeightRequest="44" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                    </VerticalStackLayout>
+
+                    <!-- Apply custom button -->
+                    <Border
+                        BackgroundColor="#ff6b6b"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 980"
+                        Padding="0,16">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ApplyCustomThemeCommand}" />
+                        </Border.GestureRecognizers>
+                        <Label Text="Apply Custom Palette" FontSize="15"
+                               FontAttributes="Bold" TextColor="White"
+                               HorizontalOptions="Center" />
+                    </Border>
+
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

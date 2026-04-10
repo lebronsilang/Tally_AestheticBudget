@@ -25,6 +25,18 @@
                 Route="GroceryPage" />
         </Tab>
 
+        <Tab Title="Wishlist" Icon="dotnet_bot.png">
+            <ShellContent
+                ContentTemplate="{DataTemplate views:WishlistPage}"
+                Route="WishlistPage" />
+        </Tab>
+
+        <Tab Title="Themes" Icon="dotnet_bot.png">
+            <ShellContent
+                ContentTemplate="{DataTemplate views:ThemesPage}"
+                Route="ThemesPage" />
+        </Tab>
+
     </TabBar>
 
 </Shell>

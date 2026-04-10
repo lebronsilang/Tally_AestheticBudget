@@ -30,6 +30,7 @@ public class DatabaseService
         await _connection.CreateTableAsync<GroceryGroupEntity>();
         await _connection.CreateTableAsync<BudgetEntity>();
         await _connection.CreateTableAsync<GroceryItemEntity>();
+        await _connection.CreateTableAsync<WishItemEntity>();
 
         return _connection;
     }

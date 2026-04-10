@@ -1,17 +1,15 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Tally_AestheticBudget.Services;
 
-namespace Tally_AestheticBudget
+namespace Tally_AestheticBudget;
+
+public partial class App : Application
 {
-    public partial class App : Application
-    {
-        public App()
-        {
-            InitializeComponent();
-        }
+    public static string CurrentAccent { get; set; } = "#ff6b6b";
 
-        protected override Window CreateWindow(IActivationState? activationState)
-        {
-            return new Window(new AppShell());
-        }
+    public App(IThemeService themeService)
+    {
+        InitializeComponent();          // ← resources are ready after this
+        themeService.ApplyOnStartup();  // ← now safe to write to Resources
+        MainPage = new AppShell();
     }
 }

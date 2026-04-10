@@ -199,3 +199,124 @@ public class StringToBoolConverter : IValueConverter
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotImplementedException();
 }
+
+// ── Add these classes to the bottom of FeedConverters.cs ─────────────────────
+
+// Afford indicator background — green if can afford, red if not
+public class BoolToAffordBgConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => value is true
+            ? Color.FromArgb("#1234c759")   // green tint
+            : Color.FromArgb("#1Fff3b30");  // red tint
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+// Afford indicator text color
+public class BoolToAffordTextConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => value is true
+            ? Color.FromArgb("#1a7a40")   // green text
+            : Color.FromArgb("#c0392b");  // red text
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+// Status toggle — Planned button background
+public class StatusToPlannedBgConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => value is WishStatus.Planned
+            ? Color.FromArgb("#f5f5f7")
+            : Colors.Transparent;
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+// Status toggle — Planned button text color
+public class StatusToPlannedTextConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => value is WishStatus.Planned
+            ? Color.FromArgb("#1d1d1f")
+            : Color.FromArgb("#6e6e73");
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+// Status toggle — Bought button background
+public class StatusToBoughtBgConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => value is WishStatus.Bought
+            ? Color.FromArgb("#1234c759")
+            : Colors.Transparent;
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+// Status toggle — Bought button text color
+public class StatusToBoughtTextConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => value is WishStatus.Bought
+            ? Color.FromArgb("#1a7a40")
+            : Color.FromArgb("#6e6e73");
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+// Pin button label — toggles between pin and unpin
+public class BoolToPinLabelConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => value is true ? "⭐ Unpin" : "⭐ Pin as Top Dream";
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+// Checks if the current ExpenseCategory matches a given category name parameter
+// Used for wish category pill active state
+public class CategoryMatchConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is not ExpenseCategory current) return false;
+        if (parameter is not string target) return false;
+        return Enum.TryParse<ExpenseCategory>(target, out var t) && current == t;
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+// ── Add this class to the bottom of FeedConverters.cs ───────────────────────
+// Highlights the active theme card with accent border, others get a subtle border.
+// The ViewModel's ActiveThemeId is passed via a binding on the parent,
+// so we need a MultiBinding workaround. Instead we use a simpler approach:
+// this converter is used with the theme card's Id binding, and we compare
+// against App's stored theme preference directly.
+
+public class ThemeActiveBorderConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        var themeId = value as string;
+        var activeId = Preferences.Get("active_theme", "default");
+        return themeId == activeId
+            ? Color.FromArgb("#ff6b6b")   // accent border for active theme
+            : Color.FromArgb("#E8E8ED");  // subtle border for inactive
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
