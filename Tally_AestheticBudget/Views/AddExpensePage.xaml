@@ -17,13 +17,14 @@
                 Padding="24,56,24,20"
                 BackgroundColor="#ffffff">
                 <VerticalStackLayout Grid.Column="0" Spacing="2">
+                    <!-- Binds to PageTitle — shows "New Entry ✦" or "Edit Entry ✦" -->
                     <Label
-                        Text="New Entry ✦"
+                        Text="{Binding PageTitle}"
                         FontFamily="DisplayFont"
                         FontSize="24"
                         TextColor="#1d1d1f" />
                     <Label
-                        Text="Log what you spent"
+                        Text="{Binding IsEditMode, Converter={StaticResource BoolToEditSubtitle}}"
                         FontSize="13"
                         TextColor="#6e6e73" />
                 </VerticalStackLayout>
@@ -32,8 +33,7 @@
                     BackgroundColor="#F5F5F7"
                     StrokeThickness="0"
                     StrokeShape="RoundRectangle 980"
-                    WidthRequest="36"
-                    HeightRequest="36"
+                    WidthRequest="36" HeightRequest="36"
                     VerticalOptions="Start">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding CancelCommand}" />
@@ -48,22 +48,18 @@
             <!-- ── Form body ──────────────────────────────────────────────── -->
             <VerticalStackLayout Padding="24,24,24,0" Spacing="22">
 
-                <!-- Title — short label shown on the feed card -->
+                <!-- Title -->
                 <VerticalStackLayout Spacing="8">
                     <Label Text="Title" FontSize="13" FontAttributes="Bold" TextColor="#1d1d1f" />
                     <Border
-                        BackgroundColor="#ffffff"
-                        Stroke="#E8E8ED"
-                        StrokeThickness="0.8"
-                        StrokeShape="RoundRectangle 12"
+                        BackgroundColor="#ffffff" Stroke="#E8E8ED"
+                        StrokeThickness="0.8" StrokeShape="RoundRectangle 12"
                         Padding="16,0">
                         <Entry
                             Text="{Binding Title}"
                             Placeholder="e.g. Lunch with friends"
-                            PlaceholderColor="#C0C0C5"
-                            FontSize="15"
-                            TextColor="#1d1d1f"
-                            BackgroundColor="Transparent"
+                            PlaceholderColor="#C0C0C5" FontSize="15"
+                            TextColor="#1d1d1f" BackgroundColor="Transparent"
                             HeightRequest="48" />
                     </Border>
                 </VerticalStackLayout>
@@ -72,19 +68,14 @@
                 <VerticalStackLayout Spacing="8">
                     <Label Text="Amount (₱)" FontSize="13" FontAttributes="Bold" TextColor="#1d1d1f" />
                     <Border
-                        BackgroundColor="#ffffff"
-                        Stroke="#E8E8ED"
-                        StrokeThickness="0.8"
-                        StrokeShape="RoundRectangle 12"
+                        BackgroundColor="#ffffff" Stroke="#E8E8ED"
+                        StrokeThickness="0.8" StrokeShape="RoundRectangle 12"
                         Padding="16,0">
                         <Entry
                             Text="{Binding AmountText}"
-                            Placeholder="0.00"
-                            PlaceholderColor="#C0C0C5"
-                            Keyboard="Numeric"
-                            FontSize="15"
-                            TextColor="#1d1d1f"
-                            BackgroundColor="Transparent"
+                            Placeholder="0.00" PlaceholderColor="#C0C0C5"
+                            Keyboard="Numeric" FontSize="15"
+                            TextColor="#1d1d1f" BackgroundColor="Transparent"
                             HeightRequest="48" />
                     </Border>
                 </VerticalStackLayout>
@@ -169,22 +160,18 @@
                     </FlexLayout>
                 </VerticalStackLayout>
 
-                <!-- Note — longer detail, only shown in the bottom sheet -->
+                <!-- Note -->
                 <VerticalStackLayout Spacing="8">
                     <Label Text="Note (optional)" FontSize="13" FontAttributes="Bold" TextColor="#1d1d1f" />
                     <Border
-                        BackgroundColor="#ffffff"
-                        Stroke="#E8E8ED"
-                        StrokeThickness="0.8"
-                        StrokeShape="RoundRectangle 12"
+                        BackgroundColor="#ffffff" Stroke="#E8E8ED"
+                        StrokeThickness="0.8" StrokeShape="RoundRectangle 12"
                         Padding="16,0">
                         <Entry
                             Text="{Binding Note}"
                             Placeholder="Any extra details..."
-                            PlaceholderColor="#C0C0C5"
-                            FontSize="15"
-                            TextColor="#1d1d1f"
-                            BackgroundColor="Transparent"
+                            PlaceholderColor="#C0C0C5" FontSize="15"
+                            TextColor="#1d1d1f" BackgroundColor="Transparent"
                             HeightRequest="48" />
                     </Border>
                 </VerticalStackLayout>
@@ -193,17 +180,13 @@
                 <VerticalStackLayout Spacing="8">
                     <Label Text="Date" FontSize="13" FontAttributes="Bold" TextColor="#1d1d1f" />
                     <Border
-                        BackgroundColor="#ffffff"
-                        Stroke="#E8E8ED"
-                        StrokeThickness="0.8"
-                        StrokeShape="RoundRectangle 12"
+                        BackgroundColor="#ffffff" Stroke="#E8E8ED"
+                        StrokeThickness="0.8" StrokeShape="RoundRectangle 12"
                         Padding="16,4">
                         <DatePicker
                             Date="{Binding SelectedDate}"
-                            Format="MMMM dd, yyyy"
-                            FontSize="15"
-                            TextColor="#1d1d1f"
-                            BackgroundColor="Transparent" />
+                            Format="MMMM dd, yyyy" FontSize="15"
+                            TextColor="#1d1d1f" BackgroundColor="Transparent" />
                     </Border>
                 </VerticalStackLayout>
 
@@ -213,10 +196,8 @@
 
                     <Border
                         IsVisible="{Binding HasPhoto, Converter={StaticResource InverseBool}}"
-                        BackgroundColor="#ffffff"
-                        Stroke="#E8E8ED"
-                        StrokeThickness="0.8"
-                        StrokeShape="RoundRectangle 14"
+                        BackgroundColor="#ffffff" Stroke="#E8E8ED"
+                        StrokeThickness="0.8" StrokeShape="RoundRectangle 14"
                         HeightRequest="110">
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding PickPhotoCommand}" />
@@ -230,10 +211,8 @@
 
                     <VerticalStackLayout IsVisible="{Binding HasPhoto}" Spacing="0">
                         <Border
-                            BackgroundColor="#ffffff"
-                            Stroke="#E8E8ED"
-                            StrokeThickness="0.8"
-                            StrokeShape="RoundRectangle 14"
+                            BackgroundColor="#ffffff" Stroke="#E8E8ED"
+                            StrokeThickness="0.8" StrokeShape="RoundRectangle 14"
                             Padding="0">
                             <Grid RowDefinitions="Auto,Auto">
                                 <Image Grid.Row="0" Source="{Binding PhotoPath}"
@@ -243,8 +222,7 @@
                                     </Image.Clip>
                                 </Image>
                                 <Border Grid.Row="1"
-                                        BackgroundColor="#1Fff3b30"
-                                        StrokeThickness="0"
+                                        BackgroundColor="#1Fff3b30" StrokeThickness="0"
                                         StrokeShape="RoundRectangle 0,0,14,14"
                                         Padding="0,10">
                                     <Border.GestureRecognizers>
@@ -256,21 +234,20 @@
                             </Grid>
                         </Border>
                     </VerticalStackLayout>
-
                 </VerticalStackLayout>
 
-                <!-- Save button -->
+                <!-- Save / Update button — label switches based on mode -->
                 <Border
-                    BackgroundColor="#ff6b6b"
-                    StrokeThickness="0"
+                    BackgroundColor="#ff6b6b" StrokeThickness="0"
                     StrokeShape="RoundRectangle 980"
-                    Padding="0,16"
-                    Margin="0,8,0,48">
+                    Padding="0,16" Margin="0,8,0,48">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding SaveCommand}" />
                     </Border.GestureRecognizers>
-                    <Label Text="Save Entry" FontSize="15" FontAttributes="Bold"
-                           TextColor="White" HorizontalOptions="Center" />
+                    <Label
+                        Text="{Binding SaveButtonLabel}"
+                        FontSize="15" FontAttributes="Bold"
+                        TextColor="White" HorizontalOptions="Center" />
                 </Border>
 
             </VerticalStackLayout>

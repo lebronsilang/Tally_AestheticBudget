@@ -1,6 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Collections.ObjectModel;
 using Tally_AestheticBudget.Models;
 using Tally_AestheticBudget.Services;
 using Tally_AestheticBudget.Views;
@@ -32,31 +32,14 @@ public partial class FeedViewModel : ObservableObject
     [ObservableProperty]
     private bool _isRefreshing;
 
-    // Subtitle under the title e.g. "March 2026" or "42 entries"
     [ObservableProperty]
     private string _summaryLabel = string.Empty;
 
-    // The pill in the top right: "Spent: ₱0.00"
     [ObservableProperty]
     private string _totalSpentFormatted = "₱0.00";
 
-    // "This Year (2026)" — matches your HTML: `This Year (${now.getFullYear()})`
     public string ThisYearLabel => $"This Year ({DateTime.Now.Year})";
-
     public bool HasNoEntries => !IsLoading && FeedItems.Count == 0;
-
-    // ── Navigation ────────────────────────────────────────────────────────────
-
-    [RelayCommand]
-    private async Task GoToAddExpenseAsync()
-    {
-        await Shell.Current.GoToAsync(nameof(AddExpensePage));
-    }
-
-    public async Task OnPageAppearingAsync()
-    {
-        await LoadFeedAsync();
-    }
 
     // ── Filter state ──────────────────────────────────────────────────────────
 
@@ -113,6 +96,28 @@ public partial class FeedViewModel : ObservableObject
 
     [ObservableProperty]
     private FeedCardItem? _selectedItem;
+
+    // ── Navigation ────────────────────────────────────────────────────────────
+
+    [RelayCommand]
+    private async Task GoToAddExpenseAsync()
+    {
+        await Shell.Current.GoToAsync(nameof(AddExpensePage));
+    }
+
+    // Passes the expense Id as a query parameter so AddExpenseViewModel
+    // knows it's in edit mode and which expense to load
+    [RelayCommand]
+    private async Task GoToEditExpenseAsync(FeedCardItem item)
+    {
+        await Shell.Current.GoToAsync(
+            $"{nameof(AddExpensePage)}?ExpenseId={item.Id}");
+    }
+
+    public async Task OnPageAppearingAsync()
+    {
+        await LoadFeedAsync();
+    }
 
     // ── Filter commands ───────────────────────────────────────────────────────
 
@@ -193,9 +198,7 @@ public partial class FeedViewModel : ObservableObject
         if (SelectedItem is null) return;
 
         bool confirmed = await Shell.Current.DisplayAlertAsync(
-            "Delete Entry",
-            "Are you sure you want to delete this?",
-            "Delete", "Cancel");
+            "Delete Entry", "Are you sure you want to delete this?", "Delete", "Cancel");
 
         if (!confirmed) return;
 
@@ -270,16 +273,12 @@ public partial class FeedViewModel : ObservableObject
     private void UpdateLabels()
     {
         var total = FeedItems.Sum(x => x.Amount);
-
-        // Pill: "Spent: ₱1,234.00"
         TotalSpentFormatted = $"₱{total:N2}";
-
-        // Subtitle under title — matches feed-subtitle in your HTML
         SummaryLabel = _activeFilter switch
         {
             FilterMode.Month => new DateTime(PickerYear, _selectedPickerMonth, 1).ToString("MMMM yyyy"),
             FilterMode.Year => PickerYear.ToString(),
-            _ => DateTime.Now.ToString("MMMM yyyy")   // default: current month name
+            _ => DateTime.Now.ToString("MMMM yyyy")
         };
     }
 }

@@ -26,10 +26,13 @@ public class ExpenseEntity
     public string? PhotoPath { get; set; }
 
     public DateTime Date { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     // Null = standalone expense.
     // Non-null = this row is a line item inside a grocery group with this Id.
     public int? GroceryGroupId { get; set; }
+
+    
 }
 
 /// <summary>

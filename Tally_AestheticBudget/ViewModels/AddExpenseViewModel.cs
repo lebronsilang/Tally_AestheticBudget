@@ -5,6 +5,9 @@ using Tally_AestheticBudget.Services;
 
 namespace Tally_AestheticBudget.ViewModels;
 
+// Shell passes query parameters as strings — this attribute lets
+// AddExpenseViewModel receive the ExpenseId when navigating for edit.
+[QueryProperty(nameof(ExpenseId), "ExpenseId")]
 public partial class AddExpenseViewModel : ObservableObject
 {
     private readonly IExpenseService _expenseService;
@@ -15,18 +18,29 @@ public partial class AddExpenseViewModel : ObservableObject
         SelectedDate = DateTime.Today;
     }
 
+    // ── Mode detection ────────────────────────────────────────────────────────
+
+    // Set by Shell navigation when editing — 0 means Add mode
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(PageTitle))]
+    [NotifyPropertyChangedFor(nameof(SaveButtonLabel))]
+    [NotifyPropertyChangedFor(nameof(IsEditMode))]
+    private int _expenseId;
+
+    public bool IsEditMode => ExpenseId > 0;
+    public string PageTitle => IsEditMode ? "Edit Entry ✦" : "New Entry ✦";
+    public string SaveButtonLabel => IsEditMode ? "Update Entry" : "Save Entry";
+
     // ── Form fields ───────────────────────────────────────────────────────────
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
     private string _amountText = string.Empty;
 
-    // Short label shown on the feed card
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
     private string _title = string.Empty;
 
-    // Longer optional detail shown only in the bottom sheet
     [ObservableProperty]
     private string _note = string.Empty;
 
@@ -58,11 +72,33 @@ public partial class AddExpenseViewModel : ObservableObject
 
     public bool HasPhoto => !string.IsNullOrEmpty(PhotoPath);
 
-    // ── Validation — both Amount and Title are required ───────────────────────
+    // ── Validation ────────────────────────────────────────────────────────────
 
     private bool CanSave() =>
         decimal.TryParse(AmountText, out var v) && v > 0
         && !string.IsNullOrWhiteSpace(Title);
+
+    // ── Load existing expense when in edit mode ───────────────────────────────
+    // Called by the page's OnAppearing when ExpenseId > 0
+
+    public async Task LoadExistingAsync()
+    {
+        if (!IsEditMode) return;
+
+        var expense = await _expenseService.GetExpenseByIdAsync(ExpenseId);
+        if (expense is null) return;
+
+        Title = expense.Title ?? string.Empty;
+        AmountText = expense.Amount.ToString("N2");
+        Note = expense.Note ?? string.Empty;
+        SelectedDate = expense.Date;
+        PhotoPath = expense.PhotoPath;
+        SelectedCategory = Enum.TryParse<ExpenseCategory>(expense.Category, out var cat)
+            ? cat
+            : ExpenseCategory.Other;
+
+        OnPropertyChanged(nameof(HasPhoto));
+    }
 
     // ── Commands ──────────────────────────────────────────────────────────────
 
@@ -78,7 +114,7 @@ public partial class AddExpenseViewModel : ObservableObject
     {
         try
         {
-            var result = await MediaPicker.PickPhotoAsync(new MediaPickerOptions
+            var result = await MediaPicker.Default.PickPhotoAsync(new MediaPickerOptions
             {
                 Title = "Choose a photo"
             });
@@ -86,7 +122,6 @@ public partial class AddExpenseViewModel : ObservableObject
             if (result is null) return;
 
             var localPath = Path.Combine(FileSystem.AppDataDirectory, result.FileName);
-
             using var stream = await result.OpenReadAsync();
             using var fileStream = File.OpenWrite(localPath);
             await stream.CopyToAsync(fileStream);
@@ -112,17 +147,37 @@ public partial class AddExpenseViewModel : ObservableObject
     {
         if (!decimal.TryParse(AmountText, out var amount) || amount <= 0) return;
 
-        var expense = new ExpenseEntity
+        if (IsEditMode)
         {
-            Amount = amount,
-            Title = Title.Trim(),
-            Category = SelectedCategory.ToString(),
-            Note = string.IsNullOrWhiteSpace(Note) ? null : Note.Trim(),
-            Date = SelectedDate,
-            PhotoPath = PhotoPath
-        };
+            // Edit mode — update the existing row
+            var expense = await _expenseService.GetExpenseByIdAsync(ExpenseId);
+            if (expense is null) return;
 
-        await _expenseService.SaveExpenseAsync(expense);
+            expense.Title = Title.Trim();
+            expense.Amount = amount;
+            expense.Category = SelectedCategory.ToString();
+            expense.Note = string.IsNullOrWhiteSpace(Note) ? null : Note.Trim();
+            expense.Date = SelectedDate;
+            expense.PhotoPath = PhotoPath;
+
+            await _expenseService.UpdateExpenseAsync(expense);
+        }
+        else
+        {
+            // Add mode — insert a new row
+            var expense = new ExpenseEntity
+            {
+                Title = Title.Trim(),
+                Amount = amount,
+                Category = SelectedCategory.ToString(),
+                Note = string.IsNullOrWhiteSpace(Note) ? null : Note.Trim(),
+                Date = SelectedDate,
+                PhotoPath = PhotoPath
+            };
+
+            await _expenseService.SaveExpenseAsync(expense);
+        }
+
         await Shell.Current.GoToAsync("..");
     }
 

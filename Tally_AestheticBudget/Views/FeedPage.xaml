@@ -222,6 +222,7 @@
                                             Spacing="4">
 
                                             <!-- Category label — .card-cat: accent color, uppercase, small -->
+                                            <!-- Category label -->
                                             <HorizontalStackLayout Spacing="6">
                                                 <Label
                                                     Text="{Binding CategoryLabel}"
@@ -230,30 +231,37 @@
                                                     CharacterSpacing="0.5"
                                                     TextTransform="Uppercase"
                                                     TextColor="#ff6b6b" />
-                                                <!-- Grocery item count badge -->
                                                 <Border
                                                     IsVisible="{Binding IsGroceryGroup}"
                                                     BackgroundColor="#1Fff6b6b"
                                                     StrokeThickness="0"
                                                     StrokeShape="RoundRectangle 980"
                                                     Padding="6,2">
-                                                    <Label
-                                                        Text="{Binding GroceryItemCountLabel}"
-                                                        FontSize="10"
-                                                        TextColor="#ff6b6b" />
+                                                    <Label Text="{Binding GroceryItemCountLabel}"
+                                                        FontSize="10" TextColor="#ff6b6b" />
                                                 </Border>
                                             </HorizontalStackLayout>
 
-                                            <!-- Note — .card-note -->
+                                            <!-- Title — main label shown on card -->
+                                            <Label
+                                                Text="{Binding Title}"
+                                                IsVisible="{Binding HasTitle}"
+                                                FontSize="14"
+                                                FontAttributes="Bold"
+                                                LineBreakMode="TailTruncation"
+                                                MaxLines="1"
+                                                TextColor="#1d1d1f" />
+
+                                            <!-- Note — secondary line -->
                                             <Label
                                                 Text="{Binding Note}"
                                                 IsVisible="{Binding HasNote}"
-                                                FontSize="13"
+                                                FontSize="12"
                                                 LineBreakMode="TailTruncation"
-                                                MaxLines="2"
-                                                TextColor="#1d1d1f" />
+                                                MaxLines="1"
+                                                TextColor="#6e6e73" />
 
-                                            <!-- Amount — .card-amount -->
+                                            <!-- Amount -->
                                             <Label
                                                 Text="{Binding AmountFormatted}"
                                                 FontSize="18"
@@ -350,15 +358,20 @@
         </Grid>
 
         <!-- ── Detail bottom sheet ─────────────────────────────────────────── -->
-        <Grid Grid.RowSpan="3" IsVisible="{Binding IsDetailVisible}" BackgroundColor="#80000000">
+        <Grid
+            Grid.RowSpan="3"
+            IsVisible="{Binding IsDetailVisible}"
+            BackgroundColor="#80000000">
             <Grid.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding DismissDetailCommand}" />
             </Grid.GestureRecognizers>
+
             <Border
                 BackgroundColor="#ffffff"
                 StrokeThickness="0"
                 StrokeShape="RoundRectangle 24,24,0,0"
                 VerticalOptions="End">
+
                 <Grid RowDefinitions="Auto,Auto,*">
 
                     <!-- Drag handle -->
@@ -369,36 +382,65 @@
                         HorizontalOptions="Center"
                         Margin="0,12,0,0" />
 
-                    <!-- Detail header -->
-                    <Grid Grid.Row="1" Padding="24,16,24,0" ColumnDefinitions="*,Auto">
-                        <VerticalStackLayout Grid.Column="0" Spacing="2">
-                            <Label
-                                Text="{Binding SelectedItem.CategoryLabel}"
-                                FontSize="12"
-                                FontAttributes="Bold"
-                                CharacterSpacing="0.5"
-                                TextTransform="Uppercase"
-                                TextColor="#ff6b6b" />
-                            <Label
-                                Text="{Binding SelectedItem.AmountFormatted}"
-                                FontSize="30"
-                                FontAttributes="Bold"
-                                TextColor="#1d1d1f" />
-                        </VerticalStackLayout>
+                    <!-- Detail header: category / amount / edit / delete -->
+                    <Grid
+                        Grid.Row="1"
+                        Padding="24,16,24,0"
+                        RowDefinitions="Auto,Auto"
+                        ColumnDefinitions="*,Auto,Auto">
+
+                        <!-- Category label — full width on row 0 -->
+                        <Label
+                            Grid.Row="0" Grid.ColumnSpan="3"
+                            Text="{Binding SelectedItem.CategoryLabel}"
+                            FontSize="12"
+                            FontAttributes="Bold"
+                            CharacterSpacing="0.5"
+                            TextTransform="Uppercase"
+                            TextColor="#ff6b6b"
+                            Margin="0,0,0,4" />
+
+                        <!-- Amount -->
+                        <Label
+                            Grid.Row="1" Grid.Column="0"
+                            Text="{Binding SelectedItem.AmountFormatted}"
+                            FontSize="30"
+                            FontAttributes="Bold"
+                            TextColor="#1d1d1f"
+                            VerticalOptions="Center" />
+
+                        <!-- Edit button — only show for non-grocery items -->
+                        <Border
+                            Grid.Row="1" Grid.Column="1"
+                            IsVisible="{Binding SelectedItem.IsGroceryGroup, Converter={StaticResource InverseBool}}"
+                            BackgroundColor="#1Fff6b6b"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="14,9"
+                            VerticalOptions="Center"
+                            Margin="0,0,8,0">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding GoToEditExpenseCommand}"
+                                    CommandParameter="{Binding SelectedItem}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="Edit" FontSize="13" TextColor="#ff6b6b" />
+                        </Border>
 
                         <!-- Delete button -->
                         <Border
-                            Grid.Column="1"
+                            Grid.Row="1" Grid.Column="2"
                             BackgroundColor="#1Fff3b30"
                             StrokeThickness="0"
                             StrokeShape="RoundRectangle 12"
                             Padding="14,9"
-                            VerticalOptions="Start">
+                            VerticalOptions="Center">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding DeleteSelectedCommand}" />
                             </Border.GestureRecognizers>
-                            <Label Text="Delete Entry" FontSize="13" TextColor="#ff3b30" />
+                            <Label Text="Delete" FontSize="13" TextColor="#ff3b30" />
                         </Border>
+
                     </Grid>
 
                     <!-- Scrollable detail content -->
@@ -419,25 +461,44 @@
 
                             <BoxView HeightRequest="0.5" Color="#E8E8ED" Margin="0,0,0,16" />
 
+                            <!-- Title -->
+                            <VerticalStackLayout
+                                IsVisible="{Binding SelectedItem.HasTitle}"
+                                Margin="0,0,0,16"
+                                Spacing="3">
+                                <Label Text="Title" FontSize="12" TextColor="#6e6e73" />
+                                <Label
+                                    Text="{Binding SelectedItem.Title}"
+                                    FontSize="15"
+                                    FontAttributes="Bold"
+                                    TextColor="#1d1d1f" />
+                            </VerticalStackLayout>
+
                             <!-- Date + category -->
                             <Grid ColumnDefinitions="*,*" Margin="0,0,0,16">
                                 <VerticalStackLayout Grid.Column="0" Spacing="3">
                                     <Label Text="Date" FontSize="12" TextColor="#6e6e73" />
-                                    <Label Text="{Binding SelectedItem.DateFormatted}" FontSize="15" TextColor="#1d1d1f" />
+                                    <Label Text="{Binding SelectedItem.DateFormatted}"
+                                           FontSize="15" TextColor="#1d1d1f" />
                                 </VerticalStackLayout>
                                 <VerticalStackLayout Grid.Column="1" Spacing="3">
                                     <Label Text="Category" FontSize="12" TextColor="#6e6e73" />
-                                    <Label Text="{Binding SelectedItem.CategoryLabel}" FontSize="15" TextColor="#1d1d1f" />
+                                    <Label Text="{Binding SelectedItem.CategoryLabel}"
+                                           FontSize="15" TextColor="#1d1d1f" />
                                 </VerticalStackLayout>
                             </Grid>
 
                             <!-- Note -->
-                            <VerticalStackLayout IsVisible="{Binding SelectedItem.HasNote}" Margin="0,0,0,16" Spacing="3">
+                            <VerticalStackLayout
+                                IsVisible="{Binding SelectedItem.HasNote}"
+                                Margin="0,0,0,16"
+                                Spacing="3">
                                 <Label Text="Note" FontSize="12" TextColor="#6e6e73" />
-                                <Label Text="{Binding SelectedItem.Note}" FontSize="15" TextColor="#1d1d1f" />
+                                <Label Text="{Binding SelectedItem.Note}"
+                                       FontSize="15" TextColor="#1d1d1f" />
                             </VerticalStackLayout>
 
-                            <!-- Grocery items -->
+                            <!-- Grocery items list -->
                             <VerticalStackLayout IsVisible="{Binding SelectedItem.IsGroceryGroup}">
                                 <BoxView HeightRequest="0.5" Color="#E8E8ED" Margin="0,0,0,14" />
                                 <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,10">
@@ -450,19 +511,26 @@
                                         </Label.GestureRecognizers>
                                     </Label>
                                 </Grid>
-                                <CollectionView ItemsSource="{Binding SelectedItem.GroceryItems}" SelectionMode="None">
+                                <CollectionView
+                                    ItemsSource="{Binding SelectedItem.GroceryItems}"
+                                    SelectionMode="None">
                                     <CollectionView.ItemTemplate>
                                         <DataTemplate x:DataType="models:GroceryLineItem">
                                             <Grid ColumnDefinitions="*,Auto,Auto" Padding="0,10,0,10">
-                                                <BoxView Grid.ColumnSpan="3" HeightRequest="0.5"
-                                                         VerticalOptions="End" Color="#F0F0F5" />
+                                                <BoxView
+                                                    Grid.ColumnSpan="3"
+                                                    HeightRequest="0.5"
+                                                    VerticalOptions="End"
+                                                    Color="#F0F0F5" />
                                                 <Label Grid.Column="0" Text="{Binding Name}"
-                                                       FontSize="14" VerticalOptions="Center" TextColor="#1d1d1f" />
+                                                       FontSize="14" VerticalOptions="Center"
+                                                       TextColor="#1d1d1f" />
                                                 <Label Grid.Column="1" Text="{Binding PriceFormatted}"
                                                        FontSize="14" FontAttributes="Bold"
                                                        TextColor="#ff6b6b"
                                                        Margin="0,0,14,0" VerticalOptions="Center" />
-                                                <Label Grid.Column="2" Text="✕" FontSize="14" TextColor="#6e6e73">
+                                                <Label Grid.Column="2" Text="✕"
+                                                       FontSize="14" TextColor="#6e6e73">
                                                     <Label.GestureRecognizers>
                                                         <TapGestureRecognizer
                                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:FeedViewModel}}, Path=DeleteGroceryItemCommand}"

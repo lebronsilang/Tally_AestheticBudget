@@ -7,7 +7,9 @@ public interface IExpenseService
     Task<IEnumerable<FeedCardItem>> GetAllFeedItemsAsync();
     Task<IEnumerable<FeedCardItem>> GetFeedItemsForYearAsync(int year);
     Task<IEnumerable<FeedCardItem>> GetFeedItemsForMonthAsync(int year, int month);
+    Task<ExpenseEntity?> GetExpenseByIdAsync(int id);
     Task SaveExpenseAsync(ExpenseEntity expense);
+    Task UpdateExpenseAsync(ExpenseEntity expense);
     Task DeleteExpenseAsync(int id);
     Task DeleteGroceryGroupAsync(int groupId);
     Task DeleteGroceryLineItemAsync(int lineItemId);
@@ -52,7 +54,7 @@ public class ExpenseService : IExpenseService
                 Id = e.Id,
                 Amount = e.Amount,
                 Category = ParseCategory(e.Category),
-                Title = e.Title,       // ← mapped here
+                Title = e.Title,
                 Note = e.Note,
                 Date = e.Date,
                 PhotoPath = e.PhotoPath
@@ -72,7 +74,7 @@ public class ExpenseService : IExpenseService
             {
                 Id = li.Id,
                 GroceryGroupId = group.Id,
-                Name = li.Title ?? li.Note ?? "Item",  // grocery items use Title as name
+                Name = li.Title ?? li.Note ?? "Item",
                 Price = li.Amount
             }).ToList();
 
@@ -92,10 +94,26 @@ public class ExpenseService : IExpenseService
         return cards.OrderByDescending(c => c.Date);
     }
 
+    // Fetches the raw DB row by Id — used by edit mode to pre-fill the form
+    public async Task<ExpenseEntity?> GetExpenseByIdAsync(int id)
+    {
+        var db = await _db.GetConnectionAsync();
+        return await db.Table<ExpenseEntity>()
+            .Where(e => e.Id == id)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task SaveExpenseAsync(ExpenseEntity expense)
     {
         var db = await _db.GetConnectionAsync();
         await db.InsertAsync(expense);
+    }
+
+    public async Task UpdateExpenseAsync(ExpenseEntity expense)
+    {
+        expense.UpdatedAt = DateTime.Now;
+        var db = await _db.GetConnectionAsync();
+        await db.UpdateAsync(expense);
     }
 
     public async Task DeleteExpenseAsync(int id)

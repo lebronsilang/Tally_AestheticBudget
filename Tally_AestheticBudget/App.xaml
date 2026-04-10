@@ -22,6 +22,7 @@
             <converters:BoolToFontAttributesConverter x:Key="BoolToFontAttr" />
             <converters:InverseBoolConverter          x:Key="InverseBool" />
             <converters:PhotoToPaddingConverter x:Key="PhotoToPadding" />
+            <converters:BoolToEditSubtitleConverter x:Key="BoolToEditSubtitle" />
 
         </ResourceDictionary>
     </Application.Resources>
