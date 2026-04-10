@@ -13,7 +13,6 @@ public interface IThemeService
 
 public class ThemeService : IThemeService
 {
-    // Preferences keys
     private const string KeyThemeId = "active_theme";
     private const string KeyCustomBg = "custom_bg";
     private const string KeyCustomAccent = "custom_accent";
@@ -27,25 +26,37 @@ public class ThemeService : IThemeService
     {
         Preferences.Set(KeyThemeId, themeId);
         var theme = AppThemes.GetById(themeId);
-        ApplyColorsToApp(
+        ApplyColorsToResources(
             theme.Background,
             theme.Accent,
             theme.Card,
             theme.TextPrimary,
             theme.TextSecondary,
             theme.Border);
+
+        // Reload the shell so all pages pick up the new colors instantly
+        ReloadShell();
     }
 
     public void ApplyCustomTheme(string bg, string accent, string card, string text)
     {
-        // Save custom colors to Preferences
+        if (!IsValidHex(bg) || !IsValidHex(accent) || !IsValidHex(card) || !IsValidHex(text))
+        {
+            Shell.Current.DisplayAlertAsync(
+                "Invalid color",
+                "Please enter valid hex colors (e.g. #ff6b6b)",
+                "OK");
+            return;
+        }
+
         Preferences.Set(KeyThemeId, "custom");
         Preferences.Set(KeyCustomBg, bg);
         Preferences.Set(KeyCustomAccent, accent);
         Preferences.Set(KeyCustomCard, card);
         Preferences.Set(KeyCustomText, text);
 
-        ApplyColorsToApp(bg, accent, card, text, text, "#E8E8ED");
+        ApplyColorsToResources(bg, accent, card, text, text, "#E8E8ED");
+        ReloadShell();
     }
 
     public (string bg, string accent, string card, string text) GetCustomColors() =>
@@ -56,25 +67,52 @@ public class ThemeService : IThemeService
         Preferences.Get(KeyCustomText, "#1d1d1f")
     );
 
-    // Applies colors to Application.Current.Resources so every page updates instantly
-    private static void ApplyColorsToApp(
+    public void ApplyOnStartup()
+    {
+        var id = GetActiveThemeId();
+        if (id == "custom")
+        {
+            var (bg, accent, card, text) = GetCustomColors();
+            ApplyColorsToResources(bg, accent, card, text, text, "#E8E8ED");
+        }
+        else
+        {
+            var theme = AppThemes.GetById(id);
+            ApplyColorsToResources(
+                theme.Background,
+                theme.Accent,
+                theme.Card,
+                theme.TextPrimary,
+                theme.TextSecondary,
+                theme.Border);
+        }
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    // Replaces MainPage with a fresh AppShell so every page
+    // re-reads the resource dictionary with the new colors.
+    private static void ReloadShell()
+    {
+        if (Application.Current is null) return;
+        Application.Current.MainPage = new AppShell();
+    }
+
+    // Writes theme colors into the app's resource dictionary.
+    // Keys must match what's defined in App.xaml.
+    private static void ApplyColorsToResources(
         string bg, string accent, string card,
         string textPrimary, string textSecondary, string border)
     {
-        if (Application.Current?.Resources is not ResourceDictionary resources) return;
+        if (Application.Current?.Resources is not ResourceDictionary res) return;
 
-        // These keys must match what your XAML pages reference.
-        // We set them as Color objects so StaticResource bindings pick them up.
         void Set(string key, string hex)
         {
-            try
-            {
-                if (Color.TryParse(hex, out var color))
-                    resources[key] = color;
-            }
-            catch { /* ignore if key doesn't exist yet */ }
+            if (Color.TryParse(hex, out var color))
+                res[key] = color;
         }
 
+        // These keys must match your App.xaml ResourceDictionary entries exactly
         Set("PageBackground", bg);
         Set("CardBackground", card);
         Set("CardBorder", border);
@@ -82,23 +120,9 @@ public class ThemeService : IThemeService
         Set("TextSecondary", textSecondary);
         Set("AccentColor", accent);
 
-        // Also update the hardcoded hex colors used throughout the pages
-        // We expose the accent as a static so XAML can reference it
         App.CurrentAccent = accent;
     }
 
-    // Apply saved theme at startup — called from App.xaml.cs
-    public void ApplyOnStartup()
-    {
-        var id = GetActiveThemeId();
-        if (id == "custom")
-        {
-            var (bg, accent, card, text) = GetCustomColors();
-            ApplyCustomTheme(bg, accent, card, text);
-        }
-        else
-        {
-            ApplyTheme(id);
-        }
-    }
+    private static bool IsValidHex(string hex) =>
+        !string.IsNullOrWhiteSpace(hex) && Color.TryParse(hex, out _);
 }

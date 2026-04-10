@@ -110,6 +110,8 @@ public partial class FeedViewModel : ObservableObject
     [RelayCommand]
     private async Task GoToEditExpenseAsync(FeedCardItem item)
     {
+        IsDetailVisible = false;
+        await Task.Delay(300); 
         await Shell.Current.GoToAsync(
             $"{nameof(AddExpensePage)}?ExpenseId={item.Id}");
     }

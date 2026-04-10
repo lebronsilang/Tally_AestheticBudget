@@ -13,6 +13,19 @@
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <!-- ── Theme color resources ─────────────────────────────────────
+                 These are written to at runtime by ThemeService.
+                 Default values = Clean Minimal theme.
+                 Keys must match exactly what ThemeService.ApplyColorsToResources sets.
+            ─────────────────────────────────────────────────────────────── -->
+            <Color x:Key="PageBackground">#f5f5f7</Color>
+            <Color x:Key="CardBackground">#ffffff</Color>
+            <Color x:Key="CardBorder">#E8E8ED</Color>
+            <Color x:Key="TextPrimary">#1d1d1f</Color>
+            <Color x:Key="TextSecondary">#6e6e73</Color>
+            <Color x:Key="AccentColor">#ff6b6b</Color>
+
+            <!-- ── Converters ─────────────────────────────────────────────── -->
             <converters:CategoryToColorConverter      x:Key="CategoryToColor" />
             <converters:CategoryToDotColorConverter   x:Key="CategoryToDot" />
             <converters:DateToDisplayConverter        x:Key="DateToDisplay" />
@@ -21,31 +34,22 @@
             <converters:BoolToChipTextConverter       x:Key="BoolToChipText" />
             <converters:BoolToFontAttributesConverter x:Key="BoolToFontAttr" />
             <converters:InverseBoolConverter          x:Key="InverseBool" />
-            
-            
-            <converters:PhotoToPaddingConverter x:Key="PhotoToPadding" />
-            <converters:BoolToEditSubtitleConverter x:Key="BoolToEditSubtitle" />
-            <converters:BoolToProgressColorConverter x:Key="BoolToProgressColor" />
-            <converters:PercentToWidthConverter      x:Key="PercentToWidth" />
-            
-            
-            <converters:BoolToOpacityConverter      x:Key="BoolToOpacity" />
-            <converters:BoolToStrikethroughConverter x:Key="BoolToStrikethrough" />
-            <converters:ZeroToBoolConverter         x:Key="ZeroToBool" />
-            <converters:StringToBoolConverter       x:Key="StringToBool" />
-            
-            
-            <converters:BoolToAffordBgConverter      x:Key="BoolToAffordBg" />
-            <converters:BoolToAffordTextConverter    x:Key="BoolToAffordText" />
-            <converters:StatusToPlannedBgConverter   x:Key="StatusToPlannedBg" />
-            <converters:StatusToPlannedTextConverter x:Key="StatusToPlannedText" />
-            <converters:StatusToBoughtBgConverter    x:Key="StatusToBoughtBg" />
-            <converters:StatusToBoughtTextConverter  x:Key="StatusToBoughtText" />
-            <converters:BoolToPinLabelConverter      x:Key="BoolToPinLabel" />
-            <converters:CategoryMatchConverter x:Key="CategoryMatch" />
-
-            
-            <converters:ThemeActiveBorderConverter x:Key="ThemeActiveBorder" />
+            <converters:PhotoToPaddingConverter       x:Key="PhotoToPadding" />
+            <converters:BoolToEditSubtitleConverter   x:Key="BoolToEditSubtitle" />
+            <converters:BoolToProgressColorConverter  x:Key="BoolToProgressColor" />
+            <converters:PercentToWidthConverter       x:Key="PercentToWidth" />
+            <converters:BoolToOpacityConverter        x:Key="BoolToOpacity" />
+            <converters:BoolToStrikethroughConverter  x:Key="BoolToStrikethrough" />
+            <converters:ZeroToBoolConverter           x:Key="ZeroToBool" />
+            <converters:StringToBoolConverter         x:Key="StringToBool" />
+            <converters:BoolToAffordBgConverter       x:Key="BoolToAffordBg" />
+            <converters:BoolToAffordTextConverter     x:Key="BoolToAffordText" />
+            <converters:StatusToPlannedBgConverter    x:Key="StatusToPlannedBg" />
+            <converters:StatusToPlannedTextConverter  x:Key="StatusToPlannedText" />
+            <converters:StatusToBoughtBgConverter     x:Key="StatusToBoughtBg" />
+            <converters:StatusToBoughtTextConverter   x:Key="StatusToBoughtText" />
+            <converters:BoolToPinLabelConverter       x:Key="BoolToPinLabel" />
+            <converters:ThemeActiveBorderConverter    x:Key="ThemeActiveBorder" />
 
         </ResourceDictionary>
     </Application.Resources>
