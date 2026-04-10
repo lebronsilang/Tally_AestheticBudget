@@ -49,3 +49,38 @@ public class GroceryGroupEntity
 
     public string? Note { get; set; }
 }
+
+
+/// <summary>
+/// One row per category per month.
+/// e.g. Food · April 2026 · limit ₱3,000
+/// </summary>
+[Table("budgets")]
+public class BudgetEntity
+{
+    [PrimaryKey, AutoIncrement]
+    public int Id { get; set; }
+
+    public string Category { get; set; } = string.Empty;
+    public decimal Limit { get; set; }
+    public int Month { get; set; }
+    public int Year { get; set; }
+}
+
+/// <summary>
+/// Maps to the "grocery_items" table.
+/// These are the PENDING items in the grocery list —
+/// separate from expense entries which live in the expenses table.
+/// </summary>
+[Table("grocery_items")]
+public class GroceryItemEntity
+{
+    [PrimaryKey, AutoIncrement]
+    public int Id { get; set; }
+
+    public string Name { get; set; } = string.Empty;
+    public decimal Price { get; set; }
+    public int Quantity { get; set; } = 1;
+    public bool IsChecked { get; set; }
+    public DateTime CreatedAt { get; set; }
+}

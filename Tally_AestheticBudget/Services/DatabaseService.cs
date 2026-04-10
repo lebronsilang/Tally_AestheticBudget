@@ -28,6 +28,8 @@ public class DatabaseService
         // it only creates the table if it doesn't already exist.
         await _connection.CreateTableAsync<ExpenseEntity>();
         await _connection.CreateTableAsync<GroceryGroupEntity>();
+        await _connection.CreateTableAsync<BudgetEntity>();
+        await _connection.CreateTableAsync<GroceryItemEntity>();
 
         return _connection;
     }

@@ -3,7 +3,6 @@ using Tally_AestheticBudget.ViewModels;
 using Tally_AestheticBudget.Views;
 using Microsoft.Extensions.Logging;
 using Tally_AestheticBudget;
-using Tally_AestheticBudget.Services;
 
 namespace Tally_AestheticBudget;
 
@@ -32,15 +31,22 @@ public static class MauiProgram
 
         builder.Services.AddSingleton<DatabaseService>();
         builder.Services.AddSingleton<IExpenseService, ExpenseService>();
+        builder.Services.AddSingleton<IBudgetService, BudgetService>();
+        builder.Services.AddSingleton<IGroceryService, GroceryService>();
 
         // ── ViewModels ────────────────────────────────────────────────────────────
         builder.Services.AddTransient<FeedViewModel>();
         builder.Services.AddTransient<AddExpenseViewModel>();
+        builder.Services.AddTransient<BudgetViewModel>();
+        builder.Services.AddTransient<GroceryViewModel>();
 
         // ── Pages ─────────────────────────────────────────────────────────────────
         builder.Services.AddTransient<FeedPage>();
         builder.Services.AddTransient<AddExpensePage>();
+        builder.Services.AddTransient<BudgetPage>();
+        builder.Services.AddTransient<GroceryPage>();
 
+        
 #if DEBUG
         builder.Logging.AddDebug();
 #endif

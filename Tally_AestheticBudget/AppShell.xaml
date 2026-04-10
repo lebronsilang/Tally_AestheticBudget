@@ -5,17 +5,24 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:Tally_AestheticBudget.Views">
 
-    <!--
-        TabBar gives us the bottom navigation.
-        We'll add more tabs (Add, Budget, Wishlist, Grocery) as we build them.
-        For now just Feed so you can get it running.
-    -->
     <TabBar>
 
-        <Tab Title="Feed" Icon="feed_icon.png">
+        <Tab Title="Feed" Icon="dotnet_bot.png">
             <ShellContent
                 ContentTemplate="{DataTemplate views:FeedPage}"
                 Route="FeedPage" />
+        </Tab>
+
+        <Tab Title="Budget" Icon="dotnet_bot.png">
+            <ShellContent
+                ContentTemplate="{DataTemplate views:BudgetPage}"
+                Route="BudgetPage" />
+        </Tab>
+
+        <Tab Title="Grocery" Icon="dotnet_bot.png">
+            <ShellContent
+                ContentTemplate="{DataTemplate views:GroceryPage}"
+                Route="GroceryPage" />
         </Tab>
 
     </TabBar>

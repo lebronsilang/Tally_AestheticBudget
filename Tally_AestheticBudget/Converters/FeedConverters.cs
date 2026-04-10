@@ -128,3 +128,74 @@ public class BoolToEditSubtitleConverter : IValueConverter
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotImplementedException();
 }
+
+// ── Add both classes to the bottom of FeedConverters.cs ─────────────────────
+
+// Progress bar color — accent normally, red when over limit
+// Matches .progress-fill.over { background: #ff3b30 } in your CSS
+public class BoolToProgressColorConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => value is true
+            ? Color.FromArgb("#ff3b30")   // over limit — red
+            : Color.FromArgb("#ff6b6b");  // normal — accent coral
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+// Converts a 0.0–1.0 progress percent into a pixel width for the progress fill bar.
+// The bar container is the full card width minus padding (roughly 280px on most screens).
+// We multiply percent × 280 to get the fill width in pixels.
+public class PercentToWidthConverter : IValueConverter
+{
+    private const double MaxWidth = 280.0;
+
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => value is double d ? d * MaxWidth : 0.0;
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+// ── Add these three classes to the bottom of FeedConverters.cs ───────────────
+
+// Fades checked items to 0.45 opacity — matches .grocery-item.checked { opacity: 0.5 }
+public class BoolToOpacityConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => value is true ? 0.45 : 1.0;
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+// Strikethrough on checked item names — matches .grocery-item.checked .grocery-name
+public class BoolToStrikethroughConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => value is true ? TextDecorations.Strikethrough : TextDecorations.None;
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+// Shows empty state when count is 0
+public class ZeroToBoolConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => value is int count && count == 0;
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+// Shows a label only when string is not null/empty
+public class StringToBoolConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => !string.IsNullOrEmpty(value as string);
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}

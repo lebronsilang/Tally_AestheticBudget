@@ -23,6 +23,12 @@
             <converters:InverseBoolConverter          x:Key="InverseBool" />
             <converters:PhotoToPaddingConverter x:Key="PhotoToPadding" />
             <converters:BoolToEditSubtitleConverter x:Key="BoolToEditSubtitle" />
+            <converters:BoolToProgressColorConverter x:Key="BoolToProgressColor" />
+            <converters:PercentToWidthConverter      x:Key="PercentToWidth" />
+            <converters:BoolToOpacityConverter      x:Key="BoolToOpacity" />
+            <converters:BoolToStrikethroughConverter x:Key="BoolToStrikethrough" />
+            <converters:ZeroToBoolConverter         x:Key="ZeroToBool" />
+            <converters:StringToBoolConverter       x:Key="StringToBool" />
 
         </ResourceDictionary>
     </Application.Resources>
