@@ -14,7 +14,7 @@
         <!-- ── Header ─────────────────────────────────────────────────────── -->
         <VerticalStackLayout Grid.Row="0"
                              BackgroundColor="{StaticResource CardBackground}"
-                             Padding="24,52,24,16" Spacing="14">
+                             Padding="24,20,24,16" Spacing="14">
 
             <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
                 <VerticalStackLayout Grid.Column="0" Spacing="2">

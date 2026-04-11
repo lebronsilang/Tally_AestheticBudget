@@ -3,12 +3,11 @@ using System.Globalization;
 
 namespace Tally_AestheticBudget.Converters;
 
-// Category label color — accent (#ff6b6b) matching .card-cat in your CSS
+// Category label color — accent matching .card-cat in your CSS
 public class CategoryToColorConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-        // All categories use the accent color for their label, just like .card-cat { color: var(--accent) }
-        => Color.FromArgb("#ff6b6b");
+        => Color.FromArgb(App.CurrentAccent);
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotImplementedException();
@@ -49,32 +48,33 @@ public class DateToDisplayConverter : IValueConverter
         => throw new NotImplementedException();
 }
 
-// Active chip: accent fill (#ff6b6b), inactive: transparent — matches .nav-item.active
+// ── FIXED: reads App.CurrentAccent instead of hardcoded #ff6b6b ──────────────
+// Active chip: accent fill, inactive: transparent — matches .nav-item.active
 public class BoolToChipBgConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         => value is true
-            ? Color.FromArgb("#ff6b6b")   // var(--accent)
+            ? Color.FromArgb(App.CurrentAccent)
             : Colors.Transparent;
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotImplementedException();
 }
 
+// ── FIXED: reads App.CurrentAccent instead of hardcoded #ff6b6b ──────────────
 // Active chip border: accent, inactive: soft gray border
 public class BoolToChipBorderConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         => value is true
-            ? Color.FromArgb("#ff6b6b")
+            ? Color.FromArgb(App.CurrentAccent)
             : Color.FromArgb("#E0E0E5");
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotImplementedException();
 }
 
-// Active chip text: white, inactive: subtext gray — matches .nav-item.active { color: var(--accent) }
-// We use white on the filled chip instead of accent-on-white for better contrast
+// Active chip text: white on filled chip, subtext gray when inactive
 public class BoolToChipTextConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -106,8 +106,6 @@ public class InverseBoolConverter : IValueConverter
         => throw new NotImplementedException();
 }
 
-// Gives cards without a photo more top padding, matching:
-
 public class PhotoToPaddingConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -129,36 +127,48 @@ public class BoolToEditSubtitleConverter : IValueConverter
         => throw new NotImplementedException();
 }
 
-// ── Add both classes to the bottom of FeedConverters.cs ─────────────────────
-
+// ── FIXED: reads App.CurrentAccent for the normal (non-over) state ────────────
 // Progress bar color — accent normally, red when over limit
 // Matches .progress-fill.over { background: #ff3b30 } in your CSS
 public class BoolToProgressColorConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         => value is true
-            ? Color.FromArgb("#ff3b30")   // over limit — red
-            : Color.FromArgb("#ff6b6b");  // normal — accent coral
+            ? Color.FromArgb("#ff3b30")           // over limit — always red
+            : Color.FromArgb(App.CurrentAccent);  // normal — current theme accent
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotImplementedException();
 }
 
+// ── FIXED: reads App.CurrentAccent instead of hardcoded #ff6b6b ──────────────
 // Converts a 0.0–1.0 progress percent into a pixel width for the progress fill bar.
 // The bar container is the full card width minus padding (roughly 280px on most screens).
-// We multiply percent × 280 to get the fill width in pixels.
+// Converts a 0.0–1.0 progress percent into a pixel width for the progress fill bar.
+// Uses the actual screen width minus known padding so the bar scales correctly
+// on all screen sizes (phone, tablet, Windows desktop).
 public class PercentToWidthConverter : IValueConverter
 {
-    private const double MaxWidth = 280.0;
-
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-        => value is double d ? d * MaxWidth : 0.0;
+    {
+        if (value is not double percent) return 0.0;
+
+        // Get screen width in device-independent units (dp)
+        var screenWidth = DeviceDisplay.MainDisplayInfo.Width
+                          / DeviceDisplay.MainDisplayInfo.Density;
+
+        // Subtract: page horizontal padding (20+20) + card horizontal padding (18+18)
+        var usableWidth = screenWidth - 76;
+
+        // Clamp so the bar never goes negative or overflows
+        usableWidth = Math.Max(usableWidth, 100);
+
+        return percent * usableWidth;
+    }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotImplementedException();
 }
-
-// ── Add these three classes to the bottom of FeedConverters.cs ───────────────
 
 // Fades checked items to 0.45 opacity — matches .grocery-item.checked { opacity: 0.5 }
 public class BoolToOpacityConverter : IValueConverter
@@ -170,7 +180,7 @@ public class BoolToOpacityConverter : IValueConverter
         => throw new NotImplementedException();
 }
 
-// Strikethrough on checked item names — matches .grocery-item.checked .grocery-name
+// Strikethrough on checked item names
 public class BoolToStrikethroughConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -199,8 +209,6 @@ public class StringToBoolConverter : IValueConverter
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotImplementedException();
 }
-
-// ── Add these classes to the bottom of FeedConverters.cs ─────────────────────
 
 // Afford indicator background — green if can afford, red if not
 public class BoolToAffordBgConverter : IValueConverter
@@ -285,7 +293,6 @@ public class BoolToPinLabelConverter : IValueConverter
 }
 
 // Checks if the current ExpenseCategory matches a given category name parameter
-// Used for wish category pill active state
 public class CategoryMatchConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -299,13 +306,8 @@ public class CategoryMatchConverter : IValueConverter
         => throw new NotImplementedException();
 }
 
-// ── Add this class to the bottom of FeedConverters.cs ───────────────────────
-// Highlights the active theme card with accent border, others get a subtle border.
-// The ViewModel's ActiveThemeId is passed via a binding on the parent,
-// so we need a MultiBinding workaround. Instead we use a simpler approach:
-// this converter is used with the theme card's Id binding, and we compare
-// against App's stored theme preference directly.
-
+// ── FIXED: reads App.CurrentAccent instead of hardcoded #ff6b6b ──────────────
+// Highlights the active theme card with the current accent border.
 public class ThemeActiveBorderConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -313,8 +315,8 @@ public class ThemeActiveBorderConverter : IValueConverter
         var themeId = value as string;
         var activeId = Preferences.Get("active_theme", "default");
         return themeId == activeId
-            ? Color.FromArgb("#ff6b6b")   // accent border for active theme
-            : Color.FromArgb("#E8E8ED");  // subtle border for inactive
+            ? Color.FromArgb(App.CurrentAccent)  // active — current accent
+            : Color.FromArgb("#E8E8ED");          // inactive — subtle border
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

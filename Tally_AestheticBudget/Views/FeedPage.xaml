@@ -14,7 +14,7 @@
         <!-- ── Header ─────────────────────────────────────────────────────── -->
         <Grid
             Grid.Row="0"
-            Padding="24,52,24,0"
+            Padding="24,16,24,0"
             ColumnDefinitions="*,Auto,Auto"
             ColumnSpacing="10"
             BackgroundColor="{StaticResource CardBackground}">
@@ -64,16 +64,16 @@
 
         </Grid>
 
-        <BoxView Grid.Row="0" HeightRequest="0.5" Color="{StaticResource CardBorder}" VerticalOptions="End" />
+        <!-- filter chips follow directly -->
 
         <!-- ── Filter chips ───────────────────────────────────────────────── -->
         <ScrollView
             Grid.Row="1"
             Orientation="Horizontal"
             HorizontalScrollBarVisibility="Never"
-            Margin="0,14,0,4"
+            Margin="0,0,0,0"
             BackgroundColor="{StaticResource CardBackground}">
-            <HorizontalStackLayout Padding="24,0,24,14" Spacing="8">
+            <HorizontalStackLayout Padding="24,8,24,14" Spacing="8">
 
                 <Border
                     BackgroundColor="{Binding IsFilterAll, Converter={StaticResource BoolToChipBg}}"
@@ -119,110 +119,37 @@
             </HorizontalStackLayout>
         </ScrollView>
 
+        <BoxView Grid.Row="1" HeightRequest="0.5" Color="{StaticResource CardBorder}"
+                 VerticalOptions="End" />
+
         <!-- ── Feed content ───────────────────────────────────────────────── -->
-        <RefreshView
-            Grid.Row="2"
-            Command="{Binding RefreshCommand}"
-            IsRefreshing="{Binding IsRefreshing}">
-            <Grid>
+        <Grid Grid.Row="2">
 
-                <VerticalStackLayout
-                    IsVisible="{Binding HasNoEntries}"
-                    HorizontalOptions="Center" VerticalOptions="Center"
-                    Spacing="12" Padding="40">
-                    <Label Text="🌸" FontSize="48" HorizontalOptions="Center" />
-                    <Label Text="No entries yet. Add your first expense!"
-                           FontSize="15" HorizontalOptions="Center"
-                           TextColor="{StaticResource TextSecondary}" />
-                </VerticalStackLayout>
+            <!-- Empty state -->
+            <VerticalStackLayout
+                IsVisible="{Binding HasNoEntries}"
+                HorizontalOptions="Center" VerticalOptions="Center"
+                Spacing="12" Padding="40">
+                <Label Text="🌸" FontSize="48" HorizontalOptions="Center" />
+                <Label Text="No entries yet. Add your first expense!"
+                       FontSize="15" HorizontalOptions="Center"
+                       TextColor="{StaticResource TextSecondary}" />
+            </VerticalStackLayout>
 
-                <CollectionView
-                    IsVisible="{Binding HasNoEntries, Converter={StaticResource InverseBool}}"
-                    ItemsSource="{Binding FeedItems}"
-                    SelectionMode="None">
-                    <CollectionView.ItemsLayout>
-                        <GridItemsLayout Orientation="Vertical" Span="2"
-                                         HorizontalItemSpacing="12" VerticalItemSpacing="12" />
-                    </CollectionView.ItemsLayout>
-                    <CollectionView.Header>
-                        <BoxView HeightRequest="8" Color="Transparent" />
-                    </CollectionView.Header>
-                    <CollectionView.Footer>
-                        <BoxView HeightRequest="100" Color="Transparent" />
-                    </CollectionView.Footer>
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="models:FeedCardItem">
-                            <ContentView Padding="0">
-                                <ContentView.GestureRecognizers>
-                                    <TapGestureRecognizer
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:FeedViewModel}}, Path=OpenDetailCommand}"
-                                        CommandParameter="{Binding .}" />
-                                </ContentView.GestureRecognizers>
-                                <Border
-                                    BackgroundColor="{StaticResource CardBackground}"
-                                    StrokeThickness="0.8"
-                                    Stroke="{StaticResource CardBorder}"
-                                    StrokeShape="RoundRectangle 18"
-                                    Padding="0">
-                                    <Grid RowDefinitions="Auto,Auto,Auto">
+            <!-- Masonry scroll — code-behind populates MasonryGrid columns -->
+            <ScrollView
+                x:Name="MasonryScrollView"
+                IsVisible="{Binding HasNoEntries, Converter={StaticResource InverseBool}}">
+                <Grid
+                    x:Name="MasonryGrid"
+                    ColumnSpacing="10"
+                    Padding="14,12,14,100"
+                    VerticalOptions="Start">
+                    <!-- Columns are added here dynamically by FeedPage.xaml.cs -->
+                </Grid>
+            </ScrollView>
 
-                                        <Image Grid.Row="0" Source="{Binding PhotoPath}"
-                                               IsVisible="{Binding HasPhoto}"
-                                               Aspect="AspectFill" HeightRequest="120">
-                                            <Image.Clip>
-                                                <RoundRectangleGeometry Rect="0,0,1000,120" CornerRadius="18,18,0,0" />
-                                            </Image.Clip>
-                                        </Image>
-
-                                        <VerticalStackLayout
-                                            Grid.Row="1"
-                                            Padding="{Binding HasPhoto, Converter={StaticResource PhotoToPadding}}"
-                                            Spacing="4">
-                                            <HorizontalStackLayout Spacing="6">
-                                                <Label Text="{Binding CategoryLabel}"
-                                                       FontSize="11" FontAttributes="Bold"
-                                                       CharacterSpacing="0.5"
-                                                       TextTransform="Uppercase"
-                                                       TextColor="{StaticResource AccentColor}" />
-                                                <Border IsVisible="{Binding IsGroceryGroup}"
-                                                        BackgroundColor="#1Fff6b6b"
-                                                        StrokeThickness="0"
-                                                        StrokeShape="RoundRectangle 980"
-                                                        Padding="6,2">
-                                                    <Label Text="{Binding GroceryItemCountLabel}"
-                                                           FontSize="10"
-                                                           TextColor="{StaticResource AccentColor}" />
-                                                </Border>
-                                            </HorizontalStackLayout>
-                                            <Label Text="{Binding Title}"
-                                                   IsVisible="{Binding HasTitle}"
-                                                   FontSize="14" FontAttributes="Bold"
-                                                   LineBreakMode="TailTruncation" MaxLines="1"
-                                                   TextColor="{StaticResource TextPrimary}" />
-                                            <Label Text="{Binding Note}"
-                                                   IsVisible="{Binding HasNote}"
-                                                   FontSize="12"
-                                                   LineBreakMode="TailTruncation" MaxLines="1"
-                                                   TextColor="{StaticResource TextSecondary}" />
-                                            <Label Text="{Binding AmountFormatted}"
-                                                   FontSize="18" FontAttributes="Bold"
-                                                   TextColor="{StaticResource TextPrimary}" />
-                                        </VerticalStackLayout>
-
-                                        <Label Grid.Row="2"
-                                               Text="{Binding Date, Converter={StaticResource DateToDisplay}}"
-                                               FontSize="11" Margin="14,0,14,14"
-                                               TextColor="{StaticResource TextSecondary}" />
-
-                                    </Grid>
-                                </Border>
-                            </ContentView>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-
-            </Grid>
-        </RefreshView>
+        </Grid>
 
         <!-- ── Month picker overlay ────────────────────────────────────────── -->
         <Grid Grid.RowSpan="3" IsVisible="{Binding IsMonthPickerVisible}" BackgroundColor="#80000000">

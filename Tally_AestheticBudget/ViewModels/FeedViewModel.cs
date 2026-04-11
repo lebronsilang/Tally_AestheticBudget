@@ -22,8 +22,18 @@ public partial class FeedViewModel : ObservableObject
 
     // ── Feed items ────────────────────────────────────────────────────────────
 
+    // Flat list — used for totals, delete commands, HasNoEntries
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasNoEntries))]
     private ObservableCollection<FeedCardItem> _feedItems = [];
+
+    // Masonry columns — one ObservableCollection per column.
+    // Code-behind reads this list and wires each column's BindableLayout.
+    // ColumnsRebuilt event tells FeedPage.xaml.cs to rebuild the UI.
+    private List<ObservableCollection<FeedCardItem>> _columns = [];
+    public IReadOnlyList<ObservableCollection<FeedCardItem>> Columns => _columns;
+
+    public event Action? ColumnsRebuilt;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasNoEntries))]
@@ -102,22 +112,31 @@ public partial class FeedViewModel : ObservableObject
     [RelayCommand]
     private async Task GoToAddExpenseAsync()
     {
+        // Mark dirty before leaving — if user saves, feed reloads on return.
+        // If user cancels, IsDirty stays true but LoadFeedAsync is fast (no DB change).
+        IsDirty = true;
         await Shell.Current.GoToAsync(nameof(AddExpensePage));
     }
 
-    // Passes the expense Id as a query parameter so AddExpenseViewModel
-    // knows it's in edit mode and which expense to load
     [RelayCommand]
     private async Task GoToEditExpenseAsync(FeedCardItem item)
     {
+        IsDirty = true;  // same reasoning as above
         IsDetailVisible = false;
-        await Task.Delay(300); 
+        await Task.Delay(300);
         await Shell.Current.GoToAsync(
             $"{nameof(AddExpensePage)}?ExpenseId={item.Id}");
     }
 
+    // Set to true by anything that changes expense data (save, delete).
+    // OnPageAppearingAsync only reloads when dirty — prevents unnecessary
+    // masonry rebuilds (and image enlarging) on simple navigation back.
+    public bool IsDirty { get; set; } = true;  // true on first load
+
     public async Task OnPageAppearingAsync()
     {
+        if (!IsDirty) return;
+        IsDirty = false;
         await LoadFeedAsync();
     }
 
@@ -209,6 +228,7 @@ public partial class FeedViewModel : ObservableObject
         else
             await _expenseService.DeleteExpenseAsync(SelectedItem.Id);
 
+        IsDirty = true;
         IsDetailVisible = false;
         await LoadFeedAsync();
     }
@@ -224,6 +244,7 @@ public partial class FeedViewModel : ObservableObject
         if (!confirmed) return;
 
         await _expenseService.DeleteGroceryGroupAsync(SelectedItem.Id);
+        IsDirty = true;
         IsDetailVisible = false;
         await LoadFeedAsync();
     }
@@ -239,6 +260,7 @@ public partial class FeedViewModel : ObservableObject
         if (SelectedItem.GroceryItems.Count == 0)
         {
             await _expenseService.DeleteGroceryGroupAsync(SelectedItem.Id);
+            IsDirty = true;
             IsDetailVisible = false;
             await LoadFeedAsync();
         }
@@ -262,7 +284,12 @@ public partial class FeedViewModel : ObservableObject
                 _ => await _expenseService.GetAllFeedItemsAsync()
             };
 
-            FeedItems = new ObservableCollection<FeedCardItem>(items);
+            var itemList = items.ToList();
+            FeedItems = new ObservableCollection<FeedCardItem>(itemList);
+
+            // DistributeIntoColumns uses the last known column count from code-behind.
+            // Code-behind subscribes to ColumnsRebuilt and re-wires the UI.
+            DistributeIntoColumns(itemList);
             UpdateLabels();
         }
         finally
@@ -270,6 +297,25 @@ public partial class FeedViewModel : ObservableObject
             IsLoading = false;
             OnPropertyChanged(nameof(HasNoEntries));
         }
+    }
+
+    // Public so FeedPage.xaml.cs can call this on resize with a new columnCount.
+    public void DistributeIntoColumns(IList<FeedCardItem>? itemList = null, int columnCount = 2)
+    {
+        var list = itemList ?? FeedItems.ToList();
+
+        // Build fresh empty collections, one per column
+        _columns = Enumerable
+            .Range(0, columnCount)
+            .Select(_ => new ObservableCollection<FeedCardItem>())
+            .ToList();
+
+        // Round-robin: item 0 → col 0, item 1 → col 1, item 2 → col 0, etc.
+        for (int i = 0; i < list.Count; i++)
+            _columns[i % columnCount].Add(list[i]);
+
+        // Fire event — code-behind rebuilds the Grid columns from scratch
+        ColumnsRebuilt?.Invoke();
     }
 
     private void UpdateLabels()

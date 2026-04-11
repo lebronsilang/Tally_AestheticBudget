@@ -13,7 +13,7 @@
         <VerticalStackLayout Spacing="0">
 
             <VerticalStackLayout BackgroundColor="{StaticResource CardBackground}"
-                                 Padding="24,52,24,20" Spacing="2">
+                                 Padding="24,20,24,20" Spacing="2">
                 <Label Text="Aesthetic Themes" FontFamily="DisplayFont"
                        FontSize="28" TextColor="{StaticResource TextPrimary}" />
                 <Label Text="Pick a vibe for your app"

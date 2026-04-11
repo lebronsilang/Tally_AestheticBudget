@@ -28,7 +28,7 @@
 		<MauiXamlInflator>SourceGen</MauiXamlInflator>
 
 		<!-- Display name -->
-		<ApplicationTitle>Tally_AestheticBudget</ApplicationTitle>
+		<ApplicationTitle>Tally</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>com.companyname.tally_aestheticbudget</ApplicationId>
