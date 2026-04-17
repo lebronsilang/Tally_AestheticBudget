@@ -190,6 +190,20 @@ public class BoolToStrikethroughConverter : IValueConverter
         => throw new NotImplementedException();
 }
 
+// Hides a row if the list doesn't have enough items for the given index
+public class IndexVisibilityConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is not int count) return false;
+        if (parameter is not int index && !int.TryParse(parameter?.ToString(), out index)) return false;
+        return count > index;
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
 // Shows empty state when count is 0
 public class ZeroToBoolConverter : IValueConverter
 {

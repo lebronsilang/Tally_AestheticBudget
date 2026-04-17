@@ -7,39 +7,40 @@
 
     <Shell.Resources>
         <Style TargetType="TabBar">
-            <Setter Property="Shell.TabBarBackgroundColor" Value="{StaticResource CardBackground}" />
-            <Setter Property="Shell.TabBarForegroundColor" Value="{StaticResource AccentColor}" />
-            <Setter Property="Shell.TabBarUnselectedColor" Value="{StaticResource TextSecondary}" />
+            <Setter Property="Shell.TabBarBackgroundColor" Value="White" />
+            <Setter Property="Shell.TabBarForegroundColor" Value="#E05C7A" />
+            <Setter Property="Shell.TabBarTitleColor" Value="#E05C7A" />
+            <Setter Property="Shell.TabBarUnselectedColor" Value="#888888" />
         </Style>
     </Shell.Resources>
     
     <TabBar>
 
-        <Tab Title="Feed" Icon="dotnet_bot.png">
+        <Tab Title="Feed" Icon="icon_feed.png">
             <ShellContent
                 ContentTemplate="{DataTemplate views:FeedPage}"
                 Route="FeedPage" />
         </Tab>
 
-        <Tab Title="Budget" Icon="dotnet_bot.png">
+        <Tab Title="Budget" Icon="icon_budget.png">
             <ShellContent
                 ContentTemplate="{DataTemplate views:BudgetPage}"
                 Route="BudgetPage" />
         </Tab>
 
-        <Tab Title="Grocery" Icon="dotnet_bot.png">
+        <Tab Title="Grocery" Icon="icon_grocery.png">
             <ShellContent
                 ContentTemplate="{DataTemplate views:GroceryPage}"
                 Route="GroceryPage" />
         </Tab>
 
-        <Tab Title="Wishlist" Icon="dotnet_bot.png">
+        <Tab Title="Wishlist" Icon="icon_wishlist.png">
             <ShellContent
                 ContentTemplate="{DataTemplate views:WishlistPage}"
                 Route="WishlistPage" />
         </Tab>
 
-        <Tab Title="Themes" Icon="dotnet_bot.png">
+        <Tab Title="Themes" Icon="icon_themes.png">
             <ShellContent
                 ContentTemplate="{DataTemplate views:ThemesPage}"
                 Route="ThemesPage" />

@@ -111,6 +111,53 @@ public partial class FeedPage : ContentPage
         });
     }
 
+    // ── Grocery preview row (index 0 or 1) ───────────────────────────────────
+    // Shows a single item name + price — Apple HIG style
+    private static Grid BuildGroceryPreviewRow(int index)
+    {
+        var row = new Grid
+        {
+            Padding = new Thickness(0, 5, 0, 5),
+            Opacity = index == 0 ? 1.0 : 0.45,
+            ColumnDefinitions =
+            {
+                new ColumnDefinition(GridLength.Star),
+                new ColumnDefinition(GridLength.Auto),
+            }
+        };
+
+        var name = new Label
+        {
+            FontSize = 14,
+            LineBreakMode = LineBreakMode.TailTruncation,
+            MaxLines = 1,
+            VerticalOptions = LayoutOptions.Center,
+        };
+        name.SetDynamicResource(Label.TextColorProperty, "TextPrimary");
+
+        var price = new Label
+        {
+            FontSize = 14,
+            HorizontalOptions = LayoutOptions.End,
+            VerticalOptions = LayoutOptions.Center,
+        };
+        price.SetDynamicResource(Label.TextColorProperty, "TextSecondary");
+
+        name.SetBinding(Label.TextProperty, new Binding($"GroceryItems[{index}].Name"));
+        price.SetBinding(Label.TextProperty, new Binding($"GroceryItems[{index}].PriceFormatted"));
+        row.SetBinding(VisualElement.IsVisibleProperty,
+            new Binding("GroceryItems.Count",
+                converter: new Converters.IndexVisibilityConverter(),
+                converterParameter: index));
+
+        Grid.SetColumn(name, 0);
+        Grid.SetColumn(price, 1);
+        row.Children.Add(name);
+        row.Children.Add(price);
+
+        return row;
+    }
+
     // ── Card DataTemplate factory ─────────────────────────────────────────────
     // Photo cards: full-bleed image with gradient overlay + white text on top.
     // No-photo cards: plain white card with themed text — unchanged from before.
@@ -146,14 +193,26 @@ public partial class FeedPage : ContentPage
             //               no-photo cards use the classic stacked layout ──────
             var root = new Grid();
 
+            // Vignette overlay — fades in on hover like Pinterest
+            var pointer = new PointerGestureRecognizer();
+            pointer.PointerEntered += (s, e) => { }; // wired after root is built
+            pointer.PointerExited += (s, e) => { };  // wired after root is built
+            card.GestureRecognizers.Add(pointer);
+
             // ── PHOTO CARD BRANCH ─────────────────────────────────────────────
             // Full-bleed photo fills the card. Gradient + text sit on top via Grid layering.
 
             var photoContainer = new Grid();
             photoContainer.SetBinding(Grid.IsVisibleProperty, "HasPhoto");
 
-            // Full-bleed image — no fixed HeightRequest, natural aspect ratio
-            var photo = new Image { Aspect = Aspect.AspectFill };
+            // Full-bleed image — natural ratio (Pinterest style), hard cap at 500 to prevent blowup
+            var photo = new Image
+            {
+                Aspect = Aspect.AspectFit,
+                HeightRequest = -1,
+                MaximumHeightRequest = 500,
+                HorizontalOptions = LayoutOptions.Fill,
+            };
             photo.SetBinding(Image.SourceProperty, "PhotoPath");
             photo.Clip = new Microsoft.Maui.Controls.Shapes.RoundRectangleGeometry
             {
@@ -294,12 +353,130 @@ public partial class FeedPage : ContentPage
             plainCard.SetBinding(Grid.IsVisibleProperty,
                 new Binding("HasPhoto", converter: new Converters.InverseBoolConverter()));
 
+            // ── GROCERY CARD — Apple HIG style ───────────────────────────────
+            var groceryCard = new VerticalStackLayout { Spacing = 0 };
+            groceryCard.SetBinding(VisualElement.IsVisibleProperty, "IsGroceryGroup");
+
+            // Top section: label + amount
+            var groceryTop = new Grid
+            {
+                Padding = new Thickness(16, 16, 16, 10),
+                ColumnDefinitions =
+                {
+                    new ColumnDefinition(GridLength.Star),
+                    new ColumnDefinition(GridLength.Auto),
+                }
+            };
+
+            var groceryLeft = new VerticalStackLayout { Spacing = 3 };
+
+            var groceryCatLabel = new Label
+            {
+                Text = "Grocery",
+                FontSize = 12,
+                FontAttributes = FontAttributes.Bold,
+            };
+            groceryCatLabel.SetDynamicResource(Label.TextColorProperty, "TextSecondary");
+
+            var groceryMeta = new HorizontalStackLayout { Spacing = 5 };
+            var groceryCount = new Label { FontSize = 12 };
+            groceryCount.SetDynamicResource(Label.TextColorProperty, "TextSecondary");
+            groceryCount.SetBinding(Label.TextProperty, "GroceryItemCountLabel");
+            var groceryMetaSep = new Label { Text = "·", FontSize = 12 };
+            groceryMetaSep.SetDynamicResource(Label.TextColorProperty, "TextSecondary");
+            var groceryMetaDate = new Label { FontSize = 12 };
+            groceryMetaDate.SetDynamicResource(Label.TextColorProperty, "TextSecondary");
+            groceryMetaDate.SetBinding(Label.TextProperty,
+                new Binding("Date", converter: new Converters.DateToDisplayConverter()));
+            groceryMeta.Children.Add(groceryCount);
+            groceryMeta.Children.Add(groceryMetaSep);
+            groceryMeta.Children.Add(groceryMetaDate);
+
+            groceryLeft.Children.Add(groceryCatLabel);
+            groceryLeft.Children.Add(groceryMeta);
+
+            // Large amount — the hero
+            var groceryAmount = new Label
+            {
+                FontSize = 22,
+                FontAttributes = FontAttributes.Bold,
+                VerticalOptions = LayoutOptions.Center,
+                HorizontalOptions = LayoutOptions.End,
+            };
+            groceryAmount.SetDynamicResource(Label.TextColorProperty, "TextPrimary");
+            groceryAmount.SetBinding(Label.TextProperty, "AmountFormatted");
+
+            Grid.SetColumn(groceryLeft, 0);
+            Grid.SetColumn(groceryAmount, 1);
+            groceryTop.Children.Add(groceryLeft);
+            groceryTop.Children.Add(groceryAmount);
+            groceryCard.Children.Add(groceryTop);
+
+            // Hairline divider
+            var divider1 = new BoxView { HeightRequest = 0.5, Margin = new Thickness(16, 0) };
+            divider1.SetDynamicResource(BoxView.ColorProperty, "CardBorder");
+            groceryCard.Children.Add(divider1);
+
+            // Item rows
+            var itemsStack = new VerticalStackLayout
+            {
+                Spacing = 0,
+                Padding = new Thickness(16, 8, 16, 4),
+            };
+            itemsStack.Children.Add(BuildGroceryPreviewRow(0));
+            itemsStack.Children.Add(BuildGroceryPreviewRow(1));
+            groceryCard.Children.Add(itemsStack);
+
+            // Hairline divider
+            var divider2 = new BoxView { HeightRequest = 0.5, Margin = new Thickness(16, 0) };
+            divider2.SetDynamicResource(BoxView.ColorProperty, "CardBorder");
+            groceryCard.Children.Add(divider2);
+
+            // "View all" row — just a quiet chevron
+            var viewAllRow = new Grid
+            {
+                Padding = new Thickness(16, 10, 16, 14),
+                ColumnDefinitions =
+                {
+                    new ColumnDefinition(GridLength.Star),
+                    new ColumnDefinition(GridLength.Auto),
+                }
+            };
+            var viewAllLabel = new Label
+            {
+                FontSize = 13,
+                VerticalOptions = LayoutOptions.Center,
+            };
+            viewAllLabel.SetDynamicResource(Label.TextColorProperty, "TextSecondary");
+            viewAllLabel.SetBinding(Label.TextProperty,
+                new Binding("GroceryItemCountLabel", stringFormat: "See all {0}"));
+            var viewAllChevron = new Label
+            {
+                Text = "›",
+                FontSize = 18,
+                VerticalOptions = LayoutOptions.Center,
+            };
+            viewAllChevron.SetDynamicResource(Label.TextColorProperty, "TextSecondary");
+            Grid.SetColumn(viewAllLabel, 0);
+            Grid.SetColumn(viewAllChevron, 1);
+            viewAllRow.Children.Add(viewAllLabel);
+            viewAllRow.Children.Add(viewAllChevron);
+            groceryCard.Children.Add(viewAllRow);
+
+            Grid.SetRow(groceryCard, 0);
+            Grid.SetColumnSpan(groceryCard, 1);
+            plainCard.Children.Add(groceryCard);
+
+            // ── REGULAR EXPENSE CARD (IsGroceryGroup == false) ────────────────
+            var regularCard = new VerticalStackLayout { Spacing = 0 };
+            regularCard.SetBinding(VisualElement.IsVisibleProperty,
+                new Binding("IsGroceryGroup", converter: new Converters.InverseBoolConverter()));
+
             var content = new VerticalStackLayout
             {
                 Spacing = 4,
                 Padding = new Thickness(14, 18, 14, 6),
             };
-            Grid.SetRow(content, 0);
 
             // Category row
             var catRow = new HorizontalStackLayout { Spacing = 6 };
@@ -314,23 +491,6 @@ public partial class FeedPage : ContentPage
             catLabel.SetBinding(Label.TextProperty, "CategoryLabel");
             catLabel.SetDynamicResource(Label.TextColorProperty, "AccentColor");
             catRow.Children.Add(catLabel);
-
-            var groceryBadge = new Border
-            {
-                StrokeThickness = 0,
-                BackgroundColor = Color.FromArgb("#1Fff6b6b"),
-                Padding = new Thickness(6, 2),
-            };
-            groceryBadge.StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle
-            {
-                CornerRadius = new CornerRadius(980)
-            };
-            groceryBadge.SetBinding(Border.IsVisibleProperty, "IsGroceryGroup");
-            var groceryCount = new Label { FontSize = 10 };
-            groceryCount.SetBinding(Label.TextProperty, "GroceryItemCountLabel");
-            groceryCount.SetDynamicResource(Label.TextColorProperty, "AccentColor");
-            groceryBadge.Content = groceryCount;
-            catRow.Children.Add(groceryBadge);
 
             content.Children.Add(catRow);
 
@@ -365,7 +525,7 @@ public partial class FeedPage : ContentPage
             amount.SetDynamicResource(Label.TextColorProperty, "TextPrimary");
             content.Children.Add(amount);
 
-            plainCard.Children.Add(content);
+            regularCard.Children.Add(content);
 
             var date = new Label
             {
@@ -375,10 +535,41 @@ public partial class FeedPage : ContentPage
             date.SetBinding(Label.TextProperty,
                 new Binding("Date", converter: new Converters.DateToDisplayConverter()));
             date.SetDynamicResource(Label.TextColorProperty, "TextSecondary");
-            Grid.SetRow(date, 1);
-            plainCard.Children.Add(date);
+            regularCard.Children.Add(date);
+
+            Grid.SetRow(regularCard, 0);
+            plainCard.Children.Add(regularCard);
 
             root.Children.Add(plainCard);
+
+            // Vignette overlay sits on top of everything, starts invisible
+            var vignetteOverlay = new Border
+            {
+                Opacity = 0,
+                InputTransparent = true,
+                StrokeThickness = 0,
+                Background = new LinearGradientBrush
+                {
+                    StartPoint = new Point(0, 0),
+                    EndPoint = new Point(0, 1),
+                    GradientStops =
+                    [
+                        new GradientStop { Color = Color.FromArgb("#80000000"), Offset = 0.0f },
+                        new GradientStop { Color = Color.FromArgb("#22000000"), Offset = 0.4f },
+                        new GradientStop { Color = Colors.Transparent,          Offset = 1.0f },
+                    ]
+                },
+                StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle
+                {
+                    CornerRadius = new CornerRadius(18)
+                }
+            };
+
+            // Wire pointer events to fade this overlay
+            pointer.PointerEntered += (s, e) => vignetteOverlay.FadeTo(0.15, 180, Easing.CubicOut);
+            pointer.PointerExited += (s, e) => vignetteOverlay.FadeTo(0, 180, Easing.CubicOut);
+
+            root.Children.Add(vignetteOverlay);
 
             card.Content = root;
             return card;

@@ -50,7 +50,9 @@
             </Border>
 
             <Border
+                x:Name="AddButton"
                 Grid.Column="2"
+                Style="{StaticResource TappableBorder}"
                 BackgroundColor="{StaticResource AccentColor}"
                 StrokeThickness="0"
                 StrokeShape="RoundRectangle 980"
@@ -76,6 +78,7 @@
             <HorizontalStackLayout Padding="24,8,24,14" Spacing="8">
 
                 <Border
+                    Style="{StaticResource TappableBorder}"
                     BackgroundColor="{Binding IsFilterAll, Converter={StaticResource BoolToChipBg}}"
                     Stroke="{Binding IsFilterAll, Converter={StaticResource BoolToChipBorder}}"
                     StrokeShape="RoundRectangle 980" StrokeThickness="0.8" Padding="16,7">
@@ -88,6 +91,7 @@
                 </Border>
 
                 <Border
+                    Style="{StaticResource TappableBorder}"
                     BackgroundColor="{Binding IsFilterMonth, Converter={StaticResource BoolToChipBg}}"
                     Stroke="{Binding IsFilterMonth, Converter={StaticResource BoolToChipBorder}}"
                     StrokeShape="RoundRectangle 980" StrokeThickness="0.8" Padding="16,7">
@@ -105,6 +109,7 @@
                 </Border>
 
                 <Border
+                    Style="{StaticResource TappableBorder}"
                     BackgroundColor="{Binding IsFilterYear, Converter={StaticResource BoolToChipBg}}"
                     Stroke="{Binding IsFilterYear, Converter={StaticResource BoolToChipBorder}}"
                     StrokeShape="RoundRectangle 980" StrokeThickness="0.8" Padding="16,7">
