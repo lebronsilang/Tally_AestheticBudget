@@ -9,89 +9,97 @@
     Shell.NavBarIsVisible="True"
     BackgroundColor="{StaticResource PageBackground}">
 
-    <Grid RowDefinitions="Auto,*">
+    <ScrollView>
+        <VerticalStackLayout Spacing="0">
 
-        <!-- ── Header ─────────────────────────────────────────────────────── -->
-        <VerticalStackLayout Grid.Row="0"
-                             BackgroundColor="{StaticResource CardBackground}"
-                             Padding="24,20,24,20" Spacing="0">
+            <!-- ── Floating header card ───────────────────────────────────── -->
+            <Border BackgroundColor="{StaticResource CardBackground}"
+                    Stroke="{StaticResource CardBorder}"
+                    StrokeThickness="1" StrokeShape="RoundRectangle 20"
+                    Padding="20,18" Margin="16,16,16,0">
+                <VerticalStackLayout Spacing="0">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <Label Text="Budget Overview" FontFamily="DisplayFont"
+                                   FontSize="28" TextColor="{StaticResource TextPrimary}" />
+                            <Label Text="Track limits per category"
+                                   FontSize="13" TextColor="{StaticResource TextSecondary}" />
+                        </VerticalStackLayout>
+                        <Border Grid.Column="1"
+                                Style="{StaticResource HoverButton}"
+                                BackgroundColor="#1Fff6b6b"
+                                Stroke="{StaticResource AccentColor}"
+                                StrokeThickness="0.8" StrokeShape="RoundRectangle 980"
+                                Padding="14,8" VerticalOptions="Center">
+                            <HorizontalStackLayout Spacing="4">
+                                <Label Text="Total: " FontSize="13"
+                                       TextColor="{StaticResource TextPrimary}" />
+                                <Label Text="{Binding TotalSpentLabel}"
+                                       FontSize="13" FontAttributes="Bold"
+                                       TextColor="{StaticResource AccentColor}" />
+                            </HorizontalStackLayout>
+                        </Border>
+                    </Grid>
 
-            <Grid ColumnDefinitions="*,Auto">
-                <VerticalStackLayout Grid.Column="0" Spacing="2">
-                    <Label Text="Budget Overview" FontFamily="DisplayFont"
-                           FontSize="28" TextColor="{StaticResource TextPrimary}" />
-                    <Label Text="Track limits per category"
-                           FontSize="13" TextColor="{StaticResource TextSecondary}" />
+                    <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,16,0,0">
+                        <Border Grid.Column="0"
+                                Style="{StaticResource HoverButton}"
+                                BackgroundColor="{StaticResource PageBackground}"
+                                StrokeShape="RoundRectangle 980"
+                                WidthRequest="36" HeightRequest="36">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding PreviousMonthCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="‹" FontSize="20" TextColor="{StaticResource TextPrimary}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <Label Grid.Column="1" Text="{Binding MonthLabel}"
+                               FontSize="15" FontAttributes="Bold"
+                               TextColor="{StaticResource TextPrimary}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                        <Border Grid.Column="2"
+                                Style="{StaticResource HoverButton}"
+                                BackgroundColor="{StaticResource PageBackground}"
+                                StrokeShape="RoundRectangle 980"
+                                WidthRequest="36" HeightRequest="36">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding NextMonthCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="›" FontSize="20" TextColor="{StaticResource TextPrimary}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                    </Grid>
                 </VerticalStackLayout>
-                <Border Grid.Column="1"
-                        Style="{StaticResource HoverButton}"
-                        BackgroundColor="#1Fff6b6b"
-                        Stroke="{StaticResource AccentColor}"
-                        StrokeThickness="0.8" StrokeShape="RoundRectangle 980"
-                        Padding="14,8" VerticalOptions="Center">
-                    <HorizontalStackLayout Spacing="4">
-                        <Label Text="Total: " FontSize="13" TextColor="{StaticResource TextPrimary}" />
-                        <Label Text="{Binding TotalSpentLabel}" FontSize="13" FontAttributes="Bold"
-                               TextColor="{StaticResource AccentColor}" />
-                    </HorizontalStackLayout>
-                </Border>
-            </Grid>
+            </Border>
 
-            <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,16,0,0">
-                <Border Grid.Column="0"
-                        Style="{StaticResource HoverButton}"
-                        BackgroundColor="{StaticResource PageBackground}"
-                        StrokeShape="RoundRectangle 980"
-                        WidthRequest="36" HeightRequest="36">
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding PreviousMonthCommand}" />
-                    </Border.GestureRecognizers>
-                    <Label Text="‹" FontSize="20" TextColor="{StaticResource TextPrimary}"
-                           HorizontalOptions="Center" VerticalOptions="Center" />
-                </Border>
-                <Label Grid.Column="1" Text="{Binding MonthLabel}"
-                       FontSize="15" FontAttributes="Bold"
-                       TextColor="{StaticResource TextPrimary}"
-                       HorizontalOptions="Center" VerticalOptions="Center" />
-                <Border Grid.Column="2"
-                        Style="{StaticResource HoverButton}"
-                        BackgroundColor="{StaticResource PageBackground}"
-                        StrokeShape="RoundRectangle 980"
-                        WidthRequest="36" HeightRequest="36">
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding NextMonthCommand}" />
-                    </Border.GestureRecognizers>
-                    <Label Text="›" FontSize="20" TextColor="{StaticResource TextPrimary}"
-                           HorizontalOptions="Center" VerticalOptions="Center" />
-                </Border>
-            </Grid>
-        </VerticalStackLayout>
-
-        <BoxView Grid.Row="0" HeightRequest="0.5" Color="{StaticResource CardBorder}" VerticalOptions="End" />
-
-        <!-- ── Category list ──────────────────────────────────────────────── -->
-        <ScrollView Grid.Row="1">
-            <VerticalStackLayout Padding="20,16,20,40" Spacing="12">
+            <!-- ── Category list ──────────────────────────────────────────── -->
+            <VerticalStackLayout Padding="16,16,16,40" Spacing="10"
+                                 Margin="16,16,16,0"
+                                 HorizontalOptions="Fill">
                 <CollectionView ItemsSource="{Binding BudgetItems}" SelectionMode="None">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:BudgetCategoryItem">
                             <Border BackgroundColor="{StaticResource CardBackground}"
                                     Stroke="{StaticResource CardBorder}"
                                     StrokeThickness="0.5" StrokeShape="RoundRectangle 18"
-                                    Padding="18,16" Margin="0,0,0,12">
+                                    Padding="18,16" Margin="0,0,0,10">
                                 <VerticalStackLayout Spacing="10">
 
                                     <Grid ColumnDefinitions="Auto,*,Auto">
                                         <Label Grid.Column="0" Text="{Binding CategoryIcon}"
-                                               FontSize="22" VerticalOptions="Center" Margin="0,0,10,0" />
-                                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                               FontSize="22" VerticalOptions="Center"
+                                               Margin="0,0,10,0" />
+                                        <VerticalStackLayout Grid.Column="1" Spacing="2"
+                                                             VerticalOptions="Center">
                                             <Label Text="{Binding CategoryLabel}"
                                                    FontSize="15" FontAttributes="Bold"
                                                    TextColor="{StaticResource TextPrimary}" />
                                             <Label Text="{Binding StatusLabel}"
-                                                   FontSize="12" TextColor="{StaticResource TextSecondary}" />
+                                                   FontSize="12"
+                                                   TextColor="{StaticResource TextSecondary}" />
                                         </VerticalStackLayout>
-                                        <Border Grid.Column="2" IsVisible="{Binding IsNotEditing}"
+                                        <Border Grid.Column="2"
+                                                IsVisible="{Binding IsNotEditing}"
                                                 Style="{StaticResource HoverButton}"
                                                 BackgroundColor="Transparent" Padding="8,4">
                                             <Border.GestureRecognizers>
@@ -103,7 +111,6 @@
                                         </Border>
                                     </Grid>
 
-                                    <!-- Progress bar -->
                                     <Grid HeightRequest="8">
                                         <Border BackgroundColor="#1Fff6b6b" StrokeThickness="0"
                                                 StrokeShape="RoundRectangle 980" HeightRequest="8" />
@@ -113,7 +120,6 @@
                                                 WidthRequest="{Binding ProgressPercent, Converter={StaticResource PercentToWidth}}" />
                                     </Grid>
 
-                                    <!-- Inline edit row -->
                                     <Grid IsVisible="{Binding IsEditing}"
                                           ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
                                         <Border Grid.Column="0"
@@ -130,20 +136,19 @@
                                         <Border Grid.Column="1"
                                                 Style="{StaticResource HoverButton}"
                                                 BackgroundColor="{StaticResource AccentColor}"
-                                                StrokeShape="RoundRectangle 12"
-                                                Padding="14,10">
+                                                StrokeShape="RoundRectangle 12" Padding="14,10">
                                             <Border.GestureRecognizers>
                                                 <TapGestureRecognizer
                                                     Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=SaveLimitCommand}"
                                                     CommandParameter="{Binding .}" />
                                             </Border.GestureRecognizers>
-                                            <Label Text="Save" FontSize="13" FontAttributes="Bold" TextColor="White" />
+                                            <Label Text="Save" FontSize="13"
+                                                   FontAttributes="Bold" TextColor="White" />
                                         </Border>
                                         <Border Grid.Column="2"
                                                 Style="{StaticResource HoverButton}"
                                                 BackgroundColor="{StaticResource PageBackground}"
-                                                StrokeShape="RoundRectangle 12"
-                                                Padding="14,10">
+                                                StrokeShape="RoundRectangle 12" Padding="14,10">
                                             <Border.GestureRecognizers>
                                                 <TapGestureRecognizer
                                                     Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=CancelEditCommand}"
@@ -160,7 +165,8 @@
                     </CollectionView.ItemTemplate>
                 </CollectionView>
             </VerticalStackLayout>
-        </ScrollView>
 
-    </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
+
 </ContentPage>

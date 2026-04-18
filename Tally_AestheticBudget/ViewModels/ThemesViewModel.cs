@@ -17,7 +17,6 @@ public partial class ThemesViewModel : ObservableObject
 
         var activeId = _themeService.GetActiveThemeId();
 
-        // Build the card list with IsActive set correctly
         ThemeCards = new ObservableCollection<ThemeCardItem>(
             AppThemes.All.Select(t => new ThemeCardItem
             {
@@ -26,7 +25,6 @@ public partial class ThemesViewModel : ObservableObject
             })
         );
 
-        // Load saved custom colors
         var (bg, accent, card, text) = _themeService.GetCustomColors();
         _customBg = bg;
         _customAccent = accent;
@@ -60,25 +58,10 @@ public partial class ThemesViewModel : ObservableObject
     [ObservableProperty]
     private string _pickerTitle = string.Empty;
 
-    private string _pickerTarget = string.Empty; // "bg" | "accent" | "card" | "text"
+    [ObservableProperty]
+    private string _pickerHexInput = string.Empty;
 
-    public static readonly IReadOnlyList<string> PaletteColors =
-    [
-        // Whites / lights
-        "#ffffff", "#f5f5f7", "#fff0f5", "#f2ede8", "#eef4fb", "#edf4ee", "#0f0f14",
-        // Pinks / reds
-        "#ff6b6b", "#e8739a", "#ff3b30", "#ff2d55", "#ff6b81", "#ff4757", "#c0392b",
-        // Purples
-        "#a78bfa", "#9b59b6", "#8e44ad", "#6c5ce7", "#a29bfe", "#fd79a8", "#e84393",
-        // Blues
-        "#3a8fc4", "#0984e3", "#74b9ff", "#0652dd", "#1289a7", "#12cbc4", "#006266",
-        // Greens
-        "#4a9e5c", "#00b894", "#55efc4", "#badc58", "#6ab04c", "#2ecc71", "#27ae60",
-        // Browns / warm
-        "#a0714f", "#e17055", "#d35400", "#e67e22", "#f39c12", "#fdcb6e", "#f9ca24",
-        // Darks
-        "#1d1d1f", "#2c1f14", "#0d2a40", "#1a2e1c", "#2d3436", "#636e72", "#b2bec3",
-    ];
+    private string _pickerTarget = string.Empty;
 
     [RelayCommand]
     private void OpenColorPicker(string target)
@@ -86,10 +69,17 @@ public partial class ThemesViewModel : ObservableObject
         _pickerTarget = target;
         PickerTitle = target switch
         {
-            "bg"     => "Background Color",
+            "bg" => "Background Color",
             "accent" => "Accent Color",
-            "card"   => "Card Color",
-            _        => "Text Color"
+            "card" => "Card Color",
+            _ => "Text Color"
+        };
+        PickerHexInput = target switch
+        {
+            "bg" => CustomBg,
+            "accent" => CustomAccent,
+            "card" => CustomCard,
+            _ => CustomText
         };
         IsColorPickerVisible = true;
     }
@@ -99,12 +89,23 @@ public partial class ThemesViewModel : ObservableObject
     {
         switch (_pickerTarget)
         {
-            case "bg":     CustomBg     = hex; break;
+            case "bg": CustomBg = hex; break;
             case "accent": CustomAccent = hex; break;
-            case "card":   CustomCard   = hex; break;
-            case "text":   CustomText   = hex; break;
+            case "card": CustomCard = hex; break;
+            case "text": CustomText = hex; break;
         }
+        PickerHexInput = hex;
         IsColorPickerVisible = false;
+    }
+
+    [RelayCommand]
+    private void ApplyHexInput()
+    {
+        var hex = PickerHexInput?.Trim();
+        if (string.IsNullOrEmpty(hex)) return;
+        if (!hex.StartsWith('#')) hex = "#" + hex;
+        if (hex.Length != 7) return;
+        SelectColor(hex);
     }
 
     [RelayCommand]
@@ -116,8 +117,6 @@ public partial class ThemesViewModel : ObservableObject
     private void ApplyTheme(string themeId)
     {
         _themeService.ApplyTheme(themeId);
-
-        // Update IsActive on all cards so borders refresh instantly
         foreach (var card in ThemeCards)
             card.IsActive = card.Id == themeId;
     }
@@ -126,8 +125,6 @@ public partial class ThemesViewModel : ObservableObject
     private void ApplyCustomTheme()
     {
         _themeService.ApplyCustomTheme(CustomBg, CustomAccent, CustomCard, CustomText);
-
-        // Deactivate all preset cards when custom is applied
         foreach (var card in ThemeCards)
             card.IsActive = false;
     }

@@ -12,104 +12,109 @@
 
     <Grid RowDefinitions="Auto,*">
 
-        <!-- ── Header ─────────────────────────────────────────────────────── -->
-        <VerticalStackLayout Grid.Row="0"
-                             BackgroundColor="{StaticResource CardBackground}"
-                             Padding="24,20,24,16" Spacing="14">
+        <!-- ── Floating header card ───────────────────────────────────────── -->
+        <Border Grid.Row="0"
+                BackgroundColor="{StaticResource CardBackground}"
+                Stroke="{StaticResource CardBorder}"
+                StrokeThickness="1" StrokeShape="RoundRectangle 20"
+                Padding="20,18,20,16"
+                Margin="16,16,16,0">
+            <VerticalStackLayout Spacing="14">
 
-            <Grid ColumnDefinitions="*,Auto">
-                <VerticalStackLayout Grid.Column="0" Spacing="2">
-                    <Label Text="Dream Board 🌸" FontFamily="DisplayFont"
-                           FontSize="26" TextColor="{StaticResource TextPrimary}" />
-                    <Label Text="{Binding StatsLabel}" FontSize="13"
-                           TextColor="{StaticResource TextSecondary}" />
-                </VerticalStackLayout>
-                <Border Grid.Column="1"
-                        Style="{StaticResource HoverButton}"
-                        BackgroundColor="{StaticResource AccentColor}"
-                        StrokeShape="RoundRectangle 980"
-                        Padding="14,8" VerticalOptions="Center">
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding OpenAddModalCommand}" />
-                    </Border.GestureRecognizers>
-                    <Label Text="+ Add Wish" FontSize="13" FontAttributes="Bold" TextColor="White" />
-                </Border>
-            </Grid>
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="Dream Board 🌸" FontFamily="DisplayFont"
+                               FontSize="26" TextColor="{StaticResource TextPrimary}" />
+                        <Label Text="{Binding StatsLabel}" FontSize="13"
+                               TextColor="{StaticResource TextSecondary}" />
+                    </VerticalStackLayout>
+                    <Border Grid.Column="1"
+                            Style="{StaticResource HoverButton}"
+                            BackgroundColor="{StaticResource AccentColor}"
+                            StrokeShape="RoundRectangle 980"
+                            Padding="14,8" VerticalOptions="Center">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenAddModalCommand}" />
+                        </Border.GestureRecognizers>
+                        <Label Text="+ Add Wish" FontSize="13" FontAttributes="Bold"
+                               TextColor="White" />
+                    </Border>
+                </Grid>
 
-            <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
-                <HorizontalStackLayout Spacing="8">
-                    <Border Style="{StaticResource HoverButton}"
-                            BackgroundColor="{Binding IsFilterAll, Converter={StaticResource BoolToChipBg}}"
-                            Stroke="{Binding IsFilterAll, Converter={StaticResource BoolToChipBorder}}"
-                            StrokeShape="RoundRectangle 980" StrokeThickness="0.8" Padding="16,7">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding FilterAllCommand}" />
-                        </Border.GestureRecognizers>
-                        <Label Text="All" FontSize="13"
-                               FontAttributes="{Binding IsFilterAll, Converter={StaticResource BoolToFontAttr}}"
-                               TextColor="{Binding IsFilterAll, Converter={StaticResource BoolToChipText}}" />
-                    </Border>
-                    <Border Style="{StaticResource HoverButton}"
-                            BackgroundColor="{Binding IsFilterPlanned, Converter={StaticResource BoolToChipBg}}"
-                            Stroke="{Binding IsFilterPlanned, Converter={StaticResource BoolToChipBorder}}"
-                            StrokeShape="RoundRectangle 980" StrokeThickness="0.8" Padding="16,7">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding FilterPlannedCommand}" />
-                        </Border.GestureRecognizers>
-                        <Label Text="Planned" FontSize="13"
-                               FontAttributes="{Binding IsFilterPlanned, Converter={StaticResource BoolToFontAttr}}"
-                               TextColor="{Binding IsFilterPlanned, Converter={StaticResource BoolToChipText}}" />
-                    </Border>
-                    <Border Style="{StaticResource HoverButton}"
-                            BackgroundColor="{Binding IsFilterBought, Converter={StaticResource BoolToChipBg}}"
-                            Stroke="{Binding IsFilterBought, Converter={StaticResource BoolToChipBorder}}"
-                            StrokeShape="RoundRectangle 980" StrokeThickness="0.8" Padding="16,7">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding FilterBoughtCommand}" />
-                        </Border.GestureRecognizers>
-                        <Label Text="Bought" FontSize="13"
-                               FontAttributes="{Binding IsFilterBought, Converter={StaticResource BoolToFontAttr}}"
-                               TextColor="{Binding IsFilterBought, Converter={StaticResource BoolToChipText}}" />
-                    </Border>
-                    <Border Style="{StaticResource HoverButton}"
-                            BackgroundColor="{Binding IsFilterWant, Converter={StaticResource BoolToChipBg}}"
-                            Stroke="{Binding IsFilterWant, Converter={StaticResource BoolToChipBorder}}"
-                            StrokeShape="RoundRectangle 980" StrokeThickness="0.8" Padding="16,7">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding FilterWantCommand}" />
-                        </Border.GestureRecognizers>
-                        <Label Text="💖 Want" FontSize="13"
-                               FontAttributes="{Binding IsFilterWant, Converter={StaticResource BoolToFontAttr}}"
-                               TextColor="{Binding IsFilterWant, Converter={StaticResource BoolToChipText}}" />
-                    </Border>
-                    <Border Style="{StaticResource HoverButton}"
-                            BackgroundColor="{Binding IsFilterNeed, Converter={StaticResource BoolToChipBg}}"
-                            Stroke="{Binding IsFilterNeed, Converter={StaticResource BoolToChipBorder}}"
-                            StrokeShape="RoundRectangle 980" StrokeThickness="0.8" Padding="16,7">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding FilterNeedCommand}" />
-                        </Border.GestureRecognizers>
-                        <Label Text="🔥 Need" FontSize="13"
-                               FontAttributes="{Binding IsFilterNeed, Converter={StaticResource BoolToFontAttr}}"
-                               TextColor="{Binding IsFilterNeed, Converter={StaticResource BoolToChipText}}" />
-                    </Border>
-                    <Border Style="{StaticResource HoverButton}"
-                            BackgroundColor="{Binding IsFilterSomeday, Converter={StaticResource BoolToChipBg}}"
-                            Stroke="{Binding IsFilterSomeday, Converter={StaticResource BoolToChipBorder}}"
-                            StrokeShape="RoundRectangle 980" StrokeThickness="0.8" Padding="16,7">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding FilterSomedayCommand}" />
-                        </Border.GestureRecognizers>
-                        <Label Text="🌙 Someday" FontSize="13"
-                               FontAttributes="{Binding IsFilterSomeday, Converter={StaticResource BoolToFontAttr}}"
-                               TextColor="{Binding IsFilterSomeday, Converter={StaticResource BoolToChipText}}" />
-                    </Border>
-                </HorizontalStackLayout>
-            </ScrollView>
+                <!-- Filter chips -->
+                <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                    <HorizontalStackLayout Spacing="8">
+                        <Border Style="{StaticResource HoverButton}"
+                                BackgroundColor="{Binding IsFilterAll, Converter={StaticResource BoolToChipBg}}"
+                                Stroke="{Binding IsFilterAll, Converter={StaticResource BoolToChipBorder}}"
+                                StrokeShape="RoundRectangle 980" StrokeThickness="0.8" Padding="16,7">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding FilterAllCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="All" FontSize="13"
+                                   FontAttributes="{Binding IsFilterAll, Converter={StaticResource BoolToFontAttr}}"
+                                   TextColor="{Binding IsFilterAll, Converter={StaticResource BoolToChipText}}" />
+                        </Border>
+                        <Border Style="{StaticResource HoverButton}"
+                                BackgroundColor="{Binding IsFilterPlanned, Converter={StaticResource BoolToChipBg}}"
+                                Stroke="{Binding IsFilterPlanned, Converter={StaticResource BoolToChipBorder}}"
+                                StrokeShape="RoundRectangle 980" StrokeThickness="0.8" Padding="16,7">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding FilterPlannedCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="Planned" FontSize="13"
+                                   FontAttributes="{Binding IsFilterPlanned, Converter={StaticResource BoolToFontAttr}}"
+                                   TextColor="{Binding IsFilterPlanned, Converter={StaticResource BoolToChipText}}" />
+                        </Border>
+                        <Border Style="{StaticResource HoverButton}"
+                                BackgroundColor="{Binding IsFilterBought, Converter={StaticResource BoolToChipBg}}"
+                                Stroke="{Binding IsFilterBought, Converter={StaticResource BoolToChipBorder}}"
+                                StrokeShape="RoundRectangle 980" StrokeThickness="0.8" Padding="16,7">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding FilterBoughtCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="Bought" FontSize="13"
+                                   FontAttributes="{Binding IsFilterBought, Converter={StaticResource BoolToFontAttr}}"
+                                   TextColor="{Binding IsFilterBought, Converter={StaticResource BoolToChipText}}" />
+                        </Border>
+                        <Border Style="{StaticResource HoverButton}"
+                                BackgroundColor="{Binding IsFilterWant, Converter={StaticResource BoolToChipBg}}"
+                                Stroke="{Binding IsFilterWant, Converter={StaticResource BoolToChipBorder}}"
+                                StrokeShape="RoundRectangle 980" StrokeThickness="0.8" Padding="16,7">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding FilterWantCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="💖 Want" FontSize="13"
+                                   FontAttributes="{Binding IsFilterWant, Converter={StaticResource BoolToFontAttr}}"
+                                   TextColor="{Binding IsFilterWant, Converter={StaticResource BoolToChipText}}" />
+                        </Border>
+                        <Border Style="{StaticResource HoverButton}"
+                                BackgroundColor="{Binding IsFilterNeed, Converter={StaticResource BoolToChipBg}}"
+                                Stroke="{Binding IsFilterNeed, Converter={StaticResource BoolToChipBorder}}"
+                                StrokeShape="RoundRectangle 980" StrokeThickness="0.8" Padding="16,7">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding FilterNeedCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="🔥 Need" FontSize="13"
+                                   FontAttributes="{Binding IsFilterNeed, Converter={StaticResource BoolToFontAttr}}"
+                                   TextColor="{Binding IsFilterNeed, Converter={StaticResource BoolToChipText}}" />
+                        </Border>
+                        <Border Style="{StaticResource HoverButton}"
+                                BackgroundColor="{Binding IsFilterSomeday, Converter={StaticResource BoolToChipBg}}"
+                                Stroke="{Binding IsFilterSomeday, Converter={StaticResource BoolToChipBorder}}"
+                                StrokeShape="RoundRectangle 980" StrokeThickness="0.8" Padding="16,7">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding FilterSomedayCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="🌙 Someday" FontSize="13"
+                                   FontAttributes="{Binding IsFilterSomeday, Converter={StaticResource BoolToFontAttr}}"
+                                   TextColor="{Binding IsFilterSomeday, Converter={StaticResource BoolToChipText}}" />
+                        </Border>
+                    </HorizontalStackLayout>
+                </ScrollView>
 
-        </VerticalStackLayout>
-
-        <BoxView Grid.Row="0" HeightRequest="0.5" Color="{StaticResource CardBorder}" VerticalOptions="End" />
+            </VerticalStackLayout>
+        </Border>
 
         <!-- ── Wish masonry grid ──────────────────────────────────────────── -->
         <Grid Grid.Row="1">
@@ -149,8 +154,7 @@
                     Style="{StaticResource ModalCard}"
                     StrokeShape="RoundRectangle 16"
                     HorizontalOptions="Center" VerticalOptions="Center"
-                    MaximumWidthRequest="360"
-                    Margin="20,0">
+                    MaximumWidthRequest="360" Margin="20,0">
                 <ScrollView MaximumHeightRequest="560">
                     <VerticalStackLayout Padding="18,16,18,18" Spacing="12">
 
@@ -158,13 +162,15 @@
                             <Label Grid.Column="0" Text="New Wish ✨"
                                    FontFamily="DisplayFont" FontSize="18"
                                    TextColor="{StaticResource TextPrimary}" />
-                            <Border Grid.Column="1" BackgroundColor="{StaticResource PageBackground}"
+                            <Border Grid.Column="1"
+                                    BackgroundColor="{StaticResource PageBackground}"
                                     StrokeThickness="0" StrokeShape="RoundRectangle 980"
                                     WidthRequest="28" HeightRequest="28">
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding DismissAddModalCommand}" />
                                 </Border.GestureRecognizers>
-                                <Label Text="✕" FontSize="12" TextColor="{StaticResource TextSecondary}"
+                                <Label Text="✕" FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}"
                                        HorizontalOptions="Center" VerticalOptions="Center" />
                             </Border>
                         </Grid>
@@ -174,8 +180,10 @@
                                    TextColor="{StaticResource TextPrimary}" />
                             <Border BackgroundColor="{StaticResource PageBackground}"
                                     Stroke="{StaticResource CardBorder}"
-                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,0">
-                                <Entry Text="{Binding NewName}" Placeholder="What do you want?"
+                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 10"
+                                    Padding="12,0">
+                                <Entry Text="{Binding NewName}"
+                                       Placeholder="What do you want?"
                                        PlaceholderColor="#C0C0C5" FontSize="13"
                                        TextColor="{StaticResource TextPrimary}"
                                        BackgroundColor="Transparent" HeightRequest="40" />
@@ -187,22 +195,23 @@
                                    TextColor="{StaticResource TextPrimary}" />
                             <Border BackgroundColor="{StaticResource PageBackground}"
                                     Stroke="{StaticResource CardBorder}"
-                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,0">
+                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 10"
+                                    Padding="12,0">
                                 <Entry Text="{Binding NewPrice}" Placeholder="0.00"
-                                       PlaceholderColor="#C0C0C5" Keyboard="Numeric" FontSize="13"
-                                       TextColor="{StaticResource TextPrimary}"
+                                       PlaceholderColor="#C0C0C5" Keyboard="Numeric"
+                                       FontSize="13" TextColor="{StaticResource TextPrimary}"
                                        BackgroundColor="Transparent" HeightRequest="40" />
                             </Border>
                         </VerticalStackLayout>
 
-                        <!-- Priority -->
                         <VerticalStackLayout Spacing="5">
                             <Label Text="Priority" FontSize="11" FontAttributes="Bold"
                                    TextColor="{StaticResource TextPrimary}" />
                             <HorizontalStackLayout Spacing="6">
                                 <Border BackgroundColor="{Binding IsWantSelected, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding IsWantSelected, Converter={StaticResource BoolToChipBorder}}"
-                                        StrokeShape="RoundRectangle 980" StrokeThickness="0.8" Padding="12,6">
+                                        StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+                                        Padding="12,6">
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding SelectPriorityCommand}" CommandParameter="Want" />
                                     </Border.GestureRecognizers>
@@ -211,7 +220,8 @@
                                 </Border>
                                 <Border BackgroundColor="{Binding IsNeedSelected, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding IsNeedSelected, Converter={StaticResource BoolToChipBorder}}"
-                                        StrokeShape="RoundRectangle 980" StrokeThickness="0.8" Padding="12,6">
+                                        StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+                                        Padding="12,6">
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding SelectPriorityCommand}" CommandParameter="Need" />
                                     </Border.GestureRecognizers>
@@ -220,7 +230,8 @@
                                 </Border>
                                 <Border BackgroundColor="{Binding IsSomedaySelected, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding IsSomedaySelected, Converter={StaticResource BoolToChipBorder}}"
-                                        StrokeShape="RoundRectangle 980" StrokeThickness="0.8" Padding="12,6">
+                                        StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+                                        Padding="12,6">
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding SelectPriorityCommand}" CommandParameter="Someday" />
                                     </Border.GestureRecognizers>
@@ -230,11 +241,11 @@
                             </HorizontalStackLayout>
                         </VerticalStackLayout>
 
-                        <!-- Category -->
                         <VerticalStackLayout Spacing="5">
                             <Label Text="Category" FontSize="11" FontAttributes="Bold"
                                    TextColor="{StaticResource TextPrimary}" />
-                            <FlexLayout Wrap="Wrap" Direction="Row" JustifyContent="Start" AlignItems="Center">
+                            <FlexLayout Wrap="Wrap" Direction="Row" JustifyContent="Start"
+                                        AlignItems="Center">
                                 <Border BackgroundColor="{Binding IsNewFoodSelected, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding IsNewFoodSelected, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
@@ -293,8 +304,10 @@
                                    TextColor="{StaticResource TextPrimary}" />
                             <Border BackgroundColor="{StaticResource PageBackground}"
                                     Stroke="{StaticResource CardBorder}"
-                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,0">
-                                <Entry Text="{Binding NewCaption}" Placeholder="for my soft girl era..."
+                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 10"
+                                    Padding="12,0">
+                                <Entry Text="{Binding NewCaption}"
+                                       Placeholder="for my soft girl era..."
                                        PlaceholderColor="#C0C0C5" FontSize="13"
                                        TextColor="{StaticResource TextPrimary}"
                                        BackgroundColor="Transparent" HeightRequest="40" />
@@ -306,56 +319,66 @@
                                    TextColor="{StaticResource TextPrimary}" />
                             <Border BackgroundColor="{StaticResource PageBackground}"
                                     Stroke="{StaticResource CardBorder}"
-                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,0">
-                                <Entry Text="{Binding NewTargetMonth}" Placeholder="e.g. 2026-06"
+                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 10"
+                                    Padding="12,0">
+                                <Entry Text="{Binding NewTargetMonth}"
+                                       Placeholder="e.g. 2026-06"
                                        PlaceholderColor="#C0C0C5" FontSize="13"
                                        TextColor="{StaticResource TextPrimary}"
                                        BackgroundColor="Transparent" HeightRequest="40" />
                             </Border>
                         </VerticalStackLayout>
 
-                        <!-- Photo -->
                         <VerticalStackLayout Spacing="5">
                             <Label Text="Photo (optional)" FontSize="11" FontAttributes="Bold"
                                    TextColor="{StaticResource TextPrimary}" />
                             <Border IsVisible="{Binding NewHasPhoto, Converter={StaticResource InverseBool}}"
                                     BackgroundColor="{StaticResource PageBackground}"
                                     Stroke="{StaticResource CardBorder}"
-                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 10" HeightRequest="72">
+                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 10"
+                                    HeightRequest="72">
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding PickWishPhotoCommand}" />
                                 </Border.GestureRecognizers>
-                                <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="3">
+                                <VerticalStackLayout HorizontalOptions="Center"
+                                                     VerticalOptions="Center" Spacing="3">
                                     <Label Text="🖼️" FontSize="20" HorizontalOptions="Center" />
                                     <Label Text="Tap to add photo" FontSize="11"
-                                           TextColor="{StaticResource TextSecondary}" HorizontalOptions="Center" />
+                                           TextColor="{StaticResource TextSecondary}"
+                                           HorizontalOptions="Center" />
                                 </VerticalStackLayout>
                             </Border>
                             <VerticalStackLayout IsVisible="{Binding NewHasPhoto}" Spacing="0">
                                 <Border BackgroundColor="{StaticResource PageBackground}"
                                         Stroke="{StaticResource CardBorder}"
-                                        StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="0">
+                                        StrokeThickness="0.8" StrokeShape="RoundRectangle 10"
+                                        Padding="0">
                                     <Grid RowDefinitions="Auto,Auto">
                                         <Image Grid.Row="0" Source="{Binding NewPhotoPath}"
                                                Aspect="AspectFill" HeightRequest="110">
                                             <Image.Clip>
-                                                <RoundRectangleGeometry Rect="0,0,1000,110" CornerRadius="10,10,0,0" />
+                                                <RoundRectangleGeometry Rect="0,0,1000,110"
+                                                                        CornerRadius="10,10,0,0" />
                                             </Image.Clip>
                                         </Image>
-                                        <Border Grid.Row="1" BackgroundColor="#1Fff3b30" StrokeThickness="0"
-                                                StrokeShape="RoundRectangle 0,0,10,10" Padding="0,7">
+                                        <Border Grid.Row="1" BackgroundColor="#1Fff3b30"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 0,0,10,10"
+                                                Padding="0,7">
                                             <Border.GestureRecognizers>
                                                 <TapGestureRecognizer Command="{Binding RemoveWishPhotoCommand}" />
                                             </Border.GestureRecognizers>
                                             <Label Text="✕ Remove photo" FontSize="12"
-                                                   TextColor="#ff3b30" HorizontalOptions="Center" />
+                                                   TextColor="#ff3b30"
+                                                   HorizontalOptions="Center" />
                                         </Border>
                                     </Grid>
                                 </Border>
                             </VerticalStackLayout>
                         </VerticalStackLayout>
 
-                        <Border BackgroundColor="{StaticResource AccentColor}" StrokeThickness="0"
+                        <Border BackgroundColor="{StaticResource AccentColor}"
+                                StrokeThickness="0"
                                 Style="{StaticResource HoverButton}"
                                 StrokeShape="RoundRectangle 980" Padding="0,12">
                             <Border.GestureRecognizers>
@@ -380,29 +403,27 @@
                     Style="{StaticResource ModalCard}"
                     StrokeShape="RoundRectangle 16"
                     HorizontalOptions="Center" VerticalOptions="Center"
-                    MaximumWidthRequest="360"
-                    Margin="20,0">
+                    MaximumWidthRequest="360" Margin="20,0">
                 <ScrollView MaximumHeightRequest="560">
                     <VerticalStackLayout Spacing="0">
 
-                        <!-- Photo -->
                         <Image Source="{Binding SelectedItem.PhotoPath}"
                                IsVisible="{Binding SelectedItem.HasPhoto}"
                                Aspect="AspectFill" HeightRequest="180">
                             <Image.Clip>
-                                <RoundRectangleGeometry Rect="0,0,1000,180" CornerRadius="16,16,0,0" />
+                                <RoundRectangleGeometry Rect="0,0,1000,180"
+                                                        CornerRadius="16,16,0,0" />
                             </Image.Clip>
                         </Image>
 
-                        <!-- Content -->
                         <VerticalStackLayout Padding="18,14,18,18" Spacing="6">
 
-                            <!-- Priority · Category row -->
                             <HorizontalStackLayout Spacing="6">
                                 <Label Text="{Binding SelectedItem.PriorityLabel}"
                                        FontSize="11" FontAttributes="Bold"
                                        TextColor="{StaticResource AccentColor}" />
-                                <Label Text="·" FontSize="11" TextColor="{StaticResource TextSecondary}" />
+                                <Label Text="·" FontSize="11"
+                                       TextColor="{StaticResource TextSecondary}" />
                                 <Label Text="{Binding SelectedItem.CategoryLabel}"
                                        FontSize="11" FontAttributes="Bold"
                                        TextColor="{StaticResource TextSecondary}"
@@ -424,22 +445,23 @@
 
                             <Border IsVisible="{Binding ShowAffordResult}"
                                     BackgroundColor="{Binding AffordResult.CanAfford, Converter={StaticResource BoolToAffordBg}}"
-                                    StrokeThickness="0" StrokeShape="RoundRectangle 8" Padding="10,6"
-                                    Margin="0,2,0,0">
+                                    StrokeThickness="0" StrokeShape="RoundRectangle 8"
+                                    Padding="10,6" Margin="0,2,0,0">
                                 <Label Text="{Binding AffordResult.Label}" FontSize="11"
                                        TextColor="{Binding AffordResult.CanAfford, Converter={StaticResource BoolToAffordText}}" />
                             </Border>
 
-                            <BoxView HeightRequest="0.5" Color="{StaticResource CardBorder}" Margin="0,8,0,8" />
+                            <BoxView HeightRequest="0.5" Color="{StaticResource CardBorder}"
+                                     Margin="0,8,0,8" />
 
-                            <!-- Planned / Bought -->
                             <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
                                 <Border Grid.Column="0" Style="{StaticResource HoverButton}"
                                         BackgroundColor="{Binding SelectedItem.Status, Converter={StaticResource StatusToPlannedBg}}"
                                         Stroke="{StaticResource CardBorder}" StrokeThickness="0.8"
                                         StrokeShape="RoundRectangle 10" Padding="0,9">
                                     <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding ToggleStatusCommand}" CommandParameter="Planned" />
+                                        <TapGestureRecognizer Command="{Binding ToggleStatusCommand}"
+                                                              CommandParameter="Planned" />
                                     </Border.GestureRecognizers>
                                     <Label Text="Planned" FontSize="12" HorizontalOptions="Center"
                                            TextColor="{Binding SelectedItem.Status, Converter={StaticResource StatusToPlannedText}}" />
@@ -449,37 +471,44 @@
                                         Stroke="{StaticResource CardBorder}" StrokeThickness="0.8"
                                         StrokeShape="RoundRectangle 10" Padding="0,9">
                                     <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding ToggleStatusCommand}" CommandParameter="Bought" />
+                                        <TapGestureRecognizer Command="{Binding ToggleStatusCommand}"
+                                                              CommandParameter="Bought" />
                                     </Border.GestureRecognizers>
                                     <Label Text="✓ Bought" FontSize="12" HorizontalOptions="Center"
                                            TextColor="{Binding SelectedItem.Status, Converter={StaticResource StatusToBoughtText}}" />
                                 </Border>
                             </Grid>
 
-                            <!-- Worth it? -->
-                            <VerticalStackLayout IsVisible="{Binding SelectedItem.IsBought}" Spacing="6" Margin="0,6,0,0">
-                                <Label Text="Worth It?" FontSize="11" TextColor="{StaticResource TextSecondary}" />
+                            <VerticalStackLayout IsVisible="{Binding SelectedItem.IsBought}"
+                                                 Spacing="6" Margin="0,6,0,0">
+                                <Label Text="Worth It?" FontSize="11"
+                                       TextColor="{StaticResource TextSecondary}" />
                                 <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
                                     <Border Grid.Column="0" Style="{StaticResource HoverButton}"
                                             BackgroundColor="#1F34c759" Stroke="#34c759"
-                                            StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="0,8">
+                                            StrokeThickness="0.8" StrokeShape="RoundRectangle 10"
+                                            Padding="0,8">
                                         <Border.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding SetRegretCommand}" CommandParameter="Worth" />
+                                            <TapGestureRecognizer Command="{Binding SetRegretCommand}"
+                                                                  CommandParameter="Worth" />
                                         </Border.GestureRecognizers>
-                                        <Label Text="😌 Worth it" FontSize="12" HorizontalOptions="Center" TextColor="#1a7a40" />
+                                        <Label Text="😌 Worth it" FontSize="12"
+                                               HorizontalOptions="Center" TextColor="#1a7a40" />
                                     </Border>
                                     <Border Grid.Column="1" Style="{StaticResource HoverButton}"
                                             BackgroundColor="#1Fff3b30" Stroke="#ff3b30"
-                                            StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="0,8">
+                                            StrokeThickness="0.8" StrokeShape="RoundRectangle 10"
+                                            Padding="0,8">
                                         <Border.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding SetRegretCommand}" CommandParameter="Regret" />
+                                            <TapGestureRecognizer Command="{Binding SetRegretCommand}"
+                                                                  CommandParameter="Regret" />
                                         </Border.GestureRecognizers>
-                                        <Label Text="� Regret" FontSize="12" HorizontalOptions="Center" TextColor="#c0392b" />
+                                        <Label Text="😭 Regret" FontSize="12"
+                                               HorizontalOptions="Center" TextColor="#c0392b" />
                                     </Border>
                                 </Grid>
                             </VerticalStackLayout>
 
-                            <!-- Move to Expenses -->
                             <Border IsVisible="{Binding SelectedItem.IsBought}"
                                     Style="{StaticResource HoverButton}"
                                     BackgroundColor="#1Fff6b6b"
@@ -490,14 +519,15 @@
                                     <TapGestureRecognizer Command="{Binding ConvertToExpenseCommand}" />
                                 </Border.GestureRecognizers>
                                 <Label Text="💸 Move to Expenses" FontSize="12" FontAttributes="Bold"
-                                       TextColor="{StaticResource AccentColor}" HorizontalOptions="Center" />
+                                       TextColor="{StaticResource AccentColor}"
+                                       HorizontalOptions="Center" />
                             </Border>
 
-                            <!-- Pin / Remove -->
                             <Grid ColumnDefinitions="*,*" ColumnSpacing="8" Margin="0,6,0,0">
                                 <Border Grid.Column="0" Style="{StaticResource HoverButton}"
                                         BackgroundColor="{StaticResource PageBackground}"
-                                        StrokeThickness="0" StrokeShape="RoundRectangle 10" Padding="0,9">
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                        Padding="0,9">
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding PinItemCommand}" />
                                     </Border.GestureRecognizers>
@@ -507,11 +537,13 @@
                                 </Border>
                                 <Border Grid.Column="1" Style="{StaticResource HoverButton}"
                                         BackgroundColor="#1Fff3b30"
-                                        StrokeThickness="0" StrokeShape="RoundRectangle 10" Padding="0,9">
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                        Padding="0,9">
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding DeleteWishItemCommand}" />
                                     </Border.GestureRecognizers>
-                                    <Label Text="Remove" FontSize="12" HorizontalOptions="Center" TextColor="#ff3b30" />
+                                    <Label Text="Remove" FontSize="12"
+                                           HorizontalOptions="Center" TextColor="#ff3b30" />
                                 </Border>
                             </Grid>
 
@@ -523,4 +555,3 @@
 
     </Grid>
 </ContentPage>
-
