@@ -107,25 +107,220 @@ public partial class FeedViewModel : ObservableObject
     [ObservableProperty]
     private FeedCardItem? _selectedItem;
 
+    // ── Add modal ─────────────────────────────────────────────────────────────
+
+    [ObservableProperty]
+    private bool _isAddModalVisible;
+
+    [ObservableProperty]
+    private string _newTitle = string.Empty;
+
+    [ObservableProperty]
+    private string _newAmountText = string.Empty;
+
+    [ObservableProperty]
+    private string _newNote = string.Empty;
+
+    [ObservableProperty]
+    private DateTime _newSelectedDate = DateTime.Today;
+
+    [ObservableProperty]
+    private string? _newPhotoPath;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(NewIsFoodSelected))]
+    [NotifyPropertyChangedFor(nameof(NewIsTransportSelected))]
+    [NotifyPropertyChangedFor(nameof(NewIsShoppingSelected))]
+    [NotifyPropertyChangedFor(nameof(NewIsHealthSelected))]
+    [NotifyPropertyChangedFor(nameof(NewIsFunSelected))]
+    [NotifyPropertyChangedFor(nameof(NewIsOtherSelected))]
+    private ExpenseCategory _newSelectedCategory = ExpenseCategory.Food;
+
+    public bool NewIsFoodSelected => NewSelectedCategory == ExpenseCategory.Food;
+    public bool NewIsTransportSelected => NewSelectedCategory == ExpenseCategory.Transport;
+    public bool NewIsShoppingSelected => NewSelectedCategory == ExpenseCategory.Shopping;
+    public bool NewIsHealthSelected => NewSelectedCategory == ExpenseCategory.Health;
+    public bool NewIsFunSelected => NewSelectedCategory == ExpenseCategory.Fun;
+    public bool NewIsOtherSelected => NewSelectedCategory == ExpenseCategory.Other;
+    public bool NewHasPhoto => !string.IsNullOrEmpty(NewPhotoPath);
+
+    [RelayCommand]
+    private void SelectNewCategory(string cat)
+    {
+        if (Enum.TryParse<ExpenseCategory>(cat, out var c)) NewSelectedCategory = c;
+    }
+
+    [RelayCommand]
+    private async Task PickNewPhotoAsync()
+    {
+        try
+        {
+            var result = await MediaPicker.Default.PickPhotoAsync();
+            if (result is null) return;
+            var localPath = Path.Combine(FileSystem.AppDataDirectory, result.FileName);
+            using var stream = await result.OpenReadAsync();
+            using var fileStream = File.OpenWrite(localPath);
+            await stream.CopyToAsync(fileStream);
+            NewPhotoPath = localPath;
+            OnPropertyChanged(nameof(NewHasPhoto));
+        }
+        catch { }
+    }
+
+    [RelayCommand]
+    private void RemoveNewPhoto()
+    {
+        NewPhotoPath = null;
+        OnPropertyChanged(nameof(NewHasPhoto));
+    }
+
+    [RelayCommand]
+    private async Task SaveNewExpenseAsync()
+    {
+        if (!decimal.TryParse(NewAmountText, out var amount) || amount <= 0) return;
+        if (string.IsNullOrWhiteSpace(NewTitle)) return;
+
+        await _expenseService.SaveExpenseAsync(new ExpenseEntity
+        {
+            Title = NewTitle.Trim(),
+            Amount = amount,
+            Category = NewSelectedCategory.ToString(),
+            Note = string.IsNullOrWhiteSpace(NewNote) ? null : NewNote.Trim(),
+            Date = NewSelectedDate,
+            PhotoPath = NewPhotoPath
+        });
+
+        IsAddModalVisible = false;
+        IsDirty = true;
+        await LoadFeedAsync();
+    }
+
     // ── Navigation ────────────────────────────────────────────────────────────
+
+    [RelayCommand]
+    private void OpenAddModal()
+    {
+        NewTitle = string.Empty;
+        NewAmountText = string.Empty;
+        NewNote = string.Empty;
+        NewSelectedDate = DateTime.Today;
+        NewPhotoPath = null;
+        NewSelectedCategory = ExpenseCategory.Food;
+        OnPropertyChanged(nameof(NewHasPhoto));
+        IsAddModalVisible = true;
+    }
+
+    [RelayCommand]
+    private void DismissAddModal() => IsAddModalVisible = false;
 
     [RelayCommand]
     private async Task GoToAddExpenseAsync()
     {
-        // Mark dirty before leaving — if user saves, feed reloads on return.
-        // If user cancels, IsDirty stays true but LoadFeedAsync is fast (no DB change).
+        OpenAddModal();
+        await Task.CompletedTask;
+    }
+
+    // ── Edit modal ────────────────────────────────────────────────────────────
+
+    [ObservableProperty] private bool _isEditModalVisible;
+    [ObservableProperty] private int _editExpenseId;
+    [ObservableProperty] private string _editTitle = string.Empty;
+    [ObservableProperty] private string _editAmountText = string.Empty;
+    [ObservableProperty] private string _editNote = string.Empty;
+    [ObservableProperty] private DateTime _editSelectedDate = DateTime.Today;
+    [ObservableProperty] private string? _editPhotoPath;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(EditIsFoodSelected))]
+    [NotifyPropertyChangedFor(nameof(EditIsTransportSelected))]
+    [NotifyPropertyChangedFor(nameof(EditIsShoppingSelected))]
+    [NotifyPropertyChangedFor(nameof(EditIsHealthSelected))]
+    [NotifyPropertyChangedFor(nameof(EditIsFunSelected))]
+    [NotifyPropertyChangedFor(nameof(EditIsOtherSelected))]
+    private ExpenseCategory _editSelectedCategory = ExpenseCategory.Food;
+
+    public bool EditIsFoodSelected => EditSelectedCategory == ExpenseCategory.Food;
+    public bool EditIsTransportSelected => EditSelectedCategory == ExpenseCategory.Transport;
+    public bool EditIsShoppingSelected => EditSelectedCategory == ExpenseCategory.Shopping;
+    public bool EditIsHealthSelected => EditSelectedCategory == ExpenseCategory.Health;
+    public bool EditIsFunSelected => EditSelectedCategory == ExpenseCategory.Fun;
+    public bool EditIsOtherSelected => EditSelectedCategory == ExpenseCategory.Other;
+    public bool EditHasPhoto => !string.IsNullOrEmpty(EditPhotoPath);
+
+    [RelayCommand]
+    private void DismissEditModal() => IsEditModalVisible = false;
+
+    [RelayCommand]
+    private void SelectEditCategory(string cat)
+    {
+        if (Enum.TryParse<ExpenseCategory>(cat, out var c)) EditSelectedCategory = c;
+    }
+
+    [RelayCommand]
+    private async Task PickEditPhotoAsync()
+    {
+        try
+        {
+            var result = await MediaPicker.Default.PickPhotoAsync();
+            if (result is null) return;
+            var localPath = Path.Combine(FileSystem.AppDataDirectory, result.FileName);
+            using var stream = await result.OpenReadAsync();
+            using var fileStream = File.OpenWrite(localPath);
+            await stream.CopyToAsync(fileStream);
+            EditPhotoPath = localPath;
+            OnPropertyChanged(nameof(EditHasPhoto));
+        }
+        catch { }
+    }
+
+    [RelayCommand]
+    private void RemoveEditPhoto()
+    {
+        EditPhotoPath = null;
+        OnPropertyChanged(nameof(EditHasPhoto));
+    }
+
+    [RelayCommand]
+    private async Task SaveEditExpenseAsync()
+    {
+        if (!decimal.TryParse(EditAmountText, out var amount) || amount <= 0) return;
+        if (string.IsNullOrWhiteSpace(EditTitle)) return;
+
+        var expense = await _expenseService.GetExpenseByIdAsync(EditExpenseId);
+        if (expense is null) return;
+
+        expense.Title = EditTitle.Trim();
+        expense.Amount = amount;
+        expense.Category = EditSelectedCategory.ToString();
+        expense.Note = string.IsNullOrWhiteSpace(EditNote) ? null : EditNote.Trim();
+        expense.Date = EditSelectedDate;
+        expense.PhotoPath = EditPhotoPath;
+
+        await _expenseService.UpdateExpenseAsync(expense);
+        IsEditModalVisible = false;
         IsDirty = true;
-        await Shell.Current.GoToAsync(nameof(AddExpensePage));
+        await LoadFeedAsync();
     }
 
     [RelayCommand]
     private async Task GoToEditExpenseAsync(FeedCardItem item)
     {
-        IsDirty = true;  // same reasoning as above
+        // Load the existing expense into edit fields
+        var expense = await _expenseService.GetExpenseByIdAsync(item.Id);
+        if (expense is null) return;
+
+        EditExpenseId = item.Id;
+        EditTitle = expense.Title ?? string.Empty;
+        EditAmountText = expense.Amount.ToString("N2");
+        EditNote = expense.Note ?? string.Empty;
+        EditSelectedDate = expense.Date;
+        EditPhotoPath = expense.PhotoPath;
+        EditSelectedCategory = Enum.TryParse<ExpenseCategory>(expense.Category, out var cat)
+            ? cat : ExpenseCategory.Other;
+        OnPropertyChanged(nameof(EditHasPhoto));
+
         IsDetailVisible = false;
-        await Task.Delay(300);
-        await Shell.Current.GoToAsync(
-            $"{nameof(AddExpensePage)}?ExpenseId={item.Id}");
+        IsEditModalVisible = true;
     }
 
     // Set to true by anything that changes expense data (save, delete).

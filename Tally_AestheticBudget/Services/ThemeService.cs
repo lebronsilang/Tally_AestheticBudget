@@ -34,8 +34,8 @@ public class ThemeService : IThemeService
             theme.TextSecondary,
             theme.Border);
 
-        // Reload the shell so all pages pick up the new colors instantly
         ReloadShell();
+        ApplyTabBarColors(theme.Accent, theme.Card, theme.TextSecondary);
     }
 
     public void ApplyCustomTheme(string bg, string accent, string card, string text)
@@ -57,6 +57,7 @@ public class ThemeService : IThemeService
 
         ApplyColorsToResources(bg, accent, card, text, text, "#E8E8ED");
         ReloadShell();
+        ApplyTabBarColors(accent, card, text);
     }
 
     public (string bg, string accent, string card, string text) GetCustomColors() =>
@@ -121,6 +122,21 @@ public class ThemeService : IThemeService
         Set("AccentColor", accent);
 
         App.CurrentAccent = accent;
+    }
+
+    // After ReloadShell creates a fresh AppShell, push the accent color into
+    // the shell's tab bar so it matches the active theme immediately.
+    private static void ApplyTabBarColors(string accent, string card, string subtext)
+    {
+        if (Application.Current?.MainPage is not Shell shell) return;
+        if (!Color.TryParse(accent, out var accentColor)) return;
+        if (!Color.TryParse(card, out var cardColor)) return;
+        if (!Color.TryParse(subtext, out var subtextColor)) return;
+
+        Shell.SetTabBarBackgroundColor(shell, cardColor);
+        Shell.SetTabBarForegroundColor(shell, accentColor);
+        Shell.SetTabBarTitleColor(shell, accentColor);
+        Shell.SetTabBarUnselectedColor(shell, subtextColor);
     }
 
     private static bool IsValidHex(string hex) =>

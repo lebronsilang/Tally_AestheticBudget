@@ -3,44 +3,114 @@
     x:Class="Tally_AestheticBudget.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:views="clr-namespace:Tally_AestheticBudget.Views">
+    xmlns:views="clr-namespace:Tally_AestheticBudget.Views"
+    Shell.TabBarIsVisible="False"
+    Shell.NavBarIsVisible="True"
+    Shell.BackgroundColor="{StaticResource CardBackground}">
 
-    <Shell.Resources>
-        <Style TargetType="TabBar">
-            <Setter Property="Shell.TabBarBackgroundColor" Value="White" />
-            <Setter Property="Shell.TabBarForegroundColor" Value="#E05C7A" />
-            <Setter Property="Shell.TabBarTitleColor" Value="#E05C7A" />
-            <Setter Property="Shell.TabBarUnselectedColor" Value="#888888" />
-        </Style>
-    </Shell.Resources>
-    
-    <TabBar>
+    <!-- Custom top nav bar: logo left · tabs center · add right -->
+    <Shell.TitleView>
+        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="0"
+              BackgroundColor="{StaticResource CardBackground}"
+              Padding="16,0">
 
-        <Tab Title="Feed" Icon="icon_feed.png">
+            <!-- Logo -->
+            <HorizontalStackLayout Grid.Column="0" Spacing="4" VerticalOptions="Center">
+                <Label Text="tally" FontFamily="DisplayFont" FontSize="18"
+                       TextColor="{StaticResource AccentColor}" VerticalOptions="Center" />
+                <Label Text="✦" FontSize="14"
+                       TextColor="{StaticResource AccentColor}" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <!-- Centered tabs -->
+            <HorizontalStackLayout Grid.Column="1" Spacing="4"
+                                   HorizontalOptions="Center" VerticalOptions="Center">
+
+                <Border x:Name="TabFeed"
+                        BackgroundColor="Transparent" StrokeThickness="0"
+                        StrokeShape="RoundRectangle 980" Padding="14,6">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="FeedPage" />
+                    </Border.GestureRecognizers>
+                    <Label x:Name="TabFeedLabel" Text="Feed" FontSize="13"
+                           TextColor="{StaticResource TextSecondary}" />
+                </Border>
+
+                <Border x:Name="TabBudget"
+                        BackgroundColor="Transparent" StrokeThickness="0"
+                        StrokeShape="RoundRectangle 980" Padding="14,6">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="BudgetPage" />
+                    </Border.GestureRecognizers>
+                    <Label x:Name="TabBudgetLabel" Text="Budget" FontSize="13"
+                           TextColor="{StaticResource TextSecondary}" />
+                </Border>
+
+                <Border x:Name="TabWishlist"
+                        BackgroundColor="Transparent" StrokeThickness="0"
+                        StrokeShape="RoundRectangle 980" Padding="14,6">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="WishlistPage" />
+                    </Border.GestureRecognizers>
+                    <Label x:Name="TabWishlistLabel" Text="Wishlist" FontSize="13"
+                           TextColor="{StaticResource TextSecondary}" />
+                </Border>
+
+                <Border x:Name="TabGrocery"
+                        BackgroundColor="Transparent" StrokeThickness="0"
+                        StrokeShape="RoundRectangle 980" Padding="14,6">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="GroceryPage" />
+                    </Border.GestureRecognizers>
+                    <Label x:Name="TabGroceryLabel" Text="Grocery" FontSize="13"
+                           TextColor="{StaticResource TextSecondary}" />
+                </Border>
+
+                <Border x:Name="TabThemes"
+                        BackgroundColor="Transparent" StrokeThickness="0"
+                        StrokeShape="RoundRectangle 980" Padding="14,6">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="ThemesPage" />
+                    </Border.GestureRecognizers>
+                    <Label x:Name="TabThemesLabel" Text="Themes" FontSize="13"
+                           TextColor="{StaticResource TextSecondary}" />
+                </Border>
+
+            </HorizontalStackLayout>
+
+            <!-- + Add placeholder (keeps layout balanced) -->
+            <BoxView Grid.Column="2" WidthRequest="80" BackgroundColor="Transparent" />
+
+        </Grid>
+    </Shell.TitleView>
+
+    <TabBar x:Name="MainTabBar">
+
+        <Tab x:Name="FeedTab" Title="Feed">
             <ShellContent
                 ContentTemplate="{DataTemplate views:FeedPage}"
                 Route="FeedPage" />
         </Tab>
 
-        <Tab Title="Budget" Icon="icon_budget.png">
+        <Tab x:Name="BudgetTab" Title="Budget">
             <ShellContent
                 ContentTemplate="{DataTemplate views:BudgetPage}"
                 Route="BudgetPage" />
         </Tab>
 
-        <Tab Title="Grocery" Icon="icon_grocery.png">
+        <Tab x:Name="GroceryTab" Title="Grocery">
             <ShellContent
                 ContentTemplate="{DataTemplate views:GroceryPage}"
                 Route="GroceryPage" />
         </Tab>
 
-        <Tab Title="Wishlist" Icon="icon_wishlist.png">
+        <Tab x:Name="WishlistTab" Title="Wishlist">
             <ShellContent
                 ContentTemplate="{DataTemplate views:WishlistPage}"
                 Route="WishlistPage" />
         </Tab>
 
-        <Tab Title="Themes" Icon="icon_themes.png">
+        <Tab x:Name="ThemesTab" Title="Themes">
             <ShellContent
                 ContentTemplate="{DataTemplate views:ThemesPage}"
                 Route="ThemesPage" />

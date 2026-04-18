@@ -16,12 +16,24 @@ public static class MauiProgram
             .UseMauiApp<App>()
             .ConfigureFonts(fonts =>
             {
+<<<<<<< HEAD
                 // Default fonts that come with the MAUI template
                 fonts.AddFont("DMSerifDisplay-Regular.ttf", "DisplayFont");
                 fonts.AddFont("DMSans-Regular.ttf", "BodyFont");
                 
 
                 
+=======
+                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+
+                // DM Sans — body/UI font matching the web CSS
+                fonts.AddFont("DMSans-Regular.ttf", "BodyFont");
+
+                // DM Serif Display — used for page titles (.logo, .page-title in CSS)
+                // Falls back to OpenSans-Semibold if file not present
+                fonts.AddFont("OpenSans-Semibold.ttf", "DisplayFont");
+>>>>>>> 79b706e (Cards & Animations)
             });
 
 

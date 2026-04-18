@@ -300,7 +300,7 @@ public class StatusToBoughtTextConverter : IValueConverter
 public class BoolToPinLabelConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-        => value is true ? "⭐ Unpin" : "⭐ Pin as Top Dream";
+        => value is true ? "📌 Unpin" : "📌 Pin";
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotImplementedException();
@@ -332,6 +332,29 @@ public class ThemeActiveBorderConverter : IValueConverter
             ? Color.FromArgb(App.CurrentAccent)  // active — current accent
             : Color.FromArgb("#E8E8ED");          // inactive — subtle border
     }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+public class PinStrokeConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        bool isPinned = value is bool b && b;
+        return isPinned
+            ? new SolidColorBrush(Color.FromArgb(App.CurrentAccent))
+            : new SolidColorBrush(Color.FromArgb("#E8E8ED"));
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+public class PinStrokeThicknessConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => value is bool b && b ? 2.0 : 0.8;
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotImplementedException();

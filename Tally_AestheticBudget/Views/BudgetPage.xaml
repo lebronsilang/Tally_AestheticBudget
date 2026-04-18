@@ -6,7 +6,7 @@
     xmlns:vm="clr-namespace:Tally_AestheticBudget.ViewModels"
     xmlns:models="clr-namespace:Tally_AestheticBudget.Models"
     x:DataType="vm:BudgetViewModel"
-    Shell.NavBarIsVisible="False"
+    Shell.NavBarIsVisible="True"
     BackgroundColor="{StaticResource PageBackground}">
 
     <Grid RowDefinitions="Auto,*">
@@ -24,6 +24,7 @@
                            FontSize="13" TextColor="{StaticResource TextSecondary}" />
                 </VerticalStackLayout>
                 <Border Grid.Column="1"
+                        Style="{StaticResource HoverButton}"
                         BackgroundColor="#1Fff6b6b"
                         Stroke="{StaticResource AccentColor}"
                         StrokeThickness="0.8" StrokeShape="RoundRectangle 980"
@@ -37,8 +38,10 @@
             </Grid>
 
             <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,16,0,0">
-                <Border Grid.Column="0" BackgroundColor="{StaticResource PageBackground}"
-                        StrokeThickness="0" StrokeShape="RoundRectangle 980"
+                <Border Grid.Column="0"
+                        Style="{StaticResource HoverButton}"
+                        BackgroundColor="{StaticResource PageBackground}"
+                        StrokeShape="RoundRectangle 980"
                         WidthRequest="36" HeightRequest="36">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding PreviousMonthCommand}" />
@@ -50,8 +53,10 @@
                        FontSize="15" FontAttributes="Bold"
                        TextColor="{StaticResource TextPrimary}"
                        HorizontalOptions="Center" VerticalOptions="Center" />
-                <Border Grid.Column="2" BackgroundColor="{StaticResource PageBackground}"
-                        StrokeThickness="0" StrokeShape="RoundRectangle 980"
+                <Border Grid.Column="2"
+                        Style="{StaticResource HoverButton}"
+                        BackgroundColor="{StaticResource PageBackground}"
+                        StrokeShape="RoundRectangle 980"
                         WidthRequest="36" HeightRequest="36">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NextMonthCommand}" />
@@ -87,7 +92,8 @@
                                                    FontSize="12" TextColor="{StaticResource TextSecondary}" />
                                         </VerticalStackLayout>
                                         <Border Grid.Column="2" IsVisible="{Binding IsNotEditing}"
-                                                BackgroundColor="Transparent" StrokeThickness="0" Padding="8,4">
+                                                Style="{StaticResource HoverButton}"
+                                                BackgroundColor="Transparent" Padding="8,4">
                                             <Border.GestureRecognizers>
                                                 <TapGestureRecognizer
                                                     Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=StartEditCommand}"
@@ -122,8 +128,9 @@
                                                    BackgroundColor="Transparent" HeightRequest="40" />
                                         </Border>
                                         <Border Grid.Column="1"
+                                                Style="{StaticResource HoverButton}"
                                                 BackgroundColor="{StaticResource AccentColor}"
-                                                StrokeThickness="0" StrokeShape="RoundRectangle 12"
+                                                StrokeShape="RoundRectangle 12"
                                                 Padding="14,10">
                                             <Border.GestureRecognizers>
                                                 <TapGestureRecognizer
@@ -133,8 +140,9 @@
                                             <Label Text="Save" FontSize="13" FontAttributes="Bold" TextColor="White" />
                                         </Border>
                                         <Border Grid.Column="2"
+                                                Style="{StaticResource HoverButton}"
                                                 BackgroundColor="{StaticResource PageBackground}"
-                                                StrokeThickness="0" StrokeShape="RoundRectangle 12"
+                                                StrokeShape="RoundRectangle 12"
                                                 Padding="14,10">
                                             <Border.GestureRecognizers>
                                                 <TapGestureRecognizer

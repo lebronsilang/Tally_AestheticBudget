@@ -29,6 +29,29 @@ public partial class WishlistViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<WishCardItem> _displayedItems = [];
 
+    // ── Masonry columns ───────────────────────────────────────────────────────
+
+    public ObservableCollection<ObservableCollection<WishCardItem>> Columns { get; } = [];
+
+    public event Action? ColumnsRebuilt;
+    public event Action? DataLoaded;
+
+    public void DistributeIntoColumns(int columnCount)
+    {
+        Columns.Clear();
+        for (int i = 0; i < columnCount; i++)
+            Columns.Add([]);
+
+        int col = 0;
+        foreach (var item in DisplayedItems)
+        {
+            Columns[col].Add(item);
+            col = (col + 1) % columnCount;
+        }
+
+        ColumnsRebuilt?.Invoke();
+    }
+
     [ObservableProperty]
     private bool _isLoading;
 
@@ -251,6 +274,10 @@ public partial class WishlistViewModel : ObservableObject
         {
             await _wishService.UpdateStatusAsync(SelectedItem.Id, status);
             SelectedItem.Status = status;
+            // Sync back to _allItems so filter/stats stay accurate
+            var match = _allItems.FirstOrDefault(i => i.Id == SelectedItem.Id);
+            if (match is not null) match.Status = status;
+            UpdateStats();
         }
     }
 
@@ -260,6 +287,8 @@ public partial class WishlistViewModel : ObservableObject
         if (SelectedItem is null) return;
         await _wishService.SetRegretAsync(SelectedItem.Id, rating);
         SelectedItem.RegretRating = rating;
+        var match = _allItems.FirstOrDefault(i => i.Id == SelectedItem.Id);
+        if (match is not null) match.RegretRating = rating;
     }
 
     [RelayCommand]
@@ -368,7 +397,11 @@ public partial class WishlistViewModel : ObservableObject
         };
 
         DisplayedItems = new ObservableCollection<WishCardItem>(filtered);
+        OnPropertyChanged(nameof(HasNoItems));
+        DataLoaded?.Invoke();
     }
+
+    public bool HasNoItems => DisplayedItems.Count == 0;
 
     private void UpdateStats()
     {

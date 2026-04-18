@@ -26,9 +26,14 @@ public partial class WishCardItem : ObservableObject
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(StatusLabel))]
     [NotifyPropertyChangedFor(nameof(IsBought))]
+    [NotifyPropertyChangedFor(nameof(ShowCoolingBanner))]
+    [NotifyPropertyChangedFor(nameof(ShowStaleBanner))]
     private WishStatus _status;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasRegretRating))]
+    [NotifyPropertyChangedFor(nameof(IsWorthIt))]
+    [NotifyPropertyChangedFor(nameof(RegretLabel))]
     private string? _regretRating;
 
     [ObservableProperty]

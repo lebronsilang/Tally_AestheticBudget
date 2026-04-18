@@ -6,7 +6,7 @@
     xmlns:vm="clr-namespace:Tally_AestheticBudget.ViewModels"
     xmlns:models="clr-namespace:Tally_AestheticBudget.Models"
     x:DataType="vm:GroceryViewModel"
-    Shell.NavBarIsVisible="False"
+    Shell.NavBarIsVisible="True"
     BackgroundColor="{StaticResource PageBackground}">
 
     <Grid RowDefinitions="Auto,*">
@@ -24,6 +24,7 @@
                            TextColor="{StaticResource TextSecondary}" />
                 </VerticalStackLayout>
                 <Border Grid.Column="1"
+                        Style="{StaticResource HoverButton}"
                         BackgroundColor="#1Fff6b6b"
                         Stroke="{StaticResource AccentColor}"
                         StrokeThickness="0.8" StrokeShape="RoundRectangle 980"
@@ -35,8 +36,9 @@
                            TextColor="{StaticResource AccentColor}" />
                 </Border>
                 <Border Grid.Column="2"
+                        Style="{StaticResource HoverButton}"
                         BackgroundColor="{StaticResource AccentColor}"
-                        StrokeThickness="0" StrokeShape="RoundRectangle 980"
+                        StrokeShape="RoundRectangle 980"
                         Padding="14,8" VerticalOptions="Center">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding OpenAddModalCommand}" />
@@ -70,7 +72,8 @@
 
             <!-- Filter chips -->
             <HorizontalStackLayout Spacing="8">
-                <Border BackgroundColor="{Binding IsFilterAll, Converter={StaticResource BoolToChipBg}}"
+                <Border Style="{StaticResource HoverButton}"
+                        BackgroundColor="{Binding IsFilterAll, Converter={StaticResource BoolToChipBg}}"
                         Stroke="{Binding IsFilterAll, Converter={StaticResource BoolToChipBorder}}"
                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8" Padding="16,7">
                     <Border.GestureRecognizers>
@@ -80,7 +83,8 @@
                            FontAttributes="{Binding IsFilterAll, Converter={StaticResource BoolToFontAttr}}"
                            TextColor="{Binding IsFilterAll, Converter={StaticResource BoolToChipText}}" />
                 </Border>
-                <Border BackgroundColor="{Binding IsFilterPending, Converter={StaticResource BoolToChipBg}}"
+                <Border Style="{StaticResource HoverButton}"
+                        BackgroundColor="{Binding IsFilterPending, Converter={StaticResource BoolToChipBg}}"
                         Stroke="{Binding IsFilterPending, Converter={StaticResource BoolToChipBorder}}"
                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8" Padding="16,7">
                     <Border.GestureRecognizers>
@@ -90,7 +94,8 @@
                            FontAttributes="{Binding IsFilterPending, Converter={StaticResource BoolToFontAttr}}"
                            TextColor="{Binding IsFilterPending, Converter={StaticResource BoolToChipText}}" />
                 </Border>
-                <Border BackgroundColor="{Binding IsFilterChecked, Converter={StaticResource BoolToChipBg}}"
+                <Border Style="{StaticResource HoverButton}"
+                        BackgroundColor="{Binding IsFilterChecked, Converter={StaticResource BoolToChipBg}}"
                         Stroke="{Binding IsFilterChecked, Converter={StaticResource BoolToChipBorder}}"
                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8" Padding="16,7">
                     <Border.GestureRecognizers>
@@ -248,7 +253,8 @@
                         </VerticalStackLayout>
                     </Grid>
 
-                    <Border BackgroundColor="{StaticResource AccentColor}" StrokeThickness="0"
+                    <Border BackgroundColor="{StaticResource AccentColor}"
+                            Style="{StaticResource HoverButton}"
                             StrokeShape="RoundRectangle 980" Padding="0,16">
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding SaveItemCommand}" />

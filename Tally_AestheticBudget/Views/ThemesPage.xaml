@@ -6,376 +6,227 @@
     xmlns:vm="clr-namespace:Tally_AestheticBudget.ViewModels"
     xmlns:models="clr-namespace:Tally_AestheticBudget.Models"
     x:DataType="vm:ThemesViewModel"
-    Shell.NavBarIsVisible="False"
+    Shell.NavBarIsVisible="True"
     BackgroundColor="{StaticResource PageBackground}">
 
     <Grid>
-
         <ScrollView>
-            <VerticalStackLayout Spacing="0">
+        <VerticalStackLayout Spacing="0">
 
-                <VerticalStackLayout BackgroundColor="{StaticResource CardBackground}"
-                                     Padding="24,20,24,20" Spacing="2">
-                    <Label Text="Aesthetic Themes" FontFamily="DisplayFont"
-                           FontSize="28" TextColor="{StaticResource TextPrimary}" />
-                    <Label Text="Pick a vibe for your app"
-                           FontSize="13" TextColor="{StaticResource TextSecondary}" />
-                </VerticalStackLayout>
+            <VerticalStackLayout BackgroundColor="{StaticResource CardBackground}"
+                                 Padding="24,20,24,20" Spacing="2">
+                <Label Text="Aesthetic Themes" FontFamily="DisplayFont"
+                       FontSize="28" TextColor="{StaticResource TextPrimary}" />
+                <Label Text="Pick a vibe for your app"
+                       FontSize="13" TextColor="{StaticResource TextSecondary}" />
+            </VerticalStackLayout>
+
+            <BoxView HeightRequest="0.5" Color="{StaticResource CardBorder}" />
+
+            <VerticalStackLayout Padding="20,24,20,48" Spacing="24">
+
+                <Label Text="Presets" FontSize="16" FontAttributes="Bold"
+                       TextColor="{StaticResource TextPrimary}" />
+
+                <CollectionView ItemsSource="{Binding ThemeCards}"
+                                SelectionMode="None" HeightRequest="340">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical" Span="3"
+                                         HorizontalItemSpacing="12" VerticalItemSpacing="12" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:ThemeCardItem">
+                            <ContentView>
+                                <ContentView.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ThemesViewModel}}, Path=ApplyThemeCommand}"
+                                        CommandParameter="{Binding Id}" />
+                                </ContentView.GestureRecognizers>
+                                <Border BackgroundColor="{StaticResource CardBackground}"
+                                        StrokeThickness="2"
+                                        Stroke="{Binding IsActive, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeShape="RoundRectangle 16"
+                                        Padding="10,10,10,12">
+                                    <VerticalStackLayout Spacing="8">
+                                        <Border HeightRequest="56" StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 10"
+                                                BackgroundColor="{Binding PreviewFrom}" />
+                                        <Label Text="{Binding DisplayName}" FontSize="11"
+                                               FontAttributes="{Binding IsActive, Converter={StaticResource BoolToFontAttr}}"
+                                               HorizontalOptions="Center"
+                                               TextColor="{StaticResource TextPrimary}"
+                                               LineBreakMode="TailTruncation" />
+                                    </VerticalStackLayout>
+                                </Border>
+                            </ContentView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
 
                 <BoxView HeightRequest="0.5" Color="{StaticResource CardBorder}" />
 
-                <VerticalStackLayout Padding="20,24,20,48" Spacing="24">
+                <Label Text="Custom Palette" FontSize="16" FontAttributes="Bold"
+                       TextColor="{StaticResource TextPrimary}" />
 
-                    <Label Text="Presets" FontSize="16" FontAttributes="Bold"
-                           TextColor="{StaticResource TextPrimary}" />
+                <VerticalStackLayout Spacing="16">
 
-                    <CollectionView ItemsSource="{Binding ThemeCards}" SelectionMode="None">
-                        <CollectionView.ItemsLayout>
-                            <GridItemsLayout Orientation="Vertical" Span="3"
-                                             HorizontalItemSpacing="12" VerticalItemSpacing="12" />
-                        </CollectionView.ItemsLayout>
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="models:ThemeCardItem">
-                                <ContentView>
-                                    <ContentView.GestureRecognizers>
-                                        <TapGestureRecognizer
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ThemesViewModel}}, Path=ApplyThemeCommand}"
-                                            CommandParameter="{Binding Id}" />
-                                    </ContentView.GestureRecognizers>
-                                    <Border BackgroundColor="{StaticResource CardBackground}"
-                                            StrokeThickness="2"
-                                            Stroke="{Binding IsActive, Converter={StaticResource BoolToChipBorder}}"
-                                            StrokeShape="RoundRectangle 16"
-                                            Padding="10,10,10,12">
-                                        <Border.GestureRecognizers>
-                                            <PointerGestureRecognizer
-                                                PointerEntered="OnThemeCardPointerEntered"
-                                                PointerExited="OnThemeCardPointerExited" />
-                                        </Border.GestureRecognizers>
-                                        <VerticalStackLayout Spacing="8">
-                                            <Border HeightRequest="56" StrokeThickness="0"
-                                                    StrokeShape="RoundRectangle 10">
-                                                <Border.Background>
-                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                                        <GradientStop Color="{Binding PreviewFrom}" Offset="0.0" />
-                                                        <GradientStop Color="{Binding PreviewTo}"   Offset="1.0" />
-                                                    </LinearGradientBrush>
-                                                </Border.Background>
-                                            </Border>
-                                            <Label Text="{Binding DisplayName}" FontSize="11"
-                                                   FontAttributes="{Binding IsActive, Converter={StaticResource BoolToFontAttr}}"
-                                                   HorizontalOptions="Center"
-                                                   TextColor="{StaticResource TextPrimary}"
-                                                   LineBreakMode="TailTruncation" />
-                                        </VerticalStackLayout>
-                                    </Border>
-                                </ContentView>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-
-                    <BoxView HeightRequest="0.5" Color="{StaticResource CardBorder}" />
-
-                    <Label Text="Custom Palette" FontSize="16" FontAttributes="Bold"
-                           TextColor="{StaticResource TextPrimary}" />
-
-                    <Border BackgroundColor="{StaticResource CardBackground}"
-                            Stroke="{StaticResource CardBorder}"
-                            StrokeThickness="1" StrokeShape="RoundRectangle 16"
-                            Padding="24,20">
-                        <VerticalStackLayout Spacing="16">
-
-                            <Label Text="Tap a swatch to edit its color"
-                                   FontSize="12" TextColor="{StaticResource TextSecondary}" />
-
-                            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="12">
-
-                                <!-- Background -->
-                                <VerticalStackLayout Grid.Column="0" Spacing="8" HorizontalOptions="Center">
-                                    <Border BackgroundColor="{Binding CustomBg}"
-                                            StrokeThickness="0"
-                                            StrokeShape="RoundRectangle 14"
-                                            WidthRequest="64" HeightRequest="64"
-                                            HorizontalOptions="Center">
-                                        <Border.Shadow>
-                                            <Shadow Brush="#40000000" Offset="0,4" Radius="8" Opacity="0.18" />
-                                        </Border.Shadow>
-                                        <Border.GestureRecognizers>
-                                            <TapGestureRecognizer Tapped="OnBgSwatchTapped" />
-                                            <PointerGestureRecognizer
-                                                PointerEntered="OnSwatchPointerEntered"
-                                                PointerExited="OnSwatchPointerExited" />
-                                        </Border.GestureRecognizers>
-                                    </Border>
-                                    <Label Text="Background" FontSize="11"
-                                           TextColor="{StaticResource TextSecondary}"
-                                           HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-
-                                <!-- Accent -->
-                                <VerticalStackLayout Grid.Column="1" Spacing="8" HorizontalOptions="Center">
-                                    <Border BackgroundColor="{Binding CustomAccent}"
-                                            StrokeThickness="0"
-                                            StrokeShape="RoundRectangle 14"
-                                            WidthRequest="64" HeightRequest="64"
-                                            HorizontalOptions="Center">
-                                        <Border.Shadow>
-                                            <Shadow Brush="#40000000" Offset="0,4" Radius="8" Opacity="0.18" />
-                                        </Border.Shadow>
-                                        <Border.GestureRecognizers>
-                                            <TapGestureRecognizer Tapped="OnAccentSwatchTapped" />
-                                            <PointerGestureRecognizer
-                                                PointerEntered="OnSwatchPointerEntered"
-                                                PointerExited="OnSwatchPointerExited" />
-                                        </Border.GestureRecognizers>
-                                    </Border>
-                                    <Label Text="Accent" FontSize="11"
-                                           TextColor="{StaticResource TextSecondary}"
-                                           HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-
-                                <!-- Card -->
-                                <VerticalStackLayout Grid.Column="2" Spacing="8" HorizontalOptions="Center">
-                                    <Border BackgroundColor="{Binding CustomCard}"
-                                            StrokeThickness="0"
-                                            StrokeShape="RoundRectangle 14"
-                                            WidthRequest="64" HeightRequest="64"
-                                            HorizontalOptions="Center">
-                                        <Border.Shadow>
-                                            <Shadow Brush="#40000000" Offset="0,4" Radius="8" Opacity="0.18" />
-                                        </Border.Shadow>
-                                        <Border.GestureRecognizers>
-                                            <TapGestureRecognizer Tapped="OnCardSwatchTapped" />
-                                            <PointerGestureRecognizer
-                                                PointerEntered="OnSwatchPointerEntered"
-                                                PointerExited="OnSwatchPointerExited" />
-                                        </Border.GestureRecognizers>
-                                    </Border>
-                                    <Label Text="Card" FontSize="11"
-                                           TextColor="{StaticResource TextSecondary}"
-                                           HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-
-                                <!-- Text -->
-                                <VerticalStackLayout Grid.Column="3" Spacing="8" HorizontalOptions="Center">
-                                    <Border BackgroundColor="{Binding CustomText}"
-                                            StrokeThickness="0"
-                                            StrokeShape="RoundRectangle 14"
-                                            WidthRequest="64" HeightRequest="64"
-                                            HorizontalOptions="Center">
-                                        <Border.Shadow>
-                                            <Shadow Brush="#40000000" Offset="0,4" Radius="8" Opacity="0.18" />
-                                        </Border.Shadow>
-                                        <Border.GestureRecognizers>
-                                            <TapGestureRecognizer Tapped="OnTextSwatchTapped" />
-                                            <PointerGestureRecognizer
-                                                PointerEntered="OnSwatchPointerEntered"
-                                                PointerExited="OnSwatchPointerExited" />
-                                        </Border.GestureRecognizers>
-                                    </Border>
-                                    <Label Text="Text" FontSize="11"
-                                           TextColor="{StaticResource TextSecondary}"
-                                           HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-
-                            </Grid>
+                    <!-- Tappable color swatches -->
+                    <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="6" HorizontalOptions="Center">
+                            <Border BackgroundColor="{Binding CustomBg}"
+                                    Style="{StaticResource HoverButton}"
+                                    Stroke="{StaticResource CardBorder}" StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 14"
+                                    WidthRequest="64" HeightRequest="64" HorizontalOptions="Center">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OpenColorPickerCommand}" CommandParameter="bg" />
+                                </Border.GestureRecognizers>
+                            </Border>
+                            <Label Text="Background" FontSize="11" TextColor="{StaticResource TextSecondary}"
+                                   HorizontalOptions="Center" />
                         </VerticalStackLayout>
-                    </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="6" HorizontalOptions="Center">
+                            <Border BackgroundColor="{Binding CustomAccent}"
+                                    Style="{StaticResource HoverButton}"
+                                    Stroke="{StaticResource CardBorder}" StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 14"
+                                    WidthRequest="64" HeightRequest="64" HorizontalOptions="Center">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OpenColorPickerCommand}" CommandParameter="accent" />
+                                </Border.GestureRecognizers>
+                            </Border>
+                            <Label Text="Accent" FontSize="11" TextColor="{StaticResource TextSecondary}"
+                                   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="2" Spacing="6" HorizontalOptions="Center">
+                            <Border BackgroundColor="{Binding CustomCard}"
+                                    Style="{StaticResource HoverButton}"
+                                    Stroke="{StaticResource CardBorder}" StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 14"
+                                    WidthRequest="64" HeightRequest="64" HorizontalOptions="Center">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OpenColorPickerCommand}" CommandParameter="card" />
+                                </Border.GestureRecognizers>
+                            </Border>
+                            <Label Text="Card" FontSize="11" TextColor="{StaticResource TextSecondary}"
+                                   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="3" Spacing="6" HorizontalOptions="Center">
+                            <Border BackgroundColor="{Binding CustomText}"
+                                    Style="{StaticResource HoverButton}"
+                                    Stroke="{StaticResource CardBorder}" StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 14"
+                                    WidthRequest="64" HeightRequest="64" HorizontalOptions="Center">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OpenColorPickerCommand}" CommandParameter="text" />
+                                </Border.GestureRecognizers>
+                            </Border>
+                            <Label Text="Text" FontSize="11" TextColor="{StaticResource TextSecondary}"
+                                   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                    </Grid>
 
-                    <!-- Apply button -->
-                    <Border BackgroundColor="{StaticResource AccentColor}" StrokeThickness="0"
-                            StrokeShape="RoundRectangle 980" Padding="0,16">
+                    <Label Text="Tap a swatch to change its color" FontSize="11"
+                           TextColor="{StaticResource TextSecondary}" HorizontalOptions="Center" />
+
+                    <Border Style="{StaticResource HoverButton}"
+                            BackgroundColor="{StaticResource AccentColor}"
+                            StrokeShape="RoundRectangle 980" Padding="0,14">
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding ApplyCustomThemeCommand}" />
                         </Border.GestureRecognizers>
-                        <Label Text="Apply Custom Palette" FontSize="15" FontAttributes="Bold"
+                        <Label Text="Apply Custom Palette" FontSize="14" FontAttributes="Bold"
                                TextColor="White" HorizontalOptions="Center" />
                     </Border>
 
                 </VerticalStackLayout>
             </VerticalStackLayout>
-        </ScrollView>
+        </VerticalStackLayout>
+    </ScrollView>
 
-        <!-- ── Color Picker Overlay ── -->
-        <Grid x:Name="PickerOverlay"
-              IsVisible="False"
-              BackgroundColor="#80000000"
-              VerticalOptions="Fill"
-              HorizontalOptions="Fill">
-            <Grid.GestureRecognizers>
-                <TapGestureRecognizer Tapped="OnPickerOverlayTapped" />
-            </Grid.GestureRecognizers>
-
-            <Border BackgroundColor="{StaticResource CardBackground}"
-                    StrokeThickness="0"
-                    StrokeShape="RoundRectangle 24"
-                    Padding="24,24,24,28"
-                    VerticalOptions="Center"
-                    HorizontalOptions="Center"
-                    WidthRequest="360">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnPickerCardTapped" />
-                </Border.GestureRecognizers>
-
-                <VerticalStackLayout Spacing="20">
-
-                    <Label x:Name="PickerTitle"
-                           FontSize="17" FontAttributes="Bold"
+    <!-- ── Color picker overlay ──────────────────────────────────────────── -->
+    <Grid IsVisible="{Binding IsColorPickerVisible}" BackgroundColor="#80000000">
+        <Grid.GestureRecognizers>
+            <TapGestureRecognizer Command="{Binding DismissColorPickerCommand}" />
+        </Grid.GestureRecognizers>
+        <Border BackgroundColor="{StaticResource CardBackground}"
+                Style="{StaticResource ModalCard}"
+                StrokeShape="RoundRectangle 16"
+                HorizontalOptions="Center" VerticalOptions="Center"
+                MaximumWidthRequest="380" Margin="20,0"
+                Padding="20,20">
+            <VerticalStackLayout Spacing="16">
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Grid.Column="0" Text="{Binding PickerTitle}"
+                           FontSize="15" FontAttributes="Bold"
                            TextColor="{StaticResource TextPrimary}" />
-
-                    <Border x:Name="PickerPreview"
-                            HeightRequest="56" StrokeThickness="0"
-                            StrokeShape="RoundRectangle 12"
-                            BackgroundColor="#ff6b6b" />
-
-                    <Border BackgroundColor="{StaticResource PageBackground}"
-                            Stroke="{StaticResource CardBorder}"
-                            StrokeThickness="1" StrokeShape="RoundRectangle 12"
-                            Padding="16,0">
-                        <Entry x:Name="PickerEntry"
-                               Placeholder="#ffffff"
-                               PlaceholderColor="#C0C0C5"
-                               FontSize="15" FontFamily="BodyFont"
-                               TextColor="{StaticResource TextPrimary}"
-                               BackgroundColor="Transparent"
-                               HeightRequest="48"
-                               TextChanged="OnPickerEntryChanged" />
+                    <Border Grid.Column="1" Style="{StaticResource HoverButton}"
+                            BackgroundColor="{StaticResource PageBackground}"
+                            StrokeShape="RoundRectangle 980"
+                            WidthRequest="28" HeightRequest="28">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding DismissColorPickerCommand}" />
+                        </Border.GestureRecognizers>
+                        <Label Text="✕" FontSize="12" TextColor="{StaticResource TextSecondary}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
                     </Border>
+                </Grid>
 
-                    <VerticalStackLayout Spacing="8">
-                        <Label Text="Presets" FontSize="12"
-                               TextColor="{StaticResource TextSecondary}" />
-                        <FlexLayout Wrap="Wrap" JustifyContent="Start">
-                            <Border WidthRequest="32" HeightRequest="32" StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 8" BackgroundColor="#ffffff"
-                                    Margin="0,0,8,8">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnPresetChipTapped"/>
-                                </Border.GestureRecognizers>
-                            </Border>
-                            <Border WidthRequest="32" HeightRequest="32" StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 8" BackgroundColor="#f5f5f7"
-                                    Margin="0,0,8,8">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnPresetChipTapped"/>
-                                </Border.GestureRecognizers>
-                            </Border>
-                            <Border WidthRequest="32" HeightRequest="32" StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 8" BackgroundColor="#1d1d1f"
-                                    Margin="0,0,8,8">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnPresetChipTapped"/>
-                                </Border.GestureRecognizers>
-                            </Border>
-                            <Border WidthRequest="32" HeightRequest="32" StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 8" BackgroundColor="#0f0f14"
-                                    Margin="0,0,8,8">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnPresetChipTapped"/>
-                                </Border.GestureRecognizers>
-                            </Border>
-                            <Border WidthRequest="32" HeightRequest="32" StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 8" BackgroundColor="#ff6b6b"
-                                    Margin="0,0,8,8">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnPresetChipTapped"/>
-                                </Border.GestureRecognizers>
-                            </Border>
-                            <Border WidthRequest="32" HeightRequest="32" StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 8" BackgroundColor="#e8739a"
-                                    Margin="0,0,8,8">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnPresetChipTapped"/>
-                                </Border.GestureRecognizers>
-                            </Border>
-                            <Border WidthRequest="32" HeightRequest="32" StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 8" BackgroundColor="#a0714f"
-                                    Margin="0,0,8,8">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnPresetChipTapped"/>
-                                </Border.GestureRecognizers>
-                            </Border>
-                            <Border WidthRequest="32" HeightRequest="32" StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 8" BackgroundColor="#3a8fc4"
-                                    Margin="0,0,8,8">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnPresetChipTapped"/>
-                                </Border.GestureRecognizers>
-                            </Border>
-                            <Border WidthRequest="32" HeightRequest="32" StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 8" BackgroundColor="#4a9e5c"
-                                    Margin="0,0,8,8">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnPresetChipTapped"/>
-                                </Border.GestureRecognizers>
-                            </Border>
-                            <Border WidthRequest="32" HeightRequest="32" StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 8" BackgroundColor="#a78bfa"
-                                    Margin="0,0,8,8">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnPresetChipTapped"/>
-                                </Border.GestureRecognizers>
-                            </Border>
-                            <Border WidthRequest="32" HeightRequest="32" StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 8" BackgroundColor="#fff0f5"
-                                    Margin="0,0,8,8">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnPresetChipTapped"/>
-                                </Border.GestureRecognizers>
-                            </Border>
-                            <Border WidthRequest="32" HeightRequest="32" StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 8" BackgroundColor="#f2ede8"
-                                    Margin="0,0,8,8">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnPresetChipTapped"/>
-                                </Border.GestureRecognizers>
-                            </Border>
-                            <Border WidthRequest="32" HeightRequest="32" StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 8" BackgroundColor="#eef4fb"
-                                    Margin="0,0,8,8">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnPresetChipTapped"/>
-                                </Border.GestureRecognizers>
-                            </Border>
-                            <Border WidthRequest="32" HeightRequest="32" StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 8" BackgroundColor="#edf4ee"
-                                    Margin="0,0,8,8">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnPresetChipTapped"/>
-                                </Border.GestureRecognizers>
-                            </Border>
-                        </FlexLayout>
-                    </VerticalStackLayout>
+                <!-- Row 1 -->
+                <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                    <Border BackgroundColor="#ffffff" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#ffffff"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#f5f5f7" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#f5f5f7"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#fff0f5" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#fff0f5"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#f2ede8" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#f2ede8"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#eef4fb" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#eef4fb"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#edf4ee" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#edf4ee"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#0f0f14" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#0f0f14"/></Border.GestureRecognizers></Border>
+                </HorizontalStackLayout>
+                <!-- Row 2 -->
+                <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                    <Border BackgroundColor="#ff6b6b" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#ff6b6b"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#e8739a" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#e8739a"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#ff3b30" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#ff3b30"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#ff2d55" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#ff2d55"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#c0392b" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#c0392b"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#fd79a8" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#fd79a8"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#e84393" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#e84393"/></Border.GestureRecognizers></Border>
+                </HorizontalStackLayout>
+                <!-- Row 3 -->
+                <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                    <Border BackgroundColor="#a78bfa" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#a78bfa"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#9b59b6" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#9b59b6"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#6c5ce7" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#6c5ce7"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#3a8fc4" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#3a8fc4"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#0984e3" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#0984e3"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#12cbc4" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#12cbc4"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#006266" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#006266"/></Border.GestureRecognizers></Border>
+                </HorizontalStackLayout>
+                <!-- Row 4 -->
+                <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                    <Border BackgroundColor="#4a9e5c" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#4a9e5c"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#00b894" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#00b894"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#55efc4" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#55efc4"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#a0714f" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#a0714f"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#e67e22" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#e67e22"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#fdcb6e" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#fdcb6e"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#f9ca24" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#f9ca24"/></Border.GestureRecognizers></Border>
+                </HorizontalStackLayout>
+                <!-- Row 5 -->
+                <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                    <Border BackgroundColor="#1d1d1f" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#1d1d1f"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#2c1f14" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#2c1f14"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#0d2a40" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#0d2a40"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#1a2e1c" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#1a2e1c"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#2d3436" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#2d3436"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#636e72" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#636e72"/></Border.GestureRecognizers></Border>
+                    <Border BackgroundColor="#b2bec3" Style="{StaticResource HoverButton}" Stroke="{StaticResource CardBorder}" StrokeThickness="0.5" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36"><Border.GestureRecognizers><TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#b2bec3"/></Border.GestureRecognizers></Border>
+                </HorizontalStackLayout>
 
-                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                        <Border Grid.Column="0"
-                                BackgroundColor="{StaticResource PageBackground}"
-                                Stroke="{StaticResource CardBorder}"
-                                StrokeThickness="1" StrokeShape="RoundRectangle 12"
-                                Padding="0,12">
-                            <Border.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="OnPickerCancel" />
-                            </Border.GestureRecognizers>
-                            <Label Text="Cancel" FontSize="14" FontAttributes="Bold"
-                                   TextColor="{StaticResource TextSecondary}"
-                                   HorizontalOptions="Center" />
-                        </Border>
-                        <Border Grid.Column="1"
-                                BackgroundColor="{StaticResource AccentColor}"
-                                StrokeThickness="0" StrokeShape="RoundRectangle 12"
-                                Padding="0,12">
-                            <Border.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="OnPickerConfirm" />
-                            </Border.GestureRecognizers>
-                            <Label Text="Apply" FontSize="14" FontAttributes="Bold"
-                                   TextColor="White" HorizontalOptions="Center" />
-                        </Border>
-                    </Grid>
-
-                </VerticalStackLayout>
-            </Border>
-        </Grid>
-
+            </VerticalStackLayout>
+        </Border>
     </Grid>
+
+</Grid>
 
 </ContentPage>
