@@ -120,4 +120,6 @@ public partial class ThemeCardItem : CommunityToolkit.Mvvm.ComponentModel.Observ
     public string Id => Theme.Id;
     public string DisplayName => Theme.DisplayName;
     public string PreviewFrom => Theme.PreviewFrom;
+    public string PreviewTo => Theme.PreviewTo;
+
 }

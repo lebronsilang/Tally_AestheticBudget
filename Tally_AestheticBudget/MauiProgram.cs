@@ -17,12 +17,11 @@ public static class MauiProgram
             .ConfigureFonts(fonts =>
             {
                 // Default fonts that come with the MAUI template
-                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                fonts.AddFont("DMSerifDisplay-Regular.ttf", "DisplayFont");
+                fonts.AddFont("DMSans-Regular.ttf", "BodyFont");
+                
 
-                // Add later DM Sans / DM Serif Display
-                // fonts.AddFont("DMSerifDisplay-Regular.ttf", "DisplayFont");
-                // fonts.AddFont("DMSans-Regular.ttf", "BodyFont");
+                
             });
 
 
