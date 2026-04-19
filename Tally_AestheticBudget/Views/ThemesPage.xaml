@@ -27,159 +27,197 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <VerticalStackLayout Padding="20,24,20,48" Spacing="24">
+                <VerticalStackLayout Padding="16,16,16,48" Spacing="12">
 
-                    <Label Text="Presets" FontSize="16" FontAttributes="Bold"
-                           TextColor="{StaticResource TextPrimary}" />
+                    <!-- ── Presets card ───────────────────────────────────── -->
+                    <Border BackgroundColor="{StaticResource CardBackground}"
+                            Stroke="{StaticResource CardBorder}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 20"
+                            Padding="20,20">
+                        <VerticalStackLayout Spacing="16">
 
-                    <Border HorizontalOptions="Fill" MaximumWidthRequest="900"
-                            StrokeThickness="0" BackgroundColor="Transparent">
-                        <CollectionView ItemsSource="{Binding ThemeCards}" SelectionMode="None">
-                            <CollectionView.ItemsLayout>
-                                <GridItemsLayout Orientation="Vertical" Span="3"
-                                                 HorizontalItemSpacing="12" VerticalItemSpacing="12" />
-                            </CollectionView.ItemsLayout>
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="models:ThemeCardItem">
-                                    <ContentView>
-                                        <ContentView.GestureRecognizers>
-                                            <TapGestureRecognizer
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ThemesViewModel}}, Path=ApplyThemeCommand}"
-                                                CommandParameter="{Binding Id}" />
-                                        </ContentView.GestureRecognizers>
-                                        <Border BackgroundColor="{StaticResource CardBackground}"
-                                                StrokeThickness="2"
-                                                Stroke="{Binding IsActive, Converter={StaticResource BoolToChipBorder}}"
-                                                StrokeShape="RoundRectangle 16"
-                                                Padding="10,10,10,12">
-                                            <Border.GestureRecognizers>
-                                                <PointerGestureRecognizer
-                                                    PointerEntered="OnThemeCardPointerEntered"
-                                                    PointerExited="OnThemeCardPointerExited" />
-                                            </Border.GestureRecognizers>
-                                            <VerticalStackLayout Spacing="8">
-                                                <Border HeightRequest="56" StrokeThickness="0"
-                                                        StrokeShape="RoundRectangle 10">
-                                                    <Border.Background>
-                                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                                            <GradientStop Color="{Binding PreviewFrom}" Offset="0.0" />
-                                                            <GradientStop Color="{Binding PreviewTo}"   Offset="1.0" />
-                                                        </LinearGradientBrush>
-                                                    </Border.Background>
+                            <Label Text="Presets" FontSize="16" FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}" />
+
+                            <Border HorizontalOptions="Fill" MaximumWidthRequest="900"
+                                    StrokeThickness="0" BackgroundColor="Transparent">
+                                <CollectionView ItemsSource="{Binding ThemeCards}"
+                                               SelectionMode="None">
+                                    <CollectionView.ItemsLayout>
+                                        <GridItemsLayout Orientation="Vertical" Span="3"
+                                                         HorizontalItemSpacing="12"
+                                                         VerticalItemSpacing="12" />
+                                    </CollectionView.ItemsLayout>
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate x:DataType="models:ThemeCardItem">
+                                            <ContentView>
+                                                <ContentView.GestureRecognizers>
+                                                    <TapGestureRecognizer
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ThemesViewModel}}, Path=ApplyThemeCommand}"
+                                                        CommandParameter="{Binding Id}" />
+                                                </ContentView.GestureRecognizers>
+                                                <Border BackgroundColor="{StaticResource PageBackground}"
+                                                        StrokeThickness="2"
+                                                        Stroke="{Binding IsActive, Converter={StaticResource BoolToChipBorder}}"
+                                                        StrokeShape="RoundRectangle 16"
+                                                        Padding="10,10,10,12">
+                                                    <Border.GestureRecognizers>
+                                                        <PointerGestureRecognizer
+                                                            PointerEntered="OnThemeCardPointerEntered"
+                                                            PointerExited="OnThemeCardPointerExited" />
+                                                    </Border.GestureRecognizers>
+                                                    <VerticalStackLayout Spacing="8">
+                                                        <Border HeightRequest="56" StrokeThickness="0"
+                                                                StrokeShape="RoundRectangle 10">
+                                                            <Border.Background>
+                                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                                    <GradientStop Color="{Binding PreviewFrom}" Offset="0.0" />
+                                                                    <GradientStop Color="{Binding PreviewTo}"   Offset="1.0" />
+                                                                </LinearGradientBrush>
+                                                            </Border.Background>
+                                                        </Border>
+                                                        <Label Text="{Binding DisplayName}" FontSize="11"
+                                                               FontAttributes="{Binding IsActive, Converter={StaticResource BoolToFontAttr}}"
+                                                               HorizontalOptions="Center"
+                                                               TextColor="{StaticResource TextPrimary}"
+                                                               LineBreakMode="TailTruncation" />
+                                                    </VerticalStackLayout>
                                                 </Border>
-                                                <Label Text="{Binding DisplayName}" FontSize="11"
-                                                       FontAttributes="{Binding IsActive, Converter={StaticResource BoolToFontAttr}}"
-                                                       HorizontalOptions="Center"
-                                                       TextColor="{StaticResource TextPrimary}"
-                                                       LineBreakMode="TailTruncation" />
-                                            </VerticalStackLayout>
-                                        </Border>
-                                    </ContentView>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
+                                            </ContentView>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </Border>
+
+                        </VerticalStackLayout>
                     </Border>
 
-                    <BoxView HeightRequest="0.5" Color="{StaticResource CardBorder}" />
+                    <!-- ── Custom Palette card ────────────────────────────── -->
+                    <Border BackgroundColor="{StaticResource CardBackground}"
+                            Stroke="{StaticResource CardBorder}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 20"
+                            Padding="20,20">
+                        <VerticalStackLayout Spacing="20">
 
-                    <Label Text="Custom Palette" FontSize="16" FontAttributes="Bold"
-                           TextColor="{StaticResource TextPrimary}" />
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="Custom Palette" FontSize="16" FontAttributes="Bold"
+                                       TextColor="{StaticResource TextPrimary}" />
+                                <Label Text="Tap a swatch to edit its color"
+                                       FontSize="12" TextColor="{StaticResource TextSecondary}" />
+                            </VerticalStackLayout>
 
-                    <Label Text="Tap a swatch to edit its color"
-                           FontSize="12" TextColor="{StaticResource TextSecondary}" />
+                            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="12">
 
-                    <!-- Wider/taller swatches: 80x72 -->
-                    <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="12" Padding="0,8">
+                                <VerticalStackLayout Grid.Column="0" Spacing="8"
+                                                     HorizontalOptions="Center">
+                                    <Border BackgroundColor="{Binding CustomBg}"
+                                            StrokeThickness="1"
+                                            Stroke="{StaticResource CardBorder}"
+                                            StrokeShape="RoundRectangle 14"
+                                            WidthRequest="80" HeightRequest="72"
+                                            HorizontalOptions="Center">
+                                        <Border.Shadow>
+                                            <Shadow Brush="#40000000" Offset="0,4"
+                                                    Radius="8" Opacity="0.18" />
+                                        </Border.Shadow>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding OpenColorPickerCommand}" CommandParameter="bg" />
+                                            <PointerGestureRecognizer
+                                                PointerEntered="OnSwatchPointerEntered"
+                                                PointerExited="OnSwatchPointerExited" />
+                                        </Border.GestureRecognizers>
+                                    </Border>
+                                    <Label Text="Background" FontSize="11"
+                                           TextColor="{StaticResource TextSecondary}"
+                                           HorizontalOptions="Center" />
+                                </VerticalStackLayout>
 
-                        <VerticalStackLayout Grid.Column="0" Spacing="8" HorizontalOptions="Center">
-                            <Border BackgroundColor="{Binding CustomBg}"
-                                    StrokeThickness="0" StrokeShape="RoundRectangle 14"
-                                    WidthRequest="80" HeightRequest="72"
-                                    HorizontalOptions="Center">
-                                <Border.Shadow>
-                                    <Shadow Brush="#40000000" Offset="0,4" Radius="8" Opacity="0.18" />
-                                </Border.Shadow>
+                                <VerticalStackLayout Grid.Column="1" Spacing="8"
+                                                     HorizontalOptions="Center">
+                                    <Border BackgroundColor="{Binding CustomAccent}"
+                                            StrokeThickness="1"
+                                            Stroke="{StaticResource CardBorder}"
+                                            StrokeShape="RoundRectangle 14"
+                                            WidthRequest="80" HeightRequest="72"
+                                            HorizontalOptions="Center">
+                                        <Border.Shadow>
+                                            <Shadow Brush="#40000000" Offset="0,4"
+                                                    Radius="8" Opacity="0.18" />
+                                        </Border.Shadow>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding OpenColorPickerCommand}" CommandParameter="accent" />
+                                            <PointerGestureRecognizer
+                                                PointerEntered="OnSwatchPointerEntered"
+                                                PointerExited="OnSwatchPointerExited" />
+                                        </Border.GestureRecognizers>
+                                    </Border>
+                                    <Label Text="Accent" FontSize="11"
+                                           TextColor="{StaticResource TextSecondary}"
+                                           HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Column="2" Spacing="8"
+                                                     HorizontalOptions="Center">
+                                    <Border BackgroundColor="{Binding CustomCard}"
+                                            StrokeThickness="1"
+                                            Stroke="{StaticResource CardBorder}"
+                                            StrokeShape="RoundRectangle 14"
+                                            WidthRequest="80" HeightRequest="72"
+                                            HorizontalOptions="Center">
+                                        <Border.Shadow>
+                                            <Shadow Brush="#40000000" Offset="0,4"
+                                                    Radius="8" Opacity="0.18" />
+                                        </Border.Shadow>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding OpenColorPickerCommand}" CommandParameter="card" />
+                                            <PointerGestureRecognizer
+                                                PointerEntered="OnSwatchPointerEntered"
+                                                PointerExited="OnSwatchPointerExited" />
+                                        </Border.GestureRecognizers>
+                                    </Border>
+                                    <Label Text="Card" FontSize="11"
+                                           TextColor="{StaticResource TextSecondary}"
+                                           HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Column="3" Spacing="8"
+                                                     HorizontalOptions="Center">
+                                    <Border BackgroundColor="{Binding CustomText}"
+                                            StrokeThickness="1"
+                                            Stroke="{StaticResource CardBorder}"
+                                            StrokeShape="RoundRectangle 14"
+                                            WidthRequest="80" HeightRequest="72"
+                                            HorizontalOptions="Center">
+                                        <Border.Shadow>
+                                            <Shadow Brush="#40000000" Offset="0,4"
+                                                    Radius="8" Opacity="0.18" />
+                                        </Border.Shadow>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding OpenColorPickerCommand}" CommandParameter="text" />
+                                            <PointerGestureRecognizer
+                                                PointerEntered="OnSwatchPointerEntered"
+                                                PointerExited="OnSwatchPointerExited" />
+                                        </Border.GestureRecognizers>
+                                    </Border>
+                                    <Label Text="Text" FontSize="11"
+                                           TextColor="{StaticResource TextSecondary}"
+                                           HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+
+                            </Grid>
+
+                            <Border BackgroundColor="{StaticResource AccentColor}"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 980" Padding="0,16">
                                 <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding OpenColorPickerCommand}" CommandParameter="bg" />
-                                    <PointerGestureRecognizer
-                                        PointerEntered="OnSwatchPointerEntered"
-                                        PointerExited="OnSwatchPointerExited" />
+                                    <TapGestureRecognizer Command="{Binding ApplyCustomThemeCommand}" />
                                 </Border.GestureRecognizers>
+                                <Label Text="Apply Custom Palette" FontSize="15"
+                                       FontAttributes="Bold" TextColor="White"
+                                       HorizontalOptions="Center" />
                             </Border>
-                            <Label Text="Background" FontSize="11"
-                                   TextColor="{StaticResource TextSecondary}"
-                                   HorizontalOptions="Center" />
+
                         </VerticalStackLayout>
-
-                        <VerticalStackLayout Grid.Column="1" Spacing="8" HorizontalOptions="Center">
-                            <Border BackgroundColor="{Binding CustomAccent}"
-                                    StrokeThickness="0" StrokeShape="RoundRectangle 14"
-                                    WidthRequest="80" HeightRequest="72"
-                                    HorizontalOptions="Center">
-                                <Border.Shadow>
-                                    <Shadow Brush="#40000000" Offset="0,4" Radius="8" Opacity="0.18" />
-                                </Border.Shadow>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding OpenColorPickerCommand}" CommandParameter="accent" />
-                                    <PointerGestureRecognizer
-                                        PointerEntered="OnSwatchPointerEntered"
-                                        PointerExited="OnSwatchPointerExited" />
-                                </Border.GestureRecognizers>
-                            </Border>
-                            <Label Text="Accent" FontSize="11"
-                                   TextColor="{StaticResource TextSecondary}"
-                                   HorizontalOptions="Center" />
-                        </VerticalStackLayout>
-
-                        <VerticalStackLayout Grid.Column="2" Spacing="8" HorizontalOptions="Center">
-                            <Border BackgroundColor="{Binding CustomCard}"
-                                    StrokeThickness="0" StrokeShape="RoundRectangle 14"
-                                    WidthRequest="80" HeightRequest="72"
-                                    HorizontalOptions="Center">
-                                <Border.Shadow>
-                                    <Shadow Brush="#40000000" Offset="0,4" Radius="8" Opacity="0.18" />
-                                </Border.Shadow>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding OpenColorPickerCommand}" CommandParameter="card" />
-                                    <PointerGestureRecognizer
-                                        PointerEntered="OnSwatchPointerEntered"
-                                        PointerExited="OnSwatchPointerExited" />
-                                </Border.GestureRecognizers>
-                            </Border>
-                            <Label Text="Card" FontSize="11"
-                                   TextColor="{StaticResource TextSecondary}"
-                                   HorizontalOptions="Center" />
-                        </VerticalStackLayout>
-
-                        <VerticalStackLayout Grid.Column="3" Spacing="8" HorizontalOptions="Center">
-                            <Border BackgroundColor="{Binding CustomText}"
-                                    StrokeThickness="0" StrokeShape="RoundRectangle 14"
-                                    WidthRequest="80" HeightRequest="72"
-                                    HorizontalOptions="Center">
-                                <Border.Shadow>
-                                    <Shadow Brush="#40000000" Offset="0,4" Radius="8" Opacity="0.18" />
-                                </Border.Shadow>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding OpenColorPickerCommand}" CommandParameter="text" />
-                                    <PointerGestureRecognizer
-                                        PointerEntered="OnSwatchPointerEntered"
-                                        PointerExited="OnSwatchPointerExited" />
-                                </Border.GestureRecognizers>
-                            </Border>
-                            <Label Text="Text" FontSize="11"
-                                   TextColor="{StaticResource TextSecondary}"
-                                   HorizontalOptions="Center" />
-                        </VerticalStackLayout>
-
-                    </Grid>
-
-                    <Border BackgroundColor="{StaticResource AccentColor}" StrokeThickness="0"
-                            StrokeShape="RoundRectangle 980" Padding="0,16">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding ApplyCustomThemeCommand}" />
-                        </Border.GestureRecognizers>
-                        <Label Text="Apply Custom Palette" FontSize="15" FontAttributes="Bold"
-                               TextColor="White" HorizontalOptions="Center" />
                     </Border>
 
                 </VerticalStackLayout>
