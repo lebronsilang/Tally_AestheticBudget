@@ -43,13 +43,13 @@ public partial class BudgetCategoryItem : ObservableObject
 
     public string CategoryIcon => Category switch
     {
-        ExpenseCategory.Food => "🍜",
-        ExpenseCategory.Transport => "🚌",
-        ExpenseCategory.Shopping => "🛍️",
-        ExpenseCategory.Health => "💊",
-        ExpenseCategory.Fun => "🎬",
-        ExpenseCategory.Grocery => "🛒",
-        _ => "✨"
+        ExpenseCategory.Transport => "icon_transport.png",
+        ExpenseCategory.Food => "icon_food.png",
+        ExpenseCategory.Shopping => "icon_shopping.png",
+        ExpenseCategory.Health => "icon_health.png",
+        ExpenseCategory.Fun => "icon_fun.png",
+        ExpenseCategory.Grocery => "icon_grocery.png",
+        _ => "icon_default.png"
     };
 
     public string SpentFormatted => $"₱{Spent:N2}";

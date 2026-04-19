@@ -74,96 +74,156 @@
 
             <!-- ── Category list ──────────────────────────────────────────── -->
             <VerticalStackLayout Padding="16,16,16,40" Spacing="10"
-                                 Margin="16,16,16,0"
-                                 HorizontalOptions="Fill">
+                     Margin="16,16,16,0"
+                     HorizontalOptions="Fill">
+
                 <CollectionView ItemsSource="{Binding BudgetItems}" SelectionMode="None">
+
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:BudgetCategoryItem">
+
                             <Border BackgroundColor="{StaticResource CardBackground}"
-                                    Stroke="{StaticResource CardBorder}"
-                                    StrokeThickness="0.5" StrokeShape="RoundRectangle 18"
-                                    Padding="18,16" Margin="0,0,0,10">
+                        Stroke="{StaticResource CardBorder}"
+                        StrokeThickness="0.5"
+                        StrokeShape="RoundRectangle 18"
+                        Padding="18,16"
+                        Margin="0,0,0,10">
+
                                 <VerticalStackLayout Spacing="10">
 
+                                    <!-- HEADER ROW -->
                                     <Grid ColumnDefinitions="Auto,*,Auto">
-                                        <Label Grid.Column="0" Text="{Binding CategoryIcon}"
-                                               FontSize="22" VerticalOptions="Center"
-                                               Margin="0,0,10,0" />
-                                        <VerticalStackLayout Grid.Column="1" Spacing="2"
-                                                             VerticalOptions="Center">
+
+                                        <!-- PNG ICON (FIXED HERE) -->
+                                        <Image Grid.Column="0"
+                                   Source="{Binding CategoryIcon}"
+                                   WidthRequest="24"
+                                   HeightRequest="24"
+                                   VerticalOptions="Center"
+                                   Margin="0,0,10,0" />
+
+                                        <!-- CATEGORY TEXT -->
+                                        <VerticalStackLayout Grid.Column="1"
+                                                 Spacing="2"
+                                                 VerticalOptions="Center">
+
                                             <Label Text="{Binding CategoryLabel}"
-                                                   FontSize="15" FontAttributes="Bold"
-                                                   TextColor="{StaticResource TextPrimary}" />
+                                       FontSize="15"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource TextPrimary}" />
+
                                             <Label Text="{Binding StatusLabel}"
-                                                   FontSize="12"
-                                                   TextColor="{StaticResource TextSecondary}" />
+                                       FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}" />
+
                                         </VerticalStackLayout>
+
+                                        <!-- EDIT BUTTON -->
                                         <Border Grid.Column="2"
-                                                IsVisible="{Binding IsNotEditing}"
-                                                Style="{StaticResource HoverButton}"
-                                                BackgroundColor="Transparent" Padding="8,4">
+                                    IsVisible="{Binding IsNotEditing}"
+                                    Style="{StaticResource HoverButton}"
+                                    BackgroundColor="Transparent"
+                                    Padding="8,4">
+
                                             <Border.GestureRecognizers>
                                                 <TapGestureRecognizer
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=StartEditCommand}"
-                                                    CommandParameter="{Binding .}" />
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=StartEditCommand}"
+                                        CommandParameter="{Binding .}" />
                                             </Border.GestureRecognizers>
+
                                             <Label Text="✏️" FontSize="16" />
+
                                         </Border>
+
                                     </Grid>
 
+                                    <!-- PROGRESS BAR -->
                                     <Grid HeightRequest="8">
-                                        <Border BackgroundColor="#1Fff6b6b" StrokeThickness="0"
-                                                StrokeShape="RoundRectangle 980" HeightRequest="8" />
+
+                                        <Border BackgroundColor="#1Fff6b6b"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 980"
+                                    HeightRequest="8" />
+
                                         <Border BackgroundColor="{Binding IsOverLimit, Converter={StaticResource BoolToProgressColor}}"
-                                                StrokeThickness="0" StrokeShape="RoundRectangle 980"
-                                                HeightRequest="8" HorizontalOptions="Start"
-                                                WidthRequest="{Binding ProgressPercent, Converter={StaticResource PercentToWidth}}" />
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 980"
+                                    HeightRequest="8"
+                                    HorizontalOptions="Start"
+                                    WidthRequest="{Binding ProgressPercent, Converter={StaticResource PercentToWidth}}" />
+
                                     </Grid>
 
+                                    <!-- INLINE EDIT ROW -->
                                     <Grid IsVisible="{Binding IsEditing}"
-                                          ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                              ColumnDefinitions="*,Auto,Auto"
+                              ColumnSpacing="8">
+
                                         <Border Grid.Column="0"
-                                                BackgroundColor="{StaticResource PageBackground}"
-                                                Stroke="{StaticResource CardBorder}"
-                                                StrokeThickness="0.8" StrokeShape="RoundRectangle 12"
-                                                Padding="12,0">
+                                    BackgroundColor="{StaticResource PageBackground}"
+                                    Stroke="{StaticResource CardBorder}"
+                                    StrokeThickness="0.8"
+                                    StrokeShape="RoundRectangle 12"
+                                    Padding="12,0">
+
                                             <Entry Text="{Binding EditLimitText}"
-                                                   Placeholder="New limit (₱)"
-                                                   PlaceholderColor="#C0C0C5" Keyboard="Numeric"
-                                                   FontSize="14" TextColor="{StaticResource TextPrimary}"
-                                                   BackgroundColor="Transparent" HeightRequest="40" />
+                                       Placeholder="New limit (₱)"
+                                       PlaceholderColor="#C0C0C5"
+                                       Keyboard="Numeric"
+                                       FontSize="14"
+                                       TextColor="{StaticResource TextPrimary}"
+                                       BackgroundColor="Transparent"
+                                       HeightRequest="40" />
+
                                         </Border>
+
                                         <Border Grid.Column="1"
-                                                Style="{StaticResource HoverButton}"
-                                                BackgroundColor="{StaticResource AccentColor}"
-                                                StrokeShape="RoundRectangle 12" Padding="14,10">
+                                    Style="{StaticResource HoverButton}"
+                                    BackgroundColor="{StaticResource AccentColor}"
+                                    StrokeShape="RoundRectangle 12"
+                                    Padding="14,10">
+
                                             <Border.GestureRecognizers>
                                                 <TapGestureRecognizer
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=SaveLimitCommand}"
-                                                    CommandParameter="{Binding .}" />
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=SaveLimitCommand}"
+                                        CommandParameter="{Binding .}" />
                                             </Border.GestureRecognizers>
-                                            <Label Text="Save" FontSize="13"
-                                                   FontAttributes="Bold" TextColor="White" />
+
+                                            <Label Text="Save"
+                                       FontSize="13"
+                                       FontAttributes="Bold"
+                                       TextColor="White" />
+
                                         </Border>
+
                                         <Border Grid.Column="2"
-                                                Style="{StaticResource HoverButton}"
-                                                BackgroundColor="{StaticResource PageBackground}"
-                                                StrokeShape="RoundRectangle 12" Padding="14,10">
+                                    Style="{StaticResource HoverButton}"
+                                    BackgroundColor="{StaticResource PageBackground}"
+                                    StrokeShape="RoundRectangle 12"
+                                    Padding="14,10">
+
                                             <Border.GestureRecognizers>
                                                 <TapGestureRecognizer
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=CancelEditCommand}"
-                                                    CommandParameter="{Binding .}" />
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=CancelEditCommand}"
+                                        CommandParameter="{Binding .}" />
                                             </Border.GestureRecognizers>
-                                            <Label Text="Cancel" FontSize="13"
-                                                   TextColor="{StaticResource TextSecondary}" />
+
+                                            <Label Text="Cancel"
+                                       FontSize="13"
+                                       TextColor="{StaticResource TextSecondary}" />
+
                                         </Border>
+
                                     </Grid>
 
                                 </VerticalStackLayout>
                             </Border>
+
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
+
                 </CollectionView>
+
             </VerticalStackLayout>
 
         </VerticalStackLayout>
