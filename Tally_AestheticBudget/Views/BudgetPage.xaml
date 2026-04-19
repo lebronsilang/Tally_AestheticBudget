@@ -73,11 +73,14 @@
             </Border>
 
             <!-- ── Category list ──────────────────────────────────────────── -->
-            <VerticalStackLayout Padding="16,16,16,40" Spacing="10"
+            <VerticalStackLayout Padding="16,16,16,40" Spacing="12"
                      Margin="16,16,16,0"
                      HorizontalOptions="Fill">
 
                 <CollectionView ItemsSource="{Binding BudgetItems}" SelectionMode="None">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="7" />
+                    </CollectionView.ItemsLayout>
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:BudgetCategoryItem">
@@ -87,7 +90,7 @@
                         StrokeThickness="0.5"
                         StrokeShape="RoundRectangle 18"
                         Padding="18,16"
-                        Margin="0,0,0,10">
+                        Margin="0,0,0,16">
 
                                 <VerticalStackLayout Spacing="10">
 
