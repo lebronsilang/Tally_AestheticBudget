@@ -134,7 +134,10 @@
                                         CommandParameter="{Binding .}" />
                                             </Border.GestureRecognizers>
 
-                                            <Label Text="✏️" FontSize="16" />
+                                            <Image Source="icon_add.png"
+                                                   WidthRequest="16" HeightRequest="16"
+                                                   HorizontalOptions="Center"
+                                                   VerticalOptions="Center" />
 
                                         </Border>
 

@@ -420,10 +420,42 @@ public partial class FeedPage : ContentPage
 
             root.Children.Add(plainCard);
 
+            // ── Edit shortcut button — top-right, fades in on hover ───────
+            var editBtn = new Border
+            {
+                Opacity = 0,
+                InputTransparent = false,
+                BackgroundColor = Color.FromArgb("#88000000"),
+                StrokeThickness = 0,
+                StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = new CornerRadius(14) },
+                Padding = new Thickness(10, 10),
+                HorizontalOptions = LayoutOptions.End,
+                VerticalOptions = LayoutOptions.Start,
+                Margin = new Thickness(0, 8, 8, 0),
+            };
+            var editBtnLabel = new Image
+            {
+                Source = "icon_edit.png",
+                WidthRequest = 14,
+                HeightRequest = 14,
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center,
+            };
+            editBtn.Content = editBtnLabel;
+
+            var editTap = new TapGestureRecognizer();
+            editTap.SetBinding(TapGestureRecognizer.CommandProperty,
+                new Binding("GoToEditExpenseCommand",
+                    source: new RelativeBindingSource(RelativeBindingSourceMode.FindAncestorBindingContext, typeof(FeedViewModel))));
+            editTap.SetBinding(TapGestureRecognizer.CommandParameterProperty, new Binding("."));
+            editBtn.GestureRecognizers.Add(editTap);
+            root.Children.Add(editBtn);
+
             // ── Hover effects ─────────────────────────────────────────────
             pointer.PointerEntered += (s, e) =>
             {
                 _ = card.ScaleTo(1.03, 160, Easing.CubicOut);
+                _ = editBtn.FadeTo(1, 150, Easing.CubicOut);
                 card.Shadow = new Shadow
                 {
                     Brush = new SolidColorBrush(Color.FromArgb("#28000000")),
@@ -434,6 +466,8 @@ public partial class FeedPage : ContentPage
             };
             pointer.PointerExited += (s, e) =>
             {
+                _ = card.ScaleTo(1.0, 160, Easing.CubicOut);
+                _ = editBtn.FadeTo(0, 150, Easing.CubicOut);
                 _ = card.ScaleTo(1.0, 160, Easing.CubicOut);
                 card.Shadow = new Shadow
                 {
