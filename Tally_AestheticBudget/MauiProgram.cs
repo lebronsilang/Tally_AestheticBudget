@@ -33,6 +33,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<IGroceryService, GroceryService>();
         builder.Services.AddSingleton<IWishService, WishService>();
         builder.Services.AddSingleton<IThemeService, ThemeService>();
+        builder.Services.AddSingleton<ISettingsService, SettingsService>();
 
         // ── ViewModels ────────────────────────────────────────────────────────────
         builder.Services.AddTransient<FeedViewModel>();
@@ -41,6 +42,7 @@ public static class MauiProgram
         builder.Services.AddTransient<GroceryViewModel>();
         builder.Services.AddTransient<WishlistViewModel>();
         builder.Services.AddTransient<ThemesViewModel>();
+        builder.Services.AddTransient<SettingsViewModel>();
 
         // ── Pages ─────────────────────────────────────────────────────────────────
         builder.Services.AddTransient<FeedPage>();
@@ -49,7 +51,7 @@ public static class MauiProgram
         builder.Services.AddTransient<GroceryPage>();
         builder.Services.AddTransient<WishlistPage>();
         builder.Services.AddTransient<ThemesPage>();
-
+        builder.Services.AddTransient<SettingsPage>();
 
 
 #if DEBUG

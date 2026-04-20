@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Tally_AestheticBudget.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Tally_AestheticBudget.ViewModels"
+    xmlns:models="clr-namespace:Tally_AestheticBudget.Models"
+    x:DataType="vm:SettingsViewModel"
+    Shell.NavBarIsVisible="True"
+    BackgroundColor="{StaticResource PageBackground}">
+
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Spacing="0">
+
+                <!-- ── Floating header card ───────────────────────────────── -->
+                <Border BackgroundColor="{StaticResource CardBackground}"
+                        Stroke="{StaticResource AccentColor}"
+                        StrokeThickness="1" StrokeShape="RoundRectangle 20"
+                        Padding="20,18,20,16"
+                        Margin="16,16,16,0">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="Settings" FontFamily="DisplayFont"
+                               FontSize="28" TextColor="{StaticResource TextPrimary}" />
+                        <Label Text="Personalize your Tally experience"
+                               FontSize="13" TextColor="{StaticResource TextSecondary}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <VerticalStackLayout Padding="16,16,16,48" Spacing="12">
+
+                    <!-- ── Currency section ───────────────────────────────── -->
+                    <Label Text="CURRENCY" FontSize="11" FontAttributes="Bold"
+                           CharacterSpacing="0.6" TextColor="{StaticResource TextSecondary}"
+                           Margin="4,0,0,0" />
+
+                    <Border BackgroundColor="{StaticResource CardBackground}"
+                            Stroke="{StaticResource AccentColor}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 20"
+                            Padding="20,16">
+                        <VerticalStackLayout Spacing="14">
+
+                            <!-- Icon + label -->
+                            <HorizontalStackLayout Spacing="14">
+                                <Border BackgroundColor="#1A4a9e5c"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                        WidthRequest="36" HeightRequest="36">
+                                    <Label Text="💱" FontSize="16"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                                    <Label Text="Display Currency" FontSize="14"
+                                           FontAttributes="Bold"
+                                           TextColor="{StaticResource TextPrimary}" />
+                                    <Label Text="Used across all pages and calculations"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextSecondary}" />
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+
+                            <!-- Selected currency preview -->
+                            <Border BackgroundColor="#1A4a9e5c"
+                                    Stroke="{StaticResource AccentColor}"
+                                    StrokeThickness="0.5" StrokeShape="RoundRectangle 12"
+                                    Padding="14,10">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <Label Grid.Column="0" Text="{Binding SelectedCurrency.Flag}"
+                                           FontSize="22" VerticalOptions="Center"
+                                           Margin="0,0,10,0" />
+                                    <VerticalStackLayout Grid.Column="1" Spacing="1"
+                                                         VerticalOptions="Center">
+                                        <Label Text="{Binding SelectedCurrency.Name}"
+                                               FontSize="13" FontAttributes="Bold"
+                                               TextColor="{StaticResource TextPrimary}" />
+                                        <Label Text="{Binding SelectedCurrency.Code}"
+                                               FontSize="11"
+                                               TextColor="{StaticResource TextSecondary}" />
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="2"
+                                           Text="{Binding SelectedCurrency.Symbol}"
+                                           FontSize="20" FontAttributes="Bold"
+                                           TextColor="{StaticResource AccentColor}"
+                                           VerticalOptions="Center" />
+                                </Grid>
+                            </Border>
+
+                            <!-- Search -->
+                            <Border BackgroundColor="{StaticResource PageBackground}"
+                                    Stroke="{StaticResource CardBorder}"
+                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 12"
+                                    Padding="12,0">
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <Label Grid.Column="0" Text="🔍" FontSize="13"
+                                           VerticalOptions="Center" Margin="0,0,6,0"
+                                           TextColor="{StaticResource TextSecondary}" />
+                                    <Entry Grid.Column="1"
+                                           Text="{Binding CurrencySearch}"
+                                           Placeholder="Search currencies..."
+                                           PlaceholderColor="#C0C0C5" FontSize="13"
+                                           TextColor="{StaticResource TextPrimary}"
+                                           BackgroundColor="Transparent" HeightRequest="40" />
+                                </Grid>
+                            </Border>
+
+                            <!-- Currency list -->
+                            <Border BackgroundColor="{StaticResource PageBackground}"
+                                    Stroke="{StaticResource CardBorder}"
+                                    StrokeThickness="0.5" StrokeShape="RoundRectangle 14"
+                                    MaximumHeightRequest="220">
+                                <CollectionView ItemsSource="{Binding FilteredCurrencies}"
+                                               SelectionMode="None">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:CurrencyOption">
+                                            <Border BackgroundColor="Transparent"
+                                                    StrokeThickness="0"
+                                                    Padding="14,10">
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SettingsViewModel}}, Path=SelectCurrencyCommand}"
+                                                        CommandParameter="{Binding .}" />
+                                                </Border.GestureRecognizers>
+                                                <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                                                    <Label Grid.Column="0" Text="{Binding Flag}"
+                                                           FontSize="18" VerticalOptions="Center"
+                                                           Margin="0,0,10,0" />
+                                                    <VerticalStackLayout Grid.Column="1" Spacing="1"
+                                                                         VerticalOptions="Center">
+                                                        <Label Text="{Binding Name}"
+                                                               FontSize="13" FontAttributes="Bold"
+                                                               TextColor="{StaticResource TextPrimary}" />
+                                                        <Label Text="{Binding Code}"
+                                                               FontSize="11"
+                                                               TextColor="{StaticResource TextSecondary}" />
+                                                    </VerticalStackLayout>
+                                                    <Label Grid.Column="2"
+                                                           Text="{Binding Symbol}"
+                                                           FontSize="14" FontAttributes="Bold"
+                                                           TextColor="{StaticResource AccentColor}"
+                                                           VerticalOptions="Center"
+                                                           Margin="0,0,10,0" />
+                                                    <Label Grid.Column="3" Text="✓"
+                                                           FontSize="14" FontAttributes="Bold"
+                                                           TextColor="{StaticResource AccentColor}"
+                                                           VerticalOptions="Center">
+                                                        <Label.IsVisible>
+                                                            <Binding Path="Code"
+                                                                     Converter="{StaticResource StringToBool}"
+                                                                     ConverterParameter="{Binding Source={RelativeSource AncestorType={x:Type vm:SettingsViewModel}}, Path=SelectedCurrency.Code}" />
+                                                        </Label.IsVisible>
+                                                    </Label>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </Border>
+
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- ── Feed Display section ───────────────────────────── -->
+                    <Label Text="FEED DISPLAY" FontSize="11" FontAttributes="Bold"
+                           CharacterSpacing="0.6" TextColor="{StaticResource TextSecondary}"
+                           Margin="4,4,0,0" />
+
+                    <Border BackgroundColor="{StaticResource CardBackground}"
+                            Stroke="{StaticResource AccentColor}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 20"
+                            Padding="0">
+                        <VerticalStackLayout Spacing="0">
+
+                            <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,14"
+                                  ColumnSpacing="14">
+                                <Border Grid.Column="0" BackgroundColor="#1Aff6b6b"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                        WidthRequest="36" HeightRequest="36">
+                                    <Label Text="📝" FontSize="16"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="2"
+                                                     VerticalOptions="Center">
+                                    <Label Text="Show Notes" FontSize="14"
+                                           FontAttributes="Bold"
+                                           TextColor="{StaticResource TextPrimary}" />
+                                    <Label Text="Display note text on feed cards"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextSecondary}" />
+                                </VerticalStackLayout>
+                                <Border Grid.Column="2"
+                                        BackgroundColor="{Binding ShowNotes, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding ShowNotes, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
+                                        WidthRequest="48" HeightRequest="28"
+                                        VerticalOptions="Center">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ToggleShowNotesCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 980"
+                                            WidthRequest="20" HeightRequest="20"
+                                            HorizontalOptions="{Binding ShowNotes, Converter={StaticResource BoolToToggleAlign}}"
+                                            VerticalOptions="Center" Margin="4,0" />
+                                </Border>
+                            </Grid>
+
+                            <BoxView HeightRequest="0.5" Color="{StaticResource CardBorder}"
+                                     Margin="20,0" />
+
+                            <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,14"
+                                  ColumnSpacing="14">
+                                <Border Grid.Column="0" BackgroundColor="#1A4a9e5c"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                        WidthRequest="36" HeightRequest="36">
+                                    <Label Text="💰" FontSize="16"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="2"
+                                                     VerticalOptions="Center">
+                                    <Label Text="Show Price" FontSize="14"
+                                           FontAttributes="Bold"
+                                           TextColor="{StaticResource TextPrimary}" />
+                                    <Label Text="Display amount on feed cards"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextSecondary}" />
+                                </VerticalStackLayout>
+                                <Border Grid.Column="2"
+                                        BackgroundColor="{Binding ShowPrice, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding ShowPrice, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
+                                        WidthRequest="48" HeightRequest="28"
+                                        VerticalOptions="Center">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ToggleShowPriceCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 980"
+                                            WidthRequest="20" HeightRequest="20"
+                                            HorizontalOptions="{Binding ShowPrice, Converter={StaticResource BoolToToggleAlign}}"
+                                            VerticalOptions="Center" Margin="4,0" />
+                                </Border>
+                            </Grid>
+
+                            <BoxView HeightRequest="0.5" Color="{StaticResource CardBorder}"
+                                     Margin="20,0" />
+
+                            <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,14"
+                                  ColumnSpacing="14">
+                                <Border Grid.Column="0" BackgroundColor="#1A3a8fc4"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                        WidthRequest="36" HeightRequest="36">
+                                    <Label Text="🗓" FontSize="16"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="2"
+                                                     VerticalOptions="Center">
+                                    <Label Text="Show Date" FontSize="14"
+                                           FontAttributes="Bold"
+                                           TextColor="{StaticResource TextPrimary}" />
+                                    <Label Text="Display date on feed cards"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextSecondary}" />
+                                </VerticalStackLayout>
+                                <Border Grid.Column="2"
+                                        BackgroundColor="{Binding ShowDate, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding ShowDate, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
+                                        WidthRequest="48" HeightRequest="28"
+                                        VerticalOptions="Center">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ToggleShowDateCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 980"
+                                            WidthRequest="20" HeightRequest="20"
+                                            HorizontalOptions="{Binding ShowDate, Converter={StaticResource BoolToToggleAlign}}"
+                                            VerticalOptions="Center" Margin="4,0" />
+                                </Border>
+                            </Grid>
+
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- ── Wishlist section ───────────────────────────────── -->
+                    <Label Text="WISHLIST" FontSize="11" FontAttributes="Bold"
+                           CharacterSpacing="0.6" TextColor="{StaticResource TextSecondary}"
+                           Margin="4,4,0,0" />
+
+                    <Border BackgroundColor="{StaticResource CardBackground}"
+                            Stroke="{StaticResource AccentColor}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 20"
+                            Padding="0">
+                        <VerticalStackLayout Spacing="0">
+
+                            <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,14"
+                                  ColumnSpacing="14">
+                                <Border Grid.Column="0" BackgroundColor="#1Aa0714f"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                        WidthRequest="36" HeightRequest="36">
+                                    <Label Text="⏳" FontSize="16"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="2"
+                                                     VerticalOptions="Center">
+                                    <Label Text="Cooling-off Reminder" FontSize="14"
+                                           FontAttributes="Bold"
+                                           TextColor="{StaticResource TextPrimary}" />
+                                    <Label Text="3-day wait badge on new wishes"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextSecondary}" />
+                                </VerticalStackLayout>
+                                <Border Grid.Column="2"
+                                        BackgroundColor="{Binding ShowCoolingOff, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding ShowCoolingOff, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
+                                        WidthRequest="48" HeightRequest="28"
+                                        VerticalOptions="Center">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ToggleShowCoolingOffCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 980"
+                                            WidthRequest="20" HeightRequest="20"
+                                            HorizontalOptions="{Binding ShowCoolingOff, Converter={StaticResource BoolToToggleAlign}}"
+                                            VerticalOptions="Center" Margin="4,0" />
+                                </Border>
+                            </Grid>
+
+                            <BoxView HeightRequest="0.5" Color="{StaticResource CardBorder}"
+                                     Margin="20,0" />
+
+                            <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,14"
+                                  ColumnSpacing="14">
+                                <Border Grid.Column="0" BackgroundColor="#1Aff6b6b"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                        WidthRequest="36" HeightRequest="36">
+                                    <Label Text="👀" FontSize="16"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="2"
+                                                     VerticalOptions="Center">
+                                    <Label Text="Stale Reminder" FontSize="14"
+                                           FontAttributes="Bold"
+                                           TextColor="{StaticResource TextPrimary}" />
+                                    <Label Text="Badge after 7 days still planned"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextSecondary}" />
+                                </VerticalStackLayout>
+                                <Border Grid.Column="2"
+                                        BackgroundColor="{Binding ShowStaleReminder, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding ShowStaleReminder, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
+                                        WidthRequest="48" HeightRequest="28"
+                                        VerticalOptions="Center">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ToggleShowStaleReminderCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 980"
+                                            WidthRequest="20" HeightRequest="20"
+                                            HorizontalOptions="{Binding ShowStaleReminder, Converter={StaticResource BoolToToggleAlign}}"
+                                            VerticalOptions="Center" Margin="4,0" />
+                                </Border>
+                            </Grid>
+
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- ── Clear Data section ─────────────────────────────── -->
+                    <Label Text="DATA" FontSize="11" FontAttributes="Bold"
+                           CharacterSpacing="0.6" TextColor="{StaticResource TextSecondary}"
+                           Margin="4,4,0,0" />
+
+                    <ContentView>
+                        <ContentView.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenClearDataCommand}" />
+                        </ContentView.GestureRecognizers>
+                        <Border BackgroundColor="{StaticResource CardBackground}"
+            Stroke="{StaticResource AccentColor}"
+            StrokeThickness="1" StrokeShape="RoundRectangle 20"
+            Padding="0">
+                            <Grid ColumnDefinitions="Auto,*" Padding="20,16" ColumnSpacing="14">
+                                <Border Grid.Column="0" BackgroundColor="#1Aff3b30"
+                    StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                    WidthRequest="36" HeightRequest="36">
+                                    <Label Text="🗑" FontSize="16"
+                       HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                    <Label Text="Clear Data" FontSize="14"
+                       FontAttributes="Bold" TextColor="#ff3b30" />
+                                    <Label Text="Permanently delete expenses and lists"
+                       FontSize="12" TextColor="{StaticResource TextSecondary}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </ContentView>
+
+                    <!-- Version -->
+                    <Label Text="Tally v1.0 · Aesthetic Budget"
+                           FontSize="12" TextColor="{StaticResource TextSecondary}"
+                           HorizontalOptions="Center" Margin="0,8,0,0" />
+
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- ── Clear Data overlay ────────────────────────────────────────── -->
+        <Grid IsVisible="{Binding IsClearDataVisible}"
+              BackgroundColor="#80000000"
+              VerticalOptions="Fill" HorizontalOptions="Fill">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding DismissClearDataCommand}" />
+            </Grid.GestureRecognizers>
+
+            <Border BackgroundColor="{StaticResource CardBackground}"
+                    StrokeThickness="0" StrokeShape="RoundRectangle 24"
+                    Padding="24,24,24,28"
+                    VerticalOptions="Center" HorizontalOptions="Center"
+                    WidthRequest="340">
+                <VerticalStackLayout Spacing="16">
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Clear Data" FontSize="17" FontAttributes="Bold"
+                               TextColor="{StaticResource TextPrimary}" />
+                        <Label Text="Choose what to permanently delete"
+                               FontSize="13" TextColor="{StaticResource TextSecondary}" />
+                    </VerticalStackLayout>
+
+                    <BoxView HeightRequest="0.5" Color="{StaticResource CardBorder}" />
+
+                    <Border BackgroundColor="#1Aff3b30" StrokeThickness="0"
+                            StrokeShape="RoundRectangle 12" Padding="16,12">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ClearExpensesCommand}" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Clear Expenses" FontSize="14"
+                                   FontAttributes="Bold" TextColor="#ff3b30" />
+                            <Label Text="Removes all expense entries from feed"
+                                   FontSize="12" TextColor="{StaticResource TextSecondary}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Border BackgroundColor="#1Aff3b30" StrokeThickness="0"
+                            StrokeShape="RoundRectangle 12" Padding="16,12">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ClearGroceriesCommand}" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Clear Grocery List" FontSize="14"
+                                   FontAttributes="Bold" TextColor="#ff3b30" />
+                            <Label Text="Removes all grocery items"
+                                   FontSize="12" TextColor="{StaticResource TextSecondary}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Border BackgroundColor="#1Aff3b30" StrokeThickness="0"
+                            StrokeShape="RoundRectangle 12" Padding="16,12">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ClearWishlistCommand}" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Clear Wishlist" FontSize="14"
+                                   FontAttributes="Bold" TextColor="#ff3b30" />
+                            <Label Text="Removes all dream board items"
+                                   FontSize="12" TextColor="{StaticResource TextSecondary}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Border BackgroundColor="#ff3b30" StrokeThickness="0"
+                            StrokeShape="RoundRectangle 12" Padding="16,12">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ClearAllCommand}" />
+                        </Border.GestureRecognizers>
+                        <Label Text="Clear Everything" FontSize="14"
+                               FontAttributes="Bold" TextColor="White"
+                               HorizontalOptions="Center" />
+                    </Border>
+
+                    <Border BackgroundColor="{StaticResource PageBackground}"
+                            StrokeThickness="0" StrokeShape="RoundRectangle 12"
+                            Padding="16,12">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding DismissClearDataCommand}" />
+                        </Border.GestureRecognizers>
+                        <Label Text="Cancel" FontSize="14"
+                               TextColor="{StaticResource TextSecondary}"
+                               HorizontalOptions="Center" />
+                    </Border>
+
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+    </Grid>
+</ContentPage>

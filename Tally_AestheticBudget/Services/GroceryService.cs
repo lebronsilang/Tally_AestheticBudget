@@ -17,6 +17,7 @@ public interface IGroceryService
 
     // Returns how much has been spent on Grocery this month
     Task<decimal> GetGrocerySpentThisMonthAsync();
+    Task DeleteAllAsync();
 }
 
 // ── Implementation ────────────────────────────────────────────────────────────
@@ -145,5 +146,15 @@ public class GroceryService : IGroceryService
         return lineItems
             .Where(e => thisMonthGroupIds.Contains(e.GroceryGroupId!.Value))
             .Sum(e => e.Amount);
+    }
+
+    public async Task DeleteAllAsync()
+    {
+        var db = await _db.GetConnectionAsync();
+
+        await db.RunInTransactionAsync(tran =>
+        {
+            tran.DeleteAll<GroceryItemEntity>();
+        });
     }
 }

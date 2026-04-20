@@ -14,6 +14,7 @@ public interface IWishService
     Task ConvertToExpenseAsync(int id);
     Task DeleteWishItemAsync(int id);
     Task<bool> IsDuplicateAsync(string name);
+    Task DeleteAllAsync();
 }
 
 // ── Implementation ────────────────────────────────────────────────────────────
@@ -129,6 +130,15 @@ public class WishService : IWishService
         var items = await db.Table<WishItemEntity>().ToListAsync();
         return items.Any(w => string.Equals(w.Name.Trim(), name.Trim(),
             StringComparison.OrdinalIgnoreCase));
+    }
+    public async Task DeleteAllAsync()
+    {
+        var db = await _db.GetConnectionAsync();
+
+        await db.RunInTransactionAsync(tran =>
+        {
+            tran.DeleteAll<WishItemEntity>();
+        });
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

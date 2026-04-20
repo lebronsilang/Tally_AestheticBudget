@@ -76,6 +76,16 @@
                            TextColor="{StaticResource TextSecondary}" />
                 </Border>
 
+                <Border x:Name="TabSettings"
+                        BackgroundColor="Transparent" StrokeThickness="0"
+                        StrokeShape="RoundRectangle 980" Padding="14,6">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="SettingsPage" />
+                    </Border.GestureRecognizers>
+                    <Label x:Name="TabSettingsLabel" Text="Settings" FontSize="13"
+                            TextColor="{StaticResource TextSecondary}" />
+                </Border>
+
             </HorizontalStackLayout>
 
             <!-- + Add placeholder (keeps layout balanced) -->
@@ -114,6 +124,12 @@
             <ShellContent
                 ContentTemplate="{DataTemplate views:ThemesPage}"
                 Route="ThemesPage" />
+        </Tab>
+
+        <Tab x:Name="SettingsTab" Title="Settings">
+            <ShellContent
+                ContentTemplate="{DataTemplate views:SettingsPage}"
+                Route="SettingsPage" />
         </Tab>
 
     </TabBar>

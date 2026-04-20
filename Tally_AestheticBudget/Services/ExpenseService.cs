@@ -13,11 +13,13 @@ public interface IExpenseService
     Task DeleteExpenseAsync(int id);
     Task DeleteGroceryGroupAsync(int groupId);
     Task DeleteGroceryLineItemAsync(int lineItemId);
+    Task DeleteAllAsync();
 }
 
 public class ExpenseService : IExpenseService
 {
     private readonly DatabaseService _db;
+    
 
     public ExpenseService(DatabaseService db) => _db = db;
 
@@ -92,6 +94,17 @@ public class ExpenseService : IExpenseService
         }
 
         return cards.OrderByDescending(c => c.Date);
+    }
+
+    public async Task DeleteAllAsync()
+    {
+        var db = await _db.GetConnectionAsync();
+
+        // Delete all expense rows (including grocery line items)
+        await db.DeleteAllAsync<ExpenseEntity>();
+
+        // Delete all grocery groups
+        await db.DeleteAllAsync<GroceryGroupEntity>();
     }
 
     // Fetches the raw DB row by Id — used by edit mode to pre-fill the form
