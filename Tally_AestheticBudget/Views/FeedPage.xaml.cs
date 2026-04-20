@@ -39,6 +39,7 @@ public partial class FeedPage : ContentPage
         var newColumnCount = GetColumnCount(width);
 
         if (newColumnCount == _lastColumnCount && _gridPopulated) return;
+        if (_viewModel.IsLoading) return;
 
         _lastColumnCount = newColumnCount;
         _gridPopulated = false;

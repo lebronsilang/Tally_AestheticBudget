@@ -7,10 +7,11 @@ using Tally_AestheticBudget.Views;
 
 namespace Tally_AestheticBudget.ViewModels;
 
+
 public partial class FeedViewModel : ObservableObject
 {
     private readonly IExpenseService _expenseService;
-
+    public int CurrentColumnCount { get; set; } = 2;
     public FeedViewModel(IExpenseService expenseService)
     {
         _expenseService = expenseService;
@@ -87,15 +88,24 @@ public partial class FeedViewModel : ObservableObject
 
     private void BuildMonthOptions()
     {
-        MonthOptions.Clear();
-        for (int m = 1; m <= 12; m++)
+        if (MonthOptions.Count == 0)
         {
-            MonthOptions.Add(new MonthOption
+            for (int m = 1; m <= 12; m++)
             {
-                Month = m,
-                ShortName = new DateTime(2000, m, 1).ToString("MMM"),
-                IsSelected = m == _selectedPickerMonth && _activeFilter == FilterMode.Month
-            });
+                MonthOptions.Add(new MonthOption
+                {
+                    Month = m,
+                    ShortName = new DateTime(2000, m, 1).ToString("MMM")
+                });
+            }
+        }
+
+        // just update selection state
+        foreach (var item in MonthOptions)
+        {
+            item.IsSelected =
+                item.Month == _selectedPickerMonth &&
+                _activeFilter == FilterMode.Month;
         }
     }
 
@@ -482,9 +492,25 @@ public partial class FeedViewModel : ObservableObject
             var itemList = items.ToList();
             FeedItems = new ObservableCollection<FeedCardItem>(itemList);
 
+            if (itemList.Count == 0)
+            {
+                _columns = new List<ObservableCollection<FeedCardItem>>
+                {
+                    new(),
+                    new()
+                };
+
+                OnPropertyChanged(nameof(Columns));
+                ColumnsRebuilt?.Invoke();
+                UpdateLabels();
+                return;
+            }
+
+            DistributeIntoColumns(itemList, CurrentColumnCount);
+
             // DistributeIntoColumns uses the last known column count from code-behind.
             // Code-behind subscribes to ColumnsRebuilt and re-wires the UI.
-            DistributeIntoColumns(itemList);
+
             UpdateLabels();
         }
         finally
@@ -500,10 +526,13 @@ public partial class FeedViewModel : ObservableObject
         var list = itemList ?? FeedItems.ToList();
 
         // Build fresh empty collections, one per column
-        _columns = Enumerable
-            .Range(0, columnCount)
-            .Select(_ => new ObservableCollection<FeedCardItem>())
-            .ToList();
+        _columns.Clear();
+
+        for (int i = 0; i < columnCount; i++)
+            _columns.Add(new ObservableCollection<FeedCardItem>());
+
+        OnPropertyChanged(nameof(Columns));
+        ColumnsRebuilt?.Invoke();
 
         // Round-robin: item 0 → col 0, item 1 → col 1, item 2 → col 0, etc.
         for (int i = 0; i < list.Count; i++)

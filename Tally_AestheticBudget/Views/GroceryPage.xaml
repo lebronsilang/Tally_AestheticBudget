@@ -22,7 +22,7 @@
 
                 <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
                     <VerticalStackLayout Grid.Column="0" Spacing="2">
-                        <Label Text="Grocery List 🛒" FontFamily="DisplayFont"
+                        <Label Text="Grocery List" FontFamily="DisplayFont"
                                FontSize="26" TextColor="{StaticResource TextPrimary}" />
                         <Label Text="{Binding StatsLabel}" FontSize="13"
                                TextColor="{StaticResource TextSecondary}" />
@@ -124,7 +124,10 @@
                 IsVisible="{Binding DisplayedItems.Count, Converter={StaticResource ZeroToBool}}"
                 HorizontalOptions="Center" VerticalOptions="Center"
                 Spacing="10" Padding="40">
-                <Label Text="🛒" FontSize="48" HorizontalOptions="Center" />
+                <Image Source="icon_grocery.png"
+                   WidthRequest="48"
+                   HeightRequest="48"
+                   HorizontalOptions="Center" />
                 <Label Text="Your grocery list is empty."
                        FontSize="15" HorizontalOptions="Center"
                        TextColor="{StaticResource TextSecondary}" />
@@ -209,7 +212,7 @@
                 <VerticalStackLayout Spacing="20">
 
                     <Grid ColumnDefinitions="*,Auto">
-                        <Label Grid.Column="0" Text="Add Item 🛒"
+                        <Label Grid.Column="0" Text="Add Item"
                                FontFamily="DisplayFont" FontSize="22"
                                TextColor="{StaticResource TextPrimary}" />
                         <Border Grid.Column="1"
