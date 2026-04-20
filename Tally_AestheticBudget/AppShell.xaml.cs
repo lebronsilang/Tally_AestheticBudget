@@ -14,15 +14,15 @@ public partial class AppShell : Shell
 
         _tabs = new()
         {
-            ["FeedPage"]     = (TabFeed,     TabFeedLabel),
-            ["BudgetPage"]   = (TabBudget,   TabBudgetLabel),
+            ["FeedPage"] = (TabFeed, TabFeedLabel),
+            ["BudgetPage"] = (TabBudget, TabBudgetLabel),
             ["WishlistPage"] = (TabWishlist, TabWishlistLabel),
-            ["GroceryPage"]  = (TabGrocery,  TabGroceryLabel),
-            ["ThemesPage"]   = (TabThemes,   TabThemesLabel),
+            ["GroceryPage"] = (TabGrocery, TabGroceryLabel),
+            ["ThemesPage"] = (TabThemes, TabThemesLabel),
+            ["SettingsPage"] = (TabSettings, TabSettingsLabel), // ← added
         };
         SetActiveTab("FeedPage");
 
-        // Keep nav bar in sync when Shell navigates
         Navigated += (s, e) =>
         {
             var route = CurrentState.Location.OriginalString.TrimStart('/');
@@ -39,10 +39,7 @@ public partial class AppShell : Shell
         foreach (var (key, (tab, label)) in _tabs)
         {
             bool isActive = key == route;
-            if (isActive)
-                tab.BackgroundColor = accent.WithAlpha(0.12f);
-            else
-                tab.BackgroundColor = Colors.Transparent;
+            tab.BackgroundColor = isActive ? accent.WithAlpha(0.12f) : Colors.Transparent;
             label.TextColor = isActive ? accent : Color.FromArgb("#6e6e73");
             label.FontAttributes = isActive ? FontAttributes.Bold : FontAttributes.None;
         }
@@ -65,7 +62,6 @@ public partial class AppShell : Shell
         }
     }
 
-    // Called by ThemeService when accent changes so tabs update
     public void RefreshAccent()
     {
         SetActiveTab(_currentRoute);

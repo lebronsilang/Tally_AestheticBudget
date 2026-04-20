@@ -205,8 +205,8 @@
                         </VerticalStackLayout>
 
                         <VerticalStackLayout Spacing="5">
-                            <Label Text="Price (₱)" FontSize="11" FontAttributes="Bold"
-                                   TextColor="{StaticResource TextPrimary}" />
+                            <Label Text="{Binding PriceLabelText}" FontSize="11" FontAttributes="Bold"
+                                    TextColor="{StaticResource TextPrimary}" />
                             <Border BackgroundColor="{StaticResource PageBackground}"
                                     Stroke="{StaticResource CardBorder}"
                                     StrokeThickness="0.8" StrokeShape="RoundRectangle 10"

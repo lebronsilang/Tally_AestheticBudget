@@ -1,6 +1,7 @@
-using System.Collections.ObjectModel;
 using Microsoft.Maui.Controls;
+using System.Collections.ObjectModel;
 using Tally_AestheticBudget.Models;
+using Tally_AestheticBudget.Services;
 using Tally_AestheticBudget.ViewModels;
 
 namespace Tally_AestheticBudget.Views;
@@ -10,11 +11,13 @@ public partial class FeedPage : ContentPage
     private readonly FeedViewModel _viewModel;
     private int _lastColumnCount = 0;
     private bool _gridPopulated = false;
+    private readonly ISettingsService _settings;
 
-    public FeedPage(FeedViewModel viewModel)
+    public FeedPage(FeedViewModel viewModel, ISettingsService settings)
     {
         InitializeComponent();
         _viewModel = viewModel;
+        _settings = settings;
         BindingContext = viewModel;
 
         _viewModel.ColumnsRebuilt += () =>

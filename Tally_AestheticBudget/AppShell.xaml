@@ -8,13 +8,11 @@
     Shell.NavBarIsVisible="True"
     Shell.BackgroundColor="{StaticResource CardBackground}">
 
-    <!-- Custom top nav bar: logo left · tabs center · add right -->
     <Shell.TitleView>
         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="0"
               BackgroundColor="{StaticResource CardBackground}"
               Padding="16,0">
 
-            <!-- Logo -->
             <HorizontalStackLayout Grid.Column="0" Spacing="4" VerticalOptions="Center">
                 <Label Text="tally" FontFamily="DisplayFont" FontSize="18"
                        TextColor="{StaticResource AccentColor}" VerticalOptions="Center" />
@@ -22,7 +20,6 @@
                        TextColor="{StaticResource AccentColor}" VerticalOptions="Center" />
             </HorizontalStackLayout>
 
-            <!-- Centered tabs -->
             <HorizontalStackLayout Grid.Column="1" Spacing="4"
                                    HorizontalOptions="Center" VerticalOptions="Center">
 
@@ -76,6 +73,7 @@
                            TextColor="{StaticResource TextSecondary}" />
                 </Border>
 
+                <!-- ↓ NEW -->
                 <Border x:Name="TabSettings"
                         BackgroundColor="Transparent" StrokeThickness="0"
                         StrokeShape="RoundRectangle 980" Padding="14,6">
@@ -83,12 +81,11 @@
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="SettingsPage" />
                     </Border.GestureRecognizers>
                     <Label x:Name="TabSettingsLabel" Text="Settings" FontSize="13"
-                            TextColor="{StaticResource TextSecondary}" />
+                           TextColor="{StaticResource TextSecondary}" />
                 </Border>
 
             </HorizontalStackLayout>
 
-            <!-- + Add placeholder (keeps layout balanced) -->
             <BoxView Grid.Column="2" WidthRequest="80" BackgroundColor="Transparent" />
 
         </Grid>
@@ -97,39 +94,34 @@
     <TabBar x:Name="MainTabBar">
 
         <Tab x:Name="FeedTab" Title="Feed">
-            <ShellContent
-                ContentTemplate="{DataTemplate views:FeedPage}"
-                Route="FeedPage" />
+            <ShellContent ContentTemplate="{DataTemplate views:FeedPage}"
+                          Route="FeedPage" />
         </Tab>
 
         <Tab x:Name="BudgetTab" Title="Budget">
-            <ShellContent
-                ContentTemplate="{DataTemplate views:BudgetPage}"
-                Route="BudgetPage" />
+            <ShellContent ContentTemplate="{DataTemplate views:BudgetPage}"
+                          Route="BudgetPage" />
         </Tab>
 
         <Tab x:Name="GroceryTab" Title="Grocery">
-            <ShellContent
-                ContentTemplate="{DataTemplate views:GroceryPage}"
-                Route="GroceryPage" />
+            <ShellContent ContentTemplate="{DataTemplate views:GroceryPage}"
+                          Route="GroceryPage" />
         </Tab>
 
         <Tab x:Name="WishlistTab" Title="Wishlist">
-            <ShellContent
-                ContentTemplate="{DataTemplate views:WishlistPage}"
-                Route="WishlistPage" />
+            <ShellContent ContentTemplate="{DataTemplate views:WishlistPage}"
+                          Route="WishlistPage" />
         </Tab>
 
         <Tab x:Name="ThemesTab" Title="Themes">
-            <ShellContent
-                ContentTemplate="{DataTemplate views:ThemesPage}"
-                Route="ThemesPage" />
+            <ShellContent ContentTemplate="{DataTemplate views:ThemesPage}"
+                          Route="ThemesPage" />
         </Tab>
 
+        <!-- ↓ NEW -->
         <Tab x:Name="SettingsTab" Title="Settings">
-            <ShellContent
-                ContentTemplate="{DataTemplate views:SettingsPage}"
-                Route="SettingsPage" />
+            <ShellContent ContentTemplate="{DataTemplate views:SettingsPage}"
+                          Route="SettingsPage" />
         </Tab>
 
     </TabBar>

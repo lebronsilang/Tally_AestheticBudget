@@ -11,25 +11,30 @@ public partial class WishlistViewModel : ObservableObject
     private readonly IWishService _wishService;
     private readonly IBudgetService _budgetService;
     private readonly IExpenseService _expenseService;
+    private readonly ISettingsService _settings;
 
     private List<WishCardItem> _allItems = [];
 
     public WishlistViewModel(
         IWishService wishService,
         IBudgetService budgetService,
-        IExpenseService expenseService)
+        IExpenseService expenseService,
+        ISettingsService settings)
     {
         _wishService = wishService;
         _budgetService = budgetService;
         _expenseService = expenseService;
+        _settings = settings;
     }
+
+    // Exposed so XAML can bind the currency label dynamically
+    public string CurrencySymbol => _settings.CurrencySymbol;
+    public string PriceLabelText => $"Price ({_settings.CurrencySymbol})";
 
     // ── Items ─────────────────────────────────────────────────────────────────
 
     [ObservableProperty]
     private ObservableCollection<WishCardItem> _displayedItems = [];
-
-    // ── Masonry columns ───────────────────────────────────────────────────────
 
     public ObservableCollection<ObservableCollection<WishCardItem>> Columns { get; } = [];
 
@@ -52,11 +57,8 @@ public partial class WishlistViewModel : ObservableObject
         ColumnsRebuilt?.Invoke();
     }
 
-    [ObservableProperty]
-    private bool _isLoading;
-
-    [ObservableProperty]
-    private string _statsLabel = "0 planned · 0 bought";
+    [ObservableProperty] private bool _isLoading;
+    [ObservableProperty] private string _statsLabel = "0 planned · 0 bought";
 
     // ── Filter ────────────────────────────────────────────────────────────────
 
@@ -76,27 +78,15 @@ public partial class WishlistViewModel : ObservableObject
     public bool IsFilterNeed => ActiveFilter == WishFilter.Need;
     public bool IsFilterSomeday => ActiveFilter == WishFilter.Someday;
 
-    // ── Add modal — form fields ───────────────────────────────────────────────
+    // ── Add modal ─────────────────────────────────────────────────────────────
 
-    [ObservableProperty]
-    private bool _isAddModalVisible;
+    [ObservableProperty] private bool _isAddModalVisible;
+    [ObservableProperty] private string _newName = string.Empty;
+    [ObservableProperty] private string _newPrice = string.Empty;
+    [ObservableProperty] private string _newCaption = string.Empty;
+    [ObservableProperty] private string _newTargetMonth = string.Empty;
+    [ObservableProperty] private string? _newPhotoPath;
 
-    [ObservableProperty]
-    private string _newName = string.Empty;
-
-    [ObservableProperty]
-    private string _newPrice = string.Empty;
-
-    [ObservableProperty]
-    private string _newCaption = string.Empty;
-
-    [ObservableProperty]
-    private string _newTargetMonth = string.Empty;
-
-    [ObservableProperty]
-    private string? _newPhotoPath;
-
-    // Priority selection
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsWantSelected))]
     [NotifyPropertyChangedFor(nameof(IsNeedSelected))]
@@ -107,7 +97,6 @@ public partial class WishlistViewModel : ObservableObject
     public bool IsNeedSelected => NewPriority == WishPriority.Need;
     public bool IsSomedaySelected => NewPriority == WishPriority.Someday;
 
-    // Category selection — one bool per category, same pattern as AddExpenseViewModel
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNewFoodSelected))]
     [NotifyPropertyChangedFor(nameof(IsNewShoppingSelected))]
@@ -121,44 +110,25 @@ public partial class WishlistViewModel : ObservableObject
     public bool IsNewHealthSelected => NewCategory == ExpenseCategory.Health;
     public bool IsNewFunSelected => NewCategory == ExpenseCategory.Fun;
     public bool IsNewOtherSelected => NewCategory == ExpenseCategory.Other;
-
     public bool NewHasPhoto => !string.IsNullOrEmpty(NewPhotoPath);
 
     // ── Detail modal ──────────────────────────────────────────────────────────
 
-    [ObservableProperty]
-    private bool _isDetailVisible;
+    [ObservableProperty] private bool _isDetailVisible;
+    [ObservableProperty] private WishCardItem? _selectedItem;
+    [ObservableProperty] private AffordResult? _affordResult;
+    [ObservableProperty] private bool _showAffordResult;
 
-    [ObservableProperty]
-    private WishCardItem? _selectedItem;
+    // ── Filter commands ───────────────────────────────────────────────────────
 
-    [ObservableProperty]
-    private AffordResult? _affordResult;
+    [RelayCommand] private void FilterAll() { ActiveFilter = WishFilter.All; ApplyFilter(); }
+    [RelayCommand] private void FilterPlanned() { ActiveFilter = WishFilter.Planned; ApplyFilter(); }
+    [RelayCommand] private void FilterBought() { ActiveFilter = WishFilter.Bought; ApplyFilter(); }
+    [RelayCommand] private void FilterWant() { ActiveFilter = WishFilter.Want; ApplyFilter(); }
+    [RelayCommand] private void FilterNeed() { ActiveFilter = WishFilter.Need; ApplyFilter(); }
+    [RelayCommand] private void FilterSomeday() { ActiveFilter = WishFilter.Someday; ApplyFilter(); }
 
-    [ObservableProperty]
-    private bool _showAffordResult;
-
-    // ── Commands — filter ─────────────────────────────────────────────────────
-
-    [RelayCommand]
-    private void FilterAll() { ActiveFilter = WishFilter.All; ApplyFilter(); }
-
-    [RelayCommand]
-    private void FilterPlanned() { ActiveFilter = WishFilter.Planned; ApplyFilter(); }
-
-    [RelayCommand]
-    private void FilterBought() { ActiveFilter = WishFilter.Bought; ApplyFilter(); }
-
-    [RelayCommand]
-    private void FilterWant() { ActiveFilter = WishFilter.Want; ApplyFilter(); }
-
-    [RelayCommand]
-    private void FilterNeed() { ActiveFilter = WishFilter.Need; ApplyFilter(); }
-
-    [RelayCommand]
-    private void FilterSomeday() { ActiveFilter = WishFilter.Someday; ApplyFilter(); }
-
-    // ── Commands — add modal ──────────────────────────────────────────────────
+    // ── Add modal commands ────────────────────────────────────────────────────
 
     [RelayCommand]
     private void OpenAddModal()
@@ -171,24 +141,22 @@ public partial class WishlistViewModel : ObservableObject
         NewPriority = WishPriority.Want;
         NewCategory = ExpenseCategory.Shopping;
         OnPropertyChanged(nameof(NewHasPhoto));
+        OnPropertyChanged(nameof(PriceLabelText));
         IsAddModalVisible = true;
     }
 
-    [RelayCommand]
-    private void DismissAddModal() => IsAddModalVisible = false;
+    [RelayCommand] private void DismissAddModal() => IsAddModalVisible = false;
 
     [RelayCommand]
     private void SelectPriority(string priority)
     {
-        if (Enum.TryParse<WishPriority>(priority, out var p))
-            NewPriority = p;
+        if (Enum.TryParse<WishPriority>(priority, out var p)) NewPriority = p;
     }
 
     [RelayCommand]
     private void SelectWishCategory(string category)
     {
-        if (Enum.TryParse<ExpenseCategory>(category, out var cat))
-            NewCategory = cat;
+        if (Enum.TryParse<ExpenseCategory>(category, out var cat)) NewCategory = cat;
     }
 
     [RelayCommand]
@@ -198,16 +166,14 @@ public partial class WishlistViewModel : ObservableObject
         {
             var result = await MediaPicker.Default.PickPhotoAsync();
             if (result is null) return;
-
             var localPath = Path.Combine(FileSystem.AppDataDirectory, result.FileName);
             using var stream = await result.OpenReadAsync();
             using var fileStream = File.OpenWrite(localPath);
             await stream.CopyToAsync(fileStream);
-
             NewPhotoPath = localPath;
             OnPropertyChanged(nameof(NewHasPhoto));
         }
-        catch { /* user cancelled */ }
+        catch { }
     }
 
     [RelayCommand]
@@ -222,13 +188,11 @@ public partial class WishlistViewModel : ObservableObject
     {
         if (string.IsNullOrWhiteSpace(NewName)) return;
 
-        // Duplicate detection
         if (await _wishService.IsDuplicateAsync(NewName))
         {
             await Shell.Current.DisplayAlertAsync(
                 "Already on your board",
-                $"\"{NewName}\" is already in your Dream Board.",
-                "OK");
+                $"\"{NewName}\" is already in your Dream Board.", "OK");
             return;
         }
 
@@ -251,7 +215,7 @@ public partial class WishlistViewModel : ObservableObject
         await LoadAsync();
     }
 
-    // ── Commands — detail modal ───────────────────────────────────────────────
+    // ── Detail commands ───────────────────────────────────────────────────────
 
     [RelayCommand]
     private async Task OpenDetailAsync(WishCardItem item)
@@ -263,22 +227,19 @@ public partial class WishlistViewModel : ObservableObject
         await CheckAffordabilityAsync(item);
     }
 
-    [RelayCommand]
-    private void DismissDetail() => IsDetailVisible = false;
+    [RelayCommand] private void DismissDetail() => IsDetailVisible = false;
 
     [RelayCommand]
     private async Task ToggleStatusAsync(string statusStr)
     {
         if (SelectedItem is null) return;
-        if (Enum.TryParse<WishStatus>(statusStr, out var status))
-        {
-            await _wishService.UpdateStatusAsync(SelectedItem.Id, status);
-            SelectedItem.Status = status;
-            // Sync back to _allItems so filter/stats stay accurate
-            var match = _allItems.FirstOrDefault(i => i.Id == SelectedItem.Id);
-            if (match is not null) match.Status = status;
-            UpdateStats();
-        }
+        if (!Enum.TryParse<WishStatus>(statusStr, out var status)) return;
+
+        await _wishService.UpdateStatusAsync(SelectedItem.Id, status);
+        SelectedItem.Status = status;
+        var match = _allItems.FirstOrDefault(i => i.Id == SelectedItem.Id);
+        if (match is not null) match.Status = status;
+        UpdateStats();
     }
 
     [RelayCommand]
@@ -304,12 +265,10 @@ public partial class WishlistViewModel : ObservableObject
     private async Task ConvertToExpenseAsync()
     {
         if (SelectedItem is null) return;
-
         bool confirmed = await Shell.Current.DisplayAlertAsync(
             "Move to Expenses",
             $"Add \"{SelectedItem.Name}\" to your expense feed?",
             "Move", "Cancel");
-
         if (!confirmed) return;
 
         await _wishService.ConvertToExpenseAsync(SelectedItem.Id);
@@ -321,12 +280,10 @@ public partial class WishlistViewModel : ObservableObject
     private async Task DeleteWishItemAsync()
     {
         if (SelectedItem is null) return;
-
         bool confirmed = await Shell.Current.DisplayAlertAsync(
             "Remove",
             $"Remove \"{SelectedItem.Name}\" from your Dream Board?",
             "Remove", "Cancel");
-
         if (!confirmed) return;
 
         await _wishService.DeleteWishItemAsync(SelectedItem.Id);
@@ -334,7 +291,7 @@ public partial class WishlistViewModel : ObservableObject
         await LoadAsync();
     }
 
-    // ── Affordability check ───────────────────────────────────────────────────
+    // ── Affordability ─────────────────────────────────────────────────────────
 
     private async Task CheckAffordabilityAsync(WishCardItem item)
     {
@@ -342,14 +299,11 @@ public partial class WishlistViewModel : ObservableObject
         var budgets = await _budgetService.GetBudgetItemsAsync(now.Year, now.Month);
         var budget = budgets.FirstOrDefault(b => b.Category == item.Category);
 
-        if (budget is null || budget.Limit <= 0)
-        {
-            ShowAffordResult = false;
-            return;
-        }
+        if (budget is null || budget.Limit <= 0) { ShowAffordResult = false; return; }
 
         var remaining = budget.Limit - budget.Spent;
         var canAfford = remaining >= item.Price;
+        var sym = _settings.CurrencySymbol;
 
         AffordResult = new AffordResult
         {
@@ -362,11 +316,9 @@ public partial class WishlistViewModel : ObservableObject
         ShowAffordResult = true;
     }
 
-    // ── Page lifecycle ────────────────────────────────────────────────────────
+    // ── Lifecycle ─────────────────────────────────────────────────────────────
 
     public async Task OnPageAppearingAsync() => await LoadAsync();
-
-    // ── Data loading ──────────────────────────────────────────────────────────
 
     private async Task LoadAsync()
     {
@@ -378,10 +330,7 @@ public partial class WishlistViewModel : ObservableObject
             UpdateStats();
             ApplyFilter();
         }
-        finally
-        {
-            IsLoading = false;
-        }
+        finally { IsLoading = false; }
     }
 
     private void ApplyFilter()

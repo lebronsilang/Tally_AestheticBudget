@@ -10,31 +10,28 @@ public partial class GroceryViewModel : ObservableObject
 {
     private readonly IGroceryService _groceryService;
     private readonly IBudgetService _budgetService;
+    private readonly ISettingsService _settings;
 
-    // Full unfiltered list — filtering happens in ApplyFilter()
     private List<GroceryItem> _allItems = [];
 
-    public GroceryViewModel(IGroceryService groceryService, IBudgetService budgetService)
+    public GroceryViewModel(
+        IGroceryService groceryService,
+        IBudgetService budgetService,
+        ISettingsService settings)
     {
         _groceryService = groceryService;
         _budgetService = budgetService;
+        _settings = settings;
     }
+
+    public string PriceLabelText => $"Price ({_settings.CurrencySymbol}) optional";
 
     // ── Items ─────────────────────────────────────────────────────────────────
 
-    [ObservableProperty]
-    private ObservableCollection<GroceryItem> _displayedItems = [];
-
-    [ObservableProperty]
-    private bool _isLoading;
-
-    // ── Stats ─────────────────────────────────────────────────────────────────
-
-    [ObservableProperty]
-    private string _statsLabel = "0 items · ₱0.00 total";
-
-    [ObservableProperty]
-    private GroceryBudgetStatus _budgetStatus = new();
+    [ObservableProperty] private ObservableCollection<GroceryItem> _displayedItems = [];
+    [ObservableProperty] private bool _isLoading;
+    [ObservableProperty] private string _statsLabel = "0 items · ₱0.00 total";
+    [ObservableProperty] private GroceryBudgetStatus _budgetStatus = new();
 
     // ── Filter ────────────────────────────────────────────────────────────────
 
@@ -48,47 +45,26 @@ public partial class GroceryViewModel : ObservableObject
     public bool IsFilterPending => ActiveFilter == GroceryFilter.Pending;
     public bool IsFilterChecked => ActiveFilter == GroceryFilter.Checked;
 
-    // ── Add item modal ────────────────────────────────────────────────────────
+    // ── Add modal ─────────────────────────────────────────────────────────────
 
-    [ObservableProperty]
-    private bool _isAddModalVisible;
+    [ObservableProperty] private bool _isAddModalVisible;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(SaveItemCommand))]
     private string _newItemName = string.Empty;
 
-    [ObservableProperty]
-    private string _newItemPrice = string.Empty;
-
-    [ObservableProperty]
-    private string _newItemQuantity = "1";
+    [ObservableProperty] private string _newItemPrice = string.Empty;
+    [ObservableProperty] private string _newItemQuantity = "1";
 
     private bool CanSaveItem() => !string.IsNullOrWhiteSpace(NewItemName);
 
-    // ── Commands — filter ─────────────────────────────────────────────────────
+    // ── Filter commands ───────────────────────────────────────────────────────
 
-    [RelayCommand]
-    private void FilterAll()
-    {
-        ActiveFilter = GroceryFilter.All;
-        ApplyFilter();
-    }
+    [RelayCommand] private void FilterAll() { ActiveFilter = GroceryFilter.All; ApplyFilter(); }
+    [RelayCommand] private void FilterPending() { ActiveFilter = GroceryFilter.Pending; ApplyFilter(); }
+    [RelayCommand] private void FilterChecked() { ActiveFilter = GroceryFilter.Checked; ApplyFilter(); }
 
-    [RelayCommand]
-    private void FilterPending()
-    {
-        ActiveFilter = GroceryFilter.Pending;
-        ApplyFilter();
-    }
-
-    [RelayCommand]
-    private void FilterChecked()
-    {
-        ActiveFilter = GroceryFilter.Checked;
-        ApplyFilter();
-    }
-
-    // ── Commands — add modal ──────────────────────────────────────────────────
+    // ── Add modal commands ────────────────────────────────────────────────────
 
     [RelayCommand]
     private void OpenAddModal()
@@ -96,11 +72,11 @@ public partial class GroceryViewModel : ObservableObject
         NewItemName = string.Empty;
         NewItemPrice = string.Empty;
         NewItemQuantity = "1";
+        OnPropertyChanged(nameof(PriceLabelText));
         IsAddModalVisible = true;
     }
 
-    [RelayCommand]
-    private void DismissAddModal() => IsAddModalVisible = false;
+    [RelayCommand] private void DismissAddModal() => IsAddModalVisible = false;
 
     [RelayCommand(CanExecute = nameof(CanSaveItem))]
     private async Task SaveItemAsync()
@@ -114,19 +90,15 @@ public partial class GroceryViewModel : ObservableObject
         await LoadAsync();
     }
 
-    // ── Commands — list actions ───────────────────────────────────────────────
+    // ── List commands ─────────────────────────────────────────────────────────
 
     [RelayCommand]
     private async Task ToggleCheckedAsync(GroceryItem item)
     {
         await _groceryService.ToggleCheckedAsync(item.Id);
         item.IsChecked = !item.IsChecked;
-
-        // Recalculate pending total for budget bar live update
         UpdateBudgetPending();
         UpdateStats();
-
-        // Re-apply filter so checked items move to correct section
         ApplyFilter();
     }
 
@@ -147,9 +119,7 @@ public partial class GroceryViewModel : ObservableObject
         if (checkedCount == 0)
         {
             await Shell.Current.DisplayAlertAsync(
-                "Nothing checked",
-                "Check off items you've bought first.",
-                "OK");
+                "Nothing checked", "Check off items you've bought first.", "OK");
             return;
         }
 
@@ -157,21 +127,15 @@ public partial class GroceryViewModel : ObservableObject
             "Buy Checked",
             $"Convert {checkedCount} item{(checkedCount == 1 ? "" : "s")} to expenses?",
             "Buy", "Cancel");
-
         if (!confirmed) return;
 
         await _groceryService.BuyCheckedAsync();
         await LoadAsync();
     }
 
-    // ── Page lifecycle ────────────────────────────────────────────────────────
+    // ── Lifecycle ─────────────────────────────────────────────────────────────
 
-    public async Task OnPageAppearingAsync()
-    {
-        await LoadAsync();
-    }
-
-    // ── Data loading ──────────────────────────────────────────────────────────
+    public async Task OnPageAppearingAsync() => await LoadAsync();
 
     private async Task LoadAsync()
     {
@@ -181,24 +145,18 @@ public partial class GroceryViewModel : ObservableObject
             var items = await _groceryService.GetItemsAsync();
             _allItems = items.ToList();
 
-            // Load grocery budget status
             var now = DateTime.Now;
-            var budget = await _budgetService.GetBudgetItemsAsync(now.Year, now.Month);
-            var groceryBudget = budget.FirstOrDefault(b => b.Category == ExpenseCategory.Grocery);
-
+            var budgets = await _budgetService.GetBudgetItemsAsync(now.Year, now.Month);
+            var groceryBudget = budgets.FirstOrDefault(b => b.Category == ExpenseCategory.Grocery);
             var spent = await _groceryService.GetGrocerySpentThisMonthAsync();
 
             BudgetStatus.BudgetLimit = groceryBudget?.Limit ?? 0;
             BudgetStatus.AlreadySpent = spent;
             UpdateBudgetPending();
-
             UpdateStats();
             ApplyFilter();
         }
-        finally
-        {
-            IsLoading = false;
-        }
+        finally { IsLoading = false; }
     }
 
     private void ApplyFilter()
@@ -209,22 +167,21 @@ public partial class GroceryViewModel : ObservableObject
             GroceryFilter.Checked => _allItems.Where(i => i.IsChecked),
             _ => _allItems.AsEnumerable()
         };
-
         DisplayedItems = new ObservableCollection<GroceryItem>(filtered);
     }
 
     private void UpdateStats()
     {
+        var sym = _settings.CurrencySymbol;
         var count = _allItems.Count;
         var total = _allItems.Sum(i => i.Price * i.Quantity);
-        StatsLabel = $"{count} item{(count == 1 ? "" : "s")} · ₱{total:N2} total";
+        StatsLabel = $"{count} item{(count == 1 ? "" : "s")} · {sym}{total:N2} total";
     }
 
     private void UpdateBudgetPending()
     {
-        var pending = _allItems
+        BudgetStatus.PendingTotal = _allItems
             .Where(i => i.IsChecked)
             .Sum(i => i.Price * i.Quantity);
-        BudgetStatus.PendingTotal = pending;
     }
 }

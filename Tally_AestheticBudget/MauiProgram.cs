@@ -27,13 +27,14 @@ public static class MauiProgram
         // AddSingleton = one instance for the whole app lifetime (good for DB)
         // AddTransient = a fresh instance every time it's requested (good for ViewModels)
 
+        builder.Services.AddSingleton<ISettingsService, SettingsService>();
         builder.Services.AddSingleton<DatabaseService>();
         builder.Services.AddSingleton<IExpenseService, ExpenseService>();
         builder.Services.AddSingleton<IBudgetService, BudgetService>();
         builder.Services.AddSingleton<IGroceryService, GroceryService>();
         builder.Services.AddSingleton<IWishService, WishService>();
         builder.Services.AddSingleton<IThemeService, ThemeService>();
-        builder.Services.AddSingleton<ISettingsService, SettingsService>();
+
 
         // ── ViewModels ────────────────────────────────────────────────────────────
         builder.Services.AddTransient<FeedViewModel>();

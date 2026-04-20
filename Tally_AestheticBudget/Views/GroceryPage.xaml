@@ -245,8 +245,8 @@
 
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
                         <VerticalStackLayout Grid.Column="0" Spacing="8">
-                            <Label Text="Price (₱) optional" FontSize="13" FontAttributes="Bold"
-                                   TextColor="{StaticResource TextPrimary}" />
+                            <Label Text="{Binding PriceLabelText}" FontSize="13" FontAttributes="Bold"
+                                TextColor="{StaticResource TextPrimary}" />
                             <Border BackgroundColor="{StaticResource PageBackground}"
                                     Stroke="{StaticResource CardBorder}"
                                     StrokeThickness="0.8" StrokeShape="RoundRectangle 12"
