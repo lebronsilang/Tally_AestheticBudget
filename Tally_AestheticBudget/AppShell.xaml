@@ -73,7 +73,10 @@
                            TextColor="{StaticResource TextSecondary}" />
                 </Border>
 
+<<<<<<< HEAD
                 <!-- ↓ NEW -->
+=======
+>>>>>>> 60c1166 (Introduction of Settings Page)
                 <Border x:Name="TabSettings"
                         BackgroundColor="Transparent" StrokeThickness="0"
                         StrokeShape="RoundRectangle 980" Padding="14,6">
@@ -81,7 +84,11 @@
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="SettingsPage" />
                     </Border.GestureRecognizers>
                     <Label x:Name="TabSettingsLabel" Text="Settings" FontSize="13"
+<<<<<<< HEAD
                            TextColor="{StaticResource TextSecondary}" />
+=======
+                            TextColor="{StaticResource TextSecondary}" />
+>>>>>>> 60c1166 (Introduction of Settings Page)
                 </Border>
 
             </HorizontalStackLayout>
@@ -122,6 +129,12 @@
         <Tab x:Name="SettingsTab" Title="Settings">
             <ShellContent ContentTemplate="{DataTemplate views:SettingsPage}"
                           Route="SettingsPage" />
+        </Tab>
+
+        <Tab x:Name="SettingsTab" Title="Settings">
+            <ShellContent
+                ContentTemplate="{DataTemplate views:SettingsPage}"
+                Route="SettingsPage" />
         </Tab>
 
     </TabBar>

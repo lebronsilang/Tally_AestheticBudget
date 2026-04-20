@@ -34,6 +34,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<IGroceryService, GroceryService>();
         builder.Services.AddSingleton<IWishService, WishService>();
         builder.Services.AddSingleton<IThemeService, ThemeService>();
+        builder.Services.AddSingleton<ISettingsService, SettingsService>();
 
 
         // ── ViewModels ────────────────────────────────────────────────────────────
