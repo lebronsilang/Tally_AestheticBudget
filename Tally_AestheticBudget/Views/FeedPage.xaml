@@ -12,22 +12,24 @@
 
     <Grid>
 
-        <!-- Empty state — floats over the scroll view when there are no entries -->
+        <!-- Empty state -->
         <VerticalStackLayout
             IsVisible="{Binding HasNoEntries}"
             HorizontalOptions="Center" VerticalOptions="Center"
-            Spacing="12" Padding="40"
-            ZIndex="1">
+            Spacing="12" Padding="40">
             <Image Source="icon_sakura.png"
-                   WidthRequest="48" HeightRequest="48"
-                   HorizontalOptions="Center" />
+               WidthRequest="48"
+               HeightRequest="48"
+               HorizontalOptions="Center" />
             <Label Text="No entries yet. Add your first expense!"
                    FontSize="15" HorizontalOptions="Center"
                    TextColor="{StaticResource TextSecondary}" />
         </VerticalStackLayout>
 
-        <!-- Main scrollable content — ALWAYS visible so header/chips/add never disappear -->
-        <ScrollView x:Name="MasonryScrollView">
+        <!-- Main scrollable content -->
+        <ScrollView
+            x:Name="MasonryScrollView">
+
             <VerticalStackLayout Spacing="0">
 
                 <!-- ── Floating header card ───────────────────────────────── -->
@@ -69,8 +71,7 @@
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding OpenAddModalCommand}" />
                                 </Border.GestureRecognizers>
-                                <Label Text="+ Add" FontSize="14" FontAttributes="Bold"
-                                       TextColor="White" />
+                                <Label Text="+ Add" FontSize="14" FontAttributes="Bold" TextColor="White" />
                             </Border>
                         </Grid>
 
@@ -180,7 +181,7 @@
                         </VerticalStackLayout>
 
                         <VerticalStackLayout Spacing="5">
-                            <Label Text="Amount" FontSize="11" FontAttributes="Bold"
+                            <Label Text="Amount (₱)" FontSize="11" FontAttributes="Bold"
                                    TextColor="{StaticResource TextPrimary}" />
                             <Border BackgroundColor="{StaticResource PageBackground}"
                                     Stroke="{StaticResource CardBorder}"
@@ -204,11 +205,19 @@
                                         <TapGestureRecognizer Command="{Binding SelectNewCategoryCommand}" CommandParameter="Food" />
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
-                                        <Image Source="icon_food.png" WidthRequest="14" HeightRequest="14"
-                                               VerticalOptions="Center" />
-                                        <Label Text="Food" FontSize="12" VerticalOptions="Center"
-                                               TextColor="{Binding NewIsFoodSelected, Converter={StaticResource BoolToChipText}}" />
+
+                                        <Image Source="icon_food.png"
+                                           WidthRequest="14"
+                                           HeightRequest="14"
+                                           VerticalOptions="Center" />
+
+                                        <Label Text="Food"
+                                           FontSize="12"
+                                           VerticalOptions="Center"
+                                           TextColor="{Binding IsNewFoodSelected, Converter={StaticResource BoolToChipText}}" />
+
                                     </HorizontalStackLayout>
+
                                 </Border>
                                 <Border BackgroundColor="{Binding NewIsTransportSelected, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding NewIsTransportSelected, Converter={StaticResource BoolToChipBorder}}"
@@ -218,10 +227,16 @@
                                         <TapGestureRecognizer Command="{Binding SelectNewCategoryCommand}" CommandParameter="Transport" />
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-                                        <Image Source="icon_transport.png" WidthRequest="14" HeightRequest="14"
-                                               VerticalOptions="Center" />
-                                        <Label Text="Transport" FontSize="12" VerticalOptions="Center"
-                                               TextColor="{Binding NewIsTransportSelected, Converter={StaticResource BoolToChipText}}" />
+                                        
+                                        <Image Source="icon_transport.png"
+                                           WidthRequest="14"
+                                           HeightRequest="14" 
+                                           VerticalOptions="Center"/>
+                                        
+                                        <Label Text="Transport"
+                                           FontSize="12"
+                                           VerticalOptions="Center"
+                                           TextColor="{Binding NewIsTransportSelected, Converter={StaticResource BoolToChipText}}" />
                                     </HorizontalStackLayout>
                                 </Border>
                                 <Border BackgroundColor="{Binding NewIsShoppingSelected, Converter={StaticResource BoolToChipBg}}"
@@ -232,10 +247,17 @@
                                         <TapGestureRecognizer Command="{Binding SelectNewCategoryCommand}" CommandParameter="Shopping" />
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
-                                        <Image Source="icon_shopping.png" WidthRequest="14" HeightRequest="14"
-                                               VerticalOptions="Center" />
-                                        <Label Text="Shopping" FontSize="12" VerticalOptions="Center"
-                                               TextColor="{Binding NewIsShoppingSelected, Converter={StaticResource BoolToChipText}}" />
+
+                                        <Image Source="icon_shopping.png"
+                                           WidthRequest="14"
+                                           HeightRequest="14"
+                                           VerticalOptions="Center" />
+
+                                        <Label Text="Shopping"
+                                           FontSize="12"
+                                           VerticalOptions="Center"
+                                           TextColor="{Binding IsNewShoppingSelected, Converter={StaticResource BoolToChipText}}" />
+
                                     </HorizontalStackLayout>
                                 </Border>
                                 <Border BackgroundColor="{Binding NewIsHealthSelected, Converter={StaticResource BoolToChipBg}}"
@@ -246,10 +268,17 @@
                                         <TapGestureRecognizer Command="{Binding SelectNewCategoryCommand}" CommandParameter="Health" />
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
-                                        <Image Source="icon_health.png" WidthRequest="14" HeightRequest="14"
-                                               VerticalOptions="Center" />
-                                        <Label Text="Health" FontSize="12" VerticalOptions="Center"
-                                               TextColor="{Binding NewIsHealthSelected, Converter={StaticResource BoolToChipText}}" />
+
+                                        <Image Source="icon_health.png"
+                                            WidthRequest="14"
+                                            HeightRequest="14"
+                                            VerticalOptions="Center" />
+
+                                        <Label Text="Food"
+                                           FontSize="12"
+                                           VerticalOptions="Center"
+                                           TextColor="{Binding IsNewHealthSelected, Converter={StaticResource BoolToChipText}}" />
+
                                     </HorizontalStackLayout>
                                 </Border>
                                 <Border BackgroundColor="{Binding NewIsFunSelected, Converter={StaticResource BoolToChipBg}}"
@@ -260,10 +289,17 @@
                                         <TapGestureRecognizer Command="{Binding SelectNewCategoryCommand}" CommandParameter="Fun" />
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
-                                        <Image Source="icon_fun.png" WidthRequest="14" HeightRequest="14"
-                                               VerticalOptions="Center" />
-                                        <Label Text="Fun" FontSize="12" VerticalOptions="Center"
-                                               TextColor="{Binding NewIsFunSelected, Converter={StaticResource BoolToChipText}}" />
+
+                                        <Image Source="icon_fun.png"
+                                           WidthRequest="14"
+                                           HeightRequest="14"
+                                           VerticalOptions="Center" />
+
+                                        <Label Text="Food"
+                                           FontSize="12"
+                                           VerticalOptions="Center"
+                                           TextColor="{Binding IsNewFunSelected, Converter={StaticResource BoolToChipText}}" />
+
                                     </HorizontalStackLayout>
                                 </Border>
                                 <Border BackgroundColor="{Binding NewIsOtherSelected, Converter={StaticResource BoolToChipBg}}"
@@ -274,10 +310,17 @@
                                         <TapGestureRecognizer Command="{Binding SelectNewCategoryCommand}" CommandParameter="Other" />
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
-                                        <Image Source="icon_default.png" WidthRequest="14" HeightRequest="14"
-                                               VerticalOptions="Center" />
-                                        <Label Text="Other" FontSize="12" VerticalOptions="Center"
-                                               TextColor="{Binding NewIsOtherSelected, Converter={StaticResource BoolToChipText}}" />
+
+                                        <Image Source="icon_default.png"
+                                            WidthRequest="14"
+                                            HeightRequest="14"
+                                            VerticalOptions="Center" />
+
+                                        <Label Text="other"
+                                           FontSize="12"
+                                           VerticalOptions="Center"
+                                           TextColor="{Binding IsNewOtherSelected, Converter={StaticResource BoolToChipText}}" />
+
                                     </HorizontalStackLayout>
                                 </Border>
                             </FlexLayout>
@@ -412,7 +455,7 @@
                         </VerticalStackLayout>
 
                         <VerticalStackLayout Spacing="5">
-                            <Label Text="Amount" FontSize="11" FontAttributes="Bold"
+                            <Label Text="Amount (₱)" FontSize="11" FontAttributes="Bold"
                                    TextColor="{StaticResource TextPrimary}" />
                             <Border BackgroundColor="{StaticResource PageBackground}"
                                     Stroke="{StaticResource CardBorder}"
@@ -436,10 +479,17 @@
                                         <TapGestureRecognizer Command="{Binding SelectEditCategoryCommand}" CommandParameter="Food" />
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
-                                        <Image Source="icon_food.png" WidthRequest="14" HeightRequest="14"
-                                               VerticalOptions="Center" />
-                                        <Label Text="Food" FontSize="12" VerticalOptions="Center"
-                                               TextColor="{Binding EditIsFoodSelected, Converter={StaticResource BoolToChipText}}" />
+
+                                        <Image Source="icon_food.png"
+                                           WidthRequest="14"
+                                           HeightRequest="14"
+                                           VerticalOptions="Center" />
+
+                                        <Label Text="Food"
+                                           FontSize="12"
+                                           VerticalOptions="Center"
+                                           TextColor="{Binding IsNewFoodSelected, Converter={StaticResource BoolToChipText}}" />
+
                                     </HorizontalStackLayout>
                                 </Border>
                                 <Border BackgroundColor="{Binding EditIsTransportSelected, Converter={StaticResource BoolToChipBg}}"
@@ -450,10 +500,14 @@
                                         <TapGestureRecognizer Command="{Binding SelectEditCategoryCommand}" CommandParameter="Transport" />
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-                                        <Image Source="icon_transport.png" WidthRequest="14" HeightRequest="14"
-                                               VerticalOptions="Center" />
-                                        <Label Text="Transport" FontSize="12" VerticalOptions="Center"
-                                               TextColor="{Binding EditIsTransportSelected, Converter={StaticResource BoolToChipText}}" />
+                                        <Image Source="icon_transport.png"
+                                           WidthRequest="14"
+                                           HeightRequest="14"
+                                           VerticalOptions="Center"/>
+                                        <Label Text="Transport"
+                                            FontSize="12"
+                                            VerticalOptions="Center"
+                                            TextColor="{Binding NewIsTransportSelected, Converter={StaticResource BoolToChipText}}" />
                                     </HorizontalStackLayout>
                                 </Border>
                                 <Border BackgroundColor="{Binding EditIsShoppingSelected, Converter={StaticResource BoolToChipBg}}"
@@ -464,10 +518,17 @@
                                         <TapGestureRecognizer Command="{Binding SelectEditCategoryCommand}" CommandParameter="Shopping" />
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
-                                        <Image Source="icon_shopping.png" WidthRequest="14" HeightRequest="14"
-                                               VerticalOptions="Center" />
-                                        <Label Text="Shopping" FontSize="12" VerticalOptions="Center"
-                                               TextColor="{Binding EditIsShoppingSelected, Converter={StaticResource BoolToChipText}}" />
+
+                                        <Image Source="icon_shopping.png"
+                                            WidthRequest="14"
+                                            HeightRequest="14"
+                                            VerticalOptions="Center" />
+
+                                        <Label Text="Shopping"
+                                           FontSize="12"
+                                           VerticalOptions="Center"
+                                           TextColor="{Binding IsNewShoppingSelected, Converter={StaticResource BoolToChipText}}" />
+
                                     </HorizontalStackLayout>
                                 </Border>
                                 <Border BackgroundColor="{Binding EditIsHealthSelected, Converter={StaticResource BoolToChipBg}}"
@@ -478,10 +539,17 @@
                                         <TapGestureRecognizer Command="{Binding SelectEditCategoryCommand}" CommandParameter="Health" />
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
-                                        <Image Source="icon_health.png" WidthRequest="14" HeightRequest="14"
-                                               VerticalOptions="Center" />
-                                        <Label Text="Health" FontSize="12" VerticalOptions="Center"
-                                               TextColor="{Binding EditIsHealthSelected, Converter={StaticResource BoolToChipText}}" />
+
+                                        <Image Source="icon_health.png"
+                                           WidthRequest="14"
+                                           HeightRequest="14"
+                                           VerticalOptions="Center" />
+
+                                        <Label Text="Health"
+                                           FontSize="12"
+                                           VerticalOptions="Center"
+                                           TextColor="{Binding IsNewHealthSelected, Converter={StaticResource BoolToChipText}}" />
+
                                     </HorizontalStackLayout>
                                 </Border>
                                 <Border BackgroundColor="{Binding EditIsFunSelected, Converter={StaticResource BoolToChipBg}}"
@@ -492,10 +560,17 @@
                                         <TapGestureRecognizer Command="{Binding SelectEditCategoryCommand}" CommandParameter="Fun" />
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
-                                        <Image Source="icon_fun.png" WidthRequest="14" HeightRequest="14"
-                                               VerticalOptions="Center" />
-                                        <Label Text="Fun" FontSize="12" VerticalOptions="Center"
-                                               TextColor="{Binding EditIsFunSelected, Converter={StaticResource BoolToChipText}}" />
+
+                                        <Image Source="icon_fun.png"
+                                           WidthRequest="14"
+                                           HeightRequest="14"
+                                           VerticalOptions="Center" />
+
+                                        <Label Text="Fun"
+                                           FontSize="12"
+                                           VerticalOptions="Center"
+                                           TextColor="{Binding IsNewFunSelected, Converter={StaticResource BoolToChipText}}" />
+
                                     </HorizontalStackLayout>
                                 </Border>
                                 <Border BackgroundColor="{Binding EditIsOtherSelected, Converter={StaticResource BoolToChipBg}}"
@@ -506,10 +581,17 @@
                                         <TapGestureRecognizer Command="{Binding SelectEditCategoryCommand}" CommandParameter="Other" />
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
-                                        <Image Source="icon_default.png" WidthRequest="14" HeightRequest="14"
-                                               VerticalOptions="Center" />
-                                        <Label Text="Other" FontSize="12" VerticalOptions="Center"
-                                               TextColor="{Binding EditIsOtherSelected, Converter={StaticResource BoolToChipText}}" />
+
+                                        <Image Source="icon_default.png"
+                                           WidthRequest="14"
+                                           HeightRequest="14"
+                                           VerticalOptions="Center" />
+
+                                        <Label Text="other"
+                                           FontSize="12"
+                                           VerticalOptions="Center"
+                                           TextColor="{Binding IsNewOtherSelected, Converter={StaticResource BoolToChipText}}" />
+
                                     </HorizontalStackLayout>
                                 </Border>
                             </FlexLayout>
@@ -551,8 +633,11 @@
                                     <TapGestureRecognizer Command="{Binding PickEditPhotoCommand}" />
                                 </Border.GestureRecognizers>
                                 <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="3">
-                                    <Image Source="icon_camera.png" WidthRequest="20" HeightRequest="20"
-                                           HorizontalOptions="Center" VerticalOptions="Center" />
+                                    <Image Source="icon_camera.png"
+                                       WidthRequest="20"
+                                       HeightRequest="20"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
                                     <Label Text="Tap to add a photo" FontSize="11"
                                            TextColor="{StaticResource TextSecondary}"
                                            HorizontalOptions="Center" />

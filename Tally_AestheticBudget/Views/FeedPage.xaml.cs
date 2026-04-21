@@ -22,8 +22,12 @@ public partial class FeedPage : ContentPage
 
         _viewModel.ColumnsRebuilt += () =>
         {
-            _gridPopulated = false;
-            RebuildMasonryGrid();
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                if (_viewModel.IsLoading) return;
+
+                RebuildMasonryGrid();
+            });
         };
     }
 
@@ -31,6 +35,7 @@ public partial class FeedPage : ContentPage
     {
         base.OnAppearing();
         await _viewModel.OnPageAppearingAsync();
+        RebuildMasonryGrid();
     }
 
     protected override void OnSizeAllocated(double width, double height)
@@ -41,12 +46,15 @@ public partial class FeedPage : ContentPage
 
         var newColumnCount = GetColumnCount(width);
 
-        if (newColumnCount == _lastColumnCount && _gridPopulated) return;
         if (_viewModel.IsLoading) return;
+
+        if (newColumnCount == _lastColumnCount && _gridPopulated)
+            return;
 
         _lastColumnCount = newColumnCount;
         _gridPopulated = false;
 
+        _viewModel.CurrentColumnCount = newColumnCount;
         _viewModel.DistributeIntoColumns(columnCount: newColumnCount);
     }
 
@@ -60,34 +68,37 @@ public partial class FeedPage : ContentPage
 
     private void RebuildMasonryGrid()
     {
-        MainThread.BeginInvokeOnMainThread(() =>
+        var columns = _viewModel.Columns;
+
+        // ALWAYS reset UI first
+        MasonryGrid.Children.Clear();
+        MasonryGrid.ColumnDefinitions.Clear();
+
+        _gridPopulated = false;
+
+        // No data → leave empty grid safely
+        if (columns == null || columns.Count == 0)
+            return;
+
+        for (int i = 0; i < columns.Count; i++)
+            MasonryGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
+
+        for (int i = 0; i < columns.Count; i++)
         {
-            var columns = _viewModel.Columns;
-            if (columns.Count == 0) return;
-
-            MasonryGrid.ColumnDefinitions.Clear();
-            MasonryGrid.Children.Clear();
-
-            for (int i = 0; i < columns.Count; i++)
-                MasonryGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
-
-            for (int i = 0; i < columns.Count; i++)
+            var stack = new VerticalStackLayout
             {
-                var stack = new VerticalStackLayout
-                {
-                    Spacing = 10,
-                    VerticalOptions = LayoutOptions.Start
-                };
+                Spacing = 10,
+                VerticalOptions = LayoutOptions.Start
+            };
 
-                BindableLayout.SetItemsSource(stack, columns[i]);
-                BindableLayout.SetItemTemplate(stack, BuildCardTemplate());
+            BindableLayout.SetItemsSource(stack, columns[i]);
+            BindableLayout.SetItemTemplate(stack, BuildCardTemplate());
 
-                Grid.SetColumn(stack, i);
-                MasonryGrid.Children.Add(stack);
-            }
+            Grid.SetColumn(stack, i);
+            MasonryGrid.Children.Add(stack);
+        }
 
-            _gridPopulated = true;
-        });
+        _gridPopulated = true;
     }
 
     private DataTemplate BuildCardTemplate()
@@ -133,9 +144,8 @@ public partial class FeedPage : ContentPage
 
             var photo = new Image
             {
-                Aspect = Aspect.AspectFit,
-                MinimumHeightRequest = 180,
-                MaximumHeightRequest = 520,
+                Aspect = Aspect.AspectFill,
+                HeightRequest = 220,
                 HorizontalOptions = LayoutOptions.Fill,
             };
             photo.SetBinding(Image.SourceProperty, "PhotoPath");
