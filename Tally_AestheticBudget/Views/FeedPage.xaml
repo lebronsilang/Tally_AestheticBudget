@@ -130,7 +130,8 @@
                     x:Name="MasonryGrid"
                     ColumnSpacing="10"
                     Padding="14,0,14,100"
-                    VerticalOptions="Start" />
+                    VerticalOptions="Start" 
+                    SizeChanged="MasonryGrid_SizeChanged"/>
 
             </VerticalStackLayout>
         </ScrollView>

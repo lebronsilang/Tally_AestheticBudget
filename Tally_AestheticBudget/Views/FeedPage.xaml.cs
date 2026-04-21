@@ -12,6 +12,8 @@ public partial class FeedPage : ContentPage
     private int _lastColumnCount = 0;
     private bool _gridPopulated = false;
     private readonly ISettingsService _settings;
+    // Add this field at the top of the class with the other fields:
+    private double _lastWidth = 0;
 
     public FeedPage(FeedViewModel viewModel, ISettingsService settings)
     {
@@ -20,14 +22,14 @@ public partial class FeedPage : ContentPage
         _settings = settings;
         BindingContext = viewModel;
 
+        _viewModel.FilterChanged += () =>
+        {
+            MainThread.BeginInvokeOnMainThread(ClearMasonryGrid);
+        };
+
         _viewModel.ColumnsRebuilt += () =>
         {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                if (_viewModel.IsLoading) return;
-
-                RebuildMasonryGrid();
-            });
+            MainThread.BeginInvokeOnMainThread(RebuildMasonryGrid);
         };
     }
 
@@ -35,28 +37,31 @@ public partial class FeedPage : ContentPage
     {
         base.OnAppearing();
         await _viewModel.OnPageAppearingAsync();
-        RebuildMasonryGrid();
     }
 
-    protected override void OnSizeAllocated(double width, double height)
-    {
-        base.OnSizeAllocated(width, height);
+    // 1. Add a property to store the calculated column width
+    private double _calculatedColumnWidth = 0;
 
+    private void MasonryGrid_SizeChanged(object sender, EventArgs e)
+    {
+        var width = MasonryGrid.Width;
         if (width <= 0) return;
+        if (Math.Abs(width - _lastWidth) < 5.0) return;
+        _lastWidth = width;
 
         var newColumnCount = GetColumnCount(width);
+        _calculatedColumnWidth = (width - (10 * (newColumnCount + 1))) / newColumnCount;
 
-        if (_viewModel.IsLoading) return;
+        _viewModel.CurrentColumnCount = newColumnCount;
 
-        if (newColumnCount == _lastColumnCount && _gridPopulated)
-            return;
-
+        if (newColumnCount == _lastColumnCount && _gridPopulated) return;
         _lastColumnCount = newColumnCount;
         _gridPopulated = false;
 
-        _viewModel.CurrentColumnCount = newColumnCount;
         _viewModel.DistributeIntoColumns(columnCount: newColumnCount);
     }
+
+
 
     private static int GetColumnCount(double pageWidth) => pageWidth switch
     {
@@ -66,41 +71,62 @@ public partial class FeedPage : ContentPage
         _ => 5
     };
 
+
+    private void ClearMasonryGrid()
+    {
+        MasonryGrid.ColumnDefinitions.Clear();
+        MasonryGrid.Children.Clear();
+        _gridPopulated = false;
+        _lastColumnCount = 0; // forces full rebuild on next ColumnsRebuilt
+    }
+
     private void RebuildMasonryGrid()
     {
         var columns = _viewModel.Columns;
+        if (columns.Count == 0) return;
 
-        // ALWAYS reset UI first
-        MasonryGrid.Children.Clear();
         MasonryGrid.ColumnDefinitions.Clear();
+        MasonryGrid.Children.Clear();
 
-        _gridPopulated = false;
-
-        // No data → leave empty grid safely
-        if (columns == null || columns.Count == 0)
-            return;
-
-        for (int i = 0; i < columns.Count; i++)
-            MasonryGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
-
+        // Build stacks WITHOUT binding items yet
         for (int i = 0; i < columns.Count; i++)
         {
+            MasonryGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
+
             var stack = new VerticalStackLayout
             {
                 Spacing = 10,
-                VerticalOptions = LayoutOptions.Start
+                VerticalOptions = LayoutOptions.Start,
             };
 
-            BindableLayout.SetItemsSource(stack, columns[i]);
             BindableLayout.SetItemTemplate(stack, BuildCardTemplate());
+            // DO NOT set ItemsSource yet
 
             Grid.SetColumn(stack, i);
             MasonryGrid.Children.Add(stack);
         }
 
-        _gridPopulated = true;
+        // Let the grid do one real layout pass so stacks have correct widths,
+        // THEN bind the items so images measure against real constrained width
+        Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(16), () =>
+        {
+            for (int i = 0; i < columns.Count; i++)
+            {
+                if (MasonryGrid.Children[i] is VerticalStackLayout stack)
+                    BindableLayout.SetItemsSource(stack, columns[i]);
+            }
+            _gridPopulated = true;
+        });
     }
 
+    private static void DisconnectHandlers(IView view)
+    {
+        if (view is Element element)
+        {
+            foreach (var child in element.GetVisualTreeDescendants().OfType<Image>())
+                child.Handler?.DisconnectHandler();
+        }
+    }
     private DataTemplate BuildCardTemplate()
     {
         return new DataTemplate(() =>
@@ -134,21 +160,28 @@ public partial class FeedPage : ContentPage
             tap.SetBinding(TapGestureRecognizer.CommandParameterProperty, new Binding("."));
             card.GestureRecognizers.Add(tap);
 
-            var root = new Grid();
+            var root = new Grid
+            {
+                IsClippedToBounds = true // Grids have this, Borders don't!
+            };
             var pointer = new PointerGestureRecognizer();
             card.GestureRecognizers.Add(pointer);
 
-            // ── PHOTO CARD ────────────────────────────────────────────────
-            var photoContainer = new Grid();
+
+
+            var photo = new Controls.AspectLockedImage();
+            photo.SetBinding(Image.SourceProperty, "PhotoPath");
+
+
+            var photoContainer = new Grid
+            {
+                VerticalOptions = LayoutOptions.Start,
+                HorizontalOptions = LayoutOptions.Fill,
+                // No HeightRequest — height is driven by AspectLockedImage
+            };
             photoContainer.SetBinding(Grid.IsVisibleProperty, "HasPhoto");
 
-            var photo = new Image
-            {
-                Aspect = Aspect.AspectFill,
-                HeightRequest = 220,
-                HorizontalOptions = LayoutOptions.Fill,
-            };
-            photo.SetBinding(Image.SourceProperty, "PhotoPath");
+
             photo.Clip = new Microsoft.Maui.Controls.Shapes.RoundRectangleGeometry
             {
                 Rect = new Rect(0, 0, 1000, 2000),
