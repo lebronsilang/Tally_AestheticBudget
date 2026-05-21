@@ -113,7 +113,6 @@ public class ThemeService : IThemeService
                 res[key] = color;
         }
 
-        // These keys must match your App.xaml ResourceDictionary entries exactly
         Set("PageBackground", bg);
         Set("CardBackground", card);
         Set("CardBorder", border);
@@ -124,8 +123,7 @@ public class ThemeService : IThemeService
         App.CurrentAccent = accent;
     }
 
-    // After ReloadShell creates a fresh AppShell, push the accent color into
-    // the shell's tab bar so it matches the active theme immediately.
+    // After reloadShell creates a fresh AppShell, push the accent color into the shell's tab bar so it matches the active theme immediately.
     private static void ApplyTabBarColors(string accent, string card, string subtext)
     {
         if (Application.Current?.MainPage is not Shell shell) return;

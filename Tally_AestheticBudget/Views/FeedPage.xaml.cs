@@ -12,7 +12,6 @@ public partial class FeedPage : ContentPage
     private int _lastColumnCount = 0;
     private bool _gridPopulated = false;
     private readonly ISettingsService _settings;
-    // Add this field at the top of the class with the other fields:
     private double _lastWidth = 0;
 
     public FeedPage(FeedViewModel viewModel, ISettingsService settings)
@@ -39,7 +38,6 @@ public partial class FeedPage : ContentPage
         await _viewModel.OnPageAppearingAsync();
     }
 
-    // 1. Add a property to store the calculated column width
     private double _calculatedColumnWidth = 0;
 
     private void MasonryGrid_SizeChanged(object sender, EventArgs e)
@@ -100,7 +98,6 @@ public partial class FeedPage : ContentPage
             };
 
             BindableLayout.SetItemTemplate(stack, BuildCardTemplate());
-            // DO NOT set ItemsSource yet
 
             Grid.SetColumn(stack, i);
             MasonryGrid.Children.Add(stack);
@@ -177,7 +174,6 @@ public partial class FeedPage : ContentPage
             {
                 VerticalOptions = LayoutOptions.Start,
                 HorizontalOptions = LayoutOptions.Fill,
-                // No HeightRequest — height is driven by AspectLockedImage
             };
             photoContainer.SetBinding(Grid.IsVisibleProperty, "HasPhoto");
 
@@ -212,7 +208,7 @@ public partial class FeedPage : ContentPage
             };
             photoContainer.Children.Add(gradient);
 
-            // Overlay: Category · Date → Title → Amount → Note
+            // Overlay: Category · Date to Title to Amount to Note
             var overlayText = new VerticalStackLayout
             {
                 Spacing = 2,
@@ -322,7 +318,7 @@ public partial class FeedPage : ContentPage
                 new Binding("HasPhoto", converter: new Converters.InverseBoolConverter()));
 
             // ── GROCERY VARIANT ───────────────────────────────────────────
-            // Category · Date → item count → Amount → (no note)
+            // Category · Date to item count to Amount to (no note)
             var groceryCard = new VerticalStackLayout
             {
                 Spacing = 3,
@@ -385,7 +381,7 @@ public partial class FeedPage : ContentPage
             plainCard.Children.Add(groceryCard);
 
             // ── REGULAR EXPENSE VARIANT ───────────────────────────────────
-            // Category · Date → Title → Amount → Note
+            // Category then Date to Title to Amount to Note
             var regularCard = new VerticalStackLayout { Spacing = 0 };
             regularCard.SetBinding(VisualElement.IsVisibleProperty,
                 new Binding("IsGroceryGroup", converter: new Converters.InverseBoolConverter()));

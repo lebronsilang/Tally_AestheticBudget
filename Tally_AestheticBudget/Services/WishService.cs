@@ -22,8 +22,13 @@ public interface IWishService
 public class WishService : IWishService
 {
     private readonly DatabaseService _db;
+    private readonly ISettingsService _settings;
 
-    public WishService(DatabaseService db) => _db = db;
+    public WishService(DatabaseService db, ISettingsService settings)
+    {
+        _db = db;
+        _settings = settings;
+    }
 
     public async Task<IEnumerable<WishCardItem>> GetWishItemsAsync()
     {
@@ -31,7 +36,7 @@ public class WishService : IWishService
         var entities = await db.Table<WishItemEntity>()
             .OrderByDescending(w => w.IsPinned)
             .ToListAsync();
-
+        var currencySymbol = _settings.CurrencySymbol;
         // Sort: pinned first, then by creation date descending
         return entities
             .OrderByDescending(w => w.IsPinned)
@@ -40,6 +45,7 @@ public class WishService : IWishService
             {
                 Id = w.Id,
                 Name = w.Name,
+                CurrencySymbol = currencySymbol,
                 Price = w.Price,
                 Priority = ParsePriority(w.Priority),
                 Category = ParseCategory(w.Category),
@@ -103,8 +109,7 @@ public class WishService : IWishService
         var item = await db.Table<WishItemEntity>().Where(w => w.Id == id).FirstOrDefaultAsync();
         if (item is null) return;
 
-        // Insert as a standalone expense
-        await db.InsertAsync(new ExpenseEntity
+        var expense = new ExpenseEntity
         {
             Title = item.Name,
             Amount = item.Price,
@@ -112,10 +117,13 @@ public class WishService : IWishService
             Note = item.Caption,
             PhotoPath = item.PhotoPath,
             Date = DateTime.Now
-        });
+        };
 
-        // Remove from wishlist after converting
-        await db.DeleteAsync<WishItemEntity>(id);
+        await db.RunInTransactionAsync(tran =>
+        {
+            tran.Insert(expense);
+            tran.Delete<WishItemEntity>(id);
+        });
     }
 
     public async Task DeleteWishItemAsync(int id)

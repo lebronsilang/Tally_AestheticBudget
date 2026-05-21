@@ -173,7 +173,7 @@
                                     Padding="12,0">
 
                                             <Entry Text="{Binding EditLimitText}"
-                                       Placeholder="New limit (₱)"
+                                       Placeholder="{Binding LimitPlaceholder}"
                                        PlaceholderColor="#C0C0C5"
                                        Keyboard="Numeric"
                                        FontSize="14"

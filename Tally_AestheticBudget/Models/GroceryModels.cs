@@ -28,8 +28,9 @@ public partial class GroceryItem : ObservableObject
 
     // ── Display helpers ───────────────────────────────────────────────────────
 
-    public string PriceFormatted => Price > 0 ? $"₱{Price:N2}" : "₱0.00";
-    public string TotalFormatted => $"₱{Price * Quantity:N2}";
+    public string CurrencySymbol { get; set; } = "₱";
+    public string PriceFormatted => Price > 0 ? $"{CurrencySymbol}{Price:N2}" : $"{CurrencySymbol}0.00";
+    public string TotalFormatted => $"{CurrencySymbol}{Price * Quantity:N2}";
 
     public string QuantityLabel => Quantity > 1 ? $"qty: {Quantity}" : string.Empty;
 }
@@ -72,10 +73,12 @@ public partial class GroceryBudgetStatus : ObservableObject
     public bool IsOverBudget =>
         BudgetLimit > 0 && (AlreadySpent + PendingTotal) > BudgetLimit;
 
+    public string CurrencySymbol { get; set; } = "₱";
+
     public string StatusLabel =>
         HasBudget
-            ? $"🛒 Grocery Budget · ₱{AlreadySpent + PendingTotal:N2}"
-            : "🛒 No grocery budget set — go to Budget to add one";
+            ? $"Grocery Budget · {CurrencySymbol}{AlreadySpent + PendingTotal:N2}"
+            : "No grocery budget set — go to Budget to add one";
 
     public string RemainingLabel
     {
@@ -84,13 +87,10 @@ public partial class GroceryBudgetStatus : ObservableObject
             if (!HasBudget) return string.Empty;
             var remaining = BudgetLimit - AlreadySpent - PendingTotal;
             return remaining >= 0
-                ? $"₱{remaining:N2} left"
-                : $"⚠️ Over by ₱{Math.Abs(remaining):N2}";
+                ? $"{CurrencySymbol}{remaining:N2} left"
+                : $"Over by {CurrencySymbol}{Math.Abs(remaining):N2}";
         }
     }
 }
 
-/// <summary>
-/// Filter options for the grocery list.
-/// </summary>
 public enum GroceryFilter { All, Pending, Checked }

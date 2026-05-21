@@ -17,8 +17,9 @@ public partial class BudgetViewModel : ObservableObject
         _settings = settings;
         _currentYear = DateTime.Now.Year;
         _currentMonth = DateTime.Now.Month;
-        _ = LoadBudgetAsync();
+
     }
+    public string LimitPlaceholder => $"New limit ({_settings.CurrencySymbol})";
 
     [ObservableProperty] private ObservableCollection<BudgetCategoryItem> _budgetItems = [];
     [ObservableProperty] private bool _isLoading;

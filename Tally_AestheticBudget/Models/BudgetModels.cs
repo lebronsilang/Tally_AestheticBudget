@@ -52,29 +52,35 @@ public partial class BudgetCategoryItem : ObservableObject
         _ => "icon_default.png"
     };
 
-    public string SpentFormatted => $"₱{Spent:N2}";
-    public string LimitFormatted => Limit > 0 ? $"₱{Limit:N2}" : "No limit set";
+    // AFTER
+    // Set by BudgetService when building this item — avoids hardcoding ₱
+    public string CurrencySymbol { get; set; } = "₱";
 
-    // Progress 0.0 → 1.0 capped at 1.0 for the bar width
-    public double ProgressPercent =>
-        Limit > 0 ? (double)Math.Min(Spent / Limit, 1.0m) : 0;
-
-    // True when spending exceeds the limit — bar turns red
-    public bool IsOverLimit => Limit > 0 && Spent > Limit;
+    public string SpentFormatted => $"{CurrencySymbol}{Spent:N2}";
+    public string LimitFormatted => Limit > 0 ? $"{CurrencySymbol}{Limit:N2}" : "No limit set";
 
     // e.g. "₱1,200 of ₱3,000" or "₱800 over limit"
     public string StatusLabel
     {
         get
         {
-            if (Limit <= 0) return $"₱{Spent:N2} spent · no limit";
-            if (IsOverLimit) return $"₱{Spent - Limit:N2} over limit";
-            return $"₱{Spent:N2} of ₱{Limit:N2}";
+            if (Limit <= 0) return $"{CurrencySymbol}{Spent:N2} spent · no limit";
+            if (IsOverLimit) return $"{CurrencySymbol}{Spent - Limit:N2} over limit";
+            return $"{CurrencySymbol}{Spent:N2} of {CurrencySymbol}{Limit:N2}";
         }
     }
 
+    // Progress 0.0 -> 1.0 capped at 1.0 for the bar width
+    public double ProgressPercent =>
+        Limit > 0 ? (double)Math.Min(Spent / Limit, 1.0m) : 0;
+
+    // True when spending exceeds the limit then bar turns red
+    public bool IsOverLimit => Limit > 0 && Spent > Limit;
+
+    
+
     // ── Inline edit state ─────────────────────────────────────────────────────
-    // These control the ✏️ inline edit row visibility
+    // These control the inline edit row visibility
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNotEditing))]

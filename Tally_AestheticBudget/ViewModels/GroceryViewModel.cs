@@ -30,7 +30,7 @@ public partial class GroceryViewModel : ObservableObject
 
     [ObservableProperty] private ObservableCollection<GroceryItem> _displayedItems = [];
     [ObservableProperty] private bool _isLoading;
-    [ObservableProperty] private string _statsLabel = "0 items · ₱0.00 total";
+    [ObservableProperty] private string _statsLabel = "0 items - 0.00 total";
     [ObservableProperty] private GroceryBudgetStatus _budgetStatus = new();
 
     // ── Filter ────────────────────────────────────────────────────────────────
@@ -144,14 +144,19 @@ public partial class GroceryViewModel : ObservableObject
         {
             var items = await _groceryService.GetItemsAsync();
             _allItems = items.ToList();
+            var sym = _settings.CurrencySymbol;
 
             var now = DateTime.Now;
             var budgets = await _budgetService.GetBudgetItemsAsync(now.Year, now.Month);
             var groceryBudget = budgets.FirstOrDefault(b => b.Category == ExpenseCategory.Grocery);
             var spent = await _groceryService.GetGrocerySpentThisMonthAsync();
 
+            BudgetStatus.CurrencySymbol = sym;
             BudgetStatus.BudgetLimit = groceryBudget?.Limit ?? 0;
             BudgetStatus.AlreadySpent = spent;
+            foreach (var item in _allItems)
+                item.CurrencySymbol = sym;
+
             UpdateBudgetPending();
             UpdateStats();
             ApplyFilter();

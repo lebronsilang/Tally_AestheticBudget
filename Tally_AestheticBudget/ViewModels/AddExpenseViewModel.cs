@@ -11,10 +11,12 @@ namespace Tally_AestheticBudget.ViewModels;
 public partial class AddExpenseViewModel : ObservableObject
 {
     private readonly IExpenseService _expenseService;
+    private readonly ISettingsService _settings;
 
-    public AddExpenseViewModel(IExpenseService expenseService)
+    public AddExpenseViewModel(IExpenseService expenseService, ISettingsService settings)
     {
         _expenseService = expenseService;
+        _settings = settings;
         SelectedDate = DateTime.Today;
     }
 
@@ -71,6 +73,8 @@ public partial class AddExpenseViewModel : ObservableObject
     // ── Photo ─────────────────────────────────────────────────────────────────
 
     public bool HasPhoto => !string.IsNullOrEmpty(PhotoPath);
+    // ── Display helpers ───────────────────────────────────────────────────────
+    public string AmountLabel => $"Amount ({_settings.CurrencySymbol})";
 
     // ── Validation ────────────────────────────────────────────────────────────
 

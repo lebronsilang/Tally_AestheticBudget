@@ -45,7 +45,8 @@ public partial class WishCardItem : ObservableObject
     public bool HasCaption => !string.IsNullOrEmpty(Caption);
     public bool IsBought => Status == WishStatus.Bought;
 
-    public string PriceFormatted => $"₱{Price:N2}";
+    public string CurrencySymbol { get; set; } = "₱";
+    public string PriceFormatted => $"{CurrencySymbol}{Price:N2}";
 
     public string PriorityLabel => Priority switch
     {
@@ -117,9 +118,10 @@ public class AffordResult
     public decimal BudgetRemaining { get; set; }
     public decimal Difference { get; set; }
 
+    public string CurrencySymbol { get; set; } = "₱";
     public string Label => CanAfford
-        ? $"✓ You can afford this — ₱{BudgetRemaining:N2} remaining in {CategoryName}"
-        : $"✗ ₱{Math.Abs(Difference):N2} over your {CategoryName} budget";
+        ? $"You can afford this — {CurrencySymbol}{BudgetRemaining:N2} remaining in {CategoryName}"
+        : $"{CurrencySymbol}{Math.Abs(Difference):N2} over your {CategoryName} budget";
 
     public string CategoryName { get; set; } = string.Empty;
 }

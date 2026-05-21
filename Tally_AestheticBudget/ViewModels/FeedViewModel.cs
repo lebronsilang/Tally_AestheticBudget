@@ -43,14 +43,14 @@ public partial class FeedViewModel : ObservableObject
 
     [ObservableProperty] private bool _isRefreshing;
     [ObservableProperty] private string _summaryLabel = string.Empty;
-    [ObservableProperty] private string _totalSpentFormatted = "₱0.00";
+    [ObservableProperty] private string _totalSpentFormatted = "0.00";
 
     public string ThisYearLabel => $"This Year ({DateTime.Now.Year})";
 
     // HasNoEntries → empty state overlay
     // HasEntries  → scroll view (header + masonry) — always visible so chips/add stay usable
     public bool HasNoEntries => !IsLoading && FeedItems.Count == 0;
-    public bool HasEntries => true; // scroll view always visible; masonry just has no cards
+    public bool HasEntries => true; 
 
     // ── Filter state ──────────────────────────────────────────────────────────
 

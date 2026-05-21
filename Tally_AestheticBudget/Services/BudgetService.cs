@@ -19,6 +19,7 @@ public class BudgetService : IBudgetService
 {
     private readonly DatabaseService _db;
     private readonly IExpenseService _expenseService;
+    private readonly ISettingsService _settings;  // ← added
 
     // The 6 categories we always show on the Budget screen
     private static readonly ExpenseCategory[] AllCategories =
@@ -32,10 +33,11 @@ public class BudgetService : IBudgetService
         ExpenseCategory.Other,
     ];
 
-    public BudgetService(DatabaseService db, IExpenseService expenseService)
+    public BudgetService(DatabaseService db, IExpenseService expenseService, ISettingsService settings)  // ← added settings param
     {
         _db = db;
         _expenseService = expenseService;
+        _settings = settings;  // ← added
     }
 
     public async Task<IEnumerable<BudgetCategoryItem>> GetBudgetItemsAsync(int year, int month)
@@ -57,6 +59,9 @@ public class BudgetService : IBudgetService
             .GroupBy(e => e.Category)
             .ToDictionary(g => g.Key, g => g.Sum(e => e.Amount));
 
+        // Read once here — not inside the lambda, not in the model
+        var currencySymbol = _settings.CurrencySymbol;  // ← added
+
         // Build one BudgetCategoryItem per category
         var items = AllCategories.Select(cat =>
         {
@@ -68,7 +73,8 @@ public class BudgetService : IBudgetService
                 Id = saved?.Id ?? 0,
                 Category = cat,
                 Limit = saved?.Limit ?? 0,
-                Spent = spentByCategory.TryGetValue(cat, out var s) ? s : 0
+                Spent = spentByCategory.TryGetValue(cat, out var s) ? s : 0,  // ← comma added
+                CurrencySymbol = currencySymbol  // ← added
             };
         });
 
@@ -110,14 +116,12 @@ public class BudgetService : IBudgetService
     {
         var db = await _db.GetConnectionAsync();
 
-        // Find all budget rows from before this month
         var allPrevious = await db.Table<BudgetEntity>()
             .Where(b => b.Year < year || (b.Year == year && b.Month < month))
             .ToListAsync();
 
         if (allPrevious.Count == 0) return [];
 
-        // Find the most recent month that has budget data
         var latestEntry = allPrevious
             .OrderByDescending(b => b.Year)
             .ThenByDescending(b => b.Month)
@@ -126,7 +130,6 @@ public class BudgetService : IBudgetService
         var latestYear = latestEntry.Year;
         var latestMonth = latestEntry.Month;
 
-        // Get all limits from that month and copy them into the new month
         var previousLimits = allPrevious
             .Where(b => b.Year == latestYear && b.Month == latestMonth)
             .ToList();

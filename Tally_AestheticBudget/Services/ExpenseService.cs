@@ -19,9 +19,13 @@ public interface IExpenseService
 public class ExpenseService : IExpenseService
 {
     private readonly DatabaseService _db;
-    
+    private readonly ISettingsService _settings;
 
-    public ExpenseService(DatabaseService db) => _db = db;
+    public ExpenseService(DatabaseService db, ISettingsService settings)
+    {
+        _db = db;
+        _settings = settings;
+    }
 
     public Task<IEnumerable<FeedCardItem>> GetAllFeedItemsAsync()
         => QueryAsync(null, null);
@@ -47,6 +51,7 @@ public class ExpenseService : IExpenseService
             .ToListAsync();
 
         var cards = new List<FeedCardItem>();
+        var currencySymbol = _settings.CurrencySymbol;
 
         foreach (var e in expenses)
         {
@@ -54,12 +59,13 @@ public class ExpenseService : IExpenseService
             cards.Add(new FeedCardItem
             {
                 Id = e.Id,
+                CurrencySymbol = currencySymbol,
                 Amount = e.Amount,
                 Category = ParseCategory(e.Category),
                 Title = e.Title,
                 Note = e.Note,
                 Date = e.Date,
-                PhotoPath = e.PhotoPath
+                PhotoPath = e.PhotoPath          
             });
         }
 
@@ -77,6 +83,7 @@ public class ExpenseService : IExpenseService
                 Id = li.Id,
                 GroceryGroupId = group.Id,
                 Name = li.Title ?? li.Note ?? "Item",
+                CurrencySymbol = currencySymbol,
                 Price = li.Amount
             }).ToList();
 
@@ -87,6 +94,7 @@ public class ExpenseService : IExpenseService
                 Category = ExpenseCategory.Grocery,
                 Note = group.Note,
                 Date = group.Date,
+                CurrencySymbol = currencySymbol,
                 GroceryItems = new System.Collections.ObjectModel.ObservableCollection<GroceryLineItem>(items)
             };
             card.Amount = items.Sum(i => i.Price);

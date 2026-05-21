@@ -308,9 +308,10 @@ public partial class WishlistViewModel : ObservableObject
         AffordResult = new AffordResult
         {
             CanAfford = canAfford,
+            CurrencySymbol = sym,
             BudgetRemaining = remaining,
             Difference = remaining - item.Price,
-            CategoryName = item.CategoryLabel
+            CategoryName = item.CategoryLabel           
         };
 
         ShowAffordResult = true;

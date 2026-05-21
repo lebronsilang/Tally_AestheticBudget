@@ -35,7 +35,8 @@ public partial class FeedCardItem : ObservableObject
     public bool HasTitle => !string.IsNullOrEmpty(Title);
     public bool HasNote => !string.IsNullOrEmpty(Note);
 
-    public string AmountFormatted => $"₱{Amount:N2}";
+    public string CurrencySymbol { get; set; } = "₱";
+    public string AmountFormatted => $"{CurrencySymbol}{Amount:N2}";
     public string DateFormatted => Date.ToString("dd MMM yyyy");
 
     public string CategoryLabel => IsGroceryGroup ? "Grocery" : Category switch
@@ -65,7 +66,8 @@ public class GroceryLineItem
     public string Name { get; set; } = string.Empty;
     public decimal Price { get; set; }
     public int Quantity { get; set; } = 1;
-    public string PriceFormatted => $"₱{Price * Quantity:N2}";
+    public string CurrencySymbol { get; set; } = "₱";
+    public string PriceFormatted => $"{CurrencySymbol}{Price * Quantity:N2}";
 }
 
 public class MonthOption

@@ -58,7 +58,7 @@
 
                     <!-- Amount -->
                     <VerticalStackLayout Spacing="5">
-                        <Label Text="Amount (₱)" FontSize="11" FontAttributes="Bold"
+                        <Label Text="{Binding AmountLabel}" FontSize="11" FontAttributes="Bold"
                                TextColor="{StaticResource TextPrimary}" />
                         <Border BackgroundColor="{StaticResource PageBackground}"
                                 Stroke="{StaticResource CardBorder}"
