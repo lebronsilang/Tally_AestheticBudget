@@ -5,21 +5,16 @@ using Tally_AestheticBudget.Services;
 
 namespace Tally_AestheticBudget.ViewModels;
 
-<<<<<<< HEAD
 public class CurrencyOption(string Flag, string Name, string Code, string Symbol)
 {
-    public string Flag { get; init; } = "";
-    public string Name { get; init; } = "";
-    public string Code { get; init; } = "";
-    public string Symbol { get; init; } = "";
+    public string Flag { get; init; } = Flag;
+    public string Name { get; init; } = Name;
+    public string Code { get; init; } = Code;
+    public string Symbol { get; init; } = Symbol;
 
-    // Set by SettingsViewModel after selection changes
     public bool IsSelected { get; set; }
 }
 
-=======
-public record CurrencyOption(string Flag, string Name, string Code, string Symbol);
->>>>>>> 60c1166 (Introduction of Settings Page)
 
 public partial class SettingsViewModel : ObservableObject
 {
@@ -48,12 +43,8 @@ public partial class SettingsViewModel : ObservableObject
         _showCoolingOff = settings.ShowCoolingOff;
         _showStaleReminder = settings.ShowStaleReminder;
 
-<<<<<<< HEAD
         FilteredCurrencies = new ObservableCollection<CurrencyOption>(
             AllCurrencies.Select(c => { c.IsSelected = c.Code == settings.CurrencyCode; return c; }));
-=======
-        FilteredCurrencies = new ObservableCollection<CurrencyOption>(AllCurrencies);
->>>>>>> 60c1166 (Introduction of Settings Page)
     }
 
     // ── Currency ──────────────────────────────────────────────────────────────
@@ -139,7 +130,6 @@ public partial class SettingsViewModel : ObservableObject
     {
         SelectedCurrency = currency;
         _settings.SetCurrency(currency.Symbol, currency.Code, currency.Name, currency.Flag);
-<<<<<<< HEAD
 
         // Update checkmarks
         foreach (var c in FilteredCurrencies)
@@ -149,8 +139,6 @@ public partial class SettingsViewModel : ObservableObject
         var temp = FilteredCurrencies.ToList();
         FilteredCurrencies.Clear();
         foreach (var c in temp) FilteredCurrencies.Add(c);
-=======
->>>>>>> 60c1166 (Introduction of Settings Page)
     }
 
     // ── Feed toggles ──────────────────────────────────────────────────────────

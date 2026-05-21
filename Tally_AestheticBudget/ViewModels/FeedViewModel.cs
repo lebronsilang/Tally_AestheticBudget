@@ -3,59 +3,58 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Tally_AestheticBudget.Models;
 using Tally_AestheticBudget.Services;
-using Tally_AestheticBudget.Views;
 
 namespace Tally_AestheticBudget.ViewModels;
-
 
 public partial class FeedViewModel : ObservableObject
 {
     private readonly IExpenseService _expenseService;
+    private readonly ISettingsService _settings;
+
     public int CurrentColumnCount { get; set; } = 2;
-    public FeedViewModel(IExpenseService expenseService)
+
+    public FeedViewModel(IExpenseService expenseService, ISettingsService settings)
     {
         _expenseService = expenseService;
+        _settings = settings;
         PickerYear = DateTime.Now.Year;
         _selectedPickerMonth = DateTime.Now.Month;
         BuildMonthOptions();
-        _ = LoadFeedAsync();
+
     }
 
     // ── Feed items ────────────────────────────────────────────────────────────
 
-    // Flat list — used for totals, delete commands, HasNoEntries
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasNoEntries))]
+    [NotifyPropertyChangedFor(nameof(HasEntries))]
     private ObservableCollection<FeedCardItem> _feedItems = [];
 
-    // Masonry columns — one ObservableCollection per column.
-    // Code-behind reads this list and wires each column's BindableLayout.
-    // ColumnsRebuilt event tells FeedPage.xaml.cs to rebuild the UI.
     private List<ObservableCollection<FeedCardItem>> _columns = [];
     public IReadOnlyList<ObservableCollection<FeedCardItem>> Columns => _columns;
 
     public event Action? ColumnsRebuilt;
+    public event Action? FilterChanged;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasNoEntries))]
+    [NotifyPropertyChangedFor(nameof(HasEntries))]
     private bool _isLoading;
 
-    [ObservableProperty]
-    private bool _isRefreshing;
-
-    [ObservableProperty]
-    private string _summaryLabel = string.Empty;
-
-    [ObservableProperty]
-    private string _totalSpentFormatted = "₱0.00";
+    [ObservableProperty] private bool _isRefreshing;
+    [ObservableProperty] private string _summaryLabel = string.Empty;
+    [ObservableProperty] private string _totalSpentFormatted = "₱0.00";
 
     public string ThisYearLabel => $"This Year ({DateTime.Now.Year})";
+
+    // HasNoEntries → empty state overlay
+    // HasEntries  → scroll view (header + masonry) — always visible so chips/add stay usable
     public bool HasNoEntries => !IsLoading && FeedItems.Count == 0;
+    public bool HasEntries => true; // scroll view always visible; masonry just has no cards
 
     // ── Filter state ──────────────────────────────────────────────────────────
 
     private FilterMode _activeFilter = FilterMode.All;
-
     public bool IsFilterAll => _activeFilter == FilterMode.All;
     public bool IsFilterYear => _activeFilter == FilterMode.Year;
     public bool IsFilterMonth => _activeFilter == FilterMode.Month;
@@ -71,16 +70,13 @@ public partial class FeedViewModel : ObservableObject
     // ── Month picker ──────────────────────────────────────────────────────────
 
     [ObservableProperty]
-    private bool _isMonthPickerVisible;
-
-    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedMonthLabel))]
     private int _pickerYear;
 
     private int _selectedPickerMonth;
 
-    [ObservableProperty]
-    private ObservableCollection<MonthOption> _monthOptions = [];
+    [ObservableProperty] private bool _isMonthPickerVisible;
+    [ObservableProperty] private ObservableCollection<MonthOption> _monthOptions = [];
 
     public string SelectedMonthLabel => _activeFilter == FilterMode.Month
         ? new DateTime(PickerYear, _selectedPickerMonth, 1).ToString("MMM yyyy")
@@ -91,51 +87,29 @@ public partial class FeedViewModel : ObservableObject
         if (MonthOptions.Count == 0)
         {
             for (int m = 1; m <= 12; m++)
-            {
                 MonthOptions.Add(new MonthOption
                 {
                     Month = m,
                     ShortName = new DateTime(2000, m, 1).ToString("MMM")
                 });
-            }
         }
-
-        // just update selection state
         foreach (var item in MonthOptions)
-        {
-            item.IsSelected =
-                item.Month == _selectedPickerMonth &&
-                _activeFilter == FilterMode.Month;
-        }
+            item.IsSelected = item.Month == _selectedPickerMonth && _activeFilter == FilterMode.Month;
     }
 
     // ── Detail modal ──────────────────────────────────────────────────────────
 
-    [ObservableProperty]
-    private bool _isDetailVisible;
-
-    [ObservableProperty]
-    private FeedCardItem? _selectedItem;
+    [ObservableProperty] private bool _isDetailVisible;
+    [ObservableProperty] private FeedCardItem? _selectedItem;
 
     // ── Add modal ─────────────────────────────────────────────────────────────
 
-    [ObservableProperty]
-    private bool _isAddModalVisible;
-
-    [ObservableProperty]
-    private string _newTitle = string.Empty;
-
-    [ObservableProperty]
-    private string _newAmountText = string.Empty;
-
-    [ObservableProperty]
-    private string _newNote = string.Empty;
-
-    [ObservableProperty]
-    private DateTime _newSelectedDate = DateTime.Today;
-
-    [ObservableProperty]
-    private string? _newPhotoPath;
+    [ObservableProperty] private bool _isAddModalVisible;
+    [ObservableProperty] private string _newTitle = string.Empty;
+    [ObservableProperty] private string _newAmountText = string.Empty;
+    [ObservableProperty] private string _newNote = string.Empty;
+    [ObservableProperty] private DateTime _newSelectedDate = DateTime.Today;
+    [ObservableProperty] private string? _newPhotoPath;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(NewIsFoodSelected))]
@@ -205,7 +179,7 @@ public partial class FeedViewModel : ObservableObject
         await LoadFeedAsync();
     }
 
-    // ── Navigation ────────────────────────────────────────────────────────────
+    // ── Add modal open/close ──────────────────────────────────────────────────
 
     [RelayCommand]
     private void OpenAddModal()
@@ -220,8 +194,7 @@ public partial class FeedViewModel : ObservableObject
         IsAddModalVisible = true;
     }
 
-    [RelayCommand]
-    private void DismissAddModal() => IsAddModalVisible = false;
+    [RelayCommand] private void DismissAddModal() => IsAddModalVisible = false;
 
     [RelayCommand]
     private async Task GoToAddExpenseAsync()
@@ -257,8 +230,7 @@ public partial class FeedViewModel : ObservableObject
     public bool EditIsOtherSelected => EditSelectedCategory == ExpenseCategory.Other;
     public bool EditHasPhoto => !string.IsNullOrEmpty(EditPhotoPath);
 
-    [RelayCommand]
-    private void DismissEditModal() => IsEditModalVisible = false;
+    [RelayCommand] private void DismissEditModal() => IsEditModalVisible = false;
 
     [RelayCommand]
     private void SelectEditCategory(string cat)
@@ -315,7 +287,6 @@ public partial class FeedViewModel : ObservableObject
     [RelayCommand]
     private async Task GoToEditExpenseAsync(FeedCardItem item)
     {
-        // Load the existing expense into edit fields
         var expense = await _expenseService.GetExpenseByIdAsync(item.Id);
         if (expense is null) return;
 
@@ -333,10 +304,7 @@ public partial class FeedViewModel : ObservableObject
         IsEditModalVisible = true;
     }
 
-    // Set to true by anything that changes expense data (save, delete).
-    // OnPageAppearingAsync only reloads when dirty — prevents unnecessary
-    // masonry rebuilds (and image enlarging) on simple navigation back.
-    public bool IsDirty { get; set; } = true;  // true on first load
+    public bool IsDirty { get; set; } = true;
 
     public async Task OnPageAppearingAsync()
     {
@@ -368,8 +336,7 @@ public partial class FeedViewModel : ObservableObject
         IsMonthPickerVisible = true;
     }
 
-    [RelayCommand]
-    private void DismissMonthPicker() => IsMonthPickerVisible = false;
+    [RelayCommand] private void DismissMonthPicker() => IsMonthPickerVisible = false;
 
     [RelayCommand]
     private async Task SelectMonthAsync(MonthOption option)
@@ -415,8 +382,7 @@ public partial class FeedViewModel : ObservableObject
         IsDetailVisible = true;
     }
 
-    [RelayCommand]
-    private void DismissDetail() => IsDetailVisible = false;
+    [RelayCommand] private void DismissDetail() => IsDetailVisible = false;
 
     [RelayCommand]
     private async Task DeleteSelectedAsync()
@@ -425,7 +391,6 @@ public partial class FeedViewModel : ObservableObject
 
         bool confirmed = await Shell.Current.DisplayAlertAsync(
             "Delete Entry", "Are you sure you want to delete this?", "Delete", "Cancel");
-
         if (!confirmed) return;
 
         if (SelectedItem.IsGroceryGroup)
@@ -445,7 +410,6 @@ public partial class FeedViewModel : ObservableObject
 
         bool confirmed = await Shell.Current.DisplayAlertAsync(
             "Delete All", "Delete this entire grocery run?", "Delete All", "Cancel");
-
         if (!confirmed) return;
 
         await _expenseService.DeleteGroceryGroupAsync(SelectedItem.Id);
@@ -477,9 +441,11 @@ public partial class FeedViewModel : ObservableObject
 
     // ── Data loading ──────────────────────────────────────────────────────────
 
+    private List<FeedCardItem> _pendingItems = [];
+
     private async Task LoadFeedAsync()
     {
-
+        FilterChanged?.Invoke();
         IsLoading = true;
         try
         {
@@ -492,70 +458,70 @@ public partial class FeedViewModel : ObservableObject
 
             var itemList = items.ToList();
             FeedItems = new ObservableCollection<FeedCardItem>(itemList);
-
-            if (itemList.Count == 0)
-            {
-                // create EMPTY columns instead of clearing
-                if (itemList.Count == 0)
-                {
-                    _columns = new List<ObservableCollection<FeedCardItem>>();
-
-                    for (int i = 0; i < CurrentColumnCount; i++)
-                        _columns.Add(new ObservableCollection<FeedCardItem>());
-
-                    OnPropertyChanged(nameof(Columns));
-                    ColumnsRebuilt?.Invoke();
-                    UpdateLabels();
-                    return;
-                }
-
-
-                OnPropertyChanged(nameof(Columns));
-                ColumnsRebuilt?.Invoke();
-                UpdateLabels();
-                return;
-            }
-
-            DistributeIntoColumns(itemList, CurrentColumnCount);
-
-            // DistributeIntoColumns uses the last known column count from code-behind.
-            // Code-behind subscribes to ColumnsRebuilt and re-wires the UI.
-
+            _pendingItems = itemList;
             UpdateLabels();
+
+            // Only distribute if we already have a real column count from OnSizeAllocated
+            if (CurrentColumnCount > 0)
+                DistributeIntoColumns(_pendingItems, CurrentColumnCount);
         }
         finally
         {
             IsLoading = false;
             OnPropertyChanged(nameof(HasNoEntries));
+            OnPropertyChanged(nameof(HasEntries));
         }
     }
 
-    // Public so FeedPage.xaml.cs can call this on resize with a new columnCount.
+    // Public — FeedPage.xaml.cs calls this on resize
     public void DistributeIntoColumns(IList<FeedCardItem>? itemList = null, int columnCount = 2)
     {
         var list = itemList ?? FeedItems.ToList();
+        bool isResize = _columns.Count != columnCount;
 
-        _columns = new List<ObservableCollection<FeedCardItem>>();
+        if (isResize)
+        {
+            // Full rebuild — column count changed
+            _columns = new List<ObservableCollection<FeedCardItem>>();
+            for (int i = 0; i < columnCount; i++)
+                _columns.Add(new ObservableCollection<FeedCardItem>());
+            OnPropertyChanged(nameof(Columns));
+        }
+        else
+        {
+            // Soft refresh — reuse existing collections, just clear them
+            foreach (var col in _columns)
+                col.Clear();
+        }
 
-        for (int i = 0; i < columnCount; i++)
-            _columns.Add(new ObservableCollection<FeedCardItem>());
+        var heights = new double[columnCount];
 
-        for (int i = 0; i < list.Count; i++)
-            _columns[i % columnCount].Add(list[i]);
+        foreach (var item in list)
+        {
+            int col = 0;
+            for (int i = 1; i < columnCount; i++)
+                if (heights[i] < heights[col]) col = i;
 
-        OnPropertyChanged(nameof(Columns));
+            _columns[col].Add(item);
 
-     
+            double h = item.HasPhoto ? 240 : 100;
+            if (!string.IsNullOrEmpty(item.Title)) h += 20;
+            if (!string.IsNullOrEmpty(item.Note)) h += 16;
+            heights[col] += h + 10;
+        }
+
         ColumnsRebuilt?.Invoke();
     }
 
     private void UpdateLabels()
     {
+        var symbol = _settings.CurrencySymbol;
         var total = FeedItems.Sum(x => x.Amount);
-        TotalSpentFormatted = $"₱{total:N2}";
+        TotalSpentFormatted = $"{symbol}{total:N2}";
         SummaryLabel = _activeFilter switch
         {
-            FilterMode.Month => new DateTime(PickerYear, _selectedPickerMonth, 1).ToString("MMMM yyyy"),
+            FilterMode.Month => new DateTime(PickerYear, _selectedPickerMonth, 1)
+                                    .ToString("MMMM yyyy"),
             FilterMode.Year => PickerYear.ToString(),
             _ => DateTime.Now.ToString("MMMM yyyy")
         };

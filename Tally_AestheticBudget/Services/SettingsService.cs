@@ -1,7 +1,5 @@
 ﻿namespace Tally_AestheticBudget.Services;
 
-<<<<<<< HEAD
-// ── Interface ─────────────────────────────────────────────────────────────────
 
 public interface ISettingsService
 {
@@ -22,10 +20,6 @@ public interface ISettingsService
     bool ShowStaleReminder { get; set; }
 }
 
-// ── Implementation ────────────────────────────────────────────────────────────
-
-=======
->>>>>>> 60c1166 (Introduction of Settings Page)
 public class SettingsService : ISettingsService
 {
     private const string KeySymbol = "currency_symbol";
