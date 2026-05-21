@@ -1,4 +1,4 @@
-# Tally — Your Aesthetic Budget
+# Tally - Your Aesthetic Budget
 
 **Because budgeting shouldn't feel like a chore.** Tally is a personal finance app built with .NET MAUI that makes tracking money feel less dreadful. Tally combines a visual, Pinterest-style feed with real budgeting tools, a grocery tracker, and a dream board, all wrapped in a themeable, minimal interface. Originally, this app was built with the sole intention of doing a school project. However, the idea came from a real (and painful) experience with finance apps and the clinical aesthetic they have. 
 
@@ -119,7 +119,7 @@ The database lives in `FileSystem.AppDataDirectory` (`budget.db`), which resolve
 
 **Theme system** works by writing color values directly into `Application.Current.Resources` at runtime. When a theme changes, `ThemeService.ReloadShell()` replaces `MainPage` with a fresh `AppShell` instance so every page picks up the new colors. `App.CurrentAccent` must be set before `ReloadShell()` is called.
 
-**Masonry grid** on the Feed and Wishlist pages is built programmatically in the code-behind (`FeedPage.xaml.cs`, `WishlistPage.xaml.cs`). This is intentional — layout construction logic that depends on measured widths does not belong in a ViewModel. The XAML file for those pages contains only a named `MasonryGrid` container.
+**Masonry grid** on the Feed and Wishlist pages is built programmatically in the code-behind (`FeedPage.xaml.cs`, `WishlistPage.xaml.cs`). This is intentional because layout construction logic that depends on measured widths does not belong in a ViewModel. The XAML file for those pages contains only a named `MasonryGrid` container.
 
 **Add and Edit expense** share one page. The route passes an `ExpenseId` query parameter; `IsEditMode` on the ViewModel drives the page title, subtitle, and button label.
 
@@ -193,10 +193,9 @@ Initially built for our Software Project Management course. However, the concept
 ---
 
 ## Team
-## Team
 
 | Name | Role |
 |---|---|
-| Le Bron Silang | Lead architect — system design, database, services, MVVM, core features |
-| Zoe Anasco | Lead frontend designer and developer — UI, aesthetics, visual polish |
-| Arielle Atim | Backend contributor and QA — feature support and testing |
+| Le Bron Silang | Lead architect: system design, database, services, MVVM, core features |
+| Zoe Anasco | Lead frontend designer and developer: UI, UX, aesthetics, visual polish |
+| Arielle Atim | Backend contributor and QA - feature support and testing |
