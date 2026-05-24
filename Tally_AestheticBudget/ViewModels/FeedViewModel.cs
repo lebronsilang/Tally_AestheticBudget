@@ -56,15 +56,21 @@ public partial class FeedViewModel : ObservableObject
 
     private FilterMode _activeFilter = FilterMode.All;
     public bool IsFilterAll => _activeFilter == FilterMode.All;
-    public bool IsFilterYear => _activeFilter == FilterMode.Year;
+    public bool IsFilterDay => _activeFilter == FilterMode.Day;
+    public bool IsFilterWeek => _activeFilter == FilterMode.Week;
     public bool IsFilterMonth => _activeFilter == FilterMode.Month;
+    public bool IsFilterYear => _activeFilter == FilterMode.Year;
+    public bool IsFilterCategory => _activeFilter == FilterMode.Category;
 
     private void SetFilter(FilterMode mode)
     {
         _activeFilter = mode;
         OnPropertyChanged(nameof(IsFilterAll));
-        OnPropertyChanged(nameof(IsFilterYear));
+        OnPropertyChanged(nameof(IsFilterDay));
+        OnPropertyChanged(nameof(IsFilterWeek));
         OnPropertyChanged(nameof(IsFilterMonth));
+        OnPropertyChanged(nameof(IsFilterYear));
+        OnPropertyChanged(nameof(IsFilterCategory));
     }
 
     // ── Month picker ──────────────────────────────────────────────────────────
@@ -96,6 +102,15 @@ public partial class FeedViewModel : ObservableObject
         foreach (var item in MonthOptions)
             item.IsSelected = item.Month == _selectedPickerMonth && _activeFilter == FilterMode.Month;
     }
+
+    // ── Category picker ───────────────────────────────────────────────────────
+
+    private ExpenseCategory _selectedCategory = ExpenseCategory.Food;
+    [ObservableProperty] private bool _isCategoryPickerVisible;
+
+    public string SelectedCategoryLabel => _activeFilter == FilterMode.Category
+        ? _selectedCategory.ToString()
+        : "Category";
 
     // ── Detail modal ──────────────────────────────────────────────────────────
 
@@ -323,9 +338,40 @@ public partial class FeedViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private async Task FilterDayAsync()
+    {
+        SetFilter(FilterMode.Day);
+        await LoadFeedAsync();
+    }
+
+    [RelayCommand]
+    private async Task FilterWeekAsync()
+    {
+        SetFilter(FilterMode.Week);
+        await LoadFeedAsync();
+    }
+
+    [RelayCommand]
     private async Task FilterYearAsync()
     {
         SetFilter(FilterMode.Year);
+        await LoadFeedAsync();
+    }
+
+    [RelayCommand]
+    private void ShowCategoryPicker() => IsCategoryPickerVisible = true;
+
+    [RelayCommand]
+    private void DismissCategoryPicker() => IsCategoryPickerVisible = false;
+
+    [RelayCommand]
+    private async Task SelectCategoryFilterAsync(string cat)
+    {
+        if (Enum.TryParse<ExpenseCategory>(cat, out var c))
+            _selectedCategory = c;
+        IsCategoryPickerVisible = false;
+        SetFilter(FilterMode.Category);
+        OnPropertyChanged(nameof(SelectedCategoryLabel));
         await LoadFeedAsync();
     }
 
@@ -451,9 +497,12 @@ public partial class FeedViewModel : ObservableObject
         {
             var items = _activeFilter switch
             {
-                FilterMode.Year => await _expenseService.GetFeedItemsForYearAsync(PickerYear),
-                FilterMode.Month => await _expenseService.GetFeedItemsForMonthAsync(PickerYear, _selectedPickerMonth),
-                _ => await _expenseService.GetAllFeedItemsAsync()
+                FilterMode.Year     => await _expenseService.GetFeedItemsForYearAsync(PickerYear),
+                FilterMode.Month    => await _expenseService.GetFeedItemsForMonthAsync(PickerYear, _selectedPickerMonth),
+                FilterMode.Day      => await _expenseService.GetFeedItemsForDayAsync(DateTime.Today),
+                FilterMode.Week     => await _expenseService.GetFeedItemsForWeekAsync(GetMondayOfCurrentWeek()),
+                FilterMode.Category => await _expenseService.GetFeedItemsByCategoryAsync(_selectedCategory),
+                _                   => await _expenseService.GetAllFeedItemsAsync()
             };
 
             var itemList = items.ToList();
@@ -520,12 +569,21 @@ public partial class FeedViewModel : ObservableObject
         TotalSpentFormatted = $"{symbol}{total:N2}";
         SummaryLabel = _activeFilter switch
         {
-            FilterMode.Month => new DateTime(PickerYear, _selectedPickerMonth, 1)
-                                    .ToString("MMMM yyyy"),
-            FilterMode.Year => PickerYear.ToString(),
-            _ => DateTime.Now.ToString("MMMM yyyy")
+            FilterMode.Month    => new DateTime(PickerYear, _selectedPickerMonth, 1).ToString("MMMM yyyy"),
+            FilterMode.Year     => PickerYear.ToString(),
+            FilterMode.Day      => DateTime.Today.ToString("dddd, MMM d"),
+            FilterMode.Week     => $"Week of {GetMondayOfCurrentWeek():MMM d}",
+            FilterMode.Category => _selectedCategory.ToString(),
+            _                   => DateTime.Now.ToString("MMMM yyyy")
         };
+    }
+
+    private static DateTime GetMondayOfCurrentWeek()
+    {
+        var today = DateTime.Today;
+        int diff = (7 + (today.DayOfWeek - DayOfWeek.Monday)) % 7;
+        return today.AddDays(-diff);
     }
 }
 
-public enum FilterMode { All, Year, Month }
+public enum FilterMode { All, Day, Week, Month, Year, Category }

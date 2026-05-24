@@ -120,6 +120,47 @@
                                            FontAttributes="{Binding IsFilterYear, Converter={StaticResource BoolToFontAttr}}"
                                            TextColor="{Binding IsFilterYear, Converter={StaticResource BoolToChipText}}" />
                                 </Border>
+                                <Border Style="{StaticResource HoverButton}"
+                                        BackgroundColor="{Binding IsFilterDay, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding IsFilterDay, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+                                        Padding="16,7">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding FilterDayCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="Today" FontSize="14"
+                                           FontAttributes="{Binding IsFilterDay, Converter={StaticResource BoolToFontAttr}}"
+                                           TextColor="{Binding IsFilterDay, Converter={StaticResource BoolToChipText}}" />
+                                </Border>
+                                <Border Style="{StaticResource HoverButton}"
+                                        BackgroundColor="{Binding IsFilterWeek, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding IsFilterWeek, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+                                        Padding="16,7">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding FilterWeekCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="This Week" FontSize="14"
+                                           FontAttributes="{Binding IsFilterWeek, Converter={StaticResource BoolToFontAttr}}"
+                                           TextColor="{Binding IsFilterWeek, Converter={StaticResource BoolToChipText}}" />
+                                </Border>
+                                <Border Style="{StaticResource HoverButton}"
+                                        BackgroundColor="{Binding IsFilterCategory, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding IsFilterCategory, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+                                        Padding="16,7">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ShowCategoryPickerCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <HorizontalStackLayout Spacing="5">
+                                        <Label Text="{Binding SelectedCategoryLabel}" FontSize="14"
+                                               FontAttributes="{Binding IsFilterCategory, Converter={StaticResource BoolToFontAttr}}"
+                                               TextColor="{StaticResource TextPrimary}" />
+                                        <Label Text="▾" FontSize="11"
+                                               TextColor="{Binding IsFilterCategory, Converter={StaticResource BoolToChipText}}"
+                                               VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
+                                </Border>
                             </HorizontalStackLayout>
                         </ScrollView>
                     </VerticalStackLayout>
@@ -754,6 +795,114 @@
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
+
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <!-- ── Category picker overlay ───────────────────────────────────── -->
+        <Grid IsVisible="{Binding IsCategoryPickerVisible}">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding DismissCategoryPickerCommand}" />
+            </Grid.GestureRecognizers>
+            <controls:BlurOverlay />
+            <Border BackgroundColor="{StaticResource CardBackground}"
+                    Style="{StaticResource ModalCard}"
+                    StrokeShape="RoundRectangle 20"
+                    HorizontalOptions="Center" VerticalOptions="Center"
+                    MaximumWidthRequest="320"
+                    Margin="20,0" Padding="24,24">
+                <VerticalStackLayout Spacing="16">
+
+                    <Label Text="Filter by category" FontSize="17" FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}" />
+
+                    <FlexLayout Wrap="Wrap" Direction="Row" JustifyContent="Start" AlignItems="Center">
+                        <Border Style="{StaticResource HoverButton}"
+                                BackgroundColor="{StaticResource PageBackground}"
+                                Stroke="{StaticResource CardBorder}"
+                                StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+                                Padding="14,8" Margin="0,0,8,8">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectCategoryFilterCommand}"
+                                                      CommandParameter="Food" />
+                            </Border.GestureRecognizers>
+                            <Label Text="🍜 Food" FontSize="13"
+                                   TextColor="{StaticResource TextPrimary}" />
+                        </Border>
+                        <Border Style="{StaticResource HoverButton}"
+                                BackgroundColor="{StaticResource PageBackground}"
+                                Stroke="{StaticResource CardBorder}"
+                                StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+                                Padding="14,8" Margin="0,0,8,8">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectCategoryFilterCommand}"
+                                                      CommandParameter="Transport" />
+                            </Border.GestureRecognizers>
+                            <Label Text="🚌 Transport" FontSize="13"
+                                   TextColor="{StaticResource TextPrimary}" />
+                        </Border>
+                        <Border Style="{StaticResource HoverButton}"
+                                BackgroundColor="{StaticResource PageBackground}"
+                                Stroke="{StaticResource CardBorder}"
+                                StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+                                Padding="14,8" Margin="0,0,8,8">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectCategoryFilterCommand}"
+                                                      CommandParameter="Shopping" />
+                            </Border.GestureRecognizers>
+                            <Label Text="🛍 Shopping" FontSize="13"
+                                   TextColor="{StaticResource TextPrimary}" />
+                        </Border>
+                        <Border Style="{StaticResource HoverButton}"
+                                BackgroundColor="{StaticResource PageBackground}"
+                                Stroke="{StaticResource CardBorder}"
+                                StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+                                Padding="14,8" Margin="0,0,8,8">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectCategoryFilterCommand}"
+                                                      CommandParameter="Health" />
+                            </Border.GestureRecognizers>
+                            <Label Text="💊 Health" FontSize="13"
+                                   TextColor="{StaticResource TextPrimary}" />
+                        </Border>
+                        <Border Style="{StaticResource HoverButton}"
+                                BackgroundColor="{StaticResource PageBackground}"
+                                Stroke="{StaticResource CardBorder}"
+                                StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+                                Padding="14,8" Margin="0,0,8,8">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectCategoryFilterCommand}"
+                                                      CommandParameter="Fun" />
+                            </Border.GestureRecognizers>
+                            <Label Text="🎮 Fun" FontSize="13"
+                                   TextColor="{StaticResource TextPrimary}" />
+                        </Border>
+                        <Border Style="{StaticResource HoverButton}"
+                                BackgroundColor="{StaticResource PageBackground}"
+                                Stroke="{StaticResource CardBorder}"
+                                StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+                                Padding="14,8" Margin="0,0,8,8">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectCategoryFilterCommand}"
+                                                      CommandParameter="Other" />
+                            </Border.GestureRecognizers>
+                            <Label Text="✦ Other" FontSize="13"
+                                   TextColor="{StaticResource TextPrimary}" />
+                        </Border>
+                        <Border Style="{StaticResource HoverButton}"
+                                BackgroundColor="{StaticResource PageBackground}"
+                                Stroke="{StaticResource CardBorder}"
+                                StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+                                Padding="14,8" Margin="0,0,8,8">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectCategoryFilterCommand}"
+                                                      CommandParameter="Grocery" />
+                            </Border.GestureRecognizers>
+                            <Label Text="🛒 Grocery" FontSize="13"
+                                   TextColor="{StaticResource TextPrimary}" />
+                        </Border>
+                    </FlexLayout>
 
                 </VerticalStackLayout>
             </Border>

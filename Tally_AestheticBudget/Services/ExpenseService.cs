@@ -7,6 +7,9 @@ public interface IExpenseService
     Task<IEnumerable<FeedCardItem>> GetAllFeedItemsAsync();
     Task<IEnumerable<FeedCardItem>> GetFeedItemsForYearAsync(int year);
     Task<IEnumerable<FeedCardItem>> GetFeedItemsForMonthAsync(int year, int month);
+    Task<IEnumerable<FeedCardItem>> GetFeedItemsForDayAsync(DateTime date);
+    Task<IEnumerable<FeedCardItem>> GetFeedItemsForWeekAsync(DateTime weekStart);
+    Task<IEnumerable<FeedCardItem>> GetFeedItemsByCategoryAsync(ExpenseCategory category);
     Task<ExpenseEntity?> GetExpenseByIdAsync(int id);
     Task SaveExpenseAsync(ExpenseEntity expense);
     Task UpdateExpenseAsync(ExpenseEntity expense);
@@ -36,7 +39,19 @@ public class ExpenseService : IExpenseService
     public Task<IEnumerable<FeedCardItem>> GetFeedItemsForMonthAsync(int year, int month)
         => QueryAsync(year, month);
 
-    private async Task<IEnumerable<FeedCardItem>> QueryAsync(int? year, int? month)
+    public Task<IEnumerable<FeedCardItem>> GetFeedItemsForDayAsync(DateTime date)
+        => QueryAsync(date.Year, date.Month, date.Day);
+
+    public Task<IEnumerable<FeedCardItem>> GetFeedItemsForWeekAsync(DateTime weekStart)
+        => QueryAsync(null, null, null, weekStart, weekStart.AddDays(7));
+
+    public Task<IEnumerable<FeedCardItem>> GetFeedItemsByCategoryAsync(ExpenseCategory category)
+        => QueryAsync(null, null, null, null, null, category);
+
+    private async Task<IEnumerable<FeedCardItem>> QueryAsync(
+        int? year, int? month, int? day = null,
+        DateTime? rangeStart = null, DateTime? rangeEnd = null,
+        ExpenseCategory? category = null)
     {
         var db = await _db.GetConnectionAsync();
 
@@ -55,17 +70,19 @@ public class ExpenseService : IExpenseService
 
         foreach (var e in expenses)
         {
-            if (!Matches(e.Date, year, month)) continue;
+            if (!Matches(e.Date, year, month, day, rangeStart, rangeEnd)) continue;
+            var expCat = ParseCategory(e.Category);
+            if (category.HasValue && expCat != category.Value) continue;
             cards.Add(new FeedCardItem
             {
                 Id = e.Id,
                 CurrencySymbol = currencySymbol,
                 Amount = e.Amount,
-                Category = ParseCategory(e.Category),
+                Category = expCat,
                 Title = e.Title,
                 Note = e.Note,
                 Date = e.Date,
-                PhotoPath = e.PhotoPath          
+                PhotoPath = e.PhotoPath
             });
         }
 
@@ -75,7 +92,8 @@ public class ExpenseService : IExpenseService
 
         foreach (var group in groups)
         {
-            if (!Matches(group.Date, year, month)) continue;
+            if (!Matches(group.Date, year, month, day, rangeStart, rangeEnd)) continue;
+            if (category.HasValue && category.Value != ExpenseCategory.Grocery) continue;
 
             var lines = byGroup.TryGetValue(group.Id, out var l) ? l : [];
             var items = lines.Select(li => new GroceryLineItem
@@ -156,10 +174,14 @@ public class ExpenseService : IExpenseService
         await db.DeleteAsync<ExpenseEntity>(lineItemId);
     }
 
-    private static bool Matches(DateTime date, int? year, int? month)
+    private static bool Matches(DateTime date, int? year, int? month, int? day = null,
+        DateTime? rangeStart = null, DateTime? rangeEnd = null)
     {
         if (year.HasValue && date.Year != year.Value) return false;
         if (month.HasValue && date.Month != month.Value) return false;
+        if (day.HasValue && date.Day != day.Value) return false;
+        if (rangeStart.HasValue && date < rangeStart.Value) return false;
+        if (rangeEnd.HasValue && date >= rangeEnd.Value) return false;
         return true;
     }
 
