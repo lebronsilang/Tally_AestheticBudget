@@ -3,6 +3,19 @@ using System.Globalization;
 
 namespace Tally_AestheticBudget.Converters;
 
+// Reads a theme color from the live resource dictionary so converters
+// adapt when the user switches themes (Midnight, Sakura, custom, etc.).
+internal static class ThemeColors
+{
+    public static Color Get(string key, string fallback = "#000000")
+    {
+        if (Application.Current?.Resources?.TryGetValue(key, out var value) == true
+            && value is Color c)
+            return c;
+        return Color.TryParse(fallback, out var fc) ? fc : Colors.Gray;
+    }
+}
+
 // Category label color — accent matching .card-cat in your CSS
 public class CategoryToColorConverter : IValueConverter
 {
@@ -61,26 +74,26 @@ public class BoolToChipBgConverter : IValueConverter
         => throw new NotImplementedException();
 }
 
-// ── FIXED: reads App.CurrentAccent instead of hardcoded #ff6b6b ──────────────
-// Active chip border: accent, inactive: soft gray border
+// ── FIXED: reads App.CurrentAccent + CardBorder instead of hardcoded values ──
+// Active chip border: accent, inactive: theme card border
 public class BoolToChipBorderConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         => value is true
             ? Color.FromArgb(App.CurrentAccent)
-            : Color.FromArgb("#E0E0E5");
+            : ThemeColors.Get("CardBorder", "#E0E0E5");
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotImplementedException();
 }
 
-// Active chip text: white on filled chip, subtext gray when inactive
+// Active chip text: white on filled chip, TextSecondary when inactive
 public class BoolToChipTextConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         => value is true
             ? Colors.White
-            : Color.FromArgb("#6e6e73");   // var(--subtext)
+            : ThemeColors.Get("TextSecondary", "#6e6e73");
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotImplementedException();
@@ -248,25 +261,25 @@ public class BoolToAffordTextConverter : IValueConverter
         => throw new NotImplementedException();
 }
 
-// Status toggle — Planned button background
+// Status toggle — Planned button background (uses theme PageBackground so it works on dark themes)
 public class StatusToPlannedBgConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         => value is WishStatus.Planned
-            ? Color.FromArgb("#f5f5f7")
+            ? ThemeColors.Get("PageBackground", "#f5f5f7")
             : Colors.Transparent;
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotImplementedException();
 }
 
-// Status toggle — Planned button text color
+// Status toggle — Planned button text color (theme-aware)
 public class StatusToPlannedTextConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         => value is WishStatus.Planned
-            ? Color.FromArgb("#1d1d1f")
-            : Color.FromArgb("#6e6e73");
+            ? ThemeColors.Get("TextPrimary", "#1d1d1f")
+            : ThemeColors.Get("TextSecondary", "#6e6e73");
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotImplementedException();
@@ -284,13 +297,13 @@ public class StatusToBoughtBgConverter : IValueConverter
         => throw new NotImplementedException();
 }
 
-// Status toggle — Bought button text color
+// Status toggle — Bought button text color (green stays semantic; inactive reads TextSecondary)
 public class StatusToBoughtTextConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         => value is WishStatus.Bought
-            ? Color.FromArgb("#1a7a40")
-            : Color.FromArgb("#6e6e73");
+            ? Color.FromArgb("#1a7a40")   // green — intentional semantic color
+            : ThemeColors.Get("TextSecondary", "#6e6e73");
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotImplementedException();
@@ -329,8 +342,8 @@ public class ThemeActiveBorderConverter : IValueConverter
         var themeId = value as string;
         var activeId = Preferences.Get("active_theme", "default");
         return themeId == activeId
-            ? Color.FromArgb(App.CurrentAccent)  // active — current accent
-            : Color.FromArgb("#E8E8ED");          // inactive — subtle border
+            ? Color.FromArgb(App.CurrentAccent)          // active — current accent
+            : ThemeColors.Get("CardBorder", "#E8E8ED");  // inactive — theme border
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -344,7 +357,7 @@ public class PinStrokeConverter : IValueConverter
         bool isPinned = value is bool b && b;
         return isPinned
             ? new SolidColorBrush(Color.FromArgb(App.CurrentAccent))
-            : new SolidColorBrush(Color.FromArgb("#E8E8ED"));
+            : new SolidColorBrush(ThemeColors.Get("CardBorder", "#E8E8ED"));
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

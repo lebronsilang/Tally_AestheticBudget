@@ -1,4 +1,5 @@
-﻿using Tally_AestheticBudget.Views;
+﻿using Tally_AestheticBudget.Converters;
+using Tally_AestheticBudget.Views;
 
 namespace Tally_AestheticBudget;
 
@@ -40,7 +41,7 @@ public partial class AppShell : Shell
         {
             bool isActive = key == route;
             tab.BackgroundColor = isActive ? accent.WithAlpha(0.12f) : Colors.Transparent;
-            label.TextColor = isActive ? accent : Color.FromArgb("#6e6e73");
+            label.TextColor = isActive ? accent : ThemeColors.Get("TextSecondary", "#6e6e73");
             label.FontAttributes = isActive ? FontAttributes.Bold : FontAttributes.None;
         }
     }

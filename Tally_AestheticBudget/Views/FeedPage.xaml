@@ -155,7 +155,7 @@
                                     <HorizontalStackLayout Spacing="5">
                                         <Label Text="{Binding SelectedCategoryLabel}" FontSize="14"
                                                FontAttributes="{Binding IsFilterCategory, Converter={StaticResource BoolToFontAttr}}"
-                                               TextColor="{StaticResource TextPrimary}" />
+                                               TextColor="{Binding IsFilterCategory, Converter={StaticResource BoolToChipText}}" />
                                         <Label Text="▾" FontSize="11"
                                                TextColor="{Binding IsFilterCategory, Converter={StaticResource BoolToChipText}}"
                                                VerticalOptions="Center" />
@@ -256,7 +256,7 @@
                                         <Label Text="Food"
                                            FontSize="12"
                                            VerticalOptions="Center"
-                                           TextColor="{Binding IsNewFoodSelected, Converter={StaticResource BoolToChipText}}" />
+                                           TextColor="{Binding NewIsFoodSelected, Converter={StaticResource BoolToChipText}}" />
 
                                     </HorizontalStackLayout>
 
@@ -298,7 +298,7 @@
                                         <Label Text="Shopping"
                                            FontSize="12"
                                            VerticalOptions="Center"
-                                           TextColor="{Binding IsNewShoppingSelected, Converter={StaticResource BoolToChipText}}" />
+                                           TextColor="{Binding NewIsShoppingSelected, Converter={StaticResource BoolToChipText}}" />
 
                                     </HorizontalStackLayout>
                                 </Border>
@@ -316,10 +316,10 @@
                                             HeightRequest="14"
                                             VerticalOptions="Center" />
 
-                                        <Label Text="Food"
+                                        <Label Text="Health"
                                            FontSize="12"
                                            VerticalOptions="Center"
-                                           TextColor="{Binding IsNewHealthSelected, Converter={StaticResource BoolToChipText}}" />
+                                           TextColor="{Binding NewIsHealthSelected, Converter={StaticResource BoolToChipText}}" />
 
                                     </HorizontalStackLayout>
                                 </Border>
@@ -337,10 +337,10 @@
                                            HeightRequest="14"
                                            VerticalOptions="Center" />
 
-                                        <Label Text="Food"
+                                        <Label Text="Fun"
                                            FontSize="12"
                                            VerticalOptions="Center"
-                                           TextColor="{Binding IsNewFunSelected, Converter={StaticResource BoolToChipText}}" />
+                                           TextColor="{Binding NewIsFunSelected, Converter={StaticResource BoolToChipText}}" />
 
                                     </HorizontalStackLayout>
                                 </Border>
@@ -358,10 +358,10 @@
                                             HeightRequest="14"
                                             VerticalOptions="Center" />
 
-                                        <Label Text="other"
+                                        <Label Text="Other"
                                            FontSize="12"
                                            VerticalOptions="Center"
-                                           TextColor="{Binding IsNewOtherSelected, Converter={StaticResource BoolToChipText}}" />
+                                           TextColor="{Binding NewIsOtherSelected, Converter={StaticResource BoolToChipText}}" />
 
                                     </HorizontalStackLayout>
                                 </Border>
@@ -530,7 +530,7 @@
                                         <Label Text="Food"
                                            FontSize="12"
                                            VerticalOptions="Center"
-                                           TextColor="{Binding IsNewFoodSelected, Converter={StaticResource BoolToChipText}}" />
+                                           TextColor="{Binding EditIsFoodSelected, Converter={StaticResource BoolToChipText}}" />
 
                                     </HorizontalStackLayout>
                                 </Border>
@@ -549,7 +549,7 @@
                                         <Label Text="Transport"
                                             FontSize="12"
                                             VerticalOptions="Center"
-                                            TextColor="{Binding NewIsTransportSelected, Converter={StaticResource BoolToChipText}}" />
+                                            TextColor="{Binding EditIsTransportSelected, Converter={StaticResource BoolToChipText}}" />
                                     </HorizontalStackLayout>
                                 </Border>
                                 <Border BackgroundColor="{Binding EditIsShoppingSelected, Converter={StaticResource BoolToChipBg}}"
@@ -569,7 +569,7 @@
                                         <Label Text="Shopping"
                                            FontSize="12"
                                            VerticalOptions="Center"
-                                           TextColor="{Binding IsNewShoppingSelected, Converter={StaticResource BoolToChipText}}" />
+                                           TextColor="{Binding EditIsShoppingSelected, Converter={StaticResource BoolToChipText}}" />
 
                                     </HorizontalStackLayout>
                                 </Border>
@@ -590,7 +590,7 @@
                                         <Label Text="Health"
                                            FontSize="12"
                                            VerticalOptions="Center"
-                                           TextColor="{Binding IsNewHealthSelected, Converter={StaticResource BoolToChipText}}" />
+                                           TextColor="{Binding EditIsHealthSelected, Converter={StaticResource BoolToChipText}}" />
 
                                     </HorizontalStackLayout>
                                 </Border>
@@ -611,7 +611,7 @@
                                         <Label Text="Fun"
                                            FontSize="12"
                                            VerticalOptions="Center"
-                                           TextColor="{Binding IsNewFunSelected, Converter={StaticResource BoolToChipText}}" />
+                                           TextColor="{Binding EditIsFunSelected, Converter={StaticResource BoolToChipText}}" />
 
                                     </HorizontalStackLayout>
                                 </Border>
@@ -629,10 +629,10 @@
                                            HeightRequest="14"
                                            VerticalOptions="Center" />
 
-                                        <Label Text="other"
+                                        <Label Text="Other"
                                            FontSize="12"
                                            VerticalOptions="Center"
-                                           TextColor="{Binding IsNewOtherSelected, Converter={StaticResource BoolToChipText}}" />
+                                           TextColor="{Binding EditIsOtherSelected, Converter={StaticResource BoolToChipText}}" />
 
                                     </HorizontalStackLayout>
                                 </Border>
