@@ -24,7 +24,7 @@
                 <Grid ColumnDefinitions="*,Auto">
                     <VerticalStackLayout Grid.Column="0" Spacing="2">
                         <Label Text="Dream Board" FontFamily="DisplayFont"
-                               FontSize="26" TextColor="{StaticResource TextPrimary}" />
+                               FontSize="28" TextColor="{StaticResource TextPrimary}" />
                         <Label Text="{Binding StatsLabel}" FontSize="13"
                                TextColor="{StaticResource TextSecondary}" />
                     </VerticalStackLayout>
@@ -635,7 +635,7 @@
 
                             <Border IsVisible="{Binding SelectedItem.IsBought}"
                                     Style="{StaticResource HoverButton}"
-                                    BackgroundColor="#1Fff6b6b"
+                                    BackgroundColor="{DynamicResource AccentColorAlpha}"
                                     Stroke="{StaticResource AccentColor}"
                                     StrokeThickness="0.8" StrokeShape="RoundRectangle 10"
                                     Padding="0,9" Margin="0,6,0,0">

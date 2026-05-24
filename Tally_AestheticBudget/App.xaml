@@ -24,6 +24,7 @@
             <Color x:Key="TextPrimary">#1d1d1f</Color>
             <Color x:Key="TextSecondary">#6e6e73</Color>
             <Color x:Key="AccentColor">#ff6b6b</Color>
+            <Color x:Key="AccentColorAlpha">#1Fff6b6b</Color>
 
             <!-- ── Converters ─────────────────────────────────────────────── -->
             <converters:CategoryToColorConverter      x:Key="CategoryToColor" />

@@ -120,6 +120,10 @@ public class ThemeService : IThemeService
         Set("TextSecondary", textSecondary);
         Set("AccentColor", accent);
 
+        // Accent at ~12% opacity — used for tinted pill/progress-track backgrounds
+        if (Color.TryParse(accent, out var accentColor))
+            res["AccentColorAlpha"] = accentColor.WithAlpha(0x1F / 255f);
+
         App.CurrentAccent = accent;
     }
 

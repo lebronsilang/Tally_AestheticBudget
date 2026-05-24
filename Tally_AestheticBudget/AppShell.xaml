@@ -29,7 +29,7 @@
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="FeedPage" />
                     </Border.GestureRecognizers>
-                    <Label x:Name="TabFeedLabel" Text="Feed" FontSize="13"
+                    <Label x:Name="TabFeedLabel" Text="≡  Feed" FontSize="13"
                            TextColor="{StaticResource TextSecondary}" />
                 </Border>
 
@@ -39,7 +39,7 @@
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="BudgetPage" />
                     </Border.GestureRecognizers>
-                    <Label x:Name="TabBudgetLabel" Text="Budget" FontSize="13"
+                    <Label x:Name="TabBudgetLabel" Text="◈  Budget" FontSize="13"
                            TextColor="{StaticResource TextSecondary}" />
                 </Border>
 
@@ -49,7 +49,7 @@
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="WishlistPage" />
                     </Border.GestureRecognizers>
-                    <Label x:Name="TabWishlistLabel" Text="Wishlist" FontSize="13"
+                    <Label x:Name="TabWishlistLabel" Text="♡  Wishlist" FontSize="13"
                            TextColor="{StaticResource TextSecondary}" />
                 </Border>
 
@@ -59,7 +59,7 @@
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="GroceryPage" />
                     </Border.GestureRecognizers>
-                    <Label x:Name="TabGroceryLabel" Text="Grocery" FontSize="13"
+                    <Label x:Name="TabGroceryLabel" Text="⊟  Grocery" FontSize="13"
                            TextColor="{StaticResource TextSecondary}" />
                 </Border>
 
@@ -69,17 +69,18 @@
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="ThemesPage" />
                     </Border.GestureRecognizers>
-                    <Label x:Name="TabThemesLabel" Text="Themes" FontSize="13"
+                    <Label x:Name="TabThemesLabel" Text="✦  Themes" FontSize="13"
                            TextColor="{StaticResource TextSecondary}" />
                 </Border>
+
                 <Border x:Name="TabSettings"
-        BackgroundColor="Transparent" StrokeThickness="0"
-        StrokeShape="RoundRectangle 980" Padding="14,6">
+                        BackgroundColor="Transparent" StrokeThickness="0"
+                        StrokeShape="RoundRectangle 980" Padding="14,6">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="SettingsPage" />
                     </Border.GestureRecognizers>
-                    <Label x:Name="TabSettingsLabel" Text="Settings" FontSize="13"
-           TextColor="{StaticResource TextSecondary}" />
+                    <Label x:Name="TabSettingsLabel" Text="⊙  Settings" FontSize="13"
+                           TextColor="{StaticResource TextSecondary}" />
                 </Border>
 
             </HorizontalStackLayout>

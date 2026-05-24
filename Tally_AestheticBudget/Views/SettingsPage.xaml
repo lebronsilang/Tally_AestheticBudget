@@ -15,7 +15,7 @@
 
                 <!-- ── Floating header card ───────────────────────────────── -->
                 <Border BackgroundColor="{StaticResource CardBackground}"
-                        Stroke="{StaticResource AccentColor}"
+                        Stroke="{StaticResource CardBorder}"
                         StrokeThickness="1" StrokeShape="RoundRectangle 20"
                         Padding="20,18,20,16"
                         Margin="16,16,16,0">
@@ -35,7 +35,7 @@
                            Margin="4,0,0,0" />
 
                     <Border BackgroundColor="{StaticResource CardBackground}"
-                            Stroke="{StaticResource AccentColor}"
+                            Stroke="{StaticResource CardBorder}"
                             StrokeThickness="1" StrokeShape="RoundRectangle 20"
                             Padding="20,16">
                         <VerticalStackLayout Spacing="14">
@@ -165,7 +165,7 @@
                            Margin="4,4,0,0" />
 
                     <Border BackgroundColor="{StaticResource CardBackground}"
-                            Stroke="{StaticResource AccentColor}"
+                            Stroke="{StaticResource CardBorder}"
                             StrokeThickness="1" StrokeShape="RoundRectangle 20"
                             Padding="0">
                         <VerticalStackLayout Spacing="0">
@@ -290,7 +290,7 @@
                            Margin="4,4,0,0" />
 
                     <Border BackgroundColor="{StaticResource CardBackground}"
-                            Stroke="{StaticResource AccentColor}"
+                            Stroke="{StaticResource CardBorder}"
                             StrokeThickness="1" StrokeShape="RoundRectangle 20"
                             Padding="0">
                         <VerticalStackLayout Spacing="0">
@@ -381,7 +381,7 @@
                             <TapGestureRecognizer Command="{Binding OpenClearDataCommand}" />
                         </ContentView.GestureRecognizers>
                         <Border BackgroundColor="{StaticResource CardBackground}"
-            Stroke="{StaticResource AccentColor}"
+            Stroke="{StaticResource CardBorder}"
             StrokeThickness="1" StrokeShape="RoundRectangle 20"
             Padding="0">
                             <Grid ColumnDefinitions="Auto,*" Padding="20,16" ColumnSpacing="14">

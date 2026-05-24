@@ -23,13 +23,13 @@
                 <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
                     <VerticalStackLayout Grid.Column="0" Spacing="2">
                         <Label Text="Grocery List" FontFamily="DisplayFont"
-                               FontSize="26" TextColor="{StaticResource TextPrimary}" />
+                               FontSize="28" TextColor="{StaticResource TextPrimary}" />
                         <Label Text="{Binding StatsLabel}" FontSize="13"
                                TextColor="{StaticResource TextSecondary}" />
                     </VerticalStackLayout>
                     <Border Grid.Column="1"
                             Style="{StaticResource HoverButton}"
-                            BackgroundColor="#1Fff6b6b"
+                            BackgroundColor="{DynamicResource AccentColorAlpha}"
                             Stroke="{StaticResource AccentColor}"
                             StrokeThickness="0.8" StrokeShape="RoundRectangle 980"
                             Padding="14,8" VerticalOptions="Center">
@@ -68,7 +68,7 @@
                                    TextColor="{Binding BudgetStatus.IsOverBudget, Converter={StaticResource BoolToProgressColor}}" />
                         </Grid>
                         <Grid IsVisible="{Binding BudgetStatus.HasBudget}" HeightRequest="6">
-                            <Border BackgroundColor="#1Fff6b6b" StrokeThickness="0"
+                            <Border BackgroundColor="{DynamicResource AccentColorAlpha}" StrokeThickness="0"
                                     StrokeShape="RoundRectangle 980" HeightRequest="6" />
                             <Border BackgroundColor="{Binding BudgetStatus.IsOverBudget, Converter={StaticResource BoolToProgressColor}}"
                                     StrokeThickness="0" StrokeShape="RoundRectangle 980"
@@ -79,6 +79,7 @@
                 </Border>
 
                 <!-- Filter chips -->
+                <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
                 <HorizontalStackLayout Spacing="8">
                     <Border Style="{StaticResource HoverButton}"
                             BackgroundColor="{Binding IsFilterAll, Converter={StaticResource BoolToChipBg}}"
@@ -114,6 +115,7 @@
                                TextColor="{Binding IsFilterChecked, Converter={StaticResource BoolToChipText}}" />
                     </Border>
                 </HorizontalStackLayout>
+                </ScrollView>
 
             </VerticalStackLayout>
         </Border>

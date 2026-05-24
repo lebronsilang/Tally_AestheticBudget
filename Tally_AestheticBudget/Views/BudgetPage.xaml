@@ -16,7 +16,7 @@
             <Border BackgroundColor="{StaticResource CardBackground}"
                     Stroke="{StaticResource CardBorder}"
                     StrokeThickness="1" StrokeShape="RoundRectangle 20"
-                    Padding="20,18" Margin="16,16,16,0">
+                    Padding="20,18,20,16" Margin="16,16,16,0">
                 <VerticalStackLayout Spacing="0">
                     <Grid ColumnDefinitions="*,Auto">
                         <VerticalStackLayout Grid.Column="0" Spacing="2">
@@ -27,7 +27,7 @@
                         </VerticalStackLayout>
                         <Border Grid.Column="1"
                                 Style="{StaticResource HoverButton}"
-                                BackgroundColor="#1Fff6b6b"
+                                BackgroundColor="{DynamicResource AccentColorAlpha}"
                                 Stroke="{StaticResource AccentColor}"
                                 StrokeThickness="0.8" StrokeShape="RoundRectangle 980"
                                 Padding="14,8" VerticalOptions="Center">
@@ -146,7 +146,7 @@
                                     <!-- PROGRESS BAR -->
                                     <Grid HeightRequest="8">
 
-                                        <Border BackgroundColor="#1Fff6b6b"
+                                        <Border BackgroundColor="{DynamicResource AccentColorAlpha}"
                                     StrokeThickness="0"
                                     StrokeShape="RoundRectangle 980"
                                     HeightRequest="8" />

@@ -10,18 +10,32 @@ public partial class WishlistPage : ContentPage
     private readonly WishlistViewModel _viewModel;
     private int _lastColumnCount = 0;
     private bool _gridPopulated = false;
+    private double _lastWidth = 0;
 
     public WishlistPage(WishlistViewModel viewModel)
     {
         InitializeComponent();
         _viewModel = viewModel;
         BindingContext = viewModel;
-        _viewModel.ColumnsRebuilt += () => { _gridPopulated = false; RebuildMasonryGrid(); };
+
+        _viewModel.FilterChanged += () =>
+        {
+            MainThread.BeginInvokeOnMainThread(ClearMasonryGrid);
+        };
+
+        _viewModel.ColumnsRebuilt += () =>
+        {
+            MainThread.BeginInvokeOnMainThread(RebuildMasonryGrid);
+        };
+
         _viewModel.DataLoaded += () =>
         {
             _gridPopulated = false;
-            _viewModel.DistributeIntoColumns(GetColumnCount(Width > 0 ? Width : 800));
+            var w = MasonryGrid.Width;
+            _viewModel.DistributeIntoColumns(GetColumnCount(w > 0 ? w : 800));
         };
+
+        MasonryGrid.SizeChanged += MasonryGrid_SizeChanged;
     }
 
     protected override async void OnAppearing()
@@ -30,15 +44,19 @@ public partial class WishlistPage : ContentPage
         await _viewModel.OnPageAppearingAsync();
     }
 
-    protected override void OnSizeAllocated(double width, double height)
+    private void MasonryGrid_SizeChanged(object? sender, EventArgs e)
     {
-        base.OnSizeAllocated(width, height);
+        var width = MasonryGrid.Width;
         if (width <= 0) return;
-        var cols = GetColumnCount(width);
-        if (cols == _lastColumnCount && _gridPopulated) return;
-        _lastColumnCount = cols;
+        if (Math.Abs(width - _lastWidth) < 5.0) return;
+        _lastWidth = width;
+
+        var newColumnCount = GetColumnCount(width);
+        if (newColumnCount == _lastColumnCount && _gridPopulated) return;
+        _lastColumnCount = newColumnCount;
         _gridPopulated = false;
-        _viewModel.DistributeIntoColumns(cols);
+
+        _viewModel.DistributeIntoColumns(newColumnCount);
     }
 
     private static int GetColumnCount(double w) => w switch
@@ -49,23 +67,38 @@ public partial class WishlistPage : ContentPage
         _ => 5
     };
 
+    private void ClearMasonryGrid()
+    {
+        MasonryGrid.ColumnDefinitions.Clear();
+        MasonryGrid.Children.Clear();
+        _gridPopulated = false;
+        _lastColumnCount = 0;
+    }
+
     private void RebuildMasonryGrid()
     {
-        MainThread.BeginInvokeOnMainThread(() =>
+        var columns = _viewModel.Columns;
+        if (columns.Count == 0) return;
+        MasonryGrid.ColumnDefinitions.Clear();
+        MasonryGrid.Children.Clear();
+
+        // Build stacks WITHOUT binding items yet — let the grid do one layout pass
+        // so stacks have correct widths before images measure against them
+        for (int i = 0; i < columns.Count; i++)
         {
-            var columns = _viewModel.Columns;
-            if (columns.Count == 0) return;
-            MasonryGrid.ColumnDefinitions.Clear();
-            MasonryGrid.Children.Clear();
-            for (int i = 0; i < columns.Count; i++)
-                MasonryGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
+            MasonryGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
+            var stack = new VerticalStackLayout { Spacing = 10, VerticalOptions = LayoutOptions.Start };
+            BindableLayout.SetItemTemplate(stack, BuildCardTemplate());
+            Grid.SetColumn(stack, i);
+            MasonryGrid.Children.Add(stack);
+        }
+
+        Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(16), () =>
+        {
             for (int i = 0; i < columns.Count; i++)
             {
-                var stack = new VerticalStackLayout { Spacing = 10, VerticalOptions = LayoutOptions.Start };
-                BindableLayout.SetItemsSource(stack, columns[i]);
-                BindableLayout.SetItemTemplate(stack, BuildCardTemplate());
-                Grid.SetColumn(stack, i);
-                MasonryGrid.Children.Add(stack);
+                if (MasonryGrid.Children[i] is VerticalStackLayout stack)
+                    BindableLayout.SetItemsSource(stack, columns[i]);
             }
             _gridPopulated = true;
         });
@@ -119,7 +152,7 @@ public partial class WishlistPage : ContentPage
             // PHOTO CARD
             var photoContainer = new Grid();
             photoContainer.SetBinding(Grid.IsVisibleProperty, "HasPhoto");
-            var photo = new Image { Aspect = Aspect.AspectFit, MaximumHeightRequest = 500, HorizontalOptions = LayoutOptions.Fill };
+            var photo = new Controls.AspectLockedImage();
             photo.SetBinding(Image.SourceProperty, "PhotoPath");
             photo.Clip = new Microsoft.Maui.Controls.Shapes.RoundRectangleGeometry { Rect = new Rect(0, 0, 1000, 2000), CornerRadius = new CornerRadius(18) };
             photoContainer.Children.Add(photo);
@@ -191,7 +224,8 @@ public partial class WishlistPage : ContentPage
             price.SetBinding(Label.TextProperty, "PriceFormatted");
             price.SetDynamicResource(Label.TextColorProperty, "AccentColor");
             content.Children.Add(price);
-            var coolingBanner = new Border { StrokeThickness = 0, BackgroundColor = Color.FromArgb("#1Fff6b6b"), Padding = new Thickness(6, 3) };
+            var coolingBanner = new Border { StrokeThickness = 0, Padding = new Thickness(6, 3) };
+            coolingBanner.SetDynamicResource(Border.BackgroundColorProperty, "AccentColorAlpha");
             coolingBanner.StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = new CornerRadius(8) };
             coolingBanner.SetBinding(Border.IsVisibleProperty, "ShowCoolingBanner");
             var coolingLabel = new Label { FontSize = 10 };
@@ -228,13 +262,13 @@ public partial class WishlistPage : ContentPage
             var pinnedBadge = new Border
             {
                 StrokeThickness = 0,
-                BackgroundColor = Color.FromArgb("#FF6B6B"),
                 Padding = new Thickness(8, 4),
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Start,
                 Margin = new Thickness(10, 10, 0, 0),
             };
             pinnedBadge.StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = new CornerRadius(980) };
+            pinnedBadge.SetDynamicResource(Border.BackgroundColorProperty, "AccentColor");
             pinnedBadge.SetBinding(Border.IsVisibleProperty, "IsPinned");
             pinnedBadge.Content = new Label { Text = "📌 Pinned", FontSize = 11, FontAttributes = FontAttributes.Bold, TextColor = Colors.White };
             root.Children.Add(pinnedBadge);

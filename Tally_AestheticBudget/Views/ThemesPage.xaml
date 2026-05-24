@@ -20,7 +20,7 @@
                         Padding="20,18,20,16"
                         Margin="16,16,16,0">
                     <VerticalStackLayout Spacing="2">
-                        <Label Text="Aesthetic Themes" FontFamily="DisplayFont"
+                        <Label Text="Themes" FontFamily="DisplayFont"
                                FontSize="28" TextColor="{StaticResource TextPrimary}" />
                         <Label Text="Pick a vibe for your app"
                                FontSize="13" TextColor="{StaticResource TextSecondary}" />

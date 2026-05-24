@@ -14,6 +14,7 @@ public partial class WishlistViewModel : ObservableObject
     private readonly ISettingsService _settings;
 
     private List<WishCardItem> _allItems = [];
+    private bool _isDirty = true;
 
     public WishlistViewModel(
         IWishService wishService,
@@ -40,6 +41,7 @@ public partial class WishlistViewModel : ObservableObject
 
     public event Action? ColumnsRebuilt;
     public event Action? DataLoaded;
+    public event Action? FilterChanged;
 
     public void DistributeIntoColumns(int columnCount)
     {
@@ -47,11 +49,14 @@ public partial class WishlistViewModel : ObservableObject
         for (int i = 0; i < columnCount; i++)
             Columns.Add([]);
 
-        int col = 0;
+        var heights = new double[columnCount];
         foreach (var item in DisplayedItems)
         {
+            int col = Array.IndexOf(heights, heights.Min());
             Columns[col].Add(item);
-            col = (col + 1) % columnCount;
+            double h = item.HasPhoto ? 240 : 100;
+            if (!string.IsNullOrEmpty(item.Caption)) h += 16;
+            heights[col] += h + 10;
         }
 
         ColumnsRebuilt?.Invoke();
@@ -319,7 +324,11 @@ public partial class WishlistViewModel : ObservableObject
 
     // ── Lifecycle ─────────────────────────────────────────────────────────────
 
-    public async Task OnPageAppearingAsync() => await LoadAsync();
+    public async Task OnPageAppearingAsync()
+    {
+        if (!_isDirty) return;
+        await LoadAsync();
+    }
 
     private async Task LoadAsync()
     {
@@ -330,12 +339,15 @@ public partial class WishlistViewModel : ObservableObject
             _allItems = items.ToList();
             UpdateStats();
             ApplyFilter();
+            _isDirty = false;
         }
         finally { IsLoading = false; }
     }
 
     private void ApplyFilter()
     {
+        FilterChanged?.Invoke();
+
         var filtered = ActiveFilter switch
         {
             WishFilter.Planned => _allItems.Where(i => i.Status == WishStatus.Planned),
