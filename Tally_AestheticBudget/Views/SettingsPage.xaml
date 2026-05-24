@@ -67,6 +67,7 @@
                                 <Grid ColumnDefinitions="Auto,*,Auto">
                                     <Label Grid.Column="0" Text="{Binding SelectedCurrency.Flag}"
                                            FontSize="22" VerticalOptions="Center"
+                                           TextColor="{StaticResource TextPrimary}"
                                            Margin="0,0,10,0" />
                                     <VerticalStackLayout Grid.Column="1" Spacing="1"
                                                          VerticalOptions="Center">
@@ -123,6 +124,7 @@
                                                 <Grid ColumnDefinitions="Auto,*,Auto,Auto">
                                                     <Label Grid.Column="0" Text="{Binding Flag}"
                                                            FontSize="18" VerticalOptions="Center"
+                                                           TextColor="{StaticResource TextPrimary}"
                                                            Margin="0,0,10,0" />
                                                     <VerticalStackLayout Grid.Column="1" Spacing="1"
                                                                          VerticalOptions="Center">
@@ -142,13 +144,8 @@
                                                     <Label Grid.Column="3" Text="✓"
                                                            FontSize="14" FontAttributes="Bold"
                                                            TextColor="{StaticResource AccentColor}"
-                                                           VerticalOptions="Center">
-                                                        <Label.IsVisible>
-                                                            <Binding Path="Code"
-                                                                     Converter="{StaticResource StringToBool}"
-                                                                     ConverterParameter="{Binding Source={RelativeSource AncestorType={x:Type vm:SettingsViewModel}}, Path=SelectedCurrency.Code}" />
-                                                        </Label.IsVisible>
-                                                    </Label>
+                                                           IsVisible="{Binding IsSelected}"
+                                                           VerticalOptions="Center" />
                                                 </Grid>
                                             </Border>
                                         </DataTemplate>

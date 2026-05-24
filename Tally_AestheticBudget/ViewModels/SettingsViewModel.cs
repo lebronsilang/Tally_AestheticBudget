@@ -5,14 +5,16 @@ using Tally_AestheticBudget.Services;
 
 namespace Tally_AestheticBudget.ViewModels;
 
-public class CurrencyOption(string Flag, string Name, string Code, string Symbol)
+public partial class CurrencyOption(string Flag, string Name, string Code, string Symbol)
+    : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
 {
     public string Flag { get; init; } = Flag;
     public string Name { get; init; } = Name;
     public string Code { get; init; } = Code;
     public string Symbol { get; init; } = Symbol;
 
-    public bool IsSelected { get; set; }
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private bool _isSelected;
 }
 
 
