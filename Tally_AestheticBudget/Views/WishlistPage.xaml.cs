@@ -28,11 +28,15 @@ public partial class WishlistPage : ContentPage
             MainThread.BeginInvokeOnMainThread(RebuildMasonryGrid);
         };
 
+
         _viewModel.DataLoaded += () =>
         {
             _gridPopulated = false;
+
             var w = MasonryGrid.Width;
-            _viewModel.DistributeIntoColumns(GetColumnCount(w > 0 ? w : 800));
+
+            _viewModel.DistributeIntoColumns(
+                GetColumnCount(w > 0 ? w : 800));
         };
 
         MasonryGrid.SizeChanged += MasonryGrid_SizeChanged;
@@ -52,6 +56,8 @@ public partial class WishlistPage : ContentPage
         _lastWidth = width;
 
         var newColumnCount = GetColumnCount(width);
+        _viewModel.CurrentColumnCount = newColumnCount;
+
         if (newColumnCount == _lastColumnCount && _gridPopulated) return;
         _lastColumnCount = newColumnCount;
         _gridPopulated = false;

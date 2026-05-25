@@ -14,7 +14,9 @@ public partial class WishlistViewModel : ObservableObject
     private readonly ISettingsService _settings;
 
     private List<WishCardItem> _allItems = [];
-    private bool _isDirty = true;
+
+
+    public int CurrentColumnCount { get; set; } = 2;
 
     public WishlistViewModel(
         IWishService wishService,
@@ -37,25 +39,49 @@ public partial class WishlistViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<WishCardItem> _displayedItems = [];
 
-    public ObservableCollection<ObservableCollection<WishCardItem>> Columns { get; } = [];
-
     public event Action? ColumnsRebuilt;
     public event Action? DataLoaded;
     public event Action? FilterChanged;
 
+    // Change Columns type to match Feed's pattern
+    private List<ObservableCollection<WishCardItem>> _columns = [];
+    public IReadOnlyList<ObservableCollection<WishCardItem>> Columns => _columns;
+
     public void DistributeIntoColumns(int columnCount)
     {
-        Columns.Clear();
-        for (int i = 0; i < columnCount; i++)
-            Columns.Add([]);
+        bool isResize = _columns.Count != columnCount;
+
+        if (isResize)
+        {
+            _columns.Clear();
+
+            for (int i = 0; i < columnCount; i++)
+                _columns.Add(new ObservableCollection<WishCardItem>());
+
+            OnPropertyChanged(nameof(Columns));
+        }
+        else
+        {
+            foreach (var col in _columns)
+                col.Clear();
+        }
 
         var heights = new double[columnCount];
+
         foreach (var item in DisplayedItems)
         {
-            int col = Array.IndexOf(heights, heights.Min());
-            Columns[col].Add(item);
+            int col = 0;
+
+            for (int i = 1; i < columnCount; i++)
+                if (heights[i] < heights[col]) col = i;
+
+            _columns[col].Add(item);
+
             double h = item.HasPhoto ? 240 : 100;
+
+            if (!string.IsNullOrEmpty(item.Name)) h += 20;
             if (!string.IsNullOrEmpty(item.Caption)) h += 16;
+
             heights[col] += h + 10;
         }
 
@@ -217,6 +243,7 @@ public partial class WishlistViewModel : ObservableObject
         });
 
         IsAddModalVisible = false;
+        IsDirty = true;
         await LoadAsync();
     }
 
@@ -263,6 +290,7 @@ public partial class WishlistViewModel : ObservableObject
         if (SelectedItem is null) return;
         await _wishService.PinItemAsync(SelectedItem.Id);
         IsDetailVisible = false;
+        IsDirty = true;
         await LoadAsync();
     }
 
@@ -278,6 +306,7 @@ public partial class WishlistViewModel : ObservableObject
 
         await _wishService.ConvertToExpenseAsync(SelectedItem.Id);
         IsDetailVisible = false;
+        IsDirty = true;
         await LoadAsync();
     }
 
@@ -293,6 +322,7 @@ public partial class WishlistViewModel : ObservableObject
 
         await _wishService.DeleteWishItemAsync(SelectedItem.Id);
         IsDetailVisible = false;
+        IsDirty = true;
         await LoadAsync();
     }
 
@@ -316,7 +346,7 @@ public partial class WishlistViewModel : ObservableObject
             CurrencySymbol = sym,
             BudgetRemaining = remaining,
             Difference = remaining - item.Price,
-            CategoryName = item.CategoryLabel           
+            CategoryName = item.CategoryLabel
         };
 
         ShowAffordResult = true;
@@ -324,14 +354,17 @@ public partial class WishlistViewModel : ObservableObject
 
     // ── Lifecycle ─────────────────────────────────────────────────────────────
 
+    public bool IsDirty { get; set; } = true;
     public async Task OnPageAppearingAsync()
     {
-        if (!_isDirty) return;
+        if (!IsDirty) return;
+        IsDirty = false;
         await LoadAsync();
     }
 
     private async Task LoadAsync()
     {
+        FilterChanged?.Invoke();
         IsLoading = true;
         try
         {
@@ -339,15 +372,12 @@ public partial class WishlistViewModel : ObservableObject
             _allItems = items.ToList();
             UpdateStats();
             ApplyFilter();
-            _isDirty = false;
         }
         finally { IsLoading = false; }
     }
 
     private void ApplyFilter()
     {
-        FilterChanged?.Invoke();
-
         var filtered = ActiveFilter switch
         {
             WishFilter.Planned => _allItems.Where(i => i.Status == WishStatus.Planned),
@@ -359,7 +389,13 @@ public partial class WishlistViewModel : ObservableObject
         };
 
         DisplayedItems = new ObservableCollection<WishCardItem>(filtered);
+
         OnPropertyChanged(nameof(HasNoItems));
+
+        // rebuild masonry columns automatically
+        if (CurrentColumnCount > 0)
+            DistributeIntoColumns(CurrentColumnCount);
+
         DataLoaded?.Invoke();
     }
 
