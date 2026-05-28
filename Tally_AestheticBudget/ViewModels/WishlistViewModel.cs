@@ -10,7 +10,6 @@ public partial class WishlistViewModel : ObservableObject
 {
     private readonly IWishService _wishService;
     private readonly IBudgetService _budgetService;
-    private readonly IExpenseService _expenseService;
     private readonly ISettingsService _settings;
 
     private List<WishCardItem> _allItems = [];
@@ -21,12 +20,10 @@ public partial class WishlistViewModel : ObservableObject
     public WishlistViewModel(
         IWishService wishService,
         IBudgetService budgetService,
-        IExpenseService expenseService,
         ISettingsService settings)
     {
         _wishService = wishService;
         _budgetService = budgetService;
-        _expenseService = expenseService;
         _settings = settings;
     }
 
@@ -204,7 +201,12 @@ public partial class WishlistViewModel : ObservableObject
             NewPhotoPath = localPath;
             OnPropertyChanged(nameof(NewHasPhoto));
         }
-        catch { }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Photo pick failed: {ex.Message}");
+            await Shell.Current.DisplayAlertAsync("Photo Error",
+                "Could not load the selected photo. Please try again.", "OK");
+        }
     }
 
     [RelayCommand]
@@ -372,6 +374,12 @@ public partial class WishlistViewModel : ObservableObject
             _allItems = items.ToList();
             UpdateStats();
             ApplyFilter();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"LoadWishlist failed: {ex.Message}");
+            await Shell.Current.DisplayAlertAsync("Error",
+                "Could not load wishlist data. Please try again.", "OK");
         }
         finally { IsLoading = false; }
     }

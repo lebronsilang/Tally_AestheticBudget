@@ -87,6 +87,12 @@ public partial class BudgetViewModel : ObservableObject
             MonthLabel = new DateTime(_currentYear, _currentMonth, 1).ToString("MMMM yyyy");
             UpdateTotalLabel();
         }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"LoadBudget failed: {ex.Message}");
+            await Shell.Current.DisplayAlertAsync("Error",
+                "Could not load budget data. Please try again.", "OK");
+        }
         finally { IsLoading = false; }
     }
 

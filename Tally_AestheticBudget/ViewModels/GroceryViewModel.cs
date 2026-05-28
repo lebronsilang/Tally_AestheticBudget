@@ -87,6 +87,7 @@ public partial class GroceryViewModel : ObservableObject
 
         await _groceryService.AddItemAsync(NewItemName, price, qty);
         IsAddModalVisible = false;
+        IsDirty = true;
         await LoadAsync();
     }
 
@@ -130,12 +131,20 @@ public partial class GroceryViewModel : ObservableObject
         if (!confirmed) return;
 
         await _groceryService.BuyCheckedAsync();
+        IsDirty = true;
         await LoadAsync();
     }
 
     // ── Lifecycle ─────────────────────────────────────────────────────────────
 
-    public async Task OnPageAppearingAsync() => await LoadAsync();
+    public bool IsDirty { get; set; } = true;
+
+    public async Task OnPageAppearingAsync()
+    {
+        if (!IsDirty) return;
+        IsDirty = false;
+        await LoadAsync();
+    }
 
     private async Task LoadAsync()
     {
@@ -160,6 +169,12 @@ public partial class GroceryViewModel : ObservableObject
             UpdateBudgetPending();
             UpdateStats();
             ApplyFilter();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"LoadGrocery failed: {ex.Message}");
+            await Shell.Current.DisplayAlertAsync("Error",
+                "Could not load grocery data. Please try again.", "OK");
         }
         finally { IsLoading = false; }
     }

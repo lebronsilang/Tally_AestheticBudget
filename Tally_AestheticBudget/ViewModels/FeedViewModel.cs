@@ -50,7 +50,7 @@ public partial class FeedViewModel : ObservableObject
     // HasNoEntries → empty state overlay
     // HasEntries  → scroll view (header + masonry) — always visible so chips/add stay usable
     public bool HasNoEntries => !IsLoading && FeedItems.Count == 0;
-    public bool HasEntries => true; 
+    public bool HasEntries => true;
 
     // ── Filter state ──────────────────────────────────────────────────────────
 
@@ -163,7 +163,12 @@ public partial class FeedViewModel : ObservableObject
             NewPhotoPath = localPath;
             OnPropertyChanged(nameof(NewHasPhoto));
         }
-        catch { }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Photo pick failed: {ex.Message}");
+            await Shell.Current.DisplayAlertAsync("Photo Error",
+                "Could not load the selected photo. Please try again.", "OK");
+        }
     }
 
     [RelayCommand]
@@ -267,7 +272,12 @@ public partial class FeedViewModel : ObservableObject
             EditPhotoPath = localPath;
             OnPropertyChanged(nameof(EditHasPhoto));
         }
-        catch { }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Photo pick failed: {ex.Message}");
+            await Shell.Current.DisplayAlertAsync("Photo Error",
+                "Could not load the selected photo. Please try again.", "OK");
+        }
     }
 
     [RelayCommand]
@@ -497,12 +507,12 @@ public partial class FeedViewModel : ObservableObject
         {
             var items = _activeFilter switch
             {
-                FilterMode.Year     => await _expenseService.GetFeedItemsForYearAsync(PickerYear),
-                FilterMode.Month    => await _expenseService.GetFeedItemsForMonthAsync(PickerYear, _selectedPickerMonth),
-                FilterMode.Day      => await _expenseService.GetFeedItemsForDayAsync(DateTime.Today),
-                FilterMode.Week     => await _expenseService.GetFeedItemsForWeekAsync(GetMondayOfCurrentWeek()),
+                FilterMode.Year => await _expenseService.GetFeedItemsForYearAsync(PickerYear),
+                FilterMode.Month => await _expenseService.GetFeedItemsForMonthAsync(PickerYear, _selectedPickerMonth),
+                FilterMode.Day => await _expenseService.GetFeedItemsForDayAsync(DateTime.Today),
+                FilterMode.Week => await _expenseService.GetFeedItemsForWeekAsync(GetMondayOfCurrentWeek()),
                 FilterMode.Category => await _expenseService.GetFeedItemsByCategoryAsync(_selectedCategory),
-                _                   => await _expenseService.GetAllFeedItemsAsync()
+                _ => await _expenseService.GetAllFeedItemsAsync()
             };
 
             var itemList = items.ToList();
@@ -513,6 +523,12 @@ public partial class FeedViewModel : ObservableObject
             // Only distribute if we already have a real column count from OnSizeAllocated
             if (CurrentColumnCount > 0)
                 DistributeIntoColumns(_pendingItems, CurrentColumnCount);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"LoadFeed failed: {ex.Message}");
+            await Shell.Current.DisplayAlertAsync("Error",
+                "Could not load expenses. Please try again.", "OK");
         }
         finally
         {
@@ -569,12 +585,12 @@ public partial class FeedViewModel : ObservableObject
         TotalSpentFormatted = $"{symbol}{total:N2}";
         SummaryLabel = _activeFilter switch
         {
-            FilterMode.Month    => new DateTime(PickerYear, _selectedPickerMonth, 1).ToString("MMMM yyyy"),
-            FilterMode.Year     => PickerYear.ToString(),
-            FilterMode.Day      => DateTime.Today.ToString("dddd, MMM d"),
-            FilterMode.Week     => $"Week of {GetMondayOfCurrentWeek():MMM d}",
+            FilterMode.Month => new DateTime(PickerYear, _selectedPickerMonth, 1).ToString("MMMM yyyy"),
+            FilterMode.Year => PickerYear.ToString(),
+            FilterMode.Day => DateTime.Today.ToString("dddd, MMM d"),
+            FilterMode.Week => $"Week of {GetMondayOfCurrentWeek():MMM d}",
             FilterMode.Category => _selectedCategory.ToString(),
-            _                   => DateTime.Now.ToString("MMMM yyyy")
+            _ => DateTime.Now.ToString("MMMM yyyy")
         };
     }
 

@@ -34,7 +34,6 @@ public class ThemeService : IThemeService
             theme.TextSecondary,
             theme.Border);
 
-        ReloadShell();
         ApplyTabBarColors(theme.Accent, theme.Card, theme.TextSecondary);
     }
 
@@ -56,7 +55,6 @@ public class ThemeService : IThemeService
         Preferences.Set(KeyCustomText, text);
 
         ApplyColorsToResources(bg, accent, card, text, text, "#E8E8ED");
-        ReloadShell();
         ApplyTabBarColors(accent, card, text);
     }
 
@@ -90,14 +88,6 @@ public class ThemeService : IThemeService
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
-
-    // Replaces MainPage with a fresh AppShell so every page
-    // re-reads the resource dictionary with the new colors.
-    private static void ReloadShell()
-    {
-        if (Application.Current is null) return;
-        Application.Current.MainPage = new AppShell();
-    }
 
     // Writes theme colors into the app's resource dictionary.
     // Keys must match what's defined in App.xaml.

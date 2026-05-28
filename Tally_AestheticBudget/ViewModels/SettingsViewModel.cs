@@ -46,7 +46,15 @@ public partial class SettingsViewModel : ObservableObject
         _showStaleReminder = settings.ShowStaleReminder;
 
         FilteredCurrencies = new ObservableCollection<CurrencyOption>(
-            AllCurrencies.Select(c => { c.IsSelected = c.Code == settings.CurrencyCode; return c; }));
+            AllCurrencies.Select(c =>
+            {
+                // Create a fresh copy so we don't mutate the shared static list
+                var copy = new CurrencyOption(c.Flag, c.Name, c.Code, c.Symbol)
+                {
+                    IsSelected = c.Code == settings.CurrencyCode
+                };
+                return copy;
+            }));
     }
 
     // ── Currency ──────────────────────────────────────────────────────────────
@@ -117,13 +125,20 @@ public partial class SettingsViewModel : ObservableObject
     {
         FilteredCurrencies.Clear();
         var q = value.Trim().ToLowerInvariant();
+        var selectedCode = SelectedCurrency?.Code ?? _settings.CurrencyCode;
         foreach (var c in AllCurrencies)
         {
             if (string.IsNullOrEmpty(q) ||
                 c.Name.ToLower().Contains(q) ||
                 c.Code.ToLower().Contains(q) ||
                 c.Symbol.ToLower().Contains(q))
-                FilteredCurrencies.Add(c);
+            {
+                var copy = new CurrencyOption(c.Flag, c.Name, c.Code, c.Symbol)
+                {
+                    IsSelected = c.Code == selectedCode
+                };
+                FilteredCurrencies.Add(copy);
+            }
         }
     }
 
