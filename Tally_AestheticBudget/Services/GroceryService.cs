@@ -124,30 +124,27 @@ public class GroceryService : IGroceryService
     {
         var db = await _db.GetConnectionAsync();
         var now = DateTime.Now;
-        var month = now.Month;
-        var year = now.Year;
 
-        // Get all grocery group headers this month
-        var groups = await db.Table<GroceryGroupEntity>()
-            .ToListAsync();
+        // Build date range for this month
+        var monthStart = new DateTime(now.Year, now.Month, 1);
+        var monthEnd = monthStart.AddMonths(1);
 
-        var thisMonthGroupIds = groups
-            .Where(g => g.Date.Month == month && g.Date.Year == year)
-            .Select(g => g.Id)
-            .ToHashSet();
+        // Single query: join groups → line items, filtered by group date in this month
+        var total = await db.ExecuteScalarAsync<decimal>(
+            @"SELECT COALESCE(SUM(e.Amount), 0)
+              FROM expenses e
+              INNER JOIN grocery_groups g ON e.GroceryGroupId = g.Id
+              WHERE g.Date >= ? AND g.Date < ?",
+            monthStart, monthEnd);
 
-        if (thisMonthGroupIds.Count == 0) return 0;
-
-        // Sum all line items under those groups
-        var lineItems = await db.Table<ExpenseEntity>()
-            .Where(e => e.GroceryGroupId != null)
-            .ToListAsync();
-
-        return lineItems
-            .Where(e => thisMonthGroupIds.Contains(e.GroceryGroupId!.Value))
-            .Sum(e => e.Amount);
+        return total;
     }
 
+    /// <summary>
+    /// Deletes all PENDING grocery list items (the checklist).
+    /// Does NOT touch expense records created by "Buy Checked" because those
+    /// are managed by <see cref="IExpenseService.DeleteAllAsync"/>.
+    /// </summary>
     public async Task DeleteAllAsync()
     {
         var db = await _db.GetConnectionAsync();
