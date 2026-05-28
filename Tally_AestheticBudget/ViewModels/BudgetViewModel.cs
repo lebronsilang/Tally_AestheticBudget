@@ -10,14 +10,21 @@ public partial class BudgetViewModel : ObservableObject
 {
     private readonly IBudgetService _budgetService;
     private readonly ISettingsService _settings;
+    private readonly DataChangedService _dataChanged;
 
-    public BudgetViewModel(IBudgetService budgetService, ISettingsService settings)
+    public BudgetViewModel(IBudgetService budgetService, ISettingsService settings,
+        DataChangedService dataChanged, IThemeService themeService)
     {
         _budgetService = budgetService;
         _settings = settings;
+        _dataChanged = dataChanged;
         _currentYear = DateTime.Now.Year;
         _currentMonth = DateTime.Now.Month;
 
+        _dataChanged.BudgetChanged += () => _isDirty = true;
+
+        // Progress bar converter reads App.CurrentAccent — force reload on theme change
+        themeService.ThemeChanged += () => { _isDirty = true; _ = LoadBudgetAsync(); };
     }
     public string LimitPlaceholder => $"New limit ({_settings.CurrencySymbol})";
 
@@ -28,6 +35,7 @@ public partial class BudgetViewModel : ObservableObject
 
     private int _currentYear;
     private int _currentMonth;
+    private bool _isDirty = true;
 
     [RelayCommand]
     private async Task PreviousMonthAsync()
@@ -75,7 +83,12 @@ public partial class BudgetViewModel : ObservableObject
         item.EditLimitText = string.Empty;
     }
 
-    public async Task OnPageAppearingAsync() => await LoadBudgetAsync();
+    public async Task OnPageAppearingAsync()
+    {
+        if (!_isDirty) return;
+        _isDirty = false;
+        await LoadBudgetAsync();
+    }
 
     private async Task LoadBudgetAsync()
     {

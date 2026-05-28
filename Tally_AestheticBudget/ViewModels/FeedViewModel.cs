@@ -10,17 +10,48 @@ public partial class FeedViewModel : ObservableObject
 {
     private readonly IExpenseService _expenseService;
     private readonly ISettingsService _settings;
+    private readonly DataChangedService _dataChanged;
 
     public int CurrentColumnCount { get; set; } = 2;
 
-    public FeedViewModel(IExpenseService expenseService, ISettingsService settings)
+    public FeedViewModel(IExpenseService expenseService, ISettingsService settings,
+        DataChangedService dataChanged, IThemeService themeService)
     {
         _expenseService = expenseService;
         _settings = settings;
+        _dataChanged = dataChanged;
         PickerYear = DateTime.Now.Year;
         _selectedPickerMonth = DateTime.Now.Month;
         BuildMonthOptions();
 
+        // When another VM signals expenses changed, mark dirty so next OnAppearing reloads
+        _dataChanged.ExpensesChanged += () => IsDirty = true;
+
+        // Re-notify converter-bound bools so chips pick up new accent color
+        themeService.ThemeChanged += () =>
+        {
+            // Filter chips
+            OnPropertyChanged(nameof(IsFilterAll));
+            OnPropertyChanged(nameof(IsFilterDay));
+            OnPropertyChanged(nameof(IsFilterWeek));
+            OnPropertyChanged(nameof(IsFilterMonth));
+            OnPropertyChanged(nameof(IsFilterYear));
+            OnPropertyChanged(nameof(IsFilterCategory));
+            // Add modal category chips
+            OnPropertyChanged(nameof(NewIsFoodSelected));
+            OnPropertyChanged(nameof(NewIsTransportSelected));
+            OnPropertyChanged(nameof(NewIsShoppingSelected));
+            OnPropertyChanged(nameof(NewIsHealthSelected));
+            OnPropertyChanged(nameof(NewIsFunSelected));
+            OnPropertyChanged(nameof(NewIsOtherSelected));
+            // Edit modal category chips
+            OnPropertyChanged(nameof(EditIsFoodSelected));
+            OnPropertyChanged(nameof(EditIsTransportSelected));
+            OnPropertyChanged(nameof(EditIsShoppingSelected));
+            OnPropertyChanged(nameof(EditIsHealthSelected));
+            OnPropertyChanged(nameof(EditIsFunSelected));
+            OnPropertyChanged(nameof(EditIsOtherSelected));
+        };
     }
 
     // ── Feed items ────────────────────────────────────────────────────────────
@@ -196,6 +227,7 @@ public partial class FeedViewModel : ObservableObject
 
         IsAddModalVisible = false;
         IsDirty = true;
+        _dataChanged.NotifyExpensesChanged();
         await LoadFeedAsync();
     }
 
@@ -306,6 +338,7 @@ public partial class FeedViewModel : ObservableObject
         await _expenseService.UpdateExpenseAsync(expense);
         IsEditModalVisible = false;
         IsDirty = true;
+        _dataChanged.NotifyExpensesChanged();
         await LoadFeedAsync();
     }
 
@@ -455,6 +488,7 @@ public partial class FeedViewModel : ObservableObject
             await _expenseService.DeleteExpenseAsync(SelectedItem.Id);
 
         IsDirty = true;
+        _dataChanged.NotifyExpensesChanged();
         IsDetailVisible = false;
         await LoadFeedAsync();
     }
@@ -470,6 +504,7 @@ public partial class FeedViewModel : ObservableObject
 
         await _expenseService.DeleteGroceryGroupAsync(SelectedItem.Id);
         IsDirty = true;
+        _dataChanged.NotifyExpensesChanged();
         IsDetailVisible = false;
         await LoadFeedAsync();
     }

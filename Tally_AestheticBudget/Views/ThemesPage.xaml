@@ -7,37 +7,37 @@
     xmlns:models="clr-namespace:Tally_AestheticBudget.Models"
     x:DataType="vm:ThemesViewModel"
     Shell.NavBarIsVisible="True"
-    BackgroundColor="{StaticResource PageBackground}">
+    BackgroundColor="{DynamicResource PageBackground}">
 
     <Grid>
         <ScrollView>
             <VerticalStackLayout Spacing="0">
 
                 <!-- ── Floating header card ───────────────────────────────── -->
-                <Border BackgroundColor="{StaticResource CardBackground}"
-                        Stroke="{StaticResource CardBorder}"
+                <Border BackgroundColor="{DynamicResource CardBackground}"
+                        Stroke="{DynamicResource CardBorder}"
                         StrokeThickness="1" StrokeShape="RoundRectangle 20"
                         Padding="20,18,20,16"
                         Margin="16,16,16,0">
                     <VerticalStackLayout Spacing="2">
                         <Label Text="Themes" FontFamily="DisplayFont"
-                               FontSize="28" TextColor="{StaticResource TextPrimary}" />
+                               FontSize="28" TextColor="{DynamicResource TextPrimary}" />
                         <Label Text="Pick a vibe for your app"
-                               FontSize="13" TextColor="{StaticResource TextSecondary}" />
+                               FontSize="13" TextColor="{DynamicResource TextSecondary}" />
                     </VerticalStackLayout>
                 </Border>
 
                 <VerticalStackLayout Padding="16,16,16,48" Spacing="12">
 
                     <!-- ── Presets card ───────────────────────────────────── -->
-                    <Border BackgroundColor="{StaticResource CardBackground}"
-                            Stroke="{StaticResource CardBorder}"
+                    <Border BackgroundColor="{DynamicResource CardBackground}"
+                            Stroke="{DynamicResource CardBorder}"
                             StrokeThickness="1" StrokeShape="RoundRectangle 20"
                             Padding="20,20">
                         <VerticalStackLayout Spacing="16">
 
                             <Label Text="Presets" FontSize="16" FontAttributes="Bold"
-                                   TextColor="{StaticResource TextPrimary}" />
+                                   TextColor="{DynamicResource TextPrimary}" />
 
                             <Border HorizontalOptions="Fill" MaximumWidthRequest="900"
                                     StrokeThickness="0" BackgroundColor="Transparent">
@@ -56,7 +56,7 @@
                                                         Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ThemesViewModel}}, Path=ApplyThemeCommand}"
                                                         CommandParameter="{Binding Id}" />
                                                 </ContentView.GestureRecognizers>
-                                                <Border BackgroundColor="{StaticResource PageBackground}"
+                                                <Border BackgroundColor="{DynamicResource PageBackground}"
                                                         StrokeThickness="2"
                                                         Stroke="{Binding IsActive, Converter={StaticResource BoolToChipBorder}}"
                                                         StrokeShape="RoundRectangle 16"
@@ -79,7 +79,7 @@
                                                         <Label Text="{Binding DisplayName}" FontSize="11"
                                                                FontAttributes="{Binding IsActive, Converter={StaticResource BoolToFontAttr}}"
                                                                HorizontalOptions="Center"
-                                                               TextColor="{StaticResource TextPrimary}"
+                                                               TextColor="{DynamicResource TextPrimary}"
                                                                LineBreakMode="TailTruncation" />
                                                     </VerticalStackLayout>
                                                 </Border>
@@ -93,17 +93,17 @@
                     </Border>
 
                     <!-- ── Custom Palette card ────────────────────────────── -->
-                    <Border BackgroundColor="{StaticResource CardBackground}"
-                            Stroke="{StaticResource CardBorder}"
+                    <Border BackgroundColor="{DynamicResource CardBackground}"
+                            Stroke="{DynamicResource CardBorder}"
                             StrokeThickness="1" StrokeShape="RoundRectangle 20"
                             Padding="20,20">
                         <VerticalStackLayout Spacing="20">
 
                             <VerticalStackLayout Spacing="4">
                                 <Label Text="Custom Palette" FontSize="16" FontAttributes="Bold"
-                                       TextColor="{StaticResource TextPrimary}" />
+                                       TextColor="{DynamicResource TextPrimary}" />
                                 <Label Text="Tap a swatch to edit its color"
-                                       FontSize="12" TextColor="{StaticResource TextSecondary}" />
+                                       FontSize="12" TextColor="{DynamicResource TextSecondary}" />
                             </VerticalStackLayout>
 
                             <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="12">
@@ -112,7 +112,7 @@
                                                      HorizontalOptions="Center">
                                     <Border BackgroundColor="{Binding CustomBg}"
                                             StrokeThickness="1"
-                                            Stroke="{StaticResource CardBorder}"
+                                            Stroke="{DynamicResource CardBorder}"
                                             StrokeShape="RoundRectangle 14"
                                             WidthRequest="80" HeightRequest="72"
                                             HorizontalOptions="Center">
@@ -128,7 +128,7 @@
                                         </Border.GestureRecognizers>
                                     </Border>
                                     <Label Text="Background" FontSize="11"
-                                           TextColor="{StaticResource TextSecondary}"
+                                           TextColor="{DynamicResource TextSecondary}"
                                            HorizontalOptions="Center" />
                                 </VerticalStackLayout>
 
@@ -136,7 +136,7 @@
                                                      HorizontalOptions="Center">
                                     <Border BackgroundColor="{Binding CustomAccent}"
                                             StrokeThickness="1"
-                                            Stroke="{StaticResource CardBorder}"
+                                            Stroke="{DynamicResource CardBorder}"
                                             StrokeShape="RoundRectangle 14"
                                             WidthRequest="80" HeightRequest="72"
                                             HorizontalOptions="Center">
@@ -152,7 +152,7 @@
                                         </Border.GestureRecognizers>
                                     </Border>
                                     <Label Text="Accent" FontSize="11"
-                                           TextColor="{StaticResource TextSecondary}"
+                                           TextColor="{DynamicResource TextSecondary}"
                                            HorizontalOptions="Center" />
                                 </VerticalStackLayout>
 
@@ -160,7 +160,7 @@
                                                      HorizontalOptions="Center">
                                     <Border BackgroundColor="{Binding CustomCard}"
                                             StrokeThickness="1"
-                                            Stroke="{StaticResource CardBorder}"
+                                            Stroke="{DynamicResource CardBorder}"
                                             StrokeShape="RoundRectangle 14"
                                             WidthRequest="80" HeightRequest="72"
                                             HorizontalOptions="Center">
@@ -176,7 +176,7 @@
                                         </Border.GestureRecognizers>
                                     </Border>
                                     <Label Text="Card" FontSize="11"
-                                           TextColor="{StaticResource TextSecondary}"
+                                           TextColor="{DynamicResource TextSecondary}"
                                            HorizontalOptions="Center" />
                                 </VerticalStackLayout>
 
@@ -184,7 +184,7 @@
                                                      HorizontalOptions="Center">
                                     <Border BackgroundColor="{Binding CustomText}"
                                             StrokeThickness="1"
-                                            Stroke="{StaticResource CardBorder}"
+                                            Stroke="{DynamicResource CardBorder}"
                                             StrokeShape="RoundRectangle 14"
                                             WidthRequest="80" HeightRequest="72"
                                             HorizontalOptions="Center">
@@ -200,13 +200,13 @@
                                         </Border.GestureRecognizers>
                                     </Border>
                                     <Label Text="Text" FontSize="11"
-                                           TextColor="{StaticResource TextSecondary}"
+                                           TextColor="{DynamicResource TextSecondary}"
                                            HorizontalOptions="Center" />
                                 </VerticalStackLayout>
 
                             </Grid>
 
-                            <Border BackgroundColor="{StaticResource AccentColor}"
+                            <Border BackgroundColor="{DynamicResource AccentColor}"
                                     StrokeThickness="0"
                                     StrokeShape="RoundRectangle 980" Padding="0,16">
                                 <Border.GestureRecognizers>
@@ -232,7 +232,7 @@
                 <TapGestureRecognizer Command="{Binding DismissColorPickerCommand}" />
             </Grid.GestureRecognizers>
 
-            <Border BackgroundColor="{StaticResource CardBackground}"
+            <Border BackgroundColor="{DynamicResource CardBackground}"
                     StrokeThickness="0" StrokeShape="RoundRectangle 24"
                     Padding="24,24,24,28"
                     VerticalOptions="Center" HorizontalOptions="Center"
@@ -246,34 +246,34 @@
                     <Grid ColumnDefinitions="*,Auto">
                         <Label Grid.Column="0" Text="{Binding PickerTitle}"
                                FontSize="17" FontAttributes="Bold"
-                               TextColor="{StaticResource TextPrimary}" />
+                               TextColor="{DynamicResource TextPrimary}" />
                         <Border Grid.Column="1"
-                                BackgroundColor="{StaticResource PageBackground}"
+                                BackgroundColor="{DynamicResource PageBackground}"
                                 StrokeThickness="0" StrokeShape="RoundRectangle 980"
                                 WidthRequest="28" HeightRequest="28">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding DismissColorPickerCommand}" />
                             </Border.GestureRecognizers>
                             <Label Text="✕" FontSize="12"
-                                   TextColor="{StaticResource TextSecondary}"
+                                   TextColor="{DynamicResource TextSecondary}"
                                    HorizontalOptions="Center" VerticalOptions="Center" />
                         </Border>
                     </Grid>
 
-                    <Border BackgroundColor="{StaticResource PageBackground}"
-                            Stroke="{StaticResource CardBorder}"
+                    <Border BackgroundColor="{DynamicResource PageBackground}"
+                            Stroke="{DynamicResource CardBorder}"
                             StrokeThickness="1" StrokeShape="RoundRectangle 12">
                         <Grid ColumnDefinitions="*,Auto">
                             <Entry Grid.Column="0"
                                    Text="{Binding PickerHexInput}"
                                    Placeholder="#ffffff" PlaceholderColor="#C0C0C5"
                                    FontSize="14" FontFamily="BodyFont"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   TextColor="{DynamicResource TextPrimary}"
                                    BackgroundColor="Transparent"
                                    HeightRequest="46" VerticalOptions="Center"
                                    Margin="14,0,8,0" />
                             <Border Grid.Column="1"
-                                    BackgroundColor="{StaticResource AccentColor}"
+                                    BackgroundColor="{DynamicResource AccentColor}"
                                     StrokeThickness="0" StrokeShape="RoundRectangle 10"
                                     WidthRequest="72" HeightRequest="36"
                                     VerticalOptions="Center" Margin="0,0,5,0">
@@ -288,40 +288,40 @@
                     </Border>
 
                     <Label Text="Or pick a color below"
-                           FontSize="12" TextColor="{StaticResource TextSecondary}" />
+                           FontSize="12" TextColor="{DynamicResource TextSecondary}" />
 
                     <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
-                        <Border BackgroundColor="#ffffff" StrokeThickness="0.5" Stroke="{StaticResource CardBorder}" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                        <Border BackgroundColor="#ffffff" StrokeThickness="0.5" Stroke="{DynamicResource CardBorder}" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#ffffff"/>
                             </Border.GestureRecognizers>
                         </Border>
-                        <Border BackgroundColor="#f5f5f7" StrokeThickness="0.5" Stroke="{StaticResource CardBorder}" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                        <Border BackgroundColor="#f5f5f7" StrokeThickness="0.5" Stroke="{DynamicResource CardBorder}" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#f5f5f7"/>
                             </Border.GestureRecognizers>
                         </Border>
-                        <Border BackgroundColor="#fff0f5" StrokeThickness="0.5" Stroke="{StaticResource CardBorder}" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                        <Border BackgroundColor="#fff0f5" StrokeThickness="0.5" Stroke="{DynamicResource CardBorder}" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#fff0f5"/>
                             </Border.GestureRecognizers>
                         </Border>
-                        <Border BackgroundColor="#f2ede8" StrokeThickness="0.5" Stroke="{StaticResource CardBorder}" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                        <Border BackgroundColor="#f2ede8" StrokeThickness="0.5" Stroke="{DynamicResource CardBorder}" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#f2ede8"/>
                             </Border.GestureRecognizers>
                         </Border>
-                        <Border BackgroundColor="#eef4fb" StrokeThickness="0.5" Stroke="{StaticResource CardBorder}" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                        <Border BackgroundColor="#eef4fb" StrokeThickness="0.5" Stroke="{DynamicResource CardBorder}" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#eef4fb"/>
                             </Border.GestureRecognizers>
                         </Border>
-                        <Border BackgroundColor="#edf4ee" StrokeThickness="0.5" Stroke="{StaticResource CardBorder}" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                        <Border BackgroundColor="#edf4ee" StrokeThickness="0.5" Stroke="{DynamicResource CardBorder}" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#edf4ee"/>
                             </Border.GestureRecognizers>
                         </Border>
-                        <Border BackgroundColor="#0f0f14" StrokeThickness="0.5" Stroke="{StaticResource CardBorder}" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                        <Border BackgroundColor="#0f0f14" StrokeThickness="0.5" Stroke="{DynamicResource CardBorder}" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#0f0f14"/>
                             </Border.GestureRecognizers>

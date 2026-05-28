@@ -24,17 +24,20 @@ public partial class SettingsViewModel : ObservableObject
     private readonly IExpenseService _expenses;
     private readonly IGroceryService _grocery;
     private readonly IWishService _wishes;
+    private readonly DataChangedService _dataChanged;
 
     public SettingsViewModel(
         ISettingsService settings,
         IExpenseService expenses,
         IGroceryService grocery,
-        IWishService wishes)
+        IWishService wishes,
+        DataChangedService dataChanged)
     {
         _settings = settings;
         _expenses = expenses;
         _grocery = grocery;
         _wishes = wishes;
+        _dataChanged = dataChanged;
 
         _selectedCurrency = AllCurrencies.FirstOrDefault(
             c => c.Code == settings.CurrencyCode) ?? AllCurrencies[0];
@@ -214,6 +217,7 @@ public partial class SettingsViewModel : ObservableObject
     private async Task ClearExpenses()
     {
         await _expenses.DeleteAllAsync();
+        _dataChanged.NotifyExpensesChanged();
         IsClearDataVisible = false;
     }
 
@@ -221,6 +225,7 @@ public partial class SettingsViewModel : ObservableObject
     private async Task ClearGroceries()
     {
         await _grocery.DeleteAllAsync();
+        _dataChanged.NotifyGroceryChanged();
         IsClearDataVisible = false;
     }
 
@@ -228,6 +233,7 @@ public partial class SettingsViewModel : ObservableObject
     private async Task ClearWishlist()
     {
         await _wishes.DeleteAllAsync();
+        _dataChanged.NotifyWishlistChanged();
         IsClearDataVisible = false;
     }
 
@@ -237,6 +243,7 @@ public partial class SettingsViewModel : ObservableObject
         await _expenses.DeleteAllAsync();
         await _grocery.DeleteAllAsync();
         await _wishes.DeleteAllAsync();
+        _dataChanged.NotifyAllChanged();
         IsClearDataVisible = false;
     }
 }

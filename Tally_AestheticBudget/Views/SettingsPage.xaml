@@ -7,23 +7,23 @@
     xmlns:models="clr-namespace:Tally_AestheticBudget.Models"
     x:DataType="vm:SettingsViewModel"
     Shell.NavBarIsVisible="True"
-    BackgroundColor="{StaticResource PageBackground}">
+    BackgroundColor="{DynamicResource PageBackground}">
 
     <Grid>
         <ScrollView>
             <VerticalStackLayout Spacing="0">
 
                 <!-- ── Floating header card ───────────────────────────────── -->
-                <Border BackgroundColor="{StaticResource CardBackground}"
-                        Stroke="{StaticResource CardBorder}"
+                <Border BackgroundColor="{DynamicResource CardBackground}"
+                        Stroke="{DynamicResource CardBorder}"
                         StrokeThickness="1" StrokeShape="RoundRectangle 20"
                         Padding="20,18,20,16"
                         Margin="16,16,16,0">
                     <VerticalStackLayout Spacing="2">
                         <Label Text="Settings" FontFamily="DisplayFont"
-                               FontSize="28" TextColor="{StaticResource TextPrimary}" />
+                               FontSize="28" TextColor="{DynamicResource TextPrimary}" />
                         <Label Text="Personalize your Tally experience"
-                               FontSize="13" TextColor="{StaticResource TextSecondary}" />
+                               FontSize="13" TextColor="{DynamicResource TextSecondary}" />
                     </VerticalStackLayout>
                 </Border>
 
@@ -31,18 +31,18 @@
 
                     <!-- ── Currency section ───────────────────────────────── -->
                     <Label Text="CURRENCY" FontSize="11" FontAttributes="Bold"
-                           CharacterSpacing="0.6" TextColor="{StaticResource TextSecondary}"
+                           CharacterSpacing="0.6" TextColor="{DynamicResource TextSecondary}"
                            Margin="4,0,0,0" />
 
-                    <Border BackgroundColor="{StaticResource CardBackground}"
-                            Stroke="{StaticResource CardBorder}"
+                    <Border BackgroundColor="{DynamicResource CardBackground}"
+                            Stroke="{DynamicResource CardBorder}"
                             StrokeThickness="1" StrokeShape="RoundRectangle 20"
                             Padding="20,16">
                         <VerticalStackLayout Spacing="14">
 
                             <!-- Icon + label -->
                             <HorizontalStackLayout Spacing="14">
-                                <Border BackgroundColor="#1A4a9e5c"
+                                <Border BackgroundColor="{DynamicResource AccentColorAlpha}"
                                         StrokeThickness="0" StrokeShape="RoundRectangle 10"
                                         WidthRequest="36" HeightRequest="36">
                                     <Label Text="💱" FontSize="16"
@@ -52,62 +52,62 @@
                                 <VerticalStackLayout Spacing="2" VerticalOptions="Center">
                                     <Label Text="Display Currency" FontSize="14"
                                            FontAttributes="Bold"
-                                           TextColor="{StaticResource TextPrimary}" />
+                                           TextColor="{DynamicResource TextPrimary}" />
                                     <Label Text="Used across all pages and calculations"
                                            FontSize="12"
-                                           TextColor="{StaticResource TextSecondary}" />
+                                           TextColor="{DynamicResource TextSecondary}" />
                                 </VerticalStackLayout>
                             </HorizontalStackLayout>
 
                             <!-- Selected currency preview -->
-                            <Border BackgroundColor="#1A4a9e5c"
-                                    Stroke="{StaticResource CardBorder}"
+                            <Border BackgroundColor="{DynamicResource AccentColorAlpha}"
+                                    Stroke="{DynamicResource CardBorder}"
                                     StrokeThickness="0.5" 
                                     StrokeShape="RoundRectangle 12"
                                     Padding="14,10">
                                 <Grid ColumnDefinitions="Auto,*,Auto">
                                     <Label Grid.Column="0" Text="{Binding SelectedCurrency.Flag}"
                                            FontSize="22" VerticalOptions="Center"
-                                           TextColor="{StaticResource TextPrimary}"
+                                           TextColor="{DynamicResource TextPrimary}"
                                            Margin="0,0,10,0" />
                                     <VerticalStackLayout Grid.Column="1" Spacing="1"
                                                          VerticalOptions="Center">
                                         <Label Text="{Binding SelectedCurrency.Name}"
                                                FontSize="13" FontAttributes="Bold"
-                                               TextColor="{StaticResource TextPrimary}" />
+                                               TextColor="{DynamicResource TextPrimary}" />
                                         <Label Text="{Binding SelectedCurrency.Code}"
                                                FontSize="11"
-                                               TextColor="{StaticResource TextSecondary}" />
+                                               TextColor="{DynamicResource TextSecondary}" />
                                     </VerticalStackLayout>
                                     <Label Grid.Column="2"
                                            Text="{Binding SelectedCurrency.Symbol}"
                                            FontSize="20" FontAttributes="Bold"
-                                           TextColor="{StaticResource AccentColor}"
+                                           TextColor="{DynamicResource AccentColor}"
                                            VerticalOptions="Center" />
                                 </Grid>
                             </Border>
 
                             <!-- Search -->
-                            <Border BackgroundColor="{StaticResource PageBackground}"
-                                    Stroke="{StaticResource CardBorder}"
+                            <Border BackgroundColor="{DynamicResource PageBackground}"
+                                    Stroke="{DynamicResource CardBorder}"
                                     StrokeThickness="0.8" StrokeShape="RoundRectangle 12"
                                     Padding="12,0">
                                 <Grid ColumnDefinitions="Auto,*">
                                     <Label Grid.Column="0" Text="🔍" FontSize="13"
                                            VerticalOptions="Center" Margin="0,0,6,0"
-                                           TextColor="{StaticResource TextSecondary}" />
+                                           TextColor="{DynamicResource TextSecondary}" />
                                     <Entry Grid.Column="1"
                                            Text="{Binding CurrencySearch}"
                                            Placeholder="Search currencies..."
                                            PlaceholderColor="#C0C0C5" FontSize="13"
-                                           TextColor="{StaticResource TextPrimary}"
+                                           TextColor="{DynamicResource TextPrimary}"
                                            BackgroundColor="Transparent" HeightRequest="40" />
                                 </Grid>
                             </Border>
 
                             <!-- Currency list -->
-                            <Border BackgroundColor="{StaticResource PageBackground}"
-                                    Stroke="{StaticResource CardBorder}"
+                            <Border BackgroundColor="{DynamicResource PageBackground}"
+                                    Stroke="{DynamicResource CardBorder}"
                                     StrokeThickness="0.5" StrokeShape="RoundRectangle 14"
                                     MaximumHeightRequest="220">
                                 <CollectionView ItemsSource="{Binding FilteredCurrencies}"
@@ -125,26 +125,26 @@
                                                 <Grid ColumnDefinitions="Auto,*,Auto,Auto">
                                                     <Label Grid.Column="0" Text="{Binding Flag}"
                                                            FontSize="18" VerticalOptions="Center"
-                                                           TextColor="{StaticResource TextPrimary}"
+                                                           TextColor="{DynamicResource TextPrimary}"
                                                            Margin="0,0,10,0" />
                                                     <VerticalStackLayout Grid.Column="1" Spacing="1"
                                                                          VerticalOptions="Center">
                                                         <Label Text="{Binding Name}"
                                                                FontSize="13" FontAttributes="Bold"
-                                                               TextColor="{StaticResource TextPrimary}" />
+                                                               TextColor="{DynamicResource TextPrimary}" />
                                                         <Label Text="{Binding Code}"
                                                                FontSize="11"
-                                                               TextColor="{StaticResource TextSecondary}" />
+                                                               TextColor="{DynamicResource TextSecondary}" />
                                                     </VerticalStackLayout>
                                                     <Label Grid.Column="2"
                                                            Text="{Binding Symbol}"
                                                            FontSize="14" FontAttributes="Bold"
-                                                           TextColor="{StaticResource AccentColor}"
+                                                           TextColor="{DynamicResource AccentColor}"
                                                            VerticalOptions="Center"
                                                            Margin="0,0,10,0" />
                                                     <Label Grid.Column="3" Text="✓"
                                                            FontSize="14" FontAttributes="Bold"
-                                                           TextColor="{StaticResource AccentColor}"
+                                                           TextColor="{DynamicResource AccentColor}"
                                                            IsVisible="{Binding IsSelected}"
                                                            VerticalOptions="Center" />
                                                 </Grid>
@@ -159,18 +159,18 @@
 
                     <!-- ── Feed Display section ───────────────────────────── -->
                     <Label Text="FEED DISPLAY" FontSize="11" FontAttributes="Bold"
-                           CharacterSpacing="0.6" TextColor="{StaticResource TextSecondary}"
+                           CharacterSpacing="0.6" TextColor="{DynamicResource TextSecondary}"
                            Margin="4,4,0,0" />
 
-                    <Border BackgroundColor="{StaticResource CardBackground}"
-                            Stroke="{StaticResource CardBorder}"
+                    <Border BackgroundColor="{DynamicResource CardBackground}"
+                            Stroke="{DynamicResource CardBorder}"
                             StrokeThickness="1" StrokeShape="RoundRectangle 20"
                             Padding="0">
                         <VerticalStackLayout Spacing="0">
 
                             <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,14"
                                   ColumnSpacing="14">
-                                <Border Grid.Column="0" BackgroundColor="#1Aff6b6b"
+                                <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
                                         StrokeThickness="0" StrokeShape="RoundRectangle 10"
                                         WidthRequest="36" HeightRequest="36">
                                     <Label Text="📝" FontSize="16"
@@ -181,10 +181,10 @@
                                                      VerticalOptions="Center">
                                     <Label Text="Show Notes" FontSize="14"
                                            FontAttributes="Bold"
-                                           TextColor="{StaticResource TextPrimary}" />
+                                           TextColor="{DynamicResource TextPrimary}" />
                                     <Label Text="Display note text on feed cards"
                                            FontSize="12"
-                                           TextColor="{StaticResource TextSecondary}" />
+                                           TextColor="{DynamicResource TextSecondary}" />
                                 </VerticalStackLayout>
                                 <Border Grid.Column="2"
                                         BackgroundColor="{Binding ShowNotes, Converter={StaticResource BoolToChipBg}}"
@@ -203,12 +203,12 @@
                                 </Border>
                             </Grid>
 
-                            <BoxView HeightRequest="0.5" Color="{StaticResource CardBorder}"
+                            <BoxView HeightRequest="0.5" Color="{DynamicResource CardBorder}"
                                      Margin="20,0" />
 
                             <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,14"
                                   ColumnSpacing="14">
-                                <Border Grid.Column="0" BackgroundColor="#1A4a9e5c"
+                                <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
                                         StrokeThickness="0" StrokeShape="RoundRectangle 10"
                                         WidthRequest="36" HeightRequest="36">
                                     <Label Text="💰" FontSize="16"
@@ -219,10 +219,10 @@
                                                      VerticalOptions="Center">
                                     <Label Text="Show Price" FontSize="14"
                                            FontAttributes="Bold"
-                                           TextColor="{StaticResource TextPrimary}" />
+                                           TextColor="{DynamicResource TextPrimary}" />
                                     <Label Text="Display amount on feed cards"
                                            FontSize="12"
-                                           TextColor="{StaticResource TextSecondary}" />
+                                           TextColor="{DynamicResource TextSecondary}" />
                                 </VerticalStackLayout>
                                 <Border Grid.Column="2"
                                         BackgroundColor="{Binding ShowPrice, Converter={StaticResource BoolToChipBg}}"
@@ -241,12 +241,12 @@
                                 </Border>
                             </Grid>
 
-                            <BoxView HeightRequest="0.5" Color="{StaticResource CardBorder}"
+                            <BoxView HeightRequest="0.5" Color="{DynamicResource CardBorder}"
                                      Margin="20,0" />
 
                             <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,14"
                                   ColumnSpacing="14">
-                                <Border Grid.Column="0" BackgroundColor="#1A3a8fc4"
+                                <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
                                         StrokeThickness="0" StrokeShape="RoundRectangle 10"
                                         WidthRequest="36" HeightRequest="36">
                                     <Label Text="🗓" FontSize="16"
@@ -257,10 +257,10 @@
                                                      VerticalOptions="Center">
                                     <Label Text="Show Date" FontSize="14"
                                            FontAttributes="Bold"
-                                           TextColor="{StaticResource TextPrimary}" />
+                                           TextColor="{DynamicResource TextPrimary}" />
                                     <Label Text="Display date on feed cards"
                                            FontSize="12"
-                                           TextColor="{StaticResource TextSecondary}" />
+                                           TextColor="{DynamicResource TextSecondary}" />
                                 </VerticalStackLayout>
                                 <Border Grid.Column="2"
                                         BackgroundColor="{Binding ShowDate, Converter={StaticResource BoolToChipBg}}"
@@ -284,18 +284,18 @@
 
                     <!-- ── Wishlist section ───────────────────────────────── -->
                     <Label Text="WISHLIST" FontSize="11" FontAttributes="Bold"
-                           CharacterSpacing="0.6" TextColor="{StaticResource TextSecondary}"
+                           CharacterSpacing="0.6" TextColor="{DynamicResource TextSecondary}"
                            Margin="4,4,0,0" />
 
-                    <Border BackgroundColor="{StaticResource CardBackground}"
-                            Stroke="{StaticResource CardBorder}"
+                    <Border BackgroundColor="{DynamicResource CardBackground}"
+                            Stroke="{DynamicResource CardBorder}"
                             StrokeThickness="1" StrokeShape="RoundRectangle 20"
                             Padding="0">
                         <VerticalStackLayout Spacing="0">
 
                             <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,14"
                                   ColumnSpacing="14">
-                                <Border Grid.Column="0" BackgroundColor="#1Aa0714f"
+                                <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
                                         StrokeThickness="0" StrokeShape="RoundRectangle 10"
                                         WidthRequest="36" HeightRequest="36">
                                     <Label Text="⏳" FontSize="16"
@@ -306,10 +306,10 @@
                                                      VerticalOptions="Center">
                                     <Label Text="Cooling-off Reminder" FontSize="14"
                                            FontAttributes="Bold"
-                                           TextColor="{StaticResource TextPrimary}" />
+                                           TextColor="{DynamicResource TextPrimary}" />
                                     <Label Text="3-day wait badge on new wishes"
                                            FontSize="12"
-                                           TextColor="{StaticResource TextSecondary}" />
+                                           TextColor="{DynamicResource TextSecondary}" />
                                 </VerticalStackLayout>
                                 <Border Grid.Column="2"
                                         BackgroundColor="{Binding ShowCoolingOff, Converter={StaticResource BoolToChipBg}}"
@@ -328,12 +328,12 @@
                                 </Border>
                             </Grid>
 
-                            <BoxView HeightRequest="0.5" Color="{StaticResource CardBorder}"
+                            <BoxView HeightRequest="0.5" Color="{DynamicResource CardBorder}"
                                      Margin="20,0" />
 
                             <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,14"
                                   ColumnSpacing="14">
-                                <Border Grid.Column="0" BackgroundColor="#1Aff6b6b"
+                                <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
                                         StrokeThickness="0" StrokeShape="RoundRectangle 10"
                                         WidthRequest="36" HeightRequest="36">
                                     <Label Text="👀" FontSize="16"
@@ -344,10 +344,10 @@
                                                      VerticalOptions="Center">
                                     <Label Text="Stale Reminder" FontSize="14"
                                            FontAttributes="Bold"
-                                           TextColor="{StaticResource TextPrimary}" />
+                                           TextColor="{DynamicResource TextPrimary}" />
                                     <Label Text="Badge after 7 days still planned"
                                            FontSize="12"
-                                           TextColor="{StaticResource TextSecondary}" />
+                                           TextColor="{DynamicResource TextSecondary}" />
                                 </VerticalStackLayout>
                                 <Border Grid.Column="2"
                                         BackgroundColor="{Binding ShowStaleReminder, Converter={StaticResource BoolToChipBg}}"
@@ -371,15 +371,15 @@
 
                     <!-- ── Clear Data section ─────────────────────────────── -->
                     <Label Text="DATA" FontSize="11" FontAttributes="Bold"
-                           CharacterSpacing="0.6" TextColor="{StaticResource TextSecondary}"
+                           CharacterSpacing="0.6" TextColor="{DynamicResource TextSecondary}"
                            Margin="4,4,0,0" />
 
                     <ContentView>
                         <ContentView.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding OpenClearDataCommand}" />
                         </ContentView.GestureRecognizers>
-                        <Border BackgroundColor="{StaticResource CardBackground}"
-            Stroke="{StaticResource CardBorder}"
+                        <Border BackgroundColor="{DynamicResource CardBackground}"
+            Stroke="{DynamicResource CardBorder}"
             StrokeThickness="1" StrokeShape="RoundRectangle 20"
             Padding="0">
                             <Grid ColumnDefinitions="Auto,*" Padding="20,16" ColumnSpacing="14">
@@ -393,7 +393,7 @@
                                     <Label Text="Clear Data" FontSize="14"
                        FontAttributes="Bold" TextColor="#ff3b30" />
                                     <Label Text="Permanently delete expenses and lists"
-                       FontSize="12" TextColor="{StaticResource TextSecondary}" />
+                       FontSize="12" TextColor="{DynamicResource TextSecondary}" />
                                 </VerticalStackLayout>
                             </Grid>
                         </Border>
@@ -401,7 +401,7 @@
 
                     <!-- Version -->
                     <Label Text="Tally v1.0 · Aesthetic Budget"
-                           FontSize="12" TextColor="{StaticResource TextSecondary}"
+                           FontSize="12" TextColor="{DynamicResource TextSecondary}"
                            HorizontalOptions="Center" Margin="0,8,0,0" />
 
                 </VerticalStackLayout>
@@ -416,7 +416,7 @@
                 <TapGestureRecognizer Command="{Binding DismissClearDataCommand}" />
             </Grid.GestureRecognizers>
 
-            <Border BackgroundColor="{StaticResource CardBackground}"
+            <Border BackgroundColor="{DynamicResource CardBackground}"
                     StrokeThickness="0" StrokeShape="RoundRectangle 24"
                     Padding="24,24,24,28"
                     VerticalOptions="Center" HorizontalOptions="Center"
@@ -425,12 +425,12 @@
 
                     <VerticalStackLayout Spacing="4">
                         <Label Text="Clear Data" FontSize="17" FontAttributes="Bold"
-                               TextColor="{StaticResource TextPrimary}" />
+                               TextColor="{DynamicResource TextPrimary}" />
                         <Label Text="Choose what to permanently delete"
-                               FontSize="13" TextColor="{StaticResource TextSecondary}" />
+                               FontSize="13" TextColor="{DynamicResource TextSecondary}" />
                     </VerticalStackLayout>
 
-                    <BoxView HeightRequest="0.5" Color="{StaticResource CardBorder}" />
+                    <BoxView HeightRequest="0.5" Color="{DynamicResource CardBorder}" />
 
                     <Border BackgroundColor="#1Aff3b30" StrokeThickness="0"
                             StrokeShape="RoundRectangle 12" Padding="16,12">
@@ -441,7 +441,7 @@
                             <Label Text="Clear Expenses" FontSize="14"
                                    FontAttributes="Bold" TextColor="#ff3b30" />
                             <Label Text="Removes all expense entries from feed"
-                                   FontSize="12" TextColor="{StaticResource TextSecondary}" />
+                                   FontSize="12" TextColor="{DynamicResource TextSecondary}" />
                         </VerticalStackLayout>
                     </Border>
 
@@ -454,7 +454,7 @@
                             <Label Text="Clear Grocery List" FontSize="14"
                                    FontAttributes="Bold" TextColor="#ff3b30" />
                             <Label Text="Removes all grocery items"
-                                   FontSize="12" TextColor="{StaticResource TextSecondary}" />
+                                   FontSize="12" TextColor="{DynamicResource TextSecondary}" />
                         </VerticalStackLayout>
                     </Border>
 
@@ -467,7 +467,7 @@
                             <Label Text="Clear Wishlist" FontSize="14"
                                    FontAttributes="Bold" TextColor="#ff3b30" />
                             <Label Text="Removes all dream board items"
-                                   FontSize="12" TextColor="{StaticResource TextSecondary}" />
+                                   FontSize="12" TextColor="{DynamicResource TextSecondary}" />
                         </VerticalStackLayout>
                     </Border>
 
@@ -481,14 +481,14 @@
                                HorizontalOptions="Center" />
                     </Border>
 
-                    <Border BackgroundColor="{StaticResource PageBackground}"
+                    <Border BackgroundColor="{DynamicResource PageBackground}"
                             StrokeThickness="0" StrokeShape="RoundRectangle 12"
                             Padding="16,12">
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding DismissClearDataCommand}" />
                         </Border.GestureRecognizers>
                         <Label Text="Cancel" FontSize="14"
-                               TextColor="{StaticResource TextSecondary}"
+                               TextColor="{DynamicResource TextSecondary}"
                                HorizontalOptions="Center" />
                     </Border>
 

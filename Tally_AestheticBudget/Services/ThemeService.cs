@@ -9,6 +9,13 @@ public interface IThemeService
     void ApplyCustomTheme(string bg, string accent, string card, string text);
     (string bg, string accent, string card, string text) GetCustomColors();
     void ApplyOnStartup();
+
+    /// <summary>
+    /// Fired after theme colors are written to the resource dictionary.
+    /// ViewModels subscribe to re-notify converter-dependent properties
+    /// so MAUI re-evaluates stale bindings.
+    /// </summary>
+    event Action? ThemeChanged;
 }
 
 public class ThemeService : IThemeService
@@ -18,6 +25,8 @@ public class ThemeService : IThemeService
     private const string KeyCustomAccent = "custom_accent";
     private const string KeyCustomCard = "custom_card";
     private const string KeyCustomText = "custom_text";
+
+    public event Action? ThemeChanged;
 
     public string GetActiveThemeId() =>
         Preferences.Get(KeyThemeId, "default");
@@ -35,6 +44,7 @@ public class ThemeService : IThemeService
             theme.Border);
 
         ApplyTabBarColors(theme.Accent, theme.Card, theme.TextSecondary);
+        ThemeChanged?.Invoke();
     }
 
     public void ApplyCustomTheme(string bg, string accent, string card, string text)
@@ -56,6 +66,7 @@ public class ThemeService : IThemeService
 
         ApplyColorsToResources(bg, accent, card, text, text, "#E8E8ED");
         ApplyTabBarColors(accent, card, text);
+        ThemeChanged?.Invoke();
     }
 
     public (string bg, string accent, string card, string text) GetCustomColors() =>
@@ -117,7 +128,7 @@ public class ThemeService : IThemeService
         App.CurrentAccent = accent;
     }
 
-    // After reloadShell creates a fresh AppShell, push the accent color into the shell's tab bar so it matches the active theme immediately.
+    // Push the accent color into the shell's tab bar and custom nav bar
     private static void ApplyTabBarColors(string accent, string card, string subtext)
     {
         if (Application.Current?.MainPage is not Shell shell) return;
@@ -129,6 +140,10 @@ public class ThemeService : IThemeService
         Shell.SetTabBarForegroundColor(shell, accentColor);
         Shell.SetTabBarTitleColor(shell, accentColor);
         Shell.SetTabBarUnselectedColor(shell, subtextColor);
+
+        // Refresh the custom nav bar tab highlights
+        if (shell is AppShell appShell)
+            appShell.RefreshAccent();
     }
 
     private static bool IsValidHex(string hex) =>

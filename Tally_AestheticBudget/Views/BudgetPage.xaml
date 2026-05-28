@@ -7,36 +7,36 @@
     xmlns:models="clr-namespace:Tally_AestheticBudget.Models"
     x:DataType="vm:BudgetViewModel"
     Shell.NavBarIsVisible="True"
-    BackgroundColor="{StaticResource PageBackground}">
+    BackgroundColor="{DynamicResource PageBackground}">
 
     <ScrollView>
         <VerticalStackLayout Spacing="0">
 
             <!-- ── Floating header card ───────────────────────────────────── -->
-            <Border BackgroundColor="{StaticResource CardBackground}"
-                    Stroke="{StaticResource CardBorder}"
+            <Border BackgroundColor="{DynamicResource CardBackground}"
+                    Stroke="{DynamicResource CardBorder}"
                     StrokeThickness="1" StrokeShape="RoundRectangle 20"
                     Padding="20,18,20,16" Margin="16,16,16,0">
                 <VerticalStackLayout Spacing="0">
                     <Grid ColumnDefinitions="*,Auto">
                         <VerticalStackLayout Grid.Column="0" Spacing="2">
                             <Label Text="Budget Overview" FontFamily="DisplayFont"
-                                   FontSize="28" TextColor="{StaticResource TextPrimary}" />
+                                   FontSize="28" TextColor="{DynamicResource TextPrimary}" />
                             <Label Text="Track limits per category"
-                                   FontSize="13" TextColor="{StaticResource TextSecondary}" />
+                                   FontSize="13" TextColor="{DynamicResource TextSecondary}" />
                         </VerticalStackLayout>
                         <Border Grid.Column="1"
                                 Style="{StaticResource HoverButton}"
                                 BackgroundColor="{DynamicResource AccentColorAlpha}"
-                                Stroke="{StaticResource AccentColor}"
+                                Stroke="{DynamicResource AccentColor}"
                                 StrokeThickness="0.8" StrokeShape="RoundRectangle 980"
                                 Padding="14,8" VerticalOptions="Center">
                             <HorizontalStackLayout Spacing="4">
                                 <Label Text="Total: " FontSize="13"
-                                       TextColor="{StaticResource TextPrimary}" />
+                                       TextColor="{DynamicResource TextPrimary}" />
                                 <Label Text="{Binding TotalSpentLabel}"
                                        FontSize="13" FontAttributes="Bold"
-                                       TextColor="{StaticResource AccentColor}" />
+                                       TextColor="{DynamicResource AccentColor}" />
                             </HorizontalStackLayout>
                         </Border>
                     </Grid>
@@ -44,28 +44,28 @@
                     <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,16,0,0">
                         <Border Grid.Column="0"
                                 Style="{StaticResource HoverButton}"
-                                BackgroundColor="{StaticResource PageBackground}"
+                                BackgroundColor="{DynamicResource PageBackground}"
                                 StrokeShape="RoundRectangle 980"
                                 WidthRequest="36" HeightRequest="36">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding PreviousMonthCommand}" />
                             </Border.GestureRecognizers>
-                            <Label Text="‹" FontSize="20" TextColor="{StaticResource TextPrimary}"
+                            <Label Text="‹" FontSize="20" TextColor="{DynamicResource TextPrimary}"
                                    HorizontalOptions="Center" VerticalOptions="Center" />
                         </Border>
                         <Label Grid.Column="1" Text="{Binding MonthLabel}"
                                FontSize="15" FontAttributes="Bold"
-                               TextColor="{StaticResource TextPrimary}"
+                               TextColor="{DynamicResource TextPrimary}"
                                HorizontalOptions="Center" VerticalOptions="Center" />
                         <Border Grid.Column="2"
                                 Style="{StaticResource HoverButton}"
-                                BackgroundColor="{StaticResource PageBackground}"
+                                BackgroundColor="{DynamicResource PageBackground}"
                                 StrokeShape="RoundRectangle 980"
                                 WidthRequest="36" HeightRequest="36">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding NextMonthCommand}" />
                             </Border.GestureRecognizers>
-                            <Label Text="›" FontSize="20" TextColor="{StaticResource TextPrimary}"
+                            <Label Text="›" FontSize="20" TextColor="{DynamicResource TextPrimary}"
                                    HorizontalOptions="Center" VerticalOptions="Center" />
                         </Border>
                     </Grid>
@@ -85,8 +85,8 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:BudgetCategoryItem">
 
-                            <Border BackgroundColor="{StaticResource CardBackground}"
-                        Stroke="{StaticResource CardBorder}"
+                            <Border BackgroundColor="{DynamicResource CardBackground}"
+                        Stroke="{DynamicResource CardBorder}"
                         StrokeThickness="0.5"
                         StrokeShape="RoundRectangle 18"
                         Padding="18,16"
@@ -113,11 +113,11 @@
                                             <Label Text="{Binding CategoryLabel}"
                                        FontSize="15"
                                        FontAttributes="Bold"
-                                       TextColor="{StaticResource TextPrimary}" />
+                                       TextColor="{DynamicResource TextPrimary}" />
 
                                             <Label Text="{Binding StatusLabel}"
                                        FontSize="12"
-                                       TextColor="{StaticResource TextSecondary}" />
+                                       TextColor="{DynamicResource TextSecondary}" />
 
                                         </VerticalStackLayout>
 
@@ -166,8 +166,8 @@
                               ColumnSpacing="8">
 
                                         <Border Grid.Column="0"
-                                    BackgroundColor="{StaticResource PageBackground}"
-                                    Stroke="{StaticResource CardBorder}"
+                                    BackgroundColor="{DynamicResource PageBackground}"
+                                    Stroke="{DynamicResource CardBorder}"
                                     StrokeThickness="0.8"
                                     StrokeShape="RoundRectangle 12"
                                     Padding="12,0">
@@ -177,7 +177,7 @@
                                        PlaceholderColor="#C0C0C5"
                                        Keyboard="Numeric"
                                        FontSize="14"
-                                       TextColor="{StaticResource TextPrimary}"
+                                       TextColor="{DynamicResource TextPrimary}"
                                        BackgroundColor="Transparent"
                                        HeightRequest="40" />
 
@@ -185,7 +185,7 @@
 
                                         <Border Grid.Column="1"
                                     Style="{StaticResource HoverButton}"
-                                    BackgroundColor="{StaticResource AccentColor}"
+                                    BackgroundColor="{DynamicResource AccentColor}"
                                     StrokeShape="RoundRectangle 12"
                                     Padding="14,10">
 
@@ -204,7 +204,7 @@
 
                                         <Border Grid.Column="2"
                                     Style="{StaticResource HoverButton}"
-                                    BackgroundColor="{StaticResource PageBackground}"
+                                    BackgroundColor="{DynamicResource PageBackground}"
                                     StrokeShape="RoundRectangle 12"
                                     Padding="14,10">
 
@@ -216,7 +216,7 @@
 
                                             <Label Text="Cancel"
                                        FontSize="13"
-                                       TextColor="{StaticResource TextSecondary}" />
+                                       TextColor="{DynamicResource TextSecondary}" />
 
                                         </Border>
 

@@ -19,16 +19,17 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 fonts.AddFont("DMSans-Regular.ttf", "BodyFont");
-                fonts.AddFont("DMSerifDisplay-Regular.ttf", "DisplayFont"); // keep yours
+                fonts.AddFont("DMSerifDisplay-Regular.ttf", "DisplayFont");
             });
 
 
-        // ── Services ──────────────────────────────────────────────────────────
+        //Services
         // AddSingleton = one instance for the whole app lifetime (good for DB)
         // AddTransient = a fresh instance every time it's requested (good for ViewModels)
 
         builder.Services.AddSingleton<ISettingsService, SettingsService>();
         builder.Services.AddSingleton<DatabaseService>();
+        builder.Services.AddSingleton<DataChangedService>();
         builder.Services.AddSingleton<IExpenseService, ExpenseService>();
         builder.Services.AddSingleton<IBudgetService, BudgetService>();
         builder.Services.AddSingleton<IGroceryService, GroceryService>();
@@ -37,7 +38,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<ISettingsService, SettingsService>();
 
 
-        // ── ViewModels ────────────────────────────────────────────────────────────
+        //ViewModels
         builder.Services.AddTransient<FeedViewModel>();
         builder.Services.AddTransient<AddExpenseViewModel>();
         builder.Services.AddTransient<BudgetViewModel>();
@@ -46,7 +47,7 @@ public static class MauiProgram
         builder.Services.AddTransient<ThemesViewModel>();
         builder.Services.AddTransient<SettingsViewModel>();
 
-        // ── Pages ─────────────────────────────────────────────────────────────────
+        //Pages
         builder.Services.AddTransient<FeedPage>();
         builder.Services.AddTransient<AddExpensePage>();
         builder.Services.AddTransient<BudgetPage>();

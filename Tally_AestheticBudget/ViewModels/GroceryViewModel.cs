@@ -11,17 +11,32 @@ public partial class GroceryViewModel : ObservableObject
     private readonly IGroceryService _groceryService;
     private readonly IBudgetService _budgetService;
     private readonly ISettingsService _settings;
+    private readonly DataChangedService _dataChanged;
 
     private List<GroceryItem> _allItems = [];
 
     public GroceryViewModel(
         IGroceryService groceryService,
         IBudgetService budgetService,
-        ISettingsService settings)
+        ISettingsService settings,
+        DataChangedService dataChanged,
+        IThemeService themeService)
     {
         _groceryService = groceryService;
         _budgetService = budgetService;
         _settings = settings;
+        _dataChanged = dataChanged;
+
+        _dataChanged.GroceryChanged += () => IsDirty = true;
+
+        themeService.ThemeChanged += () =>
+        {
+            OnPropertyChanged(nameof(IsFilterAll));
+            OnPropertyChanged(nameof(IsFilterPending));
+            OnPropertyChanged(nameof(IsFilterChecked));
+            // Re-apply filter to force rebinding of per-item chip converters
+            ApplyFilter();
+        };
     }
 
     public string PriceLabelText => $"Price ({_settings.CurrencySymbol}) optional";
@@ -131,6 +146,7 @@ public partial class GroceryViewModel : ObservableObject
         if (!confirmed) return;
 
         await _groceryService.BuyCheckedAsync();
+        _dataChanged.NotifyGroceryChanged();
         IsDirty = true;
         await LoadAsync();
     }

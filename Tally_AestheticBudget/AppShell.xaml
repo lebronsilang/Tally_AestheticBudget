@@ -6,18 +6,18 @@
     xmlns:views="clr-namespace:Tally_AestheticBudget.Views"
     Shell.TabBarIsVisible="False"
     Shell.NavBarIsVisible="True"
-    Shell.BackgroundColor="{StaticResource CardBackground}">
+    Shell.BackgroundColor="{DynamicResource CardBackground}">
 
     <Shell.TitleView>
         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="0"
-              BackgroundColor="{StaticResource CardBackground}"
+              BackgroundColor="{DynamicResource CardBackground}"
               Padding="16,0">
 
             <HorizontalStackLayout Grid.Column="0" Spacing="4" VerticalOptions="Center">
                 <Label Text="tally" FontFamily="DisplayFont" FontSize="18"
-                       TextColor="{StaticResource AccentColor}" VerticalOptions="Center" />
+                       TextColor="{DynamicResource AccentColor}" VerticalOptions="Center" />
                 <Label Text="✦" FontSize="14"
-                       TextColor="{StaticResource AccentColor}" VerticalOptions="Center" />
+                       TextColor="{DynamicResource AccentColor}" VerticalOptions="Center" />
             </HorizontalStackLayout>
 
             <HorizontalStackLayout Grid.Column="1" Spacing="4"
@@ -30,7 +30,7 @@
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="FeedPage" />
                     </Border.GestureRecognizers>
                     <Label x:Name="TabFeedLabel" Text="≡  Feed" FontSize="13"
-                           TextColor="{StaticResource TextSecondary}" />
+                           TextColor="{DynamicResource TextSecondary}" />
                 </Border>
 
                 <Border x:Name="TabBudget"
@@ -40,7 +40,7 @@
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="BudgetPage" />
                     </Border.GestureRecognizers>
                     <Label x:Name="TabBudgetLabel" Text="◈  Budget" FontSize="13"
-                           TextColor="{StaticResource TextSecondary}" />
+                           TextColor="{DynamicResource TextSecondary}" />
                 </Border>
 
                 <Border x:Name="TabWishlist"
@@ -50,7 +50,7 @@
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="WishlistPage" />
                     </Border.GestureRecognizers>
                     <Label x:Name="TabWishlistLabel" Text="♡  Wishlist" FontSize="13"
-                           TextColor="{StaticResource TextSecondary}" />
+                           TextColor="{DynamicResource TextSecondary}" />
                 </Border>
 
                 <Border x:Name="TabGrocery"
@@ -60,7 +60,7 @@
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="GroceryPage" />
                     </Border.GestureRecognizers>
                     <Label x:Name="TabGroceryLabel" Text="⊟  Grocery" FontSize="13"
-                           TextColor="{StaticResource TextSecondary}" />
+                           TextColor="{DynamicResource TextSecondary}" />
                 </Border>
 
                 <Border x:Name="TabThemes"
@@ -70,7 +70,7 @@
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="ThemesPage" />
                     </Border.GestureRecognizers>
                     <Label x:Name="TabThemesLabel" Text="✦  Themes" FontSize="13"
-                           TextColor="{StaticResource TextSecondary}" />
+                           TextColor="{DynamicResource TextSecondary}" />
                 </Border>
 
                 <Border x:Name="TabSettings"
@@ -80,7 +80,7 @@
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="SettingsPage" />
                     </Border.GestureRecognizers>
                     <Label x:Name="TabSettingsLabel" Text="⊙  Settings" FontSize="13"
-                           TextColor="{StaticResource TextSecondary}" />
+                           TextColor="{DynamicResource TextSecondary}" />
                 </Border>
 
             </HorizontalStackLayout>

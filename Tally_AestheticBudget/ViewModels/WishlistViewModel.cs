@@ -11,6 +11,7 @@ public partial class WishlistViewModel : ObservableObject
     private readonly IWishService _wishService;
     private readonly IBudgetService _budgetService;
     private readonly ISettingsService _settings;
+    private readonly DataChangedService _dataChanged;
 
     private List<WishCardItem> _allItems = [];
 
@@ -20,11 +21,36 @@ public partial class WishlistViewModel : ObservableObject
     public WishlistViewModel(
         IWishService wishService,
         IBudgetService budgetService,
-        ISettingsService settings)
+        ISettingsService settings,
+        DataChangedService dataChanged,
+        IThemeService themeService)
     {
         _wishService = wishService;
         _budgetService = budgetService;
         _settings = settings;
+        _dataChanged = dataChanged;
+
+        _dataChanged.WishlistChanged += () => IsDirty = true;
+
+        themeService.ThemeChanged += () =>
+        {
+            OnPropertyChanged(nameof(IsFilterAll));
+            OnPropertyChanged(nameof(IsFilterPlanned));
+            OnPropertyChanged(nameof(IsFilterBought));
+            OnPropertyChanged(nameof(IsFilterWant));
+            OnPropertyChanged(nameof(IsFilterNeed));
+            OnPropertyChanged(nameof(IsFilterSomeday));
+            OnPropertyChanged(nameof(IsWantSelected));
+            OnPropertyChanged(nameof(IsNeedSelected));
+            OnPropertyChanged(nameof(IsSomedaySelected));
+            OnPropertyChanged(nameof(IsNewFoodSelected));
+            OnPropertyChanged(nameof(IsNewShoppingSelected));
+            OnPropertyChanged(nameof(IsNewHealthSelected));
+            OnPropertyChanged(nameof(IsNewFunSelected));
+            OnPropertyChanged(nameof(IsNewOtherSelected));
+            // Rebuild masonry cards so pin stroke converter picks up new accent
+            ApplyFilter();
+        };
     }
 
     // Exposed so XAML can bind the currency label dynamically
@@ -307,6 +333,7 @@ public partial class WishlistViewModel : ObservableObject
         if (!confirmed) return;
 
         await _wishService.ConvertToExpenseAsync(SelectedItem.Id);
+        _dataChanged.NotifyExpensesChanged();
         IsDetailVisible = false;
         IsDirty = true;
         await LoadAsync();
