@@ -2,8 +2,6 @@
 
 namespace Tally_AestheticBudget.Services;
 
-// ── Interface ─────────────────────────────────────────────────────────────────
-
 public interface IWishService
 {
     Task<IEnumerable<WishCardItem>> GetWishItemsAsync();
@@ -17,7 +15,7 @@ public interface IWishService
     Task DeleteAllAsync();
 }
 
-// ── Implementation ────────────────────────────────────────────────────────────
+// Implementation 
 
 public class WishService : IWishService
 {
@@ -34,7 +32,6 @@ public class WishService : IWishService
     {
         var db = await _db.GetConnectionAsync();
         var entities = await db.Table<WishItemEntity>()
-            .OrderByDescending(w => w.IsPinned)
             .ToListAsync();
         var currencySymbol = _settings.CurrencySymbol;
         // Sort: pinned first, then by creation date descending
@@ -93,13 +90,25 @@ public class WishService : IWishService
         var db = await _db.GetConnectionAsync();
         var items = await db.Table<WishItemEntity>().ToListAsync();
 
-        // Unpin all others first — only one item can be pinned at a time
+        // Toggle target, unpin others — only touch rows that actually change
+        var updates = new List<WishItemEntity>();
         foreach (var w in items)
         {
-            var wasPinned = w.IsPinned;
-            w.IsPinned = w.Id == id ? !w.IsPinned : false;
-            if (wasPinned != w.IsPinned)
-                await db.UpdateAsync(w);
+            var newPinned = w.Id == id ? !w.IsPinned : false;
+            if (w.IsPinned != newPinned)
+            {
+                w.IsPinned = newPinned;
+                updates.Add(w);
+            }
+        }
+
+        if (updates.Count > 0)
+        {
+            await db.RunInTransactionAsync(tran =>
+            {
+                foreach (var w in updates)
+                    tran.Update(w);
+            });
         }
     }
 
@@ -135,9 +144,12 @@ public class WishService : IWishService
     public async Task<bool> IsDuplicateAsync(string name)
     {
         var db = await _db.GetConnectionAsync();
-        var items = await db.Table<WishItemEntity>().ToListAsync();
-        return items.Any(w => string.Equals(w.Name.Trim(), name.Trim(),
-            StringComparison.OrdinalIgnoreCase));
+        var trimmed = name.Trim().ToLowerInvariant();
+
+        // sqlite-net doesn't support ToLower in LINQ, so use a raw query
+        var count = await db.ExecuteScalarAsync<int>(
+            "SELECT COUNT(*) FROM wish_items WHERE TRIM(LOWER(Name)) = ?", trimmed);
+        return count > 0;
     }
     public async Task DeleteAllAsync()
     {
@@ -149,7 +161,7 @@ public class WishService : IWishService
         });
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
+    // Helpers
 
     private static WishPriority ParsePriority(string raw) =>
         Enum.TryParse<WishPriority>(raw, true, out var p) ? p : WishPriority.Want;
