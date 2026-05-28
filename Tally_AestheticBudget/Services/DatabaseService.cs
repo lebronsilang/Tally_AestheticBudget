@@ -11,27 +11,36 @@ namespace Tally_AestheticBudget.Services;
 public class DatabaseService
 {
     private SQLiteAsyncConnection? _connection;
+    private readonly SemaphoreSlim _lock = new(1, 1);
 
     public async Task<SQLiteAsyncConnection> GetConnectionAsync()
     {
         if (_connection is not null)
             return _connection;
 
-        // AppDataDirectory is the private folder MAUI gives each app.
-        // On Windows: C:\Users\You\AppData\Local\Packages\...\budget.db
-        // On Android: /data/data/com.yourapp/files/budget.db
-        string dbPath = Path.Combine(FileSystem.AppDataDirectory, "budget.db");
+        await _lock.WaitAsync();
+        try
+        {
+            // Double-check after acquiring lock — another caller may have initialized it
+            if (_connection is not null)
+                return _connection;
 
-        _connection = new SQLiteAsyncConnection(dbPath);
+            string dbPath = Path.Combine(FileSystem.AppDataDirectory, "budget.db");
 
-        // CreateTableAsync is safe to call every launch —
-        // it only creates the table if it doesn't already exist.
-        await _connection.CreateTableAsync<ExpenseEntity>();
-        await _connection.CreateTableAsync<GroceryGroupEntity>();
-        await _connection.CreateTableAsync<BudgetEntity>();
-        await _connection.CreateTableAsync<GroceryItemEntity>();
-        await _connection.CreateTableAsync<WishItemEntity>();
+            var conn = new SQLiteAsyncConnection(dbPath);
 
-        return _connection;
+            await conn.CreateTableAsync<ExpenseEntity>();
+            await conn.CreateTableAsync<GroceryGroupEntity>();
+            await conn.CreateTableAsync<BudgetEntity>();
+            await conn.CreateTableAsync<GroceryItemEntity>();
+            await conn.CreateTableAsync<WishItemEntity>();
+
+            _connection = conn; // publish only after tables are created
+            return _connection;
+        }
+        finally
+        {
+            _lock.Release();
+        }
     }
 }
