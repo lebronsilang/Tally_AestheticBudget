@@ -55,22 +55,80 @@ public class ExpenseService : IExpenseService
     {
         var db = await _db.GetConnectionAsync();
 
-        var expenses = await db.Table<ExpenseEntity>()
-            .Where(e => e.GroceryGroupId == null)
-            .ToListAsync();
+        // ── Build date range from the supplied filter params ──
+        DateTime? filterStart = null;
+        DateTime? filterEnd = null;
 
-        var groups = await db.Table<GroceryGroupEntity>().ToListAsync();
+        if (rangeStart.HasValue && rangeEnd.HasValue)
+        {
+            filterStart = rangeStart.Value;
+            filterEnd = rangeEnd.Value;
+        }
+        else if (year.HasValue && month.HasValue && day.HasValue)
+        {
+            filterStart = new DateTime(year.Value, month.Value, day.Value);
+            filterEnd = filterStart.Value.AddDays(1);
+        }
+        else if (year.HasValue && month.HasValue)
+        {
+            filterStart = new DateTime(year.Value, month.Value, 1);
+            filterEnd = filterStart.Value.AddMonths(1);
+        }
+        else if (year.HasValue)
+        {
+            filterStart = new DateTime(year.Value, 1, 1);
+            filterEnd = filterStart.Value.AddYears(1);
+        }
 
-        var lineItems = await db.Table<ExpenseEntity>()
-            .Where(e => e.GroceryGroupId != null)
-            .ToListAsync();
+        // ── Standalone expenses (GroceryGroupId IS NULL) ──
+        List<ExpenseEntity> expenses;
+        if (filterStart.HasValue)
+        {
+            expenses = await db.QueryAsync<ExpenseEntity>(
+                "SELECT * FROM expenses WHERE GroceryGroupId IS NULL AND Date >= ? AND Date < ?",
+                filterStart.Value, filterEnd!.Value);
+        }
+        else
+        {
+            expenses = await db.Table<ExpenseEntity>()
+                .Where(e => e.GroceryGroupId == null)
+                .ToListAsync();
+        }
+
+        // ── Grocery groups ──
+        List<GroceryGroupEntity> groups;
+        if (filterStart.HasValue)
+        {
+            groups = await db.QueryAsync<GroceryGroupEntity>(
+                "SELECT * FROM grocery_groups WHERE Date >= ? AND Date < ?",
+                filterStart.Value, filterEnd!.Value);
+        }
+        else
+        {
+            groups = await db.Table<GroceryGroupEntity>().ToListAsync();
+        }
+
+        // ── Line items — only fetch those belonging to matched groups ──
+        List<ExpenseEntity> lineItems;
+        if (groups.Count > 0)
+        {
+            var groupIds = groups.Select(g => g.Id).ToHashSet();
+            // sqlite-net doesn't support IN clause via LINQ, fetch and filter
+            var allGrouped = await db.Table<ExpenseEntity>()
+                .Where(e => e.GroceryGroupId != null)
+                .ToListAsync();
+            lineItems = allGrouped.Where(e => groupIds.Contains(e.GroceryGroupId!.Value)).ToList();
+        }
+        else
+        {
+            lineItems = [];
+        }
 
         var cards = new List<FeedCardItem>();
         var currencySymbol = _settings.CurrencySymbol;
 
         foreach (var e in expenses)
         {
-            if (!Matches(e.Date, year, month, day, rangeStart, rangeEnd)) continue;
             var expCat = ParseCategory(e.Category);
             if (category.HasValue && expCat != category.Value) continue;
             cards.Add(new FeedCardItem
@@ -92,7 +150,6 @@ public class ExpenseService : IExpenseService
 
         foreach (var group in groups)
         {
-            if (!Matches(group.Date, year, month, day, rangeStart, rangeEnd)) continue;
             if (category.HasValue && category.Value != ExpenseCategory.Grocery) continue;
 
             var lines = byGroup.TryGetValue(group.Id, out var l) ? l : [];
@@ -172,17 +229,6 @@ public class ExpenseService : IExpenseService
     {
         var db = await _db.GetConnectionAsync();
         await db.DeleteAsync<ExpenseEntity>(lineItemId);
-    }
-
-    private static bool Matches(DateTime date, int? year, int? month, int? day = null,
-        DateTime? rangeStart = null, DateTime? rangeEnd = null)
-    {
-        if (year.HasValue && date.Year != year.Value) return false;
-        if (month.HasValue && date.Month != month.Value) return false;
-        if (day.HasValue && date.Day != day.Value) return false;
-        if (rangeStart.HasValue && date < rangeStart.Value) return false;
-        if (rangeEnd.HasValue && date >= rangeEnd.Value) return false;
-        return true;
     }
 
     private static ExpenseCategory ParseCategory(string raw) =>
