@@ -19,11 +19,10 @@ public partial class WishlistViewModel : ObservableObject
     public int CurrentColumnCount { get; set; } = 2;
 
     public WishlistViewModel(
-        IWishService wishService,
-        IBudgetService budgetService,
-        ISettingsService settings,
-        DataChangedService dataChanged,
-        IThemeService themeService)
+            IWishService wishService,
+            IBudgetService budgetService,
+            ISettingsService settings,
+            DataChangedService dataChanged)
     {
         _wishService = wishService;
         _budgetService = budgetService;
@@ -31,26 +30,9 @@ public partial class WishlistViewModel : ObservableObject
         _dataChanged = dataChanged;
 
         _dataChanged.WishlistChanged += () => IsDirty = true;
+        _dataChanged.SettingsChanged += () => IsDirty = true;
 
-        themeService.ThemeChanged += () =>
-        {
-            OnPropertyChanged(nameof(IsFilterAll));
-            OnPropertyChanged(nameof(IsFilterPlanned));
-            OnPropertyChanged(nameof(IsFilterBought));
-            OnPropertyChanged(nameof(IsFilterWant));
-            OnPropertyChanged(nameof(IsFilterNeed));
-            OnPropertyChanged(nameof(IsFilterSomeday));
-            OnPropertyChanged(nameof(IsWantSelected));
-            OnPropertyChanged(nameof(IsNeedSelected));
-            OnPropertyChanged(nameof(IsSomedaySelected));
-            OnPropertyChanged(nameof(IsNewFoodSelected));
-            OnPropertyChanged(nameof(IsNewShoppingSelected));
-            OnPropertyChanged(nameof(IsNewHealthSelected));
-            OnPropertyChanged(nameof(IsNewFunSelected));
-            OnPropertyChanged(nameof(IsNewOtherSelected));
-            // Rebuild masonry cards so pin stroke converter picks up new accent
-            ApplyFilter();
-        };
+        
     }
 
     // Exposed so XAML can bind the currency label dynamically
@@ -399,6 +381,16 @@ public partial class WishlistViewModel : ObservableObject
         {
             var items = await _wishService.GetWishItemsAsync();
             _allItems = items.ToList();
+
+            // Inject current settings into each card item
+            var showCooling = _settings.ShowCoolingOff;
+            var showStale = _settings.ShowStaleReminder;
+            foreach (var item in _allItems)
+            {
+                item.SettingShowCooling = showCooling;
+                item.SettingShowStale = showStale;
+            }
+
             UpdateStats();
             ApplyFilter();
         }

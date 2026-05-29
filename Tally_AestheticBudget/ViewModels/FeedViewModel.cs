@@ -15,7 +15,7 @@ public partial class FeedViewModel : ObservableObject
     public int CurrentColumnCount { get; set; } = 2;
 
     public FeedViewModel(IExpenseService expenseService, ISettingsService settings,
-        DataChangedService dataChanged, IThemeService themeService)
+        DataChangedService dataChanged)
     {
         _expenseService = expenseService;
         _settings = settings;
@@ -26,32 +26,8 @@ public partial class FeedViewModel : ObservableObject
 
         // When another VM signals expenses changed, mark dirty so next OnAppearing reloads
         _dataChanged.ExpensesChanged += () => IsDirty = true;
+        _dataChanged.SettingsChanged += () => IsDirty = true;
 
-        // Re-notify converter-bound bools so chips pick up new accent color
-        themeService.ThemeChanged += () =>
-        {
-            // Filter chips
-            OnPropertyChanged(nameof(IsFilterAll));
-            OnPropertyChanged(nameof(IsFilterDay));
-            OnPropertyChanged(nameof(IsFilterWeek));
-            OnPropertyChanged(nameof(IsFilterMonth));
-            OnPropertyChanged(nameof(IsFilterYear));
-            OnPropertyChanged(nameof(IsFilterCategory));
-            // Add modal category chips
-            OnPropertyChanged(nameof(NewIsFoodSelected));
-            OnPropertyChanged(nameof(NewIsTransportSelected));
-            OnPropertyChanged(nameof(NewIsShoppingSelected));
-            OnPropertyChanged(nameof(NewIsHealthSelected));
-            OnPropertyChanged(nameof(NewIsFunSelected));
-            OnPropertyChanged(nameof(NewIsOtherSelected));
-            // Edit modal category chips
-            OnPropertyChanged(nameof(EditIsFoodSelected));
-            OnPropertyChanged(nameof(EditIsTransportSelected));
-            OnPropertyChanged(nameof(EditIsShoppingSelected));
-            OnPropertyChanged(nameof(EditIsHealthSelected));
-            OnPropertyChanged(nameof(EditIsFunSelected));
-            OnPropertyChanged(nameof(EditIsOtherSelected));
-        };
     }
 
     // ── Feed items ────────────────────────────────────────────────────────────
@@ -551,6 +527,18 @@ public partial class FeedViewModel : ObservableObject
             };
 
             var itemList = items.ToList();
+
+            // Inject current settings into each card item
+            var showNotes = _settings.ShowNotes;
+            var showPrice = _settings.ShowPrice;
+            var showDate = _settings.ShowDate;
+            foreach (var item in itemList)
+            {
+                item.SettingShowNotes = showNotes;
+                item.SettingShowPrice = showPrice;
+                item.SettingShowDate = showDate;
+            }
+
             FeedItems = new ObservableCollection<FeedCardItem>(itemList);
             _pendingItems = itemList;
             UpdateLabels();

@@ -35,6 +35,16 @@ public partial class FeedCardItem : ObservableObject
     public bool HasTitle => !string.IsNullOrEmpty(Title);
     public bool HasNote => !string.IsNullOrEmpty(Note);
 
+    // Settings-driven visibility set by FeedViewModel during load
+    public bool SettingShowNotes { get; set; } = true;
+    public bool SettingShowPrice { get; set; } = true;
+    public bool SettingShowDate { get; set; } = true;
+
+    //data exists AND setting is on
+    public bool ShowNote => HasNote && SettingShowNotes;
+    public bool ShowPrice => SettingShowPrice;
+    public bool ShowDate => SettingShowDate;
+
     public string CurrencySymbol { get; set; } = "₱";
     public string AmountFormatted => $"{CurrencySymbol}{Amount:N2}";
     public string DateFormatted => Date.ToString("dd MMM yyyy");

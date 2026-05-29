@@ -10,23 +10,26 @@ public interface IThemeService
     (string bg, string accent, string card, string text) GetCustomColors();
     void ApplyOnStartup();
 
-    /// <summary>
-    /// Fired after theme colors are written to the resource dictionary.
-    /// ViewModels subscribe to re-notify converter-dependent properties
-    /// so MAUI re-evaluates stale bindings.
-    /// </summary>
-    event Action? ThemeChanged;
+    // Per-month themes
+    Task<List<MonthlyThemeEntity>> GetMonthlyThemesAsync(int year);
+    Task SetMonthlyThemeAsync(int year, int month, string? themeId);
+    Task<string?> GetMonthlyThemeIdAsync(int year, int month);
 }
 
 public class ThemeService : IThemeService
 {
+    private readonly DatabaseService _db;
+
     private const string KeyThemeId = "active_theme";
     private const string KeyCustomBg = "custom_bg";
     private const string KeyCustomAccent = "custom_accent";
     private const string KeyCustomCard = "custom_card";
     private const string KeyCustomText = "custom_text";
 
-    public event Action? ThemeChanged;
+    public ThemeService(DatabaseService db)
+    {
+        _db = db;
+    }
 
     public string GetActiveThemeId() =>
         Preferences.Get(KeyThemeId, "default");
@@ -44,7 +47,6 @@ public class ThemeService : IThemeService
             theme.Border);
 
         ApplyTabBarColors(theme.Accent, theme.Card, theme.TextSecondary);
-        ThemeChanged?.Invoke();
     }
 
     public void ApplyCustomTheme(string bg, string accent, string card, string text)
@@ -66,7 +68,6 @@ public class ThemeService : IThemeService
 
         ApplyColorsToResources(bg, accent, card, text, text, "#E8E8ED");
         ApplyTabBarColors(accent, card, text);
-        ThemeChanged?.Invoke();
     }
 
     public (string bg, string accent, string card, string text) GetCustomColors() =>
@@ -79,6 +80,7 @@ public class ThemeService : IThemeService
 
     public void ApplyOnStartup()
     {
+        // Apply global/custom theme immediately (sync-safe, no DB needed)
         var id = GetActiveThemeId();
         if (id == "custom")
         {
@@ -96,12 +98,84 @@ public class ThemeService : IThemeService
                 theme.TextSecondary,
                 theme.Border);
         }
+
+        // Check for a per-month override AFTER the UI thread is free
+        _ = ApplyMonthlyOverrideAsync();
+    }
+
+    private async Task ApplyMonthlyOverrideAsync()
+    {
+        try
+        {
+            var now = DateTime.Now;
+            var monthlyId = await GetMonthlyThemeIdAsync(now.Year, now.Month);
+            if (string.IsNullOrEmpty(monthlyId)) return;
+
+            var theme = AppThemes.GetById(monthlyId);
+            ApplyColorsToResources(
+                theme.Background,
+                theme.Accent,
+                theme.Card,
+                theme.TextPrimary,
+                theme.TextSecondary,
+                theme.Border);
+            ApplyTabBarColors(theme.Accent, theme.Card, theme.TextSecondary);
+        }
+        catch
+        {
+            // DB not ready or no monthly theme — global theme stays
+        }
+    }
+
+    // ── Per-month theme persistence ─────────────────────────────────────────
+
+    public async Task<List<MonthlyThemeEntity>> GetMonthlyThemesAsync(int year)
+    {
+        var conn = await _db.GetConnectionAsync();
+        var all = await conn.Table<MonthlyThemeEntity>().ToListAsync();
+        return all.Where(r => r.Year == year).ToList();
+    }
+
+    public async Task SetMonthlyThemeAsync(int year, int month, string? themeId)
+    {
+        var conn = await _db.GetConnectionAsync();
+        var all = await conn.Table<MonthlyThemeEntity>().ToListAsync();
+        var existing = all.FirstOrDefault(r => r.Year == year && r.Month == month);
+
+        if (string.IsNullOrEmpty(themeId) || themeId == "none")
+        {
+            // Remove assignment → use global theme for this month
+            if (existing is not null)
+                await conn.DeleteAsync(existing);
+            return;
+        }
+
+        if (existing is not null)
+        {
+            existing.ThemeId = themeId;
+            await conn.UpdateAsync(existing);
+        }
+        else
+        {
+            await conn.InsertAsync(new MonthlyThemeEntity
+            {
+                Year = year,
+                Month = month,
+                ThemeId = themeId
+            });
+        }
+    }
+
+    public async Task<string?> GetMonthlyThemeIdAsync(int year, int month)
+    {
+        var conn = await _db.GetConnectionAsync();
+        var all = await conn.Table<MonthlyThemeEntity>().ToListAsync();
+        var row = all.FirstOrDefault(r => r.Year == year && r.Month == month);
+        return row?.ThemeId;
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
-    // Writes theme colors into the app's resource dictionary.
-    // Keys must match what's defined in App.xaml.
     private static void ApplyColorsToResources(
         string bg, string accent, string card,
         string textPrimary, string textSecondary, string border)
@@ -121,14 +195,12 @@ public class ThemeService : IThemeService
         Set("TextSecondary", textSecondary);
         Set("AccentColor", accent);
 
-        // Accent at ~12% opacity — used for tinted pill/progress-track backgrounds
         if (Color.TryParse(accent, out var accentColor))
             res["AccentColorAlpha"] = accentColor.WithAlpha(0x1F / 255f);
 
         App.CurrentAccent = accent;
     }
 
-    // Push the accent color into the shell's tab bar and custom nav bar
     private static void ApplyTabBarColors(string accent, string card, string subtext)
     {
         if (Application.Current?.MainPage is not Shell shell) return;
@@ -141,7 +213,6 @@ public class ThemeService : IThemeService
         Shell.SetTabBarTitleColor(shell, accentColor);
         Shell.SetTabBarUnselectedColor(shell, subtextColor);
 
-        // Refresh the custom nav bar tab highlights
         if (shell is AppShell appShell)
             appShell.RefreshAccent();
     }

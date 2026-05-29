@@ -30,6 +30,20 @@ public partial class ThemesViewModel : ObservableObject
         _customAccent = accent;
         _customCard = card;
         _customText = text;
+
+        // build month picker options (all presets + "none")
+        var pickerList = new List<ThemePickerOption>
+        {
+            new() { ThemeId = "none", DisplayName = "Default (global)" }
+        };
+        pickerList.AddRange(AppThemes.All.Select(t => new ThemePickerOption
+        {
+            ThemeId = t.Id,
+            DisplayName = t.DisplayName
+        }));
+        ThemePickerOptions = new ObservableCollection<ThemePickerOption>(pickerList);
+
+        _monthlyYear = DateTime.Now.Year;
     }
 
     // ── Theme cards ───────────────────────────────────────────────────────────
@@ -128,4 +142,127 @@ public partial class ThemesViewModel : ObservableObject
         foreach (var card in ThemeCards)
             card.IsActive = false;
     }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // ── Per-Month Themes ──────────────────────────────────────────────────────
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    public ObservableCollection<MonthlyThemeItem> MonthlyItems { get; } = [];
+    public ObservableCollection<ThemePickerOption> ThemePickerOptions { get; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(MonthlyYearLabel))]
+    private int _monthlyYear;
+
+    public string MonthlyYearLabel => MonthlyYear.ToString();
+
+    // The month item being edited
+    [ObservableProperty]
+    private MonthlyThemeItem? _editingMonth;
+
+    [ObservableProperty]
+    private bool _isMonthPickerVisible;
+
+    [RelayCommand]
+    private async Task LoadMonthlyThemesAsync()
+    {
+        var rows = await _themeService.GetMonthlyThemesAsync(MonthlyYear);
+        MonthlyItems.Clear();
+
+        for (int m = 1; m <= 12; m++)
+        {
+            var row = rows.FirstOrDefault(r => r.Month == m);
+            var themeId = row?.ThemeId ?? "none";
+            var themeName = themeId == "none"
+                ? "Default (global)"
+                : AppThemes.All.FirstOrDefault(t => t.Id == themeId)?.DisplayName ?? themeId;
+
+            MonthlyItems.Add(new MonthlyThemeItem
+            {
+                Year = MonthlyYear,
+                Month = m,
+                MonthLabel = new DateTime(MonthlyYear, m, 1).ToString("MMMM"),
+                AssignedThemeId = themeId,
+                AssignedThemeName = themeName
+            });
+        }
+    }
+
+    [RelayCommand]
+    private async Task PreviousMonthlyYear()
+    {
+        MonthlyYear--;
+        await LoadMonthlyThemesAsync();
+    }
+
+    [RelayCommand]
+    private async Task NextMonthlyYear()
+    {
+        MonthlyYear++;
+        await LoadMonthlyThemesAsync();
+    }
+
+    [RelayCommand]
+    private void OpenMonthThemePicker(MonthlyThemeItem item)
+    {
+        EditingMonth = item;
+
+        // Highlight current selection
+        foreach (var opt in ThemePickerOptions)
+            opt.IsSelected = opt.ThemeId == item.AssignedThemeId;
+
+        IsMonthPickerVisible = true;
+    }
+
+    [RelayCommand]
+    private void DismissMonthPicker() => IsMonthPickerVisible = false;
+
+    [RelayCommand]
+    private async Task SelectMonthThemeAsync(ThemePickerOption option)
+    {
+        if (EditingMonth is null) return;
+
+        await _themeService.SetMonthlyThemeAsync(
+            EditingMonth.Year, EditingMonth.Month,
+            option.ThemeId == "none" ? null : option.ThemeId);
+
+        EditingMonth.AssignedThemeId = option.ThemeId;
+        EditingMonth.AssignedThemeName = option.DisplayName;
+
+        // If this is the current month, live-apply the theme
+        var now = DateTime.Now;
+        if (EditingMonth.Year == now.Year && EditingMonth.Month == now.Month)
+        {
+            if (option.ThemeId == "none")
+            {
+                // Revert to global
+                var globalId = _themeService.GetActiveThemeId();
+                _themeService.ApplyTheme(globalId);
+            }
+            else
+            {
+                _themeService.ApplyTheme(option.ThemeId);
+            }
+
+            // Update preset card active states
+            var appliedId = option.ThemeId == "none"
+                ? _themeService.GetActiveThemeId()
+                : option.ThemeId;
+            foreach (var card in ThemeCards)
+                card.IsActive = card.Id == appliedId;
+        }
+
+        IsMonthPickerVisible = false;
+    }
+}
+
+// ── Helper for theme picker ───────────────────────────────────────────────────
+
+public partial class ThemePickerOption : ObservableObject
+{
+    public string ThemeId { get; set; } = string.Empty;
+    public string DisplayName { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    private bool _isSelected;
 }

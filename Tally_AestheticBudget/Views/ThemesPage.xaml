@@ -219,7 +219,87 @@
 
                         </VerticalStackLayout>
                     </Border>
+                    
+                    <!-- ── Monthly Themes card ──────────────────────────── -->
+                    <Border BackgroundColor="{DynamicResource CardBackground}"
+                            Stroke="{DynamicResource CardBorder}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 20"
+                            Padding="20,20">
+                        <VerticalStackLayout Spacing="16">
 
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="Monthly Themes" FontSize="16" FontAttributes="Bold"
+                                       TextColor="{DynamicResource TextPrimary}" />
+                                <Label Text="Assign a different theme to each month"
+                                       FontSize="12" TextColor="{DynamicResource TextSecondary}" />
+                            </VerticalStackLayout>
+
+                            <!-- Year nav -->
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <Border Grid.Column="0" Style="{StaticResource HoverButton}"
+                                        BackgroundColor="{DynamicResource PageBackground}"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                        Padding="12,6">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding PreviousMonthlyYearCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="◀" FontSize="14"
+                                           TextColor="{DynamicResource TextSecondary}"
+                                           HorizontalOptions="Center" />
+                                </Border>
+                                <Label Grid.Column="1" Text="{Binding MonthlyYearLabel}"
+                                       FontSize="16" FontAttributes="Bold"
+                                       TextColor="{DynamicResource TextPrimary}"
+                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                                <Border Grid.Column="2" Style="{StaticResource HoverButton}"
+                                        BackgroundColor="{DynamicResource PageBackground}"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                        Padding="12,6">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding NextMonthlyYearCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="▶" FontSize="14"
+                                           TextColor="{DynamicResource TextSecondary}"
+                                           HorizontalOptions="Center" />
+                                </Border>
+                            </Grid>
+
+                            <!-- Month list -->
+                            <CollectionView ItemsSource="{Binding MonthlyItems}"
+                                           SelectionMode="None">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="models:MonthlyThemeItem">
+                                        <Border BackgroundColor="Transparent"
+                                                StrokeThickness="0" Padding="0,8">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ThemesViewModel}}, Path=OpenMonthThemePickerCommand}"
+                                                    CommandParameter="{Binding .}" />
+                                            </Border.GestureRecognizers>
+                                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                                <Label Grid.Column="0"
+                                                       Text="{Binding MonthLabel}"
+                                                       FontSize="14" FontAttributes="Bold"
+                                                       TextColor="{DynamicResource TextPrimary}"
+                                                       VerticalOptions="Center" />
+                                                <Border Grid.Column="1"
+                                                        BackgroundColor="{DynamicResource PageBackground}"
+                                                        Stroke="{DynamicResource CardBorder}"
+                                                        StrokeThickness="0.8"
+                                                        StrokeShape="RoundRectangle 10"
+                                                        Padding="12,6">
+                                                    <Label Text="{Binding AssignedThemeName}"
+                                                           FontSize="12"
+                                                           TextColor="{DynamicResource TextSecondary}" />
+                                                </Border>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+
+                        </VerticalStackLayout>
+                    </Border>
                 </VerticalStackLayout>
             </VerticalStackLayout>
         </ScrollView>
@@ -479,7 +559,65 @@
                 </VerticalStackLayout>
             </Border>
         </Grid>
+        <!-- ── Month theme picker overlay ─────────────────────────────── -->
+        <Grid IsVisible="{Binding IsMonthPickerVisible}"
+              BackgroundColor="#80000000"
+              VerticalOptions="Fill" HorizontalOptions="Fill">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding DismissMonthPickerCommand}" />
+            </Grid.GestureRecognizers>
 
+            <Border BackgroundColor="{DynamicResource CardBackground}"
+                    StrokeThickness="0" StrokeShape="RoundRectangle 24"
+                    Padding="20,20,20,24"
+                    VerticalOptions="Center" HorizontalOptions="Center"
+                    WidthRequest="320" MaximumHeightRequest="460">
+                <VerticalStackLayout Spacing="14">
+
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="{Binding EditingMonth.MonthLabel, StringFormat='Theme for {0}'}"
+                               FontSize="16" FontAttributes="Bold"
+                               TextColor="{DynamicResource TextPrimary}" />
+                        <Label Text="Choose which theme to use this month"
+                               FontSize="12"
+                               TextColor="{DynamicResource TextSecondary}" />
+                    </VerticalStackLayout>
+
+                    <BoxView HeightRequest="0.5"
+                             Color="{DynamicResource CardBorder}" />
+
+                    <CollectionView ItemsSource="{Binding ThemePickerOptions}"
+                                   SelectionMode="None"
+                                   MaximumHeightRequest="320">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="vm:ThemePickerOption">
+                                <Border BackgroundColor="Transparent"
+                                        StrokeThickness="0" Padding="10,9">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ThemesViewModel}}, Path=SelectMonthThemeCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Grid.Column="0"
+                                               Text="{Binding DisplayName}"
+                                               FontSize="14"
+                                               TextColor="{DynamicResource TextPrimary}"
+                                               VerticalOptions="Center" />
+                                        <Label Grid.Column="1" Text="✓"
+                                               FontSize="14" FontAttributes="Bold"
+                                               TextColor="{DynamicResource AccentColor}"
+                                               IsVisible="{Binding IsSelected}"
+                                               VerticalOptions="Center" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
     </Grid>
 
 </ContentPage>

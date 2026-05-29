@@ -92,14 +92,14 @@ public static class AppThemes
         {
             Id           = "midnight",
             DisplayName  = "Midnight",
-            PreviewFrom  = "#0f0f14",
+            PreviewFrom  = "#141419",
             PreviewTo    = "#a78bfa",
-            Background   = "#0f0f14",
-            Card         = "#1a1a24",
+            Background   = "#141419",
+            Card         = "#1e1e28",
             Accent       = "#a78bfa",
-            TextPrimary  = "#e8e8f0",
-            TextSecondary = "#8888a8",
-            Border       = "#32323a"
+            TextPrimary  = "#cdc8d8",
+            TextSecondary = "#908aa0",
+            Border       = "#2e2e3a"
         },
     ];
 
@@ -122,4 +122,18 @@ public partial class ThemeCardItem : CommunityToolkit.Mvvm.ComponentModel.Observ
     public string PreviewFrom => Theme.PreviewFrom;
     public string PreviewTo => Theme.PreviewTo;
 
+}
+
+/// Wraps one month row for the per-month theme UI.
+public partial class MonthlyThemeItem : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+{
+    public int Year { get; set; }
+    public int Month { get; set; }
+    public string MonthLabel { get; set; } = string.Empty;  // "January", "February", ...
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private string _assignedThemeId = "none";
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private string _assignedThemeName = "Default (global)";
 }

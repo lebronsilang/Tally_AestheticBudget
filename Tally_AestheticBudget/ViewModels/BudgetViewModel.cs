@@ -13,7 +13,7 @@ public partial class BudgetViewModel : ObservableObject
     private readonly DataChangedService _dataChanged;
 
     public BudgetViewModel(IBudgetService budgetService, ISettingsService settings,
-        DataChangedService dataChanged, IThemeService themeService)
+        DataChangedService dataChanged)
     {
         _budgetService = budgetService;
         _settings = settings;
@@ -23,8 +23,7 @@ public partial class BudgetViewModel : ObservableObject
 
         _dataChanged.BudgetChanged += () => _isDirty = true;
 
-        // Progress bar converter reads App.CurrentAccent — force reload on theme change
-        themeService.ThemeChanged += () => { _isDirty = true; _ = LoadBudgetAsync(); };
+
     }
     public string LimitPlaceholder => $"New limit ({_settings.CurrencySymbol})";
 

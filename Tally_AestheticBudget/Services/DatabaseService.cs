@@ -34,6 +34,7 @@ public class DatabaseService
             await conn.CreateTableAsync<BudgetEntity>();
             await conn.CreateTableAsync<GroceryItemEntity>();
             await conn.CreateTableAsync<WishItemEntity>();
+            await conn.CreateTableAsync<MonthlyThemeEntity>();
 
             _connection = conn; // publish only after tables are created
             return _connection;

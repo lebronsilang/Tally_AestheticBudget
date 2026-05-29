@@ -19,8 +19,7 @@ public partial class GroceryViewModel : ObservableObject
         IGroceryService groceryService,
         IBudgetService budgetService,
         ISettingsService settings,
-        DataChangedService dataChanged,
-        IThemeService themeService)
+        DataChangedService dataChanged)
     {
         _groceryService = groceryService;
         _budgetService = budgetService;
@@ -29,14 +28,7 @@ public partial class GroceryViewModel : ObservableObject
 
         _dataChanged.GroceryChanged += () => IsDirty = true;
 
-        themeService.ThemeChanged += () =>
-        {
-            OnPropertyChanged(nameof(IsFilterAll));
-            OnPropertyChanged(nameof(IsFilterPending));
-            OnPropertyChanged(nameof(IsFilterChecked));
-            // Re-apply filter to force rebinding of per-item chip converters
-            ApplyFilter();
-        };
+
     }
 
     public string PriceLabelText => $"Price ({_settings.CurrencySymbol}) optional";

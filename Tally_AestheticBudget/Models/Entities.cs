@@ -63,11 +63,8 @@ public class BudgetEntity
     public int Year { get; set; }
 }
 
-/// <summary>
 /// Maps to the "grocery_items" table.
-/// These are the PENDING items in the grocery list —
-/// separate from expense entries which live in the expenses table.
-/// </summary>
+/// These are the PENDING items in the grocery list, separate from expense entries which live in the expenses table.
 [Table("grocery_items")]
 public class GroceryItemEntity
 {
@@ -98,4 +95,17 @@ public class WishItemEntity
     public bool IsPinned { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+}
+
+/// One row per month/year — assigns a specific theme to a calendar month. 
+/// If no row exists for the current month, the global theme applies.
+[Table("monthly_themes")]
+public class MonthlyThemeEntity
+{
+    [PrimaryKey, AutoIncrement]
+    public int Id { get; set; }
+
+    public int Year { get; set; }
+    public int Month { get; set; }       // 1–12
+    public string ThemeId { get; set; } = string.Empty;  // matches AppTheme.Id or "custom"
 }

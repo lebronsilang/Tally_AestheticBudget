@@ -244,6 +244,8 @@ public partial class FeedPage : ContentPage
             overlayDateInline.SetBinding(Label.TextProperty,
                 new Binding("Date", converter: new Converters.DateToDisplayConverter()));
 
+            overlaySep.SetBinding(Label.IsVisibleProperty, "ShowDate");
+            overlayDateInline.SetBinding(Label.IsVisibleProperty, "ShowDate");
             overlayCatDateRow.Children.Add(overlayCatLabel);
             overlayCatDateRow.Children.Add(overlaySep);
             overlayCatDateRow.Children.Add(overlayDateInline);
@@ -288,6 +290,7 @@ public partial class FeedPage : ContentPage
                 TextColor = Colors.White,
             };
             overlayAmount.SetBinding(Label.TextProperty, "AmountFormatted");
+            overlayAmount.SetBinding(Label.IsVisibleProperty, "ShowPrice");
             overlayText.Children.Add(overlayAmount);
 
             // Row 4: Note
@@ -299,7 +302,7 @@ public partial class FeedPage : ContentPage
                 MaxLines = 2,
             };
             overlayNote.SetBinding(Label.TextProperty, "Note");
-            overlayNote.SetBinding(Label.IsVisibleProperty, "HasNote");
+            overlayNote.SetBinding(Label.IsVisibleProperty, "ShowNote");
             overlayText.Children.Add(overlayNote);
 
             photoContainer.Children.Add(overlayText);
@@ -351,6 +354,8 @@ public partial class FeedPage : ContentPage
             groceryDateInline.SetBinding(Label.TextProperty,
                 new Binding("Date", converter: new Converters.DateToDisplayConverter()));
 
+            grocerySep.SetBinding(Label.IsVisibleProperty, "ShowDate");
+            groceryDateInline.SetBinding(Label.IsVisibleProperty, "ShowDate");
             groceryCatDateRow.Children.Add(groceryCatLabel);
             groceryCatDateRow.Children.Add(grocerySep);
             groceryCatDateRow.Children.Add(groceryDateInline);
@@ -375,6 +380,7 @@ public partial class FeedPage : ContentPage
             };
             groceryAmount.SetDynamicResource(Label.TextColorProperty, "TextPrimary");
             groceryAmount.SetBinding(Label.TextProperty, "AmountFormatted");
+            groceryAmount.SetBinding(Label.IsVisibleProperty, "ShowPrice");
             groceryCard.Children.Add(groceryAmount);
 
             Grid.SetRow(groceryCard, 0);
@@ -417,6 +423,8 @@ public partial class FeedPage : ContentPage
             plainDateInline.SetBinding(Label.TextProperty,
                 new Binding("Date", converter: new Converters.DateToDisplayConverter()));
 
+            plainSep.SetBinding(Label.IsVisibleProperty, "ShowDate");
+            plainDateInline.SetBinding(Label.IsVisibleProperty, "ShowDate");
             plainCatDateRow.Children.Add(plainCatLabel);
             plainCatDateRow.Children.Add(plainSep);
             plainCatDateRow.Children.Add(plainDateInline);
@@ -442,6 +450,7 @@ public partial class FeedPage : ContentPage
                 FontAttributes = FontAttributes.Bold,
             };
             amount.SetBinding(Label.TextProperty, "AmountFormatted");
+            amount.SetBinding(Label.IsVisibleProperty, "ShowPrice");
             amount.SetDynamicResource(Label.TextColorProperty, "TextPrimary");
             content.Children.Add(amount);
 
@@ -453,7 +462,7 @@ public partial class FeedPage : ContentPage
                 MaxLines = 2,
             };
             note.SetBinding(Label.TextProperty, "Note");
-            note.SetBinding(Label.IsVisibleProperty, "HasNote");
+            note.SetBinding(Label.IsVisibleProperty, "ShowNote");
             note.SetDynamicResource(Label.TextColorProperty, "TextSecondary");
             content.Children.Add(note);
 

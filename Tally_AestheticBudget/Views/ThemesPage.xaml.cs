@@ -8,6 +8,13 @@ public partial class ThemesPage : ContentPage
     {
         InitializeComponent();
         BindingContext = viewModel;
+
+    }
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        if (BindingContext is ViewModels.ThemesViewModel vm)
+            await vm.LoadMonthlyThemesCommand.ExecuteAsync(null);
     }
 
     private async void OnThemeCardPointerEntered(object sender, PointerEventArgs e)

@@ -165,25 +165,25 @@ public partial class SettingsViewModel : ObservableObject
 
     [ObservableProperty]
     private bool _showNotes;
-    partial void OnShowNotesChanged(bool value) => _settings.ShowNotes = value;
+    partial void OnShowNotesChanged(bool value) { _settings.ShowNotes = value; _dataChanged.NotifySettingsChanged(); }
 
     [ObservableProperty]
     private bool _showPrice;
-    partial void OnShowPriceChanged(bool value) => _settings.ShowPrice = value;
+    partial void OnShowPriceChanged(bool value) { _settings.ShowPrice = value; _dataChanged.NotifySettingsChanged(); }
 
     [ObservableProperty]
     private bool _showDate;
-    partial void OnShowDateChanged(bool value) => _settings.ShowDate = value;
+    partial void OnShowDateChanged(bool value) { _settings.ShowDate = value; _dataChanged.NotifySettingsChanged(); }
 
     // ── Wishlist toggles ──────────────────────────────────────────────────────
 
     [ObservableProperty]
     private bool _showCoolingOff;
-    partial void OnShowCoolingOffChanged(bool value) => _settings.ShowCoolingOff = value;
+    partial void OnShowCoolingOffChanged(bool value) { _settings.ShowCoolingOff = value; _dataChanged.NotifySettingsChanged(); }
 
     [ObservableProperty]
     private bool _showStaleReminder;
-    partial void OnShowStaleReminderChanged(bool value) => _settings.ShowStaleReminder = value;
+    partial void OnShowStaleReminderChanged(bool value) { _settings.ShowStaleReminder = value; _dataChanged.NotifySettingsChanged(); }
 
     // ── Toggle commands — flip the bool properties ────────────────────────────
 

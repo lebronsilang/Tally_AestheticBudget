@@ -87,7 +87,11 @@ public partial class WishCardItem : ObservableObject
         }
     }
 
-    // ── Cooling-off & stale detection ─────────────────────────────────────────
+    // Cooling-off & stale detection
+
+    // Settings-driven — set by WishlistViewModel during load
+    public bool SettingShowCooling { get; set; } = true;
+    public bool SettingShowStale { get; set; } = true;
 
     private int DaysSinceAdded => (DateTime.Today - CreatedAt.Date).Days;
 
@@ -95,13 +99,13 @@ public partial class WishCardItem : ObservableObject
     public bool IsStale => !IsInCoolingOff && DaysSinceAdded >= 7 && Status == WishStatus.Planned;
 
     public string CoolingOffLabel =>
-        IsInCoolingOff ? $"⏳ {3 - DaysSinceAdded}d cooling-off left" : string.Empty;
+        IsInCoolingOff ? $"{3 - DaysSinceAdded}d cooling-off left" : string.Empty;
 
     public string StaleLabel =>
-        IsStale ? $"👀 Added {DaysSinceAdded}d ago — still want it?" : string.Empty;
+        IsStale ? $"Added {DaysSinceAdded}d ago — still want it?" : string.Empty;
 
-    public bool ShowCoolingBanner => IsInCoolingOff && Status == WishStatus.Planned;
-    public bool ShowStaleBanner => IsStale;
+    public bool ShowCoolingBanner => IsInCoolingOff && Status == WishStatus.Planned && SettingShowCooling;
+    public bool ShowStaleBanner => IsStale && SettingShowStale;
 
     // ── Regret display ────────────────────────────────────────────────────────
 

@@ -19,6 +19,8 @@ public class DataChangedService
 
     /// <summary>Fires when budget data may need refresh (e.g. expenses changed).</summary>
     public event Action? BudgetChanged;
+    /// <summary>Fires when a display setting toggle changes.</summary>
+    public event Action? SettingsChanged;
 
     public void NotifyExpensesChanged()
     {
@@ -34,6 +36,8 @@ public class DataChangedService
     }
 
     public void NotifyWishlistChanged() => WishlistChanged?.Invoke();
+
+    public void NotifySettingsChanged() => SettingsChanged?.Invoke();
 
     /// <summary>Fires all changed events — used by "Clear All" in Settings.</summary>
     public void NotifyAllChanged()
