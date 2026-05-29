@@ -2,6 +2,7 @@
 <ContentPage
     x:Class="Tally_AestheticBudget.Views.FeedPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:Tally_AestheticBudget.ViewModels"
     xmlns:models="clr-namespace:Tally_AestheticBudget.Models"
@@ -79,6 +80,8 @@
                                     HorizontalScrollBarVisibility="Never"
                                     Margin="0,12,0,0">
                             <HorizontalStackLayout Spacing="8">
+
+                                <!-- ALL -->
                                 <Border Style="{StaticResource HoverButton}"
                                         BackgroundColor="{Binding IsFilterAll, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding IsFilterAll, Converter={StaticResource BoolToChipBorder}}"
@@ -91,59 +94,112 @@
                                            FontAttributes="{Binding IsFilterAll, Converter={StaticResource BoolToFontAttr}}"
                                            TextColor="{Binding IsFilterAll, Converter={StaticResource BoolToChipText}}" />
                                 </Border>
-                                <Border Style="{StaticResource HoverButton}"
-                                        BackgroundColor="{Binding IsFilterMonth, Converter={StaticResource BoolToChipBg}}"
-                                        Stroke="{Binding IsFilterMonth, Converter={StaticResource BoolToChipBorder}}"
-                                        StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
-                                        Padding="16,7">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding ShowMonthPickerCommand}" />
-                                    </Border.GestureRecognizers>
-                                    <HorizontalStackLayout Spacing="5">
-                                        <Label Text="{Binding SelectedMonthLabel}" FontSize="14"
-                                               FontAttributes="{Binding IsFilterMonth, Converter={StaticResource BoolToFontAttr}}"
-                                               TextColor="{Binding IsFilterMonth, Converter={StaticResource BoolToChipText}}" />
-                                        <Label Text="▾" FontSize="11"
-                                               TextColor="{Binding IsFilterMonth, Converter={StaticResource BoolToChipText}}"
-                                               VerticalOptions="Center" />
-                                    </HorizontalStackLayout>
-                                </Border>
-                                <Border Style="{StaticResource HoverButton}"
-                                        BackgroundColor="{Binding IsFilterYear, Converter={StaticResource BoolToChipBg}}"
-                                        Stroke="{Binding IsFilterYear, Converter={StaticResource BoolToChipBorder}}"
-                                        StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
-                                        Padding="16,7">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding FilterYearCommand}" />
-                                    </Border.GestureRecognizers>
-                                    <Label Text="{Binding ThisYearLabel}" FontSize="14"
-                                           FontAttributes="{Binding IsFilterYear, Converter={StaticResource BoolToFontAttr}}"
-                                           TextColor="{Binding IsFilterYear, Converter={StaticResource BoolToChipText}}" />
-                                </Border>
+
+                                <!-- TODAY — tap label = today, tap ▾ = pick date -->
                                 <Border Style="{StaticResource HoverButton}"
                                         BackgroundColor="{Binding IsFilterDay, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding IsFilterDay, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
-                                        Padding="16,7">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding FilterDayCommand}" />
-                                    </Border.GestureRecognizers>
-                                    <Label Text="Today" FontSize="14"
-                                           FontAttributes="{Binding IsFilterDay, Converter={StaticResource BoolToFontAttr}}"
-                                           TextColor="{Binding IsFilterDay, Converter={StaticResource BoolToChipText}}" />
+                                        Padding="12,7,6,7">
+                                    <HorizontalStackLayout Spacing="0">
+                                        <Label Text="{Binding SelectedDayLabel}" FontSize="14"
+                                               FontAttributes="{Binding IsFilterDay, Converter={StaticResource BoolToFontAttr}}"
+                                               TextColor="{Binding IsFilterDay, Converter={StaticResource BoolToChipText}}">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding FilterDayCommand}" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
+                                        <Border BackgroundColor="Transparent" StrokeThickness="0"
+                                                Padding="6,0,6,0" VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding ShowDayPickerCommand}" />
+                                            </Border.GestureRecognizers>
+                                            <Label Text="▾" FontSize="11"
+                                                   TextColor="{Binding IsFilterDay, Converter={StaticResource BoolToChipText}}"
+                                                   VerticalOptions="Center" />
+                                        </Border>
+                                    </HorizontalStackLayout>
                                 </Border>
+
+                                <!-- THIS WEEK — tap label = current week, tap ▾ = pick week -->
                                 <Border Style="{StaticResource HoverButton}"
                                         BackgroundColor="{Binding IsFilterWeek, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding IsFilterWeek, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
-                                        Padding="16,7">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding FilterWeekCommand}" />
-                                    </Border.GestureRecognizers>
-                                    <Label Text="This Week" FontSize="14"
-                                           FontAttributes="{Binding IsFilterWeek, Converter={StaticResource BoolToFontAttr}}"
-                                           TextColor="{Binding IsFilterWeek, Converter={StaticResource BoolToChipText}}" />
+                                        Padding="12,7,6,7">
+                                    <HorizontalStackLayout Spacing="0">
+                                        <Label Text="{Binding SelectedWeekLabel}" FontSize="14"
+                                               FontAttributes="{Binding IsFilterWeek, Converter={StaticResource BoolToFontAttr}}"
+                                               TextColor="{Binding IsFilterWeek, Converter={StaticResource BoolToChipText}}">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding FilterWeekCommand}" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
+                                        <Border BackgroundColor="Transparent" StrokeThickness="0"
+                                                Padding="6,0,6,0" VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding ShowWeekPickerCommand}" />
+                                            </Border.GestureRecognizers>
+                                            <Label Text="▾" FontSize="11"
+                                                   TextColor="{Binding IsFilterWeek, Converter={StaticResource BoolToChipText}}"
+                                                   VerticalOptions="Center" />
+                                        </Border>
+                                    </HorizontalStackLayout>
                                 </Border>
+
+                                <!-- THIS MONTH — tap label = current month, tap ▾ = month picker -->
+                                <Border Style="{StaticResource HoverButton}"
+                                        BackgroundColor="{Binding IsFilterMonth, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding IsFilterMonth, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+                                        Padding="12,7,6,7">
+                                    <HorizontalStackLayout Spacing="0">
+                                        <Label Text="{Binding SelectedMonthLabel}" FontSize="14"
+                                               FontAttributes="{Binding IsFilterMonth, Converter={StaticResource BoolToFontAttr}}"
+                                               TextColor="{Binding IsFilterMonth, Converter={StaticResource BoolToChipText}}">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding FilterMonthCommand}" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
+                                        <Border BackgroundColor="Transparent" StrokeThickness="0"
+                                                Padding="6,0,6,0" VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding ShowMonthPickerCommand}" />
+                                            </Border.GestureRecognizers>
+                                            <Label Text="▾" FontSize="11"
+                                                   TextColor="{Binding IsFilterMonth, Converter={StaticResource BoolToChipText}}"
+                                                   VerticalOptions="Center" />
+                                        </Border>
+                                    </HorizontalStackLayout>
+                                </Border>
+
+                                <!-- THIS YEAR — tap label = current year, tap ▾ = pick year -->
+                                <Border Style="{StaticResource HoverButton}"
+                                        BackgroundColor="{Binding IsFilterYear, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding IsFilterYear, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+                                        Padding="12,7,6,7">
+                                    <HorizontalStackLayout Spacing="0">
+                                        <Label Text="{Binding SelectedYearLabel}" FontSize="14"
+                                               FontAttributes="{Binding IsFilterYear, Converter={StaticResource BoolToFontAttr}}"
+                                               TextColor="{Binding IsFilterYear, Converter={StaticResource BoolToChipText}}">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding FilterYearCommand}" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
+                                        <Border BackgroundColor="Transparent" StrokeThickness="0"
+                                                Padding="6,0,6,0" VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding ShowYearPickerCommand}" />
+                                            </Border.GestureRecognizers>
+                                            <Label Text="▾" FontSize="11"
+                                                   TextColor="{Binding IsFilterYear, Converter={StaticResource BoolToChipText}}"
+                                                   VerticalOptions="Center" />
+                                        </Border>
+                                    </HorizontalStackLayout>
+                                </Border>
+
+                                <!-- CATEGORY — dropdown only -->
                                 <Border Style="{StaticResource HoverButton}"
                                         BackgroundColor="{Binding IsFilterCategory, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding IsFilterCategory, Converter={StaticResource BoolToChipBorder}}"
@@ -161,6 +217,7 @@
                                                VerticalOptions="Center" />
                                     </HorizontalStackLayout>
                                 </Border>
+
                             </HorizontalStackLayout>
                         </ScrollView>
                     </VerticalStackLayout>
@@ -903,6 +960,161 @@
                                    TextColor="{DynamicResource TextPrimary}" />
                         </Border>
                     </FlexLayout>
+
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <!-- ── Day picker overlay ─────────────────────────────────────────── -->
+        <Grid IsVisible="{Binding IsDayPickerVisible}">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding DismissDayPickerCommand}" />
+            </Grid.GestureRecognizers>
+            <controls:BlurOverlay />
+            <Border BackgroundColor="{DynamicResource CardBackground}"
+                    Style="{StaticResource ModalCard}"
+                    StrokeShape="RoundRectangle 20"
+                    HorizontalOptions="Center" VerticalOptions="Center"
+                    MaximumWidthRequest="340"
+                    Margin="20,0" Padding="24,24">
+                <!-- Stop tap from dismissing when user taps inside card -->
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="20">
+
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="Pick a date" FontSize="17" FontAttributes="Bold"
+                               TextColor="{DynamicResource TextPrimary}" />
+                        <Label Text="Filter expenses for a specific day"
+                               FontSize="12" TextColor="{DynamicResource TextSecondary}" />
+                    </VerticalStackLayout>
+
+                    <Border BackgroundColor="{DynamicResource PageBackground}"
+                            Stroke="{DynamicResource CardBorder}"
+                            StrokeThickness="0.8" StrokeShape="RoundRectangle 12"
+                            Padding="12,4">
+                        <DatePicker Date="{Binding PickerDay}"
+                                    Format="MMMM dd, yyyy"
+                                    FontSize="14"
+                                    TextColor="{DynamicResource TextPrimary}"
+                                    BackgroundColor="Transparent"
+                                    MaximumDate="{x:Static sys:DateTime.Today}" />
+                    </Border>
+
+                    <Border BackgroundColor="{DynamicResource AccentColor}"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 980" Padding="0,13">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ConfirmDayPickerCommand}" />
+                        </Border.GestureRecognizers>
+                        <Label Text="Apply" FontSize="14" FontAttributes="Bold"
+                               TextColor="White" HorizontalOptions="Center" />
+                    </Border>
+
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <!-- ── Week picker overlay ────────────────────────────────────────── -->
+        <Grid IsVisible="{Binding IsWeekPickerVisible}">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding DismissWeekPickerCommand}" />
+            </Grid.GestureRecognizers>
+            <controls:BlurOverlay />
+            <Border BackgroundColor="{DynamicResource CardBackground}"
+                    Style="{StaticResource ModalCard}"
+                    StrokeShape="RoundRectangle 20"
+                    HorizontalOptions="Center" VerticalOptions="Center"
+                    MaximumWidthRequest="340"
+                    Margin="20,0" Padding="24,24">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="20">
+
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Pick a week" FontSize="17" FontAttributes="Bold"
+                               TextColor="{DynamicResource TextPrimary}" />
+                        <Label Text="Showing the last 8 weeks"
+                               FontSize="12" TextColor="{DynamicResource TextSecondary}" />
+                    </VerticalStackLayout>
+
+                    <CollectionView ItemsSource="{Binding WeekOptions}"
+                                   SelectionMode="None"
+                                   MaximumHeightRequest="380">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:WeekOption">
+                                <Border BackgroundColor="{Binding IsSelected, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding IsSelected, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeShape="RoundRectangle 12" StrokeThickness="0.8"
+                                        Padding="14,11" Margin="0,0,0,6">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:FeedViewModel}}, Path=SelectWeekCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="{Binding Label}" FontSize="13"
+                                           FontAttributes="{Binding IsSelected, Converter={StaticResource BoolToFontAttr}}"
+                                           TextColor="{Binding IsSelected, Converter={StaticResource BoolToChipText}}" />
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <!-- ── Year picker overlay ────────────────────────────────────────── -->
+        <Grid IsVisible="{Binding IsYearPickerVisible}">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding DismissYearPickerCommand}" />
+            </Grid.GestureRecognizers>
+            <controls:BlurOverlay />
+            <Border BackgroundColor="{DynamicResource CardBackground}"
+                    Style="{StaticResource ModalCard}"
+                    StrokeShape="RoundRectangle 20"
+                    HorizontalOptions="Center" VerticalOptions="Center"
+                    MaximumWidthRequest="300"
+                    Margin="20,0" Padding="24,24">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="20">
+
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="Pick a year" FontSize="17" FontAttributes="Bold"
+                               TextColor="{DynamicResource TextPrimary}" />
+                        <Label Text="Filter expenses for a specific year"
+                               FontSize="12" TextColor="{DynamicResource TextSecondary}" />
+                    </VerticalStackLayout>
+
+                    <CollectionView ItemsSource="{Binding YearList}"
+                                   SelectionMode="None">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical" Span="3"
+                                             HorizontalItemSpacing="8"
+                                             VerticalItemSpacing="8" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="x:Int32">
+                                <Border BackgroundColor="{DynamicResource PageBackground}"
+                                        Stroke="{DynamicResource CardBorder}"
+                                        StrokeShape="RoundRectangle 12" StrokeThickness="0.8"
+                                        Padding="0,12" HeightRequest="48">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:FeedViewModel}}, Path=SelectYearCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="{Binding .}" FontSize="14"
+                                           HorizontalOptions="Center" VerticalOptions="Center"
+                                           TextColor="{DynamicResource TextPrimary}" />
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
 
                 </VerticalStackLayout>
             </Border>

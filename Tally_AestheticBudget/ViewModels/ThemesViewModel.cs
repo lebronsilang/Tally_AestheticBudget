@@ -128,17 +128,19 @@ public partial class ThemesViewModel : ObservableObject
     // ── Commands ──────────────────────────────────────────────────────────────
 
     [RelayCommand]
-    private void ApplyTheme(string themeId)
+    private async Task ApplyThemeAsync(string themeId)
     {
         _themeService.ApplyTheme(themeId);
+        await Shell.Current.GoToAsync("//ThemesPage");
         foreach (var card in ThemeCards)
             card.IsActive = card.Id == themeId;
     }
 
     [RelayCommand]
-    private void ApplyCustomTheme()
+    private async Task ApplyCustomTheme()
     {
         _themeService.ApplyCustomTheme(CustomBg, CustomAccent, CustomCard, CustomText);
+        await Shell.Current.GoToAsync("//ThemesPage");
         foreach (var card in ThemeCards)
             card.IsActive = false;
     }

@@ -86,3 +86,10 @@ public class MonthOption
     public string ShortName { get; set; } = string.Empty;
     public bool IsSelected { get; set; }
 }
+
+public class WeekOption
+{
+    public DateTime Monday { get; set; }
+    public string Label { get; set; } = string.Empty;
+    public bool IsSelected { get; set; }
+}
