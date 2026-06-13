@@ -219,7 +219,7 @@
 
                         </VerticalStackLayout>
                     </Border>
-                    
+
                     <!-- ── Monthly Themes card ──────────────────────────── -->
                     <Border BackgroundColor="{DynamicResource CardBackground}"
                             Stroke="{DynamicResource CardBorder}"
@@ -230,7 +230,7 @@
                             <VerticalStackLayout Spacing="4">
                                 <Label Text="Monthly Themes" FontSize="16" FontAttributes="Bold"
                                        TextColor="{DynamicResource TextPrimary}" />
-                                <Label Text="Assign a different theme to each month"
+                                <Label Text="Tap a month to assign a vibe — it activates when you view that month in Feed or Budget"
                                        FontSize="12" TextColor="{DynamicResource TextSecondary}" />
                             </VerticalStackLayout>
 
@@ -264,34 +264,62 @@
                                 </Border>
                             </Grid>
 
-                            <!-- Month list -->
+                            <!-- 4×3 month grid -->
                             <CollectionView ItemsSource="{Binding MonthlyItems}"
                                            SelectionMode="None">
+                                <CollectionView.ItemsLayout>
+                                    <GridItemsLayout Orientation="Vertical" Span="4"
+                                                     HorizontalItemSpacing="8"
+                                                     VerticalItemSpacing="8" />
+                                </CollectionView.ItemsLayout>
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate x:DataType="models:MonthlyThemeItem">
-                                        <Border BackgroundColor="Transparent"
-                                                StrokeThickness="0" Padding="0,8">
+                                        <Border BackgroundColor="{DynamicResource PageBackground}"
+                                                Stroke="{DynamicResource CardBorder}"
+                                                StrokeThickness="0.8"
+                                                StrokeShape="RoundRectangle 14"
+                                                Padding="0" HeightRequest="80">
                                             <Border.GestureRecognizers>
                                                 <TapGestureRecognizer
                                                     Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ThemesViewModel}}, Path=OpenMonthThemePickerCommand}"
                                                     CommandParameter="{Binding .}" />
                                             </Border.GestureRecognizers>
-                                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                                                <Label Grid.Column="0"
-                                                       Text="{Binding MonthLabel}"
-                                                       FontSize="14" FontAttributes="Bold"
-                                                       TextColor="{DynamicResource TextPrimary}"
-                                                       VerticalOptions="Center" />
-                                                <Border Grid.Column="1"
-                                                        BackgroundColor="{DynamicResource PageBackground}"
-                                                        Stroke="{DynamicResource CardBorder}"
-                                                        StrokeThickness="0.8"
-                                                        StrokeShape="RoundRectangle 10"
-                                                        Padding="12,6">
-                                                    <Label Text="{Binding AssignedThemeName}"
-                                                           FontSize="12"
-                                                           TextColor="{DynamicResource TextSecondary}" />
+                                            <Grid RowDefinitions="28,*">
+                                                <!-- Theme gradient preview bar (top) -->
+                                                <Border Grid.Row="0"
+                                                        StrokeThickness="0"
+                                                        StrokeShape="RoundRectangle 13,13,0,0"
+                                                        IsVisible="{Binding HasTheme}">
+                                                    <Border.Background>
+                                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                            <GradientStop Color="{Binding PreviewFrom}" Offset="0.0" />
+                                                            <GradientStop Color="{Binding PreviewTo}" Offset="1.0" />
+                                                        </LinearGradientBrush>
+                                                    </Border.Background>
                                                 </Border>
+                                                <!-- Fallback: muted bar when no theme -->
+                                                <Border Grid.Row="0"
+                                                        BackgroundColor="{DynamicResource CardBorder}"
+                                                        StrokeThickness="0"
+                                                        StrokeShape="RoundRectangle 13,13,0,0"
+                                                        Opacity="0.4"
+                                                        IsVisible="{Binding HasTheme, Converter={StaticResource InverseBool}}" />
+                                                <!-- Month label + theme name -->
+                                                <VerticalStackLayout Grid.Row="1" Spacing="1"
+                                                                     VerticalOptions="Center"
+                                                                     HorizontalOptions="Center"
+                                                                     Padding="4,0">
+                                                    <Label Text="{Binding MonthLabel}"
+                                                           FontSize="13" FontAttributes="Bold"
+                                                           TextColor="{DynamicResource TextPrimary}"
+                                                           HorizontalOptions="Center" />
+                                                    <Label Text="{Binding AssignedThemeName}"
+                                                           FontSize="9"
+                                                           TextColor="{DynamicResource TextSecondary}"
+                                                           HorizontalOptions="Center"
+                                                           LineBreakMode="TailTruncation"
+                                                           MaxLines="1" />
+                                                </VerticalStackLayout>
                                             </Grid>
                                         </Border>
                                     </DataTemplate>

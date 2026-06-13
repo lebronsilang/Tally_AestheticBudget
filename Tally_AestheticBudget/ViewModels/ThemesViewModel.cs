@@ -175,17 +175,32 @@ public partial class ThemesViewModel : ObservableObject
         {
             var row = rows.FirstOrDefault(r => r.Month == m);
             var themeId = row?.ThemeId ?? "none";
-            var themeName = themeId == "none"
-                ? "Default (global)"
-                : AppThemes.All.FirstOrDefault(t => t.Id == themeId)?.DisplayName ?? themeId;
+
+            string themeName;
+            string previewFrom = "Transparent";
+            string previewTo = "Transparent";
+
+            if (themeId == "none")
+            {
+                themeName = "Default";
+            }
+            else
+            {
+                var theme = AppThemes.All.FirstOrDefault(t => t.Id == themeId);
+                themeName = theme?.DisplayName ?? themeId;
+                previewFrom = theme?.PreviewFrom ?? "Transparent";
+                previewTo = theme?.PreviewTo ?? "Transparent";
+            }
 
             MonthlyItems.Add(new MonthlyThemeItem
             {
                 Year = MonthlyYear,
                 Month = m,
-                MonthLabel = new DateTime(MonthlyYear, m, 1).ToString("MMMM"),
+                MonthLabel = new DateTime(MonthlyYear, m, 1).ToString("MMM"),
                 AssignedThemeId = themeId,
-                AssignedThemeName = themeName
+                AssignedThemeName = themeName,
+                PreviewFrom = previewFrom,
+                PreviewTo = previewTo
             });
         }
     }
@@ -228,30 +243,20 @@ public partial class ThemesViewModel : ObservableObject
             EditingMonth.Year, EditingMonth.Month,
             option.ThemeId == "none" ? null : option.ThemeId);
 
+        // Update the UI card
         EditingMonth.AssignedThemeId = option.ThemeId;
-        EditingMonth.AssignedThemeName = option.DisplayName;
-
-        // If this is the current month, live-apply the theme
-        var now = DateTime.Now;
-        if (EditingMonth.Year == now.Year && EditingMonth.Month == now.Month)
+        if (option.ThemeId == "none")
         {
-            if (option.ThemeId == "none")
-            {
-                // Revert to global
-                var globalId = _themeService.GetActiveThemeId();
-                _themeService.ApplyTheme(globalId);
-            }
-            else
-            {
-                _themeService.ApplyTheme(option.ThemeId);
-            }
-
-            // Update preset card active states
-            var appliedId = option.ThemeId == "none"
-                ? _themeService.GetActiveThemeId()
-                : option.ThemeId;
-            foreach (var card in ThemeCards)
-                card.IsActive = card.Id == appliedId;
+            EditingMonth.AssignedThemeName = "Default";
+            EditingMonth.PreviewFrom = "Transparent";
+            EditingMonth.PreviewTo = "Transparent";
+        }
+        else
+        {
+            var theme = AppThemes.All.FirstOrDefault(t => t.Id == option.ThemeId);
+            EditingMonth.AssignedThemeName = theme?.DisplayName ?? option.ThemeId;
+            EditingMonth.PreviewFrom = theme?.PreviewFrom ?? "Transparent";
+            EditingMonth.PreviewTo = theme?.PreviewTo ?? "Transparent";
         }
 
         IsMonthPickerVisible = false;

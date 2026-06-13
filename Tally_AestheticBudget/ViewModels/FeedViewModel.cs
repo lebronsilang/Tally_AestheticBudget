@@ -11,24 +11,23 @@ public partial class FeedViewModel : ObservableObject
     private readonly IExpenseService _expenseService;
     private readonly ISettingsService _settings;
     private readonly DataChangedService _dataChanged;
+    private readonly IThemeService _themeService;
 
     public int CurrentColumnCount { get; set; } = 2;
 
     public FeedViewModel(IExpenseService expenseService, ISettingsService settings,
-        DataChangedService dataChanged)
+        DataChangedService dataChanged, IThemeService themeService)
     {
         _expenseService = expenseService;
         _settings = settings;
         _dataChanged = dataChanged;
+        _themeService = themeService;
         PickerYear = DateTime.Now.Year;
         _selectedPickerMonth = DateTime.Now.Month;
         BuildMonthOptions();
 
-
-        // When another VM signals expenses changed, mark dirty so next OnAppearing reloads
         _dataChanged.ExpensesChanged += () => IsDirty = true;
         _dataChanged.SettingsChanged += () => IsDirty = true;
-
     }
 
     // ── Feed items ────────────────────────────────────────────────────────────
@@ -643,6 +642,32 @@ public partial class FeedViewModel : ObservableObject
 
     private List<FeedCardItem> _pendingItems = [];
 
+    private async Task ApplyContextualThemeAsync()
+    {
+        // Only apply contextual themes when filtering by Month
+        if (_activeFilter != FilterMode.Month)
+        {
+            // Revert to global theme for non-month filters
+            _themeService.RevertToGlobal();
+            return;
+        }
+
+        try
+        {
+            var monthlyId = await _themeService.GetMonthlyThemeIdAsync(
+                PickerYear, _selectedPickerMonth);
+
+            if (!string.IsNullOrEmpty(monthlyId))
+                _themeService.ApplyMonthlyPreview(monthlyId);
+            else
+                _themeService.RevertToGlobal();
+        }
+        catch
+        {
+            // DB issue — stay on global
+        }
+    }
+
     private async Task LoadFeedAsync()
     {
         FilterChanged?.Invoke();
@@ -679,6 +704,7 @@ public partial class FeedViewModel : ObservableObject
             // Only distribute if we already have a real column count from OnSizeAllocated
             if (CurrentColumnCount > 0)
                 DistributeIntoColumns(_pendingItems, CurrentColumnCount);
+            await ApplyContextualThemeAsync(); 
         }
         catch (Exception ex)
         {
@@ -686,12 +712,21 @@ public partial class FeedViewModel : ObservableObject
             await Shell.Current.DisplayAlertAsync("Error",
                 "Could not load expenses. Please try again.", "OK");
         }
+        
+
         finally
         {
             IsLoading = false;
             OnPropertyChanged(nameof(HasNoEntries));
             OnPropertyChanged(nameof(HasEntries));
         }
+    }
+
+    public void OnPageDisappearing()
+    {
+        // If we had a contextual theme active, revert on navigate away
+        if (_activeFilter == FilterMode.Month)
+            _themeService.RevertToGlobal();
     }
 
     // Public — FeedPage.xaml.cs calls this on resize

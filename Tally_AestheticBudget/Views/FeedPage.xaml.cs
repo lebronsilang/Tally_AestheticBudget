@@ -116,6 +116,13 @@ public partial class FeedPage : ContentPage
         });
     }
 
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        if (BindingContext is ViewModels.FeedViewModel vm)
+            vm.OnPageDisappearing();
+    }
+
     private static void DisconnectHandlers(IView view)
     {
         if (view is Element element)

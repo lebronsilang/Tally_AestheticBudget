@@ -14,10 +14,16 @@ public interface IThemeService
     Task<List<MonthlyThemeEntity>> GetMonthlyThemesAsync(int year);
     Task SetMonthlyThemeAsync(int year, int month, string? themeId);
     Task<string?> GetMonthlyThemeIdAsync(int year, int month);
+
+    // Contextual theme preview (does NOT save to Preferences)
+    void ApplyMonthlyPreview(string themeId);
+    void RevertToGlobal();
+    event Action? ThemeChanged;
 }
 
 public class ThemeService : IThemeService
 {
+    public event Action? ThemeChanged;
     private readonly DatabaseService _db;
 
     private const string KeyThemeId = "active_theme";
@@ -47,6 +53,7 @@ public class ThemeService : IThemeService
             theme.Border);
 
         ApplyTabBarColors(theme.Accent, theme.Card, theme.TextSecondary);
+        ThemeChanged?.Invoke();
         ReloadShell();
     }
 
@@ -69,6 +76,7 @@ public class ThemeService : IThemeService
 
         ApplyColorsToResources(bg, accent, card, text, text, "#E8E8ED");
         ApplyTabBarColors(accent, card, text);
+        ThemeChanged?.Invoke();
         ReloadShell();
     }
 
@@ -82,7 +90,6 @@ public class ThemeService : IThemeService
 
     public void ApplyOnStartup()
     {
-        // Apply global/custom theme immediately (sync-safe, no DB needed)
         var id = GetActiveThemeId();
         if (id == "custom")
         {
@@ -93,16 +100,9 @@ public class ThemeService : IThemeService
         {
             var theme = AppThemes.GetById(id);
             ApplyColorsToResources(
-                theme.Background,
-                theme.Accent,
-                theme.Card,
-                theme.TextPrimary,
-                theme.TextSecondary,
-                theme.Border);
+                theme.Background, theme.Accent, theme.Card,
+                theme.TextPrimary, theme.TextSecondary, theme.Border);
         }
-
-        // Check for a per-month override AFTER the UI thread is free
-        _ = ApplyMonthlyOverrideAsync();
     }
 
     private async Task ApplyMonthlyOverrideAsync()
@@ -174,6 +174,43 @@ public class ThemeService : IThemeService
         var all = await conn.Table<MonthlyThemeEntity>().ToListAsync();
         var row = all.FirstOrDefault(r => r.Year == year && r.Month == month);
         return row?.ThemeId;
+    }
+
+    /// <summary>
+    /// Applies a theme visually WITHOUT saving to Preferences.
+    /// Used when Feed/Budget is viewing a month with an assigned theme.
+    /// </summary>
+    public void ApplyMonthlyPreview(string themeId)
+    {
+        var theme = AppThemes.GetById(themeId);
+        ApplyColorsToResources(
+            theme.Background, theme.Accent, theme.Card,
+            theme.TextPrimary, theme.TextSecondary, theme.Border);
+        ApplyTabBarColors(theme.Accent, theme.Card, theme.TextSecondary);
+        ThemeChanged?.Invoke();
+    }
+
+    /// <summary>
+    /// Restores the global theme (from Preferences) without any monthly override.
+    /// </summary>
+    public void RevertToGlobal()
+    {
+        var id = GetActiveThemeId();
+        if (id == "custom")
+        {
+            var (bg, accent, card, text) = GetCustomColors();
+            ApplyColorsToResources(bg, accent, card, text, text, "#E8E8ED");
+            ApplyTabBarColors(accent, card, text);
+        }
+        else
+        {
+            var theme = AppThemes.GetById(id);
+            ApplyColorsToResources(
+                theme.Background, theme.Accent, theme.Card,
+                theme.TextPrimary, theme.TextSecondary, theme.Border);
+            ApplyTabBarColors(theme.Accent, theme.Card, theme.TextSecondary);
+        }
+        ThemeChanged?.Invoke();
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

@@ -125,15 +125,25 @@ public partial class ThemeCardItem : CommunityToolkit.Mvvm.ComponentModel.Observ
 }
 
 /// Wraps one month row for the per-month theme UI.
+/// Wraps one month row for the per-month theme UI.
 public partial class MonthlyThemeItem : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
 {
     public int Year { get; set; }
     public int Month { get; set; }
-    public string MonthLabel { get; set; } = string.Empty;  // "January", "February", ...
+    public string MonthLabel { get; set; } = string.Empty;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private string _assignedThemeId = "none";
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private string _assignedThemeName = "Default (global)";
+
+    // Gradient swatch colors for the grid card preview
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private string _previewFrom = "Transparent";
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private string _previewTo = "Transparent";
+
+    public bool HasTheme => AssignedThemeId != "none";
 }

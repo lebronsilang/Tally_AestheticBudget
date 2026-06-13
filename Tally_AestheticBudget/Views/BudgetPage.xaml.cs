@@ -18,4 +18,10 @@ public partial class BudgetPage : ContentPage
         base.OnAppearing();
         await _viewModel.OnPageAppearingAsync();
     }
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        if (BindingContext is ViewModels.BudgetViewModel vm)
+            vm.OnPageDisappearing();
+    }
 }

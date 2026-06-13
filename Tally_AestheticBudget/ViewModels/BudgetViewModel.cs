@@ -11,19 +11,19 @@ public partial class BudgetViewModel : ObservableObject
     private readonly IBudgetService _budgetService;
     private readonly ISettingsService _settings;
     private readonly DataChangedService _dataChanged;
+    private readonly IThemeService _themeService;
 
     public BudgetViewModel(IBudgetService budgetService, ISettingsService settings,
-        DataChangedService dataChanged)
+        DataChangedService dataChanged, IThemeService themeService)
     {
         _budgetService = budgetService;
         _settings = settings;
         _dataChanged = dataChanged;
+        _themeService = themeService;
         _currentYear = DateTime.Now.Year;
         _currentMonth = DateTime.Now.Month;
 
         _dataChanged.BudgetChanged += () => _isDirty = true;
-
-
     }
     public string LimitPlaceholder => $"New limit ({_settings.CurrencySymbol})";
 
@@ -98,6 +98,7 @@ public partial class BudgetViewModel : ObservableObject
             BudgetItems = new ObservableCollection<BudgetCategoryItem>(items);
             MonthLabel = new DateTime(_currentYear, _currentMonth, 1).ToString("MMMM yyyy");
             UpdateTotalLabel();
+            await ApplyContextualThemeAsync();
         }
         catch (Exception ex)
         {
@@ -105,9 +106,31 @@ public partial class BudgetViewModel : ObservableObject
             await Shell.Current.DisplayAlertAsync("Error",
                 "Could not load budget data. Please try again.", "OK");
         }
+        
         finally { IsLoading = false; }
     }
+    private async Task ApplyContextualThemeAsync()
+    {
+        try
+        {
+            var monthlyId = await _themeService.GetMonthlyThemeIdAsync(
+                _currentYear, _currentMonth);
 
+            if (!string.IsNullOrEmpty(monthlyId))
+                _themeService.ApplyMonthlyPreview(monthlyId);
+            else
+                _themeService.RevertToGlobal();
+        }
+        catch
+        {
+            // DB issue — stay on global
+        }
+    }
+
+    public void OnPageDisappearing()
+    {
+        _themeService.RevertToGlobal();
+    }
     private void UpdateTotalLabel()
     {
         var symbol = _settings.CurrencySymbol;
