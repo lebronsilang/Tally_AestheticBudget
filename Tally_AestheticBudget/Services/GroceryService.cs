@@ -140,6 +140,8 @@ public class GroceryService : IGroceryService
         return total;
     }
 
+    
+
     /// <summary>
     /// Deletes all PENDING grocery list items (the checklist).
     /// Does NOT touch expense records created by "Buy Checked" because those

@@ -12,9 +12,10 @@ public partial class BudgetViewModel : ObservableObject
     private readonly ISettingsService _settings;
     private readonly DataChangedService _dataChanged;
     private readonly IThemeService _themeService;
+    private readonly HeaderState _header;
 
     public BudgetViewModel(IBudgetService budgetService, ISettingsService settings,
-        DataChangedService dataChanged, IThemeService themeService)
+        DataChangedService dataChanged, IThemeService themeService, HeaderState header)
     {
         _budgetService = budgetService;
         _settings = settings;
@@ -24,7 +25,18 @@ public partial class BudgetViewModel : ObservableObject
         _currentMonth = DateTime.Now.Month;
 
         _dataChanged.BudgetChanged += () => _isDirty = true;
+        _themeService.ThemeChanged += OnThemeChanged;
+        _header = header;
     }
+
+    private void OnThemeChanged()
+    {
+        foreach (var item in BudgetItems)
+            item.RefreshThemeBindings();
+    }
+    private string CurrentMonthLabel =>
+        new DateTime(_currentYear, _currentMonth, 1).ToString("MMMM yyyy");
+
     public string LimitPlaceholder => $"New limit ({_settings.CurrencySymbol})";
 
     [ObservableProperty] private ObservableCollection<BudgetCategoryItem> _budgetItems = [];
@@ -84,6 +96,7 @@ public partial class BudgetViewModel : ObservableObject
 
     public async Task OnPageAppearingAsync()
     {
+        _header.ShowFilter(CurrentMonthLabel);
         if (!_isDirty) return;
         _isDirty = false;
         await LoadBudgetAsync();
@@ -97,6 +110,7 @@ public partial class BudgetViewModel : ObservableObject
             var items = await _budgetService.GetBudgetItemsAsync(_currentYear, _currentMonth);
             BudgetItems = new ObservableCollection<BudgetCategoryItem>(items);
             MonthLabel = new DateTime(_currentYear, _currentMonth, 1).ToString("MMMM yyyy");
+            _header.ShowFilter(MonthLabel);
             UpdateTotalLabel();
             await ApplyContextualThemeAsync();
         }

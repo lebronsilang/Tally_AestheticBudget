@@ -55,6 +55,8 @@ public partial class GroceryBudgetStatus : ObservableObject
     [NotifyPropertyChangedFor(nameof(RemainingLabel))]
     private decimal _alreadySpent;
 
+    public void RefreshThemeBindings() => OnPropertyChanged(nameof(IsOverBudget));
+
     // Total of checked items (pending purchase) — updates live as user checks items
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ProgressPercent))]

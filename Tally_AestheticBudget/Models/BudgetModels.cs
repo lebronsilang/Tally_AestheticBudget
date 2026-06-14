@@ -52,8 +52,10 @@ public partial class BudgetCategoryItem : ObservableObject
         _ => "icon_default.png"
     };
 
+    /// <summary>Re-raises accent-dependent bindings after a theme change.</summary>
+    public void RefreshThemeBindings() => OnPropertyChanged(nameof(IsOverLimit));
+
     // AFTER
-    // Set by BudgetService when building this item — avoids hardcoding ₱
     public string CurrencySymbol { get; set; } = "₱";
 
     public string SpentFormatted => $"{CurrencySymbol}{Spent:N2}";

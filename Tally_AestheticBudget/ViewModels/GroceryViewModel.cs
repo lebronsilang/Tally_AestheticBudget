@@ -12,6 +12,7 @@ public partial class GroceryViewModel : ObservableObject
     private readonly IBudgetService _budgetService;
     private readonly ISettingsService _settings;
     private readonly DataChangedService _dataChanged;
+    private readonly IThemeService _themeService;
 
     private List<GroceryItem> _allItems = [];
 
@@ -19,17 +20,27 @@ public partial class GroceryViewModel : ObservableObject
         IGroceryService groceryService,
         IBudgetService budgetService,
         ISettingsService settings,
-        DataChangedService dataChanged)
+        DataChangedService dataChanged,
+        IThemeService themeService)
     {
         _groceryService = groceryService;
         _budgetService = budgetService;
         _settings = settings;
         _dataChanged = dataChanged;
+        _themeService = themeService;
 
         _dataChanged.GroceryChanged += () => IsDirty = true;
-
+        _themeService.ThemeChanged += OnThemeChanged;
 
     }
+    private void OnThemeChanged()
+    {
+        OnPropertyChanged(nameof(IsFilterAll));
+        OnPropertyChanged(nameof(IsFilterPending));
+        OnPropertyChanged(nameof(IsFilterChecked));
+        BudgetStatus.RefreshThemeBindings();
+    }
+
 
     public string PriceLabelText => $"Price ({_settings.CurrencySymbol}) optional";
 

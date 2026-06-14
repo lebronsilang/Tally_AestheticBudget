@@ -40,7 +40,11 @@ public partial class WishCardItem : ObservableObject
     private bool _isPinned;
 
     // ── Computed display helpers ──────────────────────────────────────────────
-
+    public void RefreshThemeBindings()
+    {
+        OnPropertyChanged(nameof(IsPinned));   // pin-stroke colour reads the accent
+        OnPropertyChanged(nameof(Status));     // status-toggle colours read theme tokens
+    }
     public bool HasPhoto => !string.IsNullOrEmpty(PhotoPath);
     public bool HasCaption => !string.IsNullOrEmpty(Caption);
     public bool IsBought => Status == WishStatus.Bought;

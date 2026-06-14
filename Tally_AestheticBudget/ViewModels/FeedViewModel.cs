@@ -12,22 +12,36 @@ public partial class FeedViewModel : ObservableObject
     private readonly ISettingsService _settings;
     private readonly DataChangedService _dataChanged;
     private readonly IThemeService _themeService;
+    private readonly HeaderState _header;
 
     public int CurrentColumnCount { get; set; } = 2;
 
     public FeedViewModel(IExpenseService expenseService, ISettingsService settings,
-        DataChangedService dataChanged, IThemeService themeService)
+        DataChangedService dataChanged, IThemeService themeService, HeaderState header)
     {
         _expenseService = expenseService;
         _settings = settings;
         _dataChanged = dataChanged;
         _themeService = themeService;
+        _header = header;
         PickerYear = DateTime.Now.Year;
         _selectedPickerMonth = DateTime.Now.Month;
         BuildMonthOptions();
 
         _dataChanged.ExpensesChanged += () => IsDirty = true;
         _dataChanged.SettingsChanged += () => IsDirty = true;
+        _themeService.ThemeChanged += OnThemeChanged;
+    }
+
+    private void OnThemeChanged()
+    {
+        // Filter chips use converters that read the accent; nudge them to re-run.
+        OnPropertyChanged(nameof(IsFilterAll));
+        OnPropertyChanged(nameof(IsFilterDay));
+        OnPropertyChanged(nameof(IsFilterWeek));
+        OnPropertyChanged(nameof(IsFilterMonth));
+        OnPropertyChanged(nameof(IsFilterYear));
+        OnPropertyChanged(nameof(IsFilterCategory));
     }
 
     // ── Feed items ────────────────────────────────────────────────────────────
@@ -68,6 +82,17 @@ public partial class FeedViewModel : ObservableObject
     public bool IsFilterMonth => _activeFilter == FilterMode.Month;
     public bool IsFilterYear => _activeFilter == FilterMode.Year;
     public bool IsFilterCategory => _activeFilter == FilterMode.Category;
+
+    public string FilterHeaderLabel => _activeFilter switch
+    {
+        FilterMode.All => "All",
+        FilterMode.Day => SelectedDayLabel,
+        FilterMode.Week => SelectedWeekLabel,
+        FilterMode.Month => SelectedMonthLabel,
+        FilterMode.Year => SelectedYearLabel,
+        FilterMode.Category => SelectedCategoryLabel,
+        _ => "tally"
+    };
 
     private void SetFilter(FilterMode mode)
     {
@@ -377,6 +402,7 @@ public partial class FeedViewModel : ObservableObject
 
     public async Task OnPageAppearingAsync()
     {
+        _header.ShowFilter(FilterHeaderLabel);
         if (!IsDirty) return;
         IsDirty = false;
         await LoadFeedAsync();
@@ -783,6 +809,7 @@ public partial class FeedViewModel : ObservableObject
             FilterMode.Category => _selectedCategory.ToString(),
             _ => DateTime.Now.ToString("MMMM yyyy")
         };
+        _header.ShowFilter(FilterHeaderLabel);
     }
 
     private static DateTime GetMondayOfCurrentWeek()

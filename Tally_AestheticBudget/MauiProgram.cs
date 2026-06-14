@@ -29,13 +29,14 @@ public static class MauiProgram
 
         builder.Services.AddSingleton<ISettingsService, SettingsService>();
         builder.Services.AddSingleton<DatabaseService>();
-        builder.Services.AddSingleton<DataChangedService>();
+        builder.Services.AddSingleton<DataChangedService>();        
+        builder.Services.AddSingleton<HeaderState>();
         builder.Services.AddSingleton<IExpenseService, ExpenseService>();
         builder.Services.AddSingleton<IBudgetService, BudgetService>();
         builder.Services.AddSingleton<IGroceryService, GroceryService>();
         builder.Services.AddSingleton<IWishService, WishService>();
         builder.Services.AddSingleton<IThemeService, ThemeService>();
-        builder.Services.AddSingleton<ISettingsService, SettingsService>();
+
 
 
         //ViewModels

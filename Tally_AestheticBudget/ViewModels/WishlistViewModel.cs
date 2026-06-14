@@ -12,6 +12,7 @@ public partial class WishlistViewModel : ObservableObject
     private readonly IBudgetService _budgetService;
     private readonly ISettingsService _settings;
     private readonly DataChangedService _dataChanged;
+    private readonly IThemeService _themeService;
 
     private List<WishCardItem> _allItems = [];
 
@@ -22,17 +23,31 @@ public partial class WishlistViewModel : ObservableObject
             IWishService wishService,
             IBudgetService budgetService,
             ISettingsService settings,
-            DataChangedService dataChanged)
+            DataChangedService dataChanged,
+            IThemeService themeService)
     {
         _wishService = wishService;
         _budgetService = budgetService;
         _settings = settings;
         _dataChanged = dataChanged;
+        _themeService = themeService;       
 
         _dataChanged.WishlistChanged += () => IsDirty = true;
         _dataChanged.SettingsChanged += () => IsDirty = true;
+        _themeService.ThemeChanged += OnThemeChanged;
 
-        
+    }
+
+    private void OnThemeChanged()
+    {
+        OnPropertyChanged(nameof(IsFilterAll));
+        OnPropertyChanged(nameof(IsFilterPlanned));
+        OnPropertyChanged(nameof(IsFilterBought));
+        OnPropertyChanged(nameof(IsFilterWant));
+        OnPropertyChanged(nameof(IsFilterNeed));
+        OnPropertyChanged(nameof(IsFilterSomeday));
+        foreach (var item in DisplayedItems)
+            item.RefreshThemeBindings();
     }
 
     // Exposed so XAML can bind the currency label dynamically

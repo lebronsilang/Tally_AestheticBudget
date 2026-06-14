@@ -54,7 +54,6 @@ public class ThemeService : IThemeService
 
         ApplyTabBarColors(theme.Accent, theme.Card, theme.TextSecondary);
         ThemeChanged?.Invoke();
-        ReloadShell();
     }
 
     public void ApplyCustomTheme(string bg, string accent, string card, string text)
@@ -77,7 +76,6 @@ public class ThemeService : IThemeService
         ApplyColorsToResources(bg, accent, card, text, text, "#E8E8ED");
         ApplyTabBarColors(accent, card, text);
         ThemeChanged?.Invoke();
-        ReloadShell();
     }
 
     public (string bg, string accent, string card, string text) GetCustomColors() =>
@@ -258,14 +256,4 @@ public class ThemeService : IThemeService
 
     private static bool IsValidHex(string hex) =>
         !string.IsNullOrWhiteSpace(hex) && Color.TryParse(hex, out _);
-
-    public static void ReloadShell()
-    {
-        if (Application.Current is null) return;
-
-        // Set accent BEFORE rebuilding the shell so AppShell reads the new value
-        // (App.CurrentAccent is already set by ApplyColorsToResources)
-        Application.Current.MainPage = new AppShell();
-    }
 }
-

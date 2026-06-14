@@ -7,10 +7,14 @@ public partial class AppShell : Shell
 {
     private readonly Dictionary<string, (Border tab, Label label)> _tabs;
     private string _currentRoute = "FeedPage";
+    private readonly Services.HeaderState _header;
 
-    public AppShell()
+    public AppShell(Services.HeaderState header)
     {
         InitializeComponent();
+        _header = header;
+        HeaderInfo.BindingContext = header;
+
         Routing.RegisterRoute(nameof(AddExpensePage), typeof(AddExpensePage));
 
         _tabs = new()
@@ -20,7 +24,7 @@ public partial class AppShell : Shell
             ["WishlistPage"] = (TabWishlist, TabWishlistLabel),
             ["GroceryPage"] = (TabGrocery, TabGroceryLabel),
             ["ThemesPage"] = (TabThemes, TabThemesLabel),
-            ["SettingsPage"] = (TabSettings, TabSettingsLabel), // ← added
+            ["SettingsPage"] = (TabSettings, TabSettingsLabel),
         };
         SetActiveTab("FeedPage");
 
@@ -29,6 +33,10 @@ public partial class AppShell : Shell
             var route = CurrentState.Location.OriginalString.TrimStart('/');
             var page = _tabs.Keys.FirstOrDefault(k => route.Contains(k));
             if (page is not null) SetActiveTab(page);
+
+            // Feed & Budget own their filter label; every other page shows the brand.
+            if (page is not ("FeedPage" or "BudgetPage"))
+                _header.ShowBrand();
         };
     }
 

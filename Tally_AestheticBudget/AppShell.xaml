@@ -13,10 +13,10 @@
               BackgroundColor="{DynamicResource CardBackground}"
               Padding="16,0">
 
-            <HorizontalStackLayout Grid.Column="0" Spacing="4" VerticalOptions="Center">
-                <Label Text="tally" FontFamily="DisplayFont" FontSize="18"
+            <HorizontalStackLayout x:Name="HeaderInfo" Grid.Column="0" Spacing="4" VerticalOptions="Center">
+                <Label Text="{Binding Text}" FontFamily="DisplayFont" FontSize="18"
                        TextColor="{DynamicResource AccentColor}" VerticalOptions="Center" />
-                <Label Text="✦" FontSize="14"
+                <Label Text="✦" FontSize="14" IsVisible="{Binding ShowBrandMark}"
                        TextColor="{DynamicResource AccentColor}" VerticalOptions="Center" />
             </HorizontalStackLayout>
 
