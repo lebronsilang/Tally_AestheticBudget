@@ -133,6 +133,7 @@ public partial class MonthlyThemeItem : CommunityToolkit.Mvvm.ComponentModel.Obs
     public string MonthLabel { get; set; } = string.Empty;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(HasTheme))]
     private string _assignedThemeId = "none";
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]

@@ -13,9 +13,9 @@ public partial class WishlistViewModel : ObservableObject
     private readonly ISettingsService _settings;
     private readonly DataChangedService _dataChanged;
     private readonly IThemeService _themeService;
+    private bool _themeSubscribed;
 
     private List<WishCardItem> _allItems = [];
-
 
     public int CurrentColumnCount { get; set; } = 2;
 
@@ -30,24 +30,10 @@ public partial class WishlistViewModel : ObservableObject
         _budgetService = budgetService;
         _settings = settings;
         _dataChanged = dataChanged;
-        _themeService = themeService;       
+        _themeService = themeService;
 
         _dataChanged.WishlistChanged += () => IsDirty = true;
         _dataChanged.SettingsChanged += () => IsDirty = true;
-        _themeService.ThemeChanged += OnThemeChanged;
-
-    }
-
-    private void OnThemeChanged()
-    {
-        OnPropertyChanged(nameof(IsFilterAll));
-        OnPropertyChanged(nameof(IsFilterPlanned));
-        OnPropertyChanged(nameof(IsFilterBought));
-        OnPropertyChanged(nameof(IsFilterWant));
-        OnPropertyChanged(nameof(IsFilterNeed));
-        OnPropertyChanged(nameof(IsFilterSomeday));
-        foreach (var item in DisplayedItems)
-            item.RefreshThemeBindings();
     }
 
     // Exposed so XAML can bind the currency label dynamically
@@ -217,9 +203,10 @@ public partial class WishlistViewModel : ObservableObject
         {
             var result = await MediaPicker.Default.PickPhotoAsync();
             if (result is null) return;
-            var localPath = Path.Combine(FileSystem.AppDataDirectory, result.FileName);
+            var safeName = $"{Guid.NewGuid():N}{Path.GetExtension(result.FileName)}";
+            var localPath = Path.Combine(FileSystem.AppDataDirectory, safeName);
             using var stream = await result.OpenReadAsync();
-            using var fileStream = File.OpenWrite(localPath);
+            using var fileStream = File.Create(localPath);
             await stream.CopyToAsync(fileStream);
             NewPhotoPath = localPath;
             OnPropertyChanged(nameof(NewHasPhoto));
@@ -381,11 +368,35 @@ public partial class WishlistViewModel : ObservableObject
     // ── Lifecycle ─────────────────────────────────────────────────────────────
 
     public bool IsDirty { get; set; } = true;
+
     public async Task OnPageAppearingAsync()
     {
+        if (!_themeSubscribed)
+        {
+            _themeSubscribed = true;
+            _themeService.ThemeChanged += OnThemeChanged;
+        }
         if (!IsDirty) return;
         IsDirty = false;
         await LoadAsync();
+    }
+
+    public void OnPageDisappearing()
+    {
+        _themeService.ThemeChanged -= OnThemeChanged;
+        _themeSubscribed = false;
+    }
+
+    private void OnThemeChanged()
+    {
+        OnPropertyChanged(nameof(IsFilterAll));
+        OnPropertyChanged(nameof(IsFilterPlanned));
+        OnPropertyChanged(nameof(IsFilterBought));
+        OnPropertyChanged(nameof(IsFilterWant));
+        OnPropertyChanged(nameof(IsFilterNeed));
+        OnPropertyChanged(nameof(IsFilterSomeday));
+        foreach (var item in DisplayedItems)
+            item.RefreshThemeBindings();
     }
 
     private async Task LoadAsync()

@@ -52,10 +52,8 @@ public partial class BudgetCategoryItem : ObservableObject
         _ => "icon_default.png"
     };
 
-    /// <summary>Re-raises accent-dependent bindings after a theme change.</summary>
-    public void RefreshThemeBindings() => OnPropertyChanged(nameof(IsOverLimit));
-
     // AFTER
+    // Set by BudgetService when building this item — avoids hardcoding ₱
     public string CurrencySymbol { get; set; } = "₱";
 
     public string SpentFormatted => $"{CurrencySymbol}{Spent:N2}";
@@ -79,7 +77,7 @@ public partial class BudgetCategoryItem : ObservableObject
     // True when spending exceeds the limit then bar turns red
     public bool IsOverLimit => Limit > 0 && Spent > Limit;
 
-    
+
 
     // ── Inline edit state ─────────────────────────────────────────────────────
     // These control the inline edit row visibility
@@ -93,4 +91,7 @@ public partial class BudgetCategoryItem : ObservableObject
     // The text the user types into the inline edit field
     [ObservableProperty]
     private string _editLimitText = string.Empty;
+
+    /// <summary>Re-raises accent-dependent computed properties after a theme change.</summary>
+    public void RefreshThemeBindings() => OnPropertyChanged(nameof(IsOverLimit));
 }

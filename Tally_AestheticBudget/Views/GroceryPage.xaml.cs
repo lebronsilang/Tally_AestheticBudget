@@ -18,4 +18,10 @@ public partial class GroceryPage : ContentPage
         base.OnAppearing();
         await _viewModel.OnPageAppearingAsync();
     }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        _viewModel.OnPageDisappearing();
+    }
 }

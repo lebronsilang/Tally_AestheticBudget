@@ -13,6 +13,7 @@ public partial class GroceryViewModel : ObservableObject
     private readonly ISettingsService _settings;
     private readonly DataChangedService _dataChanged;
     private readonly IThemeService _themeService;
+    private bool _themeSubscribed;
 
     private List<GroceryItem> _allItems = [];
 
@@ -30,17 +31,7 @@ public partial class GroceryViewModel : ObservableObject
         _themeService = themeService;
 
         _dataChanged.GroceryChanged += () => IsDirty = true;
-        _themeService.ThemeChanged += OnThemeChanged;
-
     }
-    private void OnThemeChanged()
-    {
-        OnPropertyChanged(nameof(IsFilterAll));
-        OnPropertyChanged(nameof(IsFilterPending));
-        OnPropertyChanged(nameof(IsFilterChecked));
-        BudgetStatus.RefreshThemeBindings();
-    }
-
 
     public string PriceLabelText => $"Price ({_settings.CurrencySymbol}) optional";
 
@@ -160,9 +151,27 @@ public partial class GroceryViewModel : ObservableObject
 
     public async Task OnPageAppearingAsync()
     {
+        if (!_themeSubscribed)
+        {
+            _themeSubscribed = true;
+            _themeService.ThemeChanged += OnThemeChanged;
+        }
         if (!IsDirty) return;
         IsDirty = false;
         await LoadAsync();
+    }
+
+    public void OnPageDisappearing()
+    {
+        _themeService.ThemeChanged -= OnThemeChanged;
+        _themeSubscribed = false;
+    }
+
+    private void OnThemeChanged()
+    {
+        OnPropertyChanged(nameof(IsFilterAll));
+        OnPropertyChanged(nameof(IsFilterPending));
+        OnPropertyChanged(nameof(IsFilterChecked));
     }
 
     private async Task LoadAsync()

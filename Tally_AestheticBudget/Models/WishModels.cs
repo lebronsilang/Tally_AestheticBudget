@@ -40,11 +40,7 @@ public partial class WishCardItem : ObservableObject
     private bool _isPinned;
 
     // ── Computed display helpers ──────────────────────────────────────────────
-    public void RefreshThemeBindings()
-    {
-        OnPropertyChanged(nameof(IsPinned));   // pin-stroke colour reads the accent
-        OnPropertyChanged(nameof(Status));     // status-toggle colours read theme tokens
-    }
+
     public bool HasPhoto => !string.IsNullOrEmpty(PhotoPath);
     public bool HasCaption => !string.IsNullOrEmpty(Caption);
     public bool IsBought => Status == WishStatus.Bought;
@@ -116,6 +112,13 @@ public partial class WishCardItem : ObservableObject
     public bool HasRegretRating => !string.IsNullOrEmpty(RegretRating);
     public bool IsWorthIt => RegretRating == "Worth";
     public string RegretLabel => RegretRating == "Worth" ? "😌 Worth it" : "😭 Regret";
+
+    /// <summary>Re-raises accent-dependent bindings after a theme change.</summary>
+    public void RefreshThemeBindings()
+    {
+        OnPropertyChanged(nameof(IsPinned));  // pin-stroke border colour reads the accent
+        OnPropertyChanged(nameof(Status));    // status toggle colours read theme tokens
+    }
 }
 
 // ── Afford result ─────────────────────────────────────────────────────────────

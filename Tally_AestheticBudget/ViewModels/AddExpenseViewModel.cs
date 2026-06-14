@@ -125,11 +125,11 @@ public partial class AddExpenseViewModel : ObservableObject
 
             if (result is null) return;
 
-            var localPath = Path.Combine(FileSystem.AppDataDirectory, result.FileName);
+            var safeName = $"{Guid.NewGuid():N}{Path.GetExtension(result.FileName)}";
+            var localPath = Path.Combine(FileSystem.AppDataDirectory, safeName);
             using var stream = await result.OpenReadAsync();
-            using var fileStream = File.OpenWrite(localPath);
+            using var fileStream = File.Create(localPath);
             await stream.CopyToAsync(fileStream);
-
             PhotoPath = localPath;
             OnPropertyChanged(nameof(HasPhoto));
         }

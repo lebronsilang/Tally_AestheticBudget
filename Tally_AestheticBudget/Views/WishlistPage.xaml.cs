@@ -48,6 +48,12 @@ public partial class WishlistPage : ContentPage
         await _viewModel.OnPageAppearingAsync();
     }
 
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        _viewModel.OnPageDisappearing();
+    }
+
     private void MasonryGrid_SizeChanged(object? sender, EventArgs e)
     {
         var width = MasonryGrid.Width;

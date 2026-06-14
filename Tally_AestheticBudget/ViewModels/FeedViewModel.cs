@@ -13,6 +13,7 @@ public partial class FeedViewModel : ObservableObject
     private readonly DataChangedService _dataChanged;
     private readonly IThemeService _themeService;
     private readonly HeaderState _header;
+    private bool _themeSubscribed;
 
     public int CurrentColumnCount { get; set; } = 2;
 
@@ -30,18 +31,6 @@ public partial class FeedViewModel : ObservableObject
 
         _dataChanged.ExpensesChanged += () => IsDirty = true;
         _dataChanged.SettingsChanged += () => IsDirty = true;
-        _themeService.ThemeChanged += OnThemeChanged;
-    }
-
-    private void OnThemeChanged()
-    {
-        // Filter chips use converters that read the accent; nudge them to re-run.
-        OnPropertyChanged(nameof(IsFilterAll));
-        OnPropertyChanged(nameof(IsFilterDay));
-        OnPropertyChanged(nameof(IsFilterWeek));
-        OnPropertyChanged(nameof(IsFilterMonth));
-        OnPropertyChanged(nameof(IsFilterYear));
-        OnPropertyChanged(nameof(IsFilterCategory));
     }
 
     // ── Feed items ────────────────────────────────────────────────────────────
@@ -82,17 +71,6 @@ public partial class FeedViewModel : ObservableObject
     public bool IsFilterMonth => _activeFilter == FilterMode.Month;
     public bool IsFilterYear => _activeFilter == FilterMode.Year;
     public bool IsFilterCategory => _activeFilter == FilterMode.Category;
-
-    public string FilterHeaderLabel => _activeFilter switch
-    {
-        FilterMode.All => "All",
-        FilterMode.Day => SelectedDayLabel,
-        FilterMode.Week => SelectedWeekLabel,
-        FilterMode.Month => SelectedMonthLabel,
-        FilterMode.Year => SelectedYearLabel,
-        FilterMode.Category => SelectedCategoryLabel,
-        _ => "tally"
-    };
 
     private void SetFilter(FilterMode mode)
     {
@@ -223,9 +201,10 @@ public partial class FeedViewModel : ObservableObject
         {
             var result = await MediaPicker.Default.PickPhotoAsync();
             if (result is null) return;
-            var localPath = Path.Combine(FileSystem.AppDataDirectory, result.FileName);
+            var safeName = $"{Guid.NewGuid():N}{Path.GetExtension(result.FileName)}";
+            var localPath = Path.Combine(FileSystem.AppDataDirectory, safeName);
             using var stream = await result.OpenReadAsync();
-            using var fileStream = File.OpenWrite(localPath);
+            using var fileStream = File.Create(localPath);
             await stream.CopyToAsync(fileStream);
             NewPhotoPath = localPath;
             OnPropertyChanged(nameof(NewHasPhoto));
@@ -333,9 +312,10 @@ public partial class FeedViewModel : ObservableObject
         {
             var result = await MediaPicker.Default.PickPhotoAsync();
             if (result is null) return;
-            var localPath = Path.Combine(FileSystem.AppDataDirectory, result.FileName);
+            var safeName = $"{Guid.NewGuid():N}{Path.GetExtension(result.FileName)}";
+            var localPath = Path.Combine(FileSystem.AppDataDirectory, safeName);
             using var stream = await result.OpenReadAsync();
-            using var fileStream = File.OpenWrite(localPath);
+            using var fileStream = File.Create(localPath);
             await stream.CopyToAsync(fileStream);
             EditPhotoPath = localPath;
             OnPropertyChanged(nameof(EditHasPhoto));
@@ -402,6 +382,11 @@ public partial class FeedViewModel : ObservableObject
 
     public async Task OnPageAppearingAsync()
     {
+        if (!_themeSubscribed)
+        {
+            _themeSubscribed = true;
+            _themeService.ThemeChanged += OnThemeChanged;
+        }
         _header.ShowFilter(FilterHeaderLabel);
         if (!IsDirty) return;
         IsDirty = false;
@@ -730,7 +715,7 @@ public partial class FeedViewModel : ObservableObject
             // Only distribute if we already have a real column count from OnSizeAllocated
             if (CurrentColumnCount > 0)
                 DistributeIntoColumns(_pendingItems, CurrentColumnCount);
-            await ApplyContextualThemeAsync(); 
+            await ApplyContextualThemeAsync();
         }
         catch (Exception ex)
         {
@@ -738,7 +723,7 @@ public partial class FeedViewModel : ObservableObject
             await Shell.Current.DisplayAlertAsync("Error",
                 "Could not load expenses. Please try again.", "OK");
         }
-        
+
 
         finally
         {
@@ -750,10 +735,31 @@ public partial class FeedViewModel : ObservableObject
 
     public void OnPageDisappearing()
     {
-        // If we had a contextual theme active, revert on navigate away
+        _themeService.ThemeChanged -= OnThemeChanged;
+        _themeSubscribed = false;
         if (_activeFilter == FilterMode.Month)
             _themeService.RevertToGlobal();
     }
+
+    private void OnThemeChanged()
+    {
+        OnPropertyChanged(nameof(IsFilterAll));
+        OnPropertyChanged(nameof(IsFilterDay));
+        OnPropertyChanged(nameof(IsFilterWeek));
+        OnPropertyChanged(nameof(IsFilterMonth));
+        OnPropertyChanged(nameof(IsFilterYear));
+        OnPropertyChanged(nameof(IsFilterCategory));
+    }
+
+    public string FilterHeaderLabel => _activeFilter switch
+    {
+        FilterMode.Day => SelectedDayLabel,
+        FilterMode.Week => SelectedWeekLabel,
+        FilterMode.Month => SelectedMonthLabel,
+        FilterMode.Year => SelectedYearLabel,
+        FilterMode.Category => SelectedCategoryLabel,
+        _ => string.Empty          // empty = ShowBrand() in AppShell
+    };
 
     // Public — FeedPage.xaml.cs calls this on resize
     public void DistributeIntoColumns(IList<FeedCardItem>? itemList = null, int columnCount = 2)

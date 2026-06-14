@@ -13,6 +13,7 @@ public partial class BudgetViewModel : ObservableObject
     private readonly DataChangedService _dataChanged;
     private readonly IThemeService _themeService;
     private readonly HeaderState _header;
+    private bool _themeSubscribed;
 
     public BudgetViewModel(IBudgetService budgetService, ISettingsService settings,
         DataChangedService dataChanged, IThemeService themeService, HeaderState header)
@@ -21,22 +22,12 @@ public partial class BudgetViewModel : ObservableObject
         _settings = settings;
         _dataChanged = dataChanged;
         _themeService = themeService;
+        _header = header;
         _currentYear = DateTime.Now.Year;
         _currentMonth = DateTime.Now.Month;
 
         _dataChanged.BudgetChanged += () => _isDirty = true;
-        _themeService.ThemeChanged += OnThemeChanged;
-        _header = header;
     }
-
-    private void OnThemeChanged()
-    {
-        foreach (var item in BudgetItems)
-            item.RefreshThemeBindings();
-    }
-    private string CurrentMonthLabel =>
-        new DateTime(_currentYear, _currentMonth, 1).ToString("MMMM yyyy");
-
     public string LimitPlaceholder => $"New limit ({_settings.CurrencySymbol})";
 
     [ObservableProperty] private ObservableCollection<BudgetCategoryItem> _budgetItems = [];
@@ -96,10 +87,28 @@ public partial class BudgetViewModel : ObservableObject
 
     public async Task OnPageAppearingAsync()
     {
-        _header.ShowFilter(CurrentMonthLabel);
+        if (!_themeSubscribed)
+        {
+            _themeSubscribed = true;
+            _themeService.ThemeChanged += OnThemeChanged;
+        }
+        _header.ShowFilter(MonthLabel);
         if (!_isDirty) return;
         _isDirty = false;
         await LoadBudgetAsync();
+    }
+
+    private void OnThemeChanged()
+    {
+        foreach (var item in BudgetItems)
+            item.RefreshThemeBindings();
+    }
+
+    public void OnPageDisappearing()
+    {
+        _themeService.ThemeChanged -= OnThemeChanged;
+        _themeSubscribed = false;
+        _themeService.RevertToGlobal();
     }
 
     private async Task LoadBudgetAsync()
@@ -120,7 +129,7 @@ public partial class BudgetViewModel : ObservableObject
             await Shell.Current.DisplayAlertAsync("Error",
                 "Could not load budget data. Please try again.", "OK");
         }
-        
+
         finally { IsLoading = false; }
     }
     private async Task ApplyContextualThemeAsync()
@@ -141,10 +150,6 @@ public partial class BudgetViewModel : ObservableObject
         }
     }
 
-    public void OnPageDisappearing()
-    {
-        _themeService.RevertToGlobal();
-    }
     private void UpdateTotalLabel()
     {
         var symbol = _settings.CurrencySymbol;
