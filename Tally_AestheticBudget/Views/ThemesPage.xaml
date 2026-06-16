@@ -13,7 +13,7 @@
         <ScrollView>
             <VerticalStackLayout Spacing="0">
 
-                <!-- ── Floating header card ───────────────────────────────── -->
+                <!-- ── Page header ─────────────────────────────────────────── -->
                 <Border BackgroundColor="{DynamicResource CardBackground}"
                         Stroke="{DynamicResource CardBorder}"
                         StrokeThickness="1" StrokeShape="RoundRectangle 20"
@@ -29,70 +29,93 @@
 
                 <VerticalStackLayout Padding="16,16,16,48" Spacing="12">
 
-                    <!-- ── Presets card ───────────────────────────────────── -->
+                    <!-- ── Preset themes ──────────────────────────────────── -->
                     <Border BackgroundColor="{DynamicResource CardBackground}"
                             Stroke="{DynamicResource CardBorder}"
                             StrokeThickness="1" StrokeShape="RoundRectangle 20"
                             Padding="20,20">
-                        <VerticalStackLayout Spacing="16">
+                        <VerticalStackLayout Spacing="14">
 
-                            <Label Text="Presets" FontSize="16" FontAttributes="Bold"
-                                   TextColor="{DynamicResource TextPrimary}" />
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="Presets" FontSize="16" FontAttributes="Bold"
+                                       TextColor="{DynamicResource TextPrimary}" />
+                                <Label Text="Tap a theme to apply it"
+                                       FontSize="12" TextColor="{DynamicResource TextSecondary}" />
+                            </VerticalStackLayout>
 
-                            <Border HorizontalOptions="Fill" MaximumWidthRequest="900"
-                                    StrokeThickness="0" BackgroundColor="Transparent">
-                                <CollectionView ItemsSource="{Binding ThemeCards}"
-                                               SelectionMode="None">
-                                    <CollectionView.ItemsLayout>
-                                        <GridItemsLayout Orientation="Vertical" Span="3"
-                                                         HorizontalItemSpacing="12"
-                                                         VerticalItemSpacing="12" />
-                                    </CollectionView.ItemsLayout>
-                                    <CollectionView.ItemTemplate>
-                                        <DataTemplate x:DataType="models:ThemeCardItem">
-                                            <ContentView>
-                                                <ContentView.GestureRecognizers>
-                                                    <TapGestureRecognizer
-                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ThemesViewModel}}, Path=ApplyThemeCommand}"
-                                                        CommandParameter="{Binding Id}" />
-                                                </ContentView.GestureRecognizers>
-                                                <Border BackgroundColor="{DynamicResource PageBackground}"
-                                                        StrokeThickness="2"
-                                                        Stroke="{Binding IsActive, Converter={StaticResource BoolToChipBorder}}"
-                                                        StrokeShape="RoundRectangle 16"
-                                                        Padding="10,10,10,12">
-                                                    <Border.GestureRecognizers>
-                                                        <PointerGestureRecognizer
-                                                            PointerEntered="OnThemeCardPointerEntered"
-                                                            PointerExited="OnThemeCardPointerExited" />
-                                                    </Border.GestureRecognizers>
-                                                    <VerticalStackLayout Spacing="8">
-                                                        <Border HeightRequest="56" StrokeThickness="0"
-                                                                StrokeShape="RoundRectangle 10">
-                                                            <Border.Background>
-                                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                                                    <GradientStop Color="{Binding PreviewFrom}" Offset="0.0" />
-                                                                    <GradientStop Color="{Binding PreviewTo}"   Offset="1.0" />
-                                                                </LinearGradientBrush>
-                                                            </Border.Background>
-                                                        </Border>
-                                                        <Label Text="{Binding DisplayName}" FontSize="11"
-                                                               FontAttributes="{Binding IsActive, Converter={StaticResource BoolToFontAttr}}"
-                                                               HorizontalOptions="Center"
-                                                               TextColor="{DynamicResource TextPrimary}"
-                                                               LineBreakMode="TailTruncation" />
-                                                    </VerticalStackLayout>
-                                                </Border>
-                                            </ContentView>
-                                        </DataTemplate>
-                                    </CollectionView.ItemTemplate>
-                                </CollectionView>
-                            </Border>
+                            <!-- 6-column Apple Music–style portrait swatch grid -->
+                            <CollectionView ItemsSource="{Binding ThemeCards}"
+                                           SelectionMode="None">
+                                <CollectionView.ItemsLayout>
+                                    <GridItemsLayout Orientation="Vertical" Span="6"
+                                                     HorizontalItemSpacing="8"
+                                                     VerticalItemSpacing="8" />
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="models:ThemeCardItem">
+                                        <ContentView>
+                                            <ContentView.GestureRecognizers>
+                                                <TapGestureRecognizer
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ThemesViewModel}}, Path=ApplyThemeCommand}"
+                                                    CommandParameter="{Binding Id}" />
+                                            </ContentView.GestureRecognizers>
+
+                                            <!--
+                                                Outer card: gradient fills the full face.
+                                                StrokeShape clips children to rounded rect,
+                                                so the scrim and label respect the corners.
+                                            -->
+                                            <Border HeightRequest="160"
+                                                    StrokeThickness="2"
+                                                    Stroke="{Binding IsActive, Converter={StaticResource BoolToChipBorder}}"
+                                                    StrokeShape="RoundRectangle 14"
+                                                    Padding="0">
+                                                <Border.Background>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                        <GradientStop Color="{Binding PreviewFrom}" Offset="0.0" />
+                                                        <GradientStop Color="{Binding PreviewTo}"   Offset="1.0" />
+                                                    </LinearGradientBrush>
+                                                </Border.Background>
+                                                <Border.GestureRecognizers>
+                                                    <PointerGestureRecognizer
+                                                        PointerEntered="OnThemeCardPointerEntered"
+                                                        PointerExited="OnThemeCardPointerExited" />
+                                                </Border.GestureRecognizers>
+
+                                                <Grid>
+                                                    <!-- Bottom scrim: transparent → dark -->
+                                                    <Border StrokeThickness="0"
+                                                            VerticalOptions="End"
+                                                            HeightRequest="48"
+                                                            HorizontalOptions="Fill">
+                                                        <Border.Background>
+                                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                                <GradientStop Color="#00000000" Offset="0.0" />
+                                                                <GradientStop Color="#CC000000" Offset="1.0" />
+                                                            </LinearGradientBrush>
+                                                        </Border.Background>
+                                                    </Border>
+
+                                                    <!-- Theme name overlaid at bottom -->
+                                                    <Label Text="{Binding DisplayName}"
+                                                           FontSize="10" FontAttributes="Bold"
+                                                           TextColor="White"
+                                                           HorizontalOptions="Center"
+                                                           VerticalOptions="End"
+                                                           Margin="4,0,4,8"
+                                                           LineBreakMode="TailTruncation"
+                                                           MaxLines="1" />
+                                                </Grid>
+                                            </Border>
+                                        </ContentView>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
 
                         </VerticalStackLayout>
                     </Border>
 
-                    <!-- ── Custom Palette card ────────────────────────────── -->
+                    <!-- ── Custom Palette ─────────────────────────────────── -->
                     <Border BackgroundColor="{DynamicResource CardBackground}"
                             Stroke="{DynamicResource CardBorder}"
                             StrokeThickness="1" StrokeShape="RoundRectangle 20"
@@ -106,19 +129,23 @@
                                        FontSize="12" TextColor="{DynamicResource TextSecondary}" />
                             </VerticalStackLayout>
 
+                            <!--
+                                4 equal columns, no fixed WidthRequest so each swatch
+                                fills its column for consistent spacing.
+                            -->
                             <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="12">
 
-                                <VerticalStackLayout Grid.Column="0" Spacing="8"
-                                                     HorizontalOptions="Center">
+                                <!-- Background swatch -->
+                                <VerticalStackLayout Grid.Column="0" Spacing="8">
                                     <Border BackgroundColor="{Binding CustomBg}"
                                             StrokeThickness="1"
                                             Stroke="{DynamicResource CardBorder}"
                                             StrokeShape="RoundRectangle 14"
-                                            WidthRequest="80" HeightRequest="72"
-                                            HorizontalOptions="Center">
+                                            HeightRequest="160"
+                                            HorizontalOptions="Fill">
                                         <Border.Shadow>
                                             <Shadow Brush="#40000000" Offset="0,4"
-                                                    Radius="8" Opacity="0.18" />
+                                                    Radius="8" Opacity="0.15" />
                                         </Border.Shadow>
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding OpenColorPickerCommand}" CommandParameter="bg" />
@@ -132,17 +159,17 @@
                                            HorizontalOptions="Center" />
                                 </VerticalStackLayout>
 
-                                <VerticalStackLayout Grid.Column="1" Spacing="8"
-                                                     HorizontalOptions="Center">
+                                <!-- Accent swatch -->
+                                <VerticalStackLayout Grid.Column="1" Spacing="8">
                                     <Border BackgroundColor="{Binding CustomAccent}"
                                             StrokeThickness="1"
                                             Stroke="{DynamicResource CardBorder}"
                                             StrokeShape="RoundRectangle 14"
-                                            WidthRequest="80" HeightRequest="72"
-                                            HorizontalOptions="Center">
+                                            HeightRequest="160"
+                                            HorizontalOptions="Fill">
                                         <Border.Shadow>
                                             <Shadow Brush="#40000000" Offset="0,4"
-                                                    Radius="8" Opacity="0.18" />
+                                                    Radius="8" Opacity="0.15" />
                                         </Border.Shadow>
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding OpenColorPickerCommand}" CommandParameter="accent" />
@@ -156,17 +183,17 @@
                                            HorizontalOptions="Center" />
                                 </VerticalStackLayout>
 
-                                <VerticalStackLayout Grid.Column="2" Spacing="8"
-                                                     HorizontalOptions="Center">
+                                <!-- Card swatch -->
+                                <VerticalStackLayout Grid.Column="2" Spacing="8">
                                     <Border BackgroundColor="{Binding CustomCard}"
                                             StrokeThickness="1"
                                             Stroke="{DynamicResource CardBorder}"
                                             StrokeShape="RoundRectangle 14"
-                                            WidthRequest="80" HeightRequest="72"
-                                            HorizontalOptions="Center">
+                                            HeightRequest="160"
+                                            HorizontalOptions="Fill">
                                         <Border.Shadow>
                                             <Shadow Brush="#40000000" Offset="0,4"
-                                                    Radius="8" Opacity="0.18" />
+                                                    Radius="8" Opacity="0.15" />
                                         </Border.Shadow>
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding OpenColorPickerCommand}" CommandParameter="card" />
@@ -180,17 +207,17 @@
                                            HorizontalOptions="Center" />
                                 </VerticalStackLayout>
 
-                                <VerticalStackLayout Grid.Column="3" Spacing="8"
-                                                     HorizontalOptions="Center">
+                                <!-- Text swatch -->
+                                <VerticalStackLayout Grid.Column="3" Spacing="8">
                                     <Border BackgroundColor="{Binding CustomText}"
                                             StrokeThickness="1"
                                             Stroke="{DynamicResource CardBorder}"
                                             StrokeShape="RoundRectangle 14"
-                                            WidthRequest="80" HeightRequest="72"
-                                            HorizontalOptions="Center">
+                                            HeightRequest="160"
+                                            HorizontalOptions="Fill">
                                         <Border.Shadow>
                                             <Shadow Brush="#40000000" Offset="0,4"
-                                                    Radius="8" Opacity="0.18" />
+                                                    Radius="8" Opacity="0.15" />
                                         </Border.Shadow>
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding OpenColorPickerCommand}" CommandParameter="text" />
@@ -220,7 +247,7 @@
                         </VerticalStackLayout>
                     </Border>
 
-                    <!-- ── Monthly Themes card ──────────────────────────── -->
+                    <!-- ── Monthly Themes ──────────────────────────────────── -->
                     <Border BackgroundColor="{DynamicResource CardBackground}"
                             Stroke="{DynamicResource CardBorder}"
                             StrokeThickness="1" StrokeShape="RoundRectangle 20"
@@ -230,11 +257,11 @@
                             <VerticalStackLayout Spacing="4">
                                 <Label Text="Monthly Themes" FontSize="16" FontAttributes="Bold"
                                        TextColor="{DynamicResource TextPrimary}" />
-                                <Label Text="Tap a month to assign a vibe — it activates when you view that month in Feed or Budget"
+                                <Label Text="Tap a month to assign a vibe — activates when you view that month in Feed or Budget"
                                        FontSize="12" TextColor="{DynamicResource TextSecondary}" />
                             </VerticalStackLayout>
 
-                            <!-- Year nav -->
+                            <!-- Year navigation -->
                             <Grid ColumnDefinitions="Auto,*,Auto">
                                 <Border Grid.Column="0" Style="{StaticResource HoverButton}"
                                         BackgroundColor="{DynamicResource PageBackground}"
@@ -264,75 +291,116 @@
                                 </Border>
                             </Grid>
 
-                            <!-- 4×3 month grid -->
+                            <!--
+                                6-column monthly grid — matches the preset swatch style.
+                                Two visual states per card (HasTheme / !HasTheme) are
+                                toggled via IsVisible, using the app-level InverseBool converter.
+                                Layers render in document order: earliest = bottom, latest = top.
+                            -->
                             <CollectionView ItemsSource="{Binding MonthlyItems}"
                                            SelectionMode="None">
                                 <CollectionView.ItemsLayout>
-                                    <GridItemsLayout Orientation="Vertical" Span="4"
+                                    <GridItemsLayout Orientation="Vertical" Span="6"
                                                      HorizontalItemSpacing="8"
                                                      VerticalItemSpacing="8" />
                                 </CollectionView.ItemsLayout>
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate x:DataType="models:MonthlyThemeItem">
-                                        <Border BackgroundColor="{DynamicResource PageBackground}"
+
+                                        <Border StrokeThickness="1"
                                                 Stroke="{DynamicResource CardBorder}"
-                                                StrokeThickness="0.8"
                                                 StrokeShape="RoundRectangle 14"
-                                                Padding="0" HeightRequest="80">
+                                                HeightRequest="160"
+                                                Padding="0">
                                             <Border.GestureRecognizers>
                                                 <TapGestureRecognizer
                                                     Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ThemesViewModel}}, Path=OpenMonthThemePickerCommand}"
                                                     CommandParameter="{Binding .}" />
                                             </Border.GestureRecognizers>
-                                            <Grid RowDefinitions="28,*">
-                                                <!-- Theme gradient preview bar (top) -->
-                                                <Border Grid.Row="0"
-                                                        StrokeThickness="0"
-                                                        StrokeShape="RoundRectangle 13,13,0,0"
-                                                        IsVisible="{Binding HasTheme}">
+
+                                            <Grid>
+                                                <!-- ── State A: theme assigned ── -->
+
+                                                <!-- Gradient fill (full card) -->
+                                                <Border StrokeThickness="0"
+                                                        IsVisible="{Binding HasTheme}"
+                                                        HorizontalOptions="Fill"
+                                                        VerticalOptions="Fill">
                                                     <Border.Background>
                                                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                                             <GradientStop Color="{Binding PreviewFrom}" Offset="0.0" />
-                                                            <GradientStop Color="{Binding PreviewTo}" Offset="1.0" />
+                                                            <GradientStop Color="{Binding PreviewTo}"   Offset="1.0" />
                                                         </LinearGradientBrush>
                                                     </Border.Background>
                                                 </Border>
-                                                <!-- Fallback: muted bar when no theme -->
-                                                <Border Grid.Row="0"
-                                                        BackgroundColor="{DynamicResource CardBorder}"
-                                                        StrokeThickness="0"
-                                                        StrokeShape="RoundRectangle 13,13,0,0"
-                                                        Opacity="0.4"
-                                                        IsVisible="{Binding HasTheme, Converter={StaticResource InverseBool}}" />
-                                                <!-- Month label + theme name -->
-                                                <VerticalStackLayout Grid.Row="1" Spacing="1"
-                                                                     VerticalOptions="Center"
-                                                                     HorizontalOptions="Center"
-                                                                     Padding="4,0">
+
+                                                <!-- Bottom scrim (assigned) -->
+                                                <Border StrokeThickness="0"
+                                                        IsVisible="{Binding HasTheme}"
+                                                        VerticalOptions="End"
+                                                        HeightRequest="50"
+                                                        HorizontalOptions="Fill">
+                                                    <Border.Background>
+                                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                            <GradientStop Color="#00000000" Offset="0.0" />
+                                                            <GradientStop Color="#CC000000" Offset="1.0" />
+                                                        </LinearGradientBrush>
+                                                    </Border.Background>
+                                                </Border>
+
+                                                <!-- Month + theme name (assigned) -->
+                                                <VerticalStackLayout
+                                                    IsVisible="{Binding HasTheme}"
+                                                    VerticalOptions="End"
+                                                    HorizontalOptions="Center"
+                                                    Spacing="1"
+                                                    Margin="4,0,4,7">
                                                     <Label Text="{Binding MonthLabel}"
                                                            FontSize="13" FontAttributes="Bold"
-                                                           TextColor="{DynamicResource TextPrimary}"
+                                                           TextColor="White"
                                                            HorizontalOptions="Center" />
                                                     <Label Text="{Binding AssignedThemeName}"
-                                                           FontSize="9"
-                                                           TextColor="{DynamicResource TextSecondary}"
+                                                           FontSize="8"
+                                                           TextColor="#D0FFFFFF"
                                                            HorizontalOptions="Center"
                                                            LineBreakMode="TailTruncation"
                                                            MaxLines="1" />
                                                 </VerticalStackLayout>
+
+                                                <!-- ── State B: no theme assigned ── -->
+
+                                                <!-- Muted background -->
+                                                <Border BackgroundColor="{DynamicResource PageBackground}"
+                                                        StrokeThickness="0"
+                                                        IsVisible="{Binding HasTheme, Converter={StaticResource InverseBool}}"
+                                                        HorizontalOptions="Fill"
+                                                        VerticalOptions="Fill" />
+
+                                                <!-- Month label only (no theme) -->
+                                                <Label Text="{Binding MonthLabel}"
+                                                       IsVisible="{Binding HasTheme, Converter={StaticResource InverseBool}}"
+                                                       FontSize="13" FontAttributes="Bold"
+                                                       TextColor="{DynamicResource TextSecondary}"
+                                                       HorizontalOptions="Center"
+                                                       VerticalOptions="Center" />
+
                                             </Grid>
                                         </Border>
+
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
                             </CollectionView>
 
                         </VerticalStackLayout>
                     </Border>
+
                 </VerticalStackLayout>
             </VerticalStackLayout>
         </ScrollView>
 
-        <!-- ── Color Picker Overlay ── -->
+        <!-- ══════════════════════════════════════════════════════════════════ -->
+        <!-- Color Picker Overlay — unchanged                                  -->
+        <!-- ══════════════════════════════════════════════════════════════════ -->
         <Grid IsVisible="{Binding IsColorPickerVisible}"
               BackgroundColor="#80000000"
               VerticalOptions="Fill" HorizontalOptions="Fill">
@@ -587,7 +655,10 @@
                 </VerticalStackLayout>
             </Border>
         </Grid>
-        <!-- ── Month theme picker overlay ─────────────────────────────── -->
+
+        <!-- ══════════════════════════════════════════════════════════════════ -->
+        <!-- Month Theme Picker Overlay — unchanged                            -->
+        <!-- ══════════════════════════════════════════════════════════════════ -->
         <Grid IsVisible="{Binding IsMonthPickerVisible}"
               BackgroundColor="#80000000"
               VerticalOptions="Fill" HorizontalOptions="Fill">
@@ -646,6 +717,7 @@
                 </VerticalStackLayout>
             </Border>
         </Grid>
+
     </Grid>
 
 </ContentPage>
