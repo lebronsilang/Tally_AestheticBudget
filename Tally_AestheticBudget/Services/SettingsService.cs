@@ -18,6 +18,7 @@ public interface ISettingsService
     // Wishlist toggles
     bool ShowCoolingOff { get; set; }
     bool ShowStaleReminder { get; set; }
+    bool AllotRemainingToUnallocated { get; set; }
 }
 
 public class SettingsService : ISettingsService
@@ -31,6 +32,7 @@ public class SettingsService : ISettingsService
     private const string KeyShowDate = "show_date";
     private const string KeyCoolingOff = "show_cooling_off";
     private const string KeyStale = "show_stale_reminder";
+    private const string KeyAllotRemaining = "allot_remaining_unallocated";
 
     public string CurrencySymbol => Preferences.Get(KeySymbol, "₱");
     public string CurrencyCode => Preferences.Get(KeyCode, "PHP");
@@ -73,5 +75,11 @@ public class SettingsService : ISettingsService
     {
         get => Preferences.Get(KeyStale, true);
         set => Preferences.Set(KeyStale, value);
+    }
+
+    public bool AllotRemainingToUnallocated
+    {
+        get => Preferences.Get("allot_remaining_to_unallocated", false);
+        set => Preferences.Set("allot_remaining_to_unallocated", value);
     }
 }

@@ -35,6 +35,8 @@ public class DataChangedService
         BudgetChanged?.Invoke();
     }
 
+    public void NotifyBudgetChanged() => BudgetChanged?.Invoke();
+
     public void NotifyWishlistChanged() => WishlistChanged?.Invoke();
 
     public void NotifySettingsChanged() => SettingsChanged?.Invoke();

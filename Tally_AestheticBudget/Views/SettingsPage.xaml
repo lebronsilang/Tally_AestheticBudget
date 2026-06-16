@@ -282,6 +282,45 @@
                         </VerticalStackLayout>
                     </Border>
 
+                    <!-- ── Budget section ─────────────────────────────────── -->
+                    <Label Text="BUDGET" FontSize="11" FontAttributes="Bold"
+                           CharacterSpacing="0.6" TextColor="{DynamicResource TextSecondary}"
+                           Margin="4,4,0,0" />
+
+                    <Border BackgroundColor="{DynamicResource CardBackground}"
+                            Stroke="{DynamicResource CardBorder}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 20"
+                            Padding="0">
+                        <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,14" ColumnSpacing="14">
+                            <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
+                                    StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                    WidthRequest="36" HeightRequest="36">
+                                <Label Text="🧮" FontSize="16"
+                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                <Label Text="Allot Remaining" FontSize="14" FontAttributes="Bold"
+                                       TextColor="{DynamicResource TextPrimary}" />
+                                <Label Text="Show leftover budget as an Unallocated row"
+                                       FontSize="12" TextColor="{DynamicResource TextSecondary}" />
+                            </VerticalStackLayout>
+                            <Border Grid.Column="2"
+                                    BackgroundColor="{Binding AllotRemaining, Converter={StaticResource BoolToChipBg}}"
+                                    Stroke="{Binding AllotRemaining, Converter={StaticResource BoolToChipBorder}}"
+                                    StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
+                                    WidthRequest="48" HeightRequest="28" VerticalOptions="Center">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ToggleAllotRemainingCommand}" />
+                                </Border.GestureRecognizers>
+                                <Border BackgroundColor="White" StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 980"
+                                        WidthRequest="20" HeightRequest="20"
+                                        HorizontalOptions="{Binding AllotRemaining, Converter={StaticResource BoolToToggleAlign}}"
+                                        VerticalOptions="Center" Margin="4,0" />
+                            </Border>
+                        </Grid>
+                    </Border>
+
                     <!-- ── Wishlist section ───────────────────────────────── -->
                     <Label Text="WISHLIST" FontSize="11" FontAttributes="Bold"
                            CharacterSpacing="0.6" TextColor="{DynamicResource TextSecondary}"

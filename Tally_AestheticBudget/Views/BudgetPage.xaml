@@ -2,237 +2,528 @@
 <ContentPage
     x:Class="Tally_AestheticBudget.Views.BudgetPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:Tally_AestheticBudget.ViewModels"
     xmlns:models="clr-namespace:Tally_AestheticBudget.Models"
+    xmlns:controls="clr-namespace:Tally_AestheticBudget.Controls"
     x:DataType="vm:BudgetViewModel"
     Shell.NavBarIsVisible="True"
     BackgroundColor="{DynamicResource PageBackground}">
 
-    <ScrollView>
-        <VerticalStackLayout Spacing="0">
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Spacing="0">
 
-            <!-- ── Floating header card ───────────────────────────────────── -->
-            <Border BackgroundColor="{DynamicResource CardBackground}"
-                    Stroke="{DynamicResource CardBorder}"
-                    StrokeThickness="1" StrokeShape="RoundRectangle 20"
-                    Padding="20,18,20,16" Margin="16,16,16,0">
-                <VerticalStackLayout Spacing="0">
-                    <Grid ColumnDefinitions="*,Auto">
-                        <VerticalStackLayout Grid.Column="0" Spacing="2">
-                            <Label Text="Budget Overview" FontFamily="DisplayFont"
-                                   FontSize="28" TextColor="{DynamicResource TextPrimary}" />
-                            <Label Text="Track limits per category"
-                                   FontSize="13" TextColor="{DynamicResource TextSecondary}" />
+                <!-- ── Floating header card ───────────────────────────────────── -->
+                <Border BackgroundColor="{DynamicResource CardBackground}"
+                        Stroke="{DynamicResource CardBorder}"
+                        StrokeThickness="1" StrokeShape="RoundRectangle 20"
+                        Padding="20,18,20,14" Margin="16,16,16,0">
+                    <VerticalStackLayout Spacing="0">
+
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                            <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                <Label Text="Budget Overview" FontFamily="DisplayFont"
+                                       FontSize="28" TextColor="{DynamicResource TextPrimary}" />
+                                <Label Text="{Binding PeriodLabel}"
+                                       FontSize="13" TextColor="{DynamicResource TextSecondary}" />
+                            </VerticalStackLayout>
+
+                            <!-- Spent (info only) -->
+                            <Border Grid.Column="1"
+                                    Style="{StaticResource HoverButton}"
+                                    BackgroundColor="{DynamicResource AccentColorAlpha}"
+                                    Stroke="{DynamicResource AccentColor}"
+                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 980"
+                                    Padding="14,8" VerticalOptions="Center">
+                                <HorizontalStackLayout Spacing="4">
+                                    <Label Text="Spent: " FontSize="13"
+                                           TextColor="{DynamicResource TextPrimary}" />
+                                    <Label Text="{Binding TotalSpentLabel}"
+                                           FontSize="13" FontAttributes="Bold"
+                                           TextColor="{DynamicResource AccentColor}" />
+                                </HorizontalStackLayout>
+                            </Border>
+
+                            <!-- Budget (tappable → edit) -->
+                            <Border Grid.Column="2"
+                                    Style="{StaticResource HoverButton}"
+                                    BackgroundColor="{DynamicResource AccentColor}"
+                                    StrokeShape="RoundRectangle 980"
+                                    Padding="14,8" VerticalOptions="Center">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ShowTotalEditorCommand}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="{Binding TotalLimitLabel}"
+                                       FontSize="13" FontAttributes="Bold" TextColor="White" />
+                            </Border>
+                        </Grid>
+
+                        <!-- Total progress + remaining (only when a total is set) -->
+                        <VerticalStackLayout IsVisible="{Binding HasTotal}" Spacing="6"
+                                             Margin="0,14,0,0">
+                            <Grid HeightRequest="8">
+                                <Border BackgroundColor="{DynamicResource AccentColorAlpha}"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 980"
+                                        HeightRequest="8" />
+                                <Border BackgroundColor="{Binding IsOverTotal, Converter={StaticResource BoolToProgressColor}}"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 980"
+                                        HeightRequest="8" HorizontalOptions="Start"
+                                        WidthRequest="{Binding TotalProgress, Converter={StaticResource PercentToWidth}}" />
+                            </Grid>
+                            <Label Text="{Binding TotalRemainingLabel}"
+                                   FontSize="12"
+                                   TextColor="{Binding IsOverTotal, Converter={StaticResource BoolToProgressColor}}" />
                         </VerticalStackLayout>
-                        <Border Grid.Column="1"
-                                Style="{StaticResource HoverButton}"
-                                BackgroundColor="{DynamicResource AccentColorAlpha}"
-                                Stroke="{DynamicResource AccentColor}"
-                                StrokeThickness="0.8" StrokeShape="RoundRectangle 980"
-                                Padding="14,8" VerticalOptions="Center">
-                            <HorizontalStackLayout Spacing="4">
-                                <Label Text="Total: " FontSize="13"
-                                       TextColor="{DynamicResource TextPrimary}" />
-                                <Label Text="{Binding TotalSpentLabel}"
-                                       FontSize="13" FontAttributes="Bold"
-                                       TextColor="{DynamicResource AccentColor}" />
-                            </HorizontalStackLayout>
-                        </Border>
-                    </Grid>
 
-                    <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,16,0,0">
-                        <Border Grid.Column="0"
-                                Style="{StaticResource HoverButton}"
-                                BackgroundColor="{DynamicResource PageBackground}"
-                                StrokeShape="RoundRectangle 980"
+                        <!-- ── Filter chips ──────────────────────────────────── -->
+                        <ScrollView Orientation="Horizontal"
+                                    HorizontalScrollBarVisibility="Never"
+                                    Margin="0,14,0,0">
+                            <HorizontalStackLayout Spacing="8">
+
+                                <!-- TODAY -->
+                                <Border Style="{StaticResource HoverButton}"
+                                        BackgroundColor="{Binding IsFilterDay, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding IsFilterDay, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+                                        Padding="12,7,6,7">
+                                    <HorizontalStackLayout Spacing="0">
+                                        <Label Text="{Binding SelectedDayLabel}" FontSize="14"
+                                               FontAttributes="{Binding IsFilterDay, Converter={StaticResource BoolToFontAttr}}"
+                                               TextColor="{Binding IsFilterDay, Converter={StaticResource BoolToChipText}}">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding FilterDayCommand}" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
+                                        <Border BackgroundColor="Transparent" StrokeThickness="0"
+                                                Padding="6,0,6,0" VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding ShowDayPickerCommand}" />
+                                            </Border.GestureRecognizers>
+                                            <Label Text="▾" FontSize="11"
+                                                   TextColor="{Binding IsFilterDay, Converter={StaticResource BoolToChipText}}"
+                                                   VerticalOptions="Center" />
+                                        </Border>
+                                    </HorizontalStackLayout>
+                                </Border>
+
+                                <!-- THIS WEEK -->
+                                <Border Style="{StaticResource HoverButton}"
+                                        BackgroundColor="{Binding IsFilterWeek, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding IsFilterWeek, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+                                        Padding="12,7,6,7">
+                                    <HorizontalStackLayout Spacing="0">
+                                        <Label Text="{Binding SelectedWeekLabel}" FontSize="14"
+                                               FontAttributes="{Binding IsFilterWeek, Converter={StaticResource BoolToFontAttr}}"
+                                               TextColor="{Binding IsFilterWeek, Converter={StaticResource BoolToChipText}}">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding FilterWeekCommand}" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
+                                        <Border BackgroundColor="Transparent" StrokeThickness="0"
+                                                Padding="6,0,6,0" VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding ShowWeekPickerCommand}" />
+                                            </Border.GestureRecognizers>
+                                            <Label Text="▾" FontSize="11"
+                                                   TextColor="{Binding IsFilterWeek, Converter={StaticResource BoolToChipText}}"
+                                                   VerticalOptions="Center" />
+                                        </Border>
+                                    </HorizontalStackLayout>
+                                </Border>
+
+                                <!-- THIS MONTH -->
+                                <Border Style="{StaticResource HoverButton}"
+                                        BackgroundColor="{Binding IsFilterMonth, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding IsFilterMonth, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+                                        Padding="12,7,6,7">
+                                    <HorizontalStackLayout Spacing="0">
+                                        <Label Text="{Binding SelectedMonthLabel}" FontSize="14"
+                                               FontAttributes="{Binding IsFilterMonth, Converter={StaticResource BoolToFontAttr}}"
+                                               TextColor="{Binding IsFilterMonth, Converter={StaticResource BoolToChipText}}">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding FilterMonthCommand}" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
+                                        <Border BackgroundColor="Transparent" StrokeThickness="0"
+                                                Padding="6,0,6,0" VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding ShowMonthPickerCommand}" />
+                                            </Border.GestureRecognizers>
+                                            <Label Text="▾" FontSize="11"
+                                                   TextColor="{Binding IsFilterMonth, Converter={StaticResource BoolToChipText}}"
+                                                   VerticalOptions="Center" />
+                                        </Border>
+                                    </HorizontalStackLayout>
+                                </Border>
+
+                                <!-- THIS YEAR -->
+                                <Border Style="{StaticResource HoverButton}"
+                                        BackgroundColor="{Binding IsFilterYear, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding IsFilterYear, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+                                        Padding="12,7,6,7">
+                                    <HorizontalStackLayout Spacing="0">
+                                        <Label Text="{Binding SelectedYearLabel}" FontSize="14"
+                                               FontAttributes="{Binding IsFilterYear, Converter={StaticResource BoolToFontAttr}}"
+                                               TextColor="{Binding IsFilterYear, Converter={StaticResource BoolToChipText}}">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding FilterYearCommand}" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
+                                        <Border BackgroundColor="Transparent" StrokeThickness="0"
+                                                Padding="6,0,6,0" VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding ShowYearPickerCommand}" />
+                                            </Border.GestureRecognizers>
+                                            <Label Text="▾" FontSize="11"
+                                                   TextColor="{Binding IsFilterYear, Converter={StaticResource BoolToChipText}}"
+                                                   VerticalOptions="Center" />
+                                        </Border>
+                                    </HorizontalStackLayout>
+                                </Border>
+
+                            </HorizontalStackLayout>
+                        </ScrollView>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- ── Category list ──────────────────────────────────────────── -->
+                <VerticalStackLayout Padding="16,16,16,40" Spacing="12" Margin="16,4,16,0">
+                    <CollectionView ItemsSource="{Binding BudgetItems}" SelectionMode="None">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="7" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:BudgetCategoryItem">
+                                <Border BackgroundColor="{DynamicResource CardBackground}"
+                                        Stroke="{DynamicResource CardBorder}"
+                                        StrokeThickness="0.5" StrokeShape="RoundRectangle 18"
+                                        Padding="18,16" Margin="0,0,0,16">
+                                    <VerticalStackLayout Spacing="10">
+
+                                        <Grid ColumnDefinitions="Auto,*,Auto">
+                                            <Image Grid.Column="0" Source="{Binding CategoryIcon}"
+                                                   WidthRequest="24" HeightRequest="24"
+                                                   VerticalOptions="Center" Margin="0,0,10,0" />
+                                            <VerticalStackLayout Grid.Column="1" Spacing="2"
+                                                                 VerticalOptions="Center">
+                                                <Label Text="{Binding DisplayName}" FontSize="15"
+                                                       FontAttributes="Bold"
+                                                       TextColor="{DynamicResource TextPrimary}" />
+                                                <Label Text="{Binding StatusLabel}" FontSize="12"
+                                                       TextColor="{DynamicResource TextSecondary}" />
+                                            </VerticalStackLayout>
+                                            <Border Grid.Column="2"
+                                                    IsVisible="{Binding ShowEditButton}"
+                                                    Style="{StaticResource HoverButton}"
+                                                    BackgroundColor="Transparent" Padding="8,4">
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=StartEditCommand}"
+                                                        CommandParameter="{Binding .}" />
+                                                </Border.GestureRecognizers>
+                                                <Image Source="icon_add.png"
+                                                       WidthRequest="16" HeightRequest="16"
+                                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                                            </Border>
+                                        </Grid>
+
+                                        <Grid HeightRequest="8">
+                                            <Border BackgroundColor="{DynamicResource AccentColorAlpha}"
+                                                    StrokeThickness="0" StrokeShape="RoundRectangle 980"
+                                                    HeightRequest="8" />
+                                            <Border BackgroundColor="{Binding IsOverLimit, Converter={StaticResource BoolToProgressColor}}"
+                                                    StrokeThickness="0" StrokeShape="RoundRectangle 980"
+                                                    HeightRequest="8" HorizontalOptions="Start"
+                                                    WidthRequest="{Binding ProgressPercent, Converter={StaticResource PercentToWidth}}" />
+                                        </Grid>
+
+                                        <Grid IsVisible="{Binding IsEditing}"
+                                              ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                                            <Border Grid.Column="0"
+                                                    BackgroundColor="{DynamicResource PageBackground}"
+                                                    Stroke="{DynamicResource CardBorder}"
+                                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 12"
+                                                    Padding="12,0">
+                                                <Entry Text="{Binding EditLimitText}"
+                                                       Placeholder="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=LimitPlaceholder}"
+                                                       PlaceholderColor="#C0C0C5" Keyboard="Numeric"
+                                                       FontSize="14" TextColor="{DynamicResource TextPrimary}"
+                                                       BackgroundColor="Transparent" HeightRequest="40" />
+                                            </Border>
+                                            <Border Grid.Column="1"
+                                                    Style="{StaticResource HoverButton}"
+                                                    BackgroundColor="{DynamicResource AccentColor}"
+                                                    StrokeShape="RoundRectangle 12" Padding="14,10">
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=SaveLimitCommand}"
+                                                        CommandParameter="{Binding .}" />
+                                                </Border.GestureRecognizers>
+                                                <Label Text="Save" FontSize="13" FontAttributes="Bold" TextColor="White" />
+                                            </Border>
+                                            <Border Grid.Column="2"
+                                                    Style="{StaticResource HoverButton}"
+                                                    BackgroundColor="{DynamicResource PageBackground}"
+                                                    StrokeShape="RoundRectangle 12" Padding="14,10">
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=CancelEditCommand}"
+                                                        CommandParameter="{Binding .}" />
+                                                </Border.GestureRecognizers>
+                                                <Label Text="Cancel" FontSize="13" TextColor="{DynamicResource TextSecondary}" />
+                                            </Border>
+                                        </Grid>
+
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- ── Total editor overlay ───────────────────────────────────────────── -->
+        <Grid IsVisible="{Binding IsTotalEditVisible}">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding DismissTotalEditorCommand}" />
+            </Grid.GestureRecognizers>
+            <controls:BlurOverlay />
+            <Border BackgroundColor="{DynamicResource CardBackground}"
+                    Style="{StaticResource ModalCard}" StrokeShape="RoundRectangle 20"
+                    HorizontalOptions="Center" VerticalOptions="Center"
+                    MaximumWidthRequest="340" Margin="20,0" Padding="24,24">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="18">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="Monthly budget" FontSize="17" FontAttributes="Bold"
+                               TextColor="{DynamicResource TextPrimary}" />
+                        <Label Text="Your ceiling for everything this month"
+                               FontSize="12" TextColor="{DynamicResource TextSecondary}" />
+                    </VerticalStackLayout>
+                    <Border BackgroundColor="{DynamicResource PageBackground}"
+                            Stroke="{DynamicResource CardBorder}"
+                            StrokeThickness="0.8" StrokeShape="RoundRectangle 12" Padding="12,0">
+                        <Entry Text="{Binding EditTotalText}"
+                               Placeholder="{Binding TotalPlaceholder}"
+                               PlaceholderColor="#C0C0C5" Keyboard="Numeric" FontSize="14"
+                               TextColor="{DynamicResource TextPrimary}"
+                               BackgroundColor="Transparent" HeightRequest="44" />
+                    </Border>
+                    <Border BackgroundColor="{DynamicResource AccentColor}"
+                            StrokeThickness="0" StrokeShape="RoundRectangle 980" Padding="0,13">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SaveTotalCommand}" />
+                        </Border.GestureRecognizers>
+                        <Label Text="Save" FontSize="14" FontAttributes="Bold"
+                               TextColor="White" HorizontalOptions="Center" />
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <!-- ── Day picker overlay ─────────────────────────────────────────────── -->
+        <Grid IsVisible="{Binding IsDayPickerVisible}">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding DismissDayPickerCommand}" />
+            </Grid.GestureRecognizers>
+            <controls:BlurOverlay />
+            <Border BackgroundColor="{DynamicResource CardBackground}"
+                    Style="{StaticResource ModalCard}" StrokeShape="RoundRectangle 20"
+                    HorizontalOptions="Center" VerticalOptions="Center"
+                    MaximumWidthRequest="340" Margin="20,0" Padding="24,24">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="18">
+                    <Label Text="Pick a day" FontSize="17" FontAttributes="Bold"
+                           TextColor="{DynamicResource TextPrimary}" />
+                    <Border BackgroundColor="{DynamicResource PageBackground}"
+                            Stroke="{DynamicResource CardBorder}"
+                            StrokeThickness="0.8" StrokeShape="RoundRectangle 12" Padding="12,4">
+                        <DatePicker Date="{Binding PickerDay}" Format="MMMM dd, yyyy"
+                                    FontSize="14" TextColor="{DynamicResource TextPrimary}"
+                                    BackgroundColor="Transparent"
+                                    MaximumDate="{x:Static sys:DateTime.Today}" />
+                    </Border>
+                    <Border BackgroundColor="{DynamicResource AccentColor}"
+                            StrokeThickness="0" StrokeShape="RoundRectangle 980" Padding="0,13">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ConfirmDayPickerCommand}" />
+                        </Border.GestureRecognizers>
+                        <Label Text="Apply" FontSize="14" FontAttributes="Bold"
+                               TextColor="White" HorizontalOptions="Center" />
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <!-- ── Week picker overlay ────────────────────────────────────────────── -->
+        <Grid IsVisible="{Binding IsWeekPickerVisible}">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding DismissWeekPickerCommand}" />
+            </Grid.GestureRecognizers>
+            <controls:BlurOverlay />
+            <Border BackgroundColor="{DynamicResource CardBackground}"
+                    Style="{StaticResource ModalCard}" StrokeShape="RoundRectangle 20"
+                    HorizontalOptions="Center" VerticalOptions="Center"
+                    MaximumWidthRequest="340" Margin="20,0" Padding="24,24">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="20">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Pick a week" FontSize="17" FontAttributes="Bold"
+                               TextColor="{DynamicResource TextPrimary}" />
+                        <Label Text="Showing the last 8 weeks"
+                               FontSize="12" TextColor="{DynamicResource TextSecondary}" />
+                    </VerticalStackLayout>
+                    <CollectionView ItemsSource="{Binding WeekOptions}" SelectionMode="None"
+                                    MaximumHeightRequest="380">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:WeekOption">
+                                <Border BackgroundColor="{Binding IsSelected, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding IsSelected, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeShape="RoundRectangle 12" StrokeThickness="0.8"
+                                        Padding="14,11" Margin="0,0,0,6">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=SelectWeekCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="{Binding Label}" FontSize="13"
+                                           FontAttributes="{Binding IsSelected, Converter={StaticResource BoolToFontAttr}}"
+                                           TextColor="{Binding IsSelected, Converter={StaticResource BoolToChipText}}" />
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <!-- ── Month picker overlay ───────────────────────────────────────────── -->
+        <Grid IsVisible="{Binding IsMonthPickerVisible}">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding DismissMonthPickerCommand}" />
+            </Grid.GestureRecognizers>
+            <controls:BlurOverlay />
+            <Border BackgroundColor="{DynamicResource CardBackground}"
+                    Style="{StaticResource ModalCard}" StrokeShape="RoundRectangle 20"
+                    HorizontalOptions="Center" VerticalOptions="Center"
+                    MaximumWidthRequest="340" Margin="20,0" Padding="24,24">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="20">
+                    <Label Text="Select month" FontSize="17" FontAttributes="Bold"
+                           TextColor="{DynamicResource TextPrimary}" />
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <Border Grid.Column="0" BackgroundColor="{DynamicResource PageBackground}"
+                                StrokeThickness="0" StrokeShape="RoundRectangle 980"
                                 WidthRequest="36" HeightRequest="36">
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding PreviousMonthCommand}" />
+                                <TapGestureRecognizer Command="{Binding PreviousYearCommand}" />
                             </Border.GestureRecognizers>
                             <Label Text="‹" FontSize="20" TextColor="{DynamicResource TextPrimary}"
                                    HorizontalOptions="Center" VerticalOptions="Center" />
                         </Border>
-                        <Label Grid.Column="1" Text="{Binding MonthLabel}"
+                        <Label Grid.Column="1" Text="{Binding PickerYear}"
                                FontSize="15" FontAttributes="Bold"
                                TextColor="{DynamicResource TextPrimary}"
                                HorizontalOptions="Center" VerticalOptions="Center" />
-                        <Border Grid.Column="2"
-                                Style="{StaticResource HoverButton}"
-                                BackgroundColor="{DynamicResource PageBackground}"
-                                StrokeShape="RoundRectangle 980"
+                        <Border Grid.Column="2" BackgroundColor="{DynamicResource PageBackground}"
+                                StrokeThickness="0" StrokeShape="RoundRectangle 980"
                                 WidthRequest="36" HeightRequest="36">
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding NextMonthCommand}" />
+                                <TapGestureRecognizer Command="{Binding NextYearCommand}" />
                             </Border.GestureRecognizers>
                             <Label Text="›" FontSize="20" TextColor="{DynamicResource TextPrimary}"
                                    HorizontalOptions="Center" VerticalOptions="Center" />
                         </Border>
                     </Grid>
+                    <CollectionView ItemsSource="{Binding MonthOptions}" SelectionMode="None">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical" Span="4"
+                                             HorizontalItemSpacing="8" VerticalItemSpacing="8" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:MonthOption">
+                                <Border BackgroundColor="{Binding IsSelected, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding IsSelected, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeShape="RoundRectangle 12" StrokeThickness="0.8"
+                                        Padding="0,10" HeightRequest="44">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=SelectMonthCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="{Binding ShortName}" FontSize="13"
+                                           FontAttributes="{Binding IsSelected, Converter={StaticResource BoolToFontAttr}}"
+                                           HorizontalOptions="Center" VerticalOptions="Center"
+                                           TextColor="{Binding IsSelected, Converter={StaticResource BoolToChipText}}" />
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
                 </VerticalStackLayout>
             </Border>
+        </Grid>
 
-            <!-- ── Category list ──────────────────────────────────────────── -->
-            <VerticalStackLayout Padding="16,16,16,40" Spacing="12"
-                     Margin="16,16,16,0"
-                     HorizontalOptions="Fill">
+        <!-- ── Year picker overlay ────────────────────────────────────────────── -->
+        <Grid IsVisible="{Binding IsYearPickerVisible}">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding DismissYearPickerCommand}" />
+            </Grid.GestureRecognizers>
+            <controls:BlurOverlay />
+            <Border BackgroundColor="{DynamicResource CardBackground}"
+                    Style="{StaticResource ModalCard}" StrokeShape="RoundRectangle 20"
+                    HorizontalOptions="Center" VerticalOptions="Center"
+                    MaximumWidthRequest="300" Margin="20,0" Padding="24,24">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="20">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="Pick a year" FontSize="17" FontAttributes="Bold"
+                               TextColor="{DynamicResource TextPrimary}" />
+                        <Label Text="Budget limits summed across that year"
+                               FontSize="12" TextColor="{DynamicResource TextSecondary}" />
+                    </VerticalStackLayout>
+                    <CollectionView ItemsSource="{Binding YearList}" SelectionMode="None">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical" Span="3"
+                                             HorizontalItemSpacing="8" VerticalItemSpacing="8" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="x:Int32">
+                                <Border BackgroundColor="{DynamicResource PageBackground}"
+                                        Stroke="{DynamicResource CardBorder}"
+                                        StrokeShape="RoundRectangle 12" StrokeThickness="0.8"
+                                        Padding="0,12" HeightRequest="48">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=SelectYearCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="{Binding .}" FontSize="14"
+                                           HorizontalOptions="Center" VerticalOptions="Center"
+                                           TextColor="{DynamicResource TextPrimary}" />
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
 
-                <CollectionView ItemsSource="{Binding BudgetItems}" SelectionMode="None">
-                    <CollectionView.ItemsLayout>
-                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="7" />
-                    </CollectionView.ItemsLayout>
-
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="models:BudgetCategoryItem">
-
-                            <Border BackgroundColor="{DynamicResource CardBackground}"
-                        Stroke="{DynamicResource CardBorder}"
-                        StrokeThickness="0.5"
-                        StrokeShape="RoundRectangle 18"
-                        Padding="18,16"
-                        Margin="0,0,0,16">
-
-                                <VerticalStackLayout Spacing="10">
-
-                                    <!-- HEADER ROW -->
-                                    <Grid ColumnDefinitions="Auto,*,Auto">
-
-                                        <!-- PNG ICON (FIXED HERE) -->
-                                        <Image Grid.Column="0"
-                                   Source="{Binding CategoryIcon}"
-                                   WidthRequest="24"
-                                   HeightRequest="24"
-                                   VerticalOptions="Center"
-                                   Margin="0,0,10,0" />
-
-                                        <!-- CATEGORY TEXT -->
-                                        <VerticalStackLayout Grid.Column="1"
-                                                 Spacing="2"
-                                                 VerticalOptions="Center">
-
-                                            <Label Text="{Binding CategoryLabel}"
-                                       FontSize="15"
-                                       FontAttributes="Bold"
-                                       TextColor="{DynamicResource TextPrimary}" />
-
-                                            <Label Text="{Binding StatusLabel}"
-                                       FontSize="12"
-                                       TextColor="{DynamicResource TextSecondary}" />
-
-                                        </VerticalStackLayout>
-
-                                        <!-- EDIT BUTTON -->
-                                        <Border Grid.Column="2"
-                                    IsVisible="{Binding IsNotEditing}"
-                                    Style="{StaticResource HoverButton}"
-                                    BackgroundColor="Transparent"
-                                    Padding="8,4">
-
-                                            <Border.GestureRecognizers>
-                                                <TapGestureRecognizer
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=StartEditCommand}"
-                                        CommandParameter="{Binding .}" />
-                                            </Border.GestureRecognizers>
-
-                                            <Image Source="icon_add.png"
-                                                   WidthRequest="16" HeightRequest="16"
-                                                   HorizontalOptions="Center"
-                                                   VerticalOptions="Center" />
-
-                                        </Border>
-
-                                    </Grid>
-
-                                    <!-- PROGRESS BAR -->
-                                    <Grid HeightRequest="8">
-
-                                        <Border BackgroundColor="{DynamicResource AccentColorAlpha}"
-                                    StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 980"
-                                    HeightRequest="8" />
-
-                                        <Border BackgroundColor="{Binding IsOverLimit, Converter={StaticResource BoolToProgressColor}}"
-                                    StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 980"
-                                    HeightRequest="8"
-                                    HorizontalOptions="Start"
-                                    WidthRequest="{Binding ProgressPercent, Converter={StaticResource PercentToWidth}}" />
-
-                                    </Grid>
-
-                                    <!-- INLINE EDIT ROW -->
-                                    <Grid IsVisible="{Binding IsEditing}"
-                              ColumnDefinitions="*,Auto,Auto"
-                              ColumnSpacing="8">
-
-                                        <Border Grid.Column="0"
-                                    BackgroundColor="{DynamicResource PageBackground}"
-                                    Stroke="{DynamicResource CardBorder}"
-                                    StrokeThickness="0.8"
-                                    StrokeShape="RoundRectangle 12"
-                                    Padding="12,0">
-
-                                            <Entry Text="{Binding EditLimitText}"
-                                       Placeholder="{Binding LimitPlaceholder}"
-                                       PlaceholderColor="#C0C0C5"
-                                       Keyboard="Numeric"
-                                       FontSize="14"
-                                       TextColor="{DynamicResource TextPrimary}"
-                                       BackgroundColor="Transparent"
-                                       HeightRequest="40" />
-
-                                        </Border>
-
-                                        <Border Grid.Column="1"
-                                    Style="{StaticResource HoverButton}"
-                                    BackgroundColor="{DynamicResource AccentColor}"
-                                    StrokeShape="RoundRectangle 12"
-                                    Padding="14,10">
-
-                                            <Border.GestureRecognizers>
-                                                <TapGestureRecognizer
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=SaveLimitCommand}"
-                                        CommandParameter="{Binding .}" />
-                                            </Border.GestureRecognizers>
-
-                                            <Label Text="Save"
-                                       FontSize="13"
-                                       FontAttributes="Bold"
-                                       TextColor="White" />
-
-                                        </Border>
-
-                                        <Border Grid.Column="2"
-                                    Style="{StaticResource HoverButton}"
-                                    BackgroundColor="{DynamicResource PageBackground}"
-                                    StrokeShape="RoundRectangle 12"
-                                    Padding="14,10">
-
-                                            <Border.GestureRecognizers>
-                                                <TapGestureRecognizer
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=CancelEditCommand}"
-                                        CommandParameter="{Binding .}" />
-                                            </Border.GestureRecognizers>
-
-                                            <Label Text="Cancel"
-                                       FontSize="13"
-                                       TextColor="{DynamicResource TextSecondary}" />
-
-                                        </Border>
-
-                                    </Grid>
-
-                                </VerticalStackLayout>
-                            </Border>
-
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-
-                </CollectionView>
-
-            </VerticalStackLayout>
-
-        </VerticalStackLayout>
-    </ScrollView>
-
+    </Grid>
 </ContentPage>

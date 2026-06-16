@@ -47,6 +47,8 @@ public partial class SettingsViewModel : ObservableObject
         _showDate = settings.ShowDate;
         _showCoolingOff = settings.ShowCoolingOff;
         _showStaleReminder = settings.ShowStaleReminder;
+        _allotRemaining = settings.AllotRemainingToUnallocated;
+
 
         FilteredCurrencies = new ObservableCollection<CurrencyOption>(
             AllCurrencies.Select(c =>
@@ -175,6 +177,23 @@ public partial class SettingsViewModel : ObservableObject
     private bool _showDate;
     partial void OnShowDateChanged(bool value) { _settings.ShowDate = value; _dataChanged.NotifySettingsChanged(); }
 
+
+    //
+
+    private bool _allotRemaining;
+    public bool AllotRemaining
+    {
+        get => _allotRemaining;
+        set
+        {
+            if (SetProperty(ref _allotRemaining, value))
+            {
+                _settings.AllotRemainingToUnallocated = value;
+                _dataChanged.NotifyBudgetChanged();
+            }
+        }
+    }
+
     // ── Wishlist toggles ──────────────────────────────────────────────────────
 
     [ObservableProperty]
@@ -185,6 +204,7 @@ public partial class SettingsViewModel : ObservableObject
     private bool _showStaleReminder;
     partial void OnShowStaleReminderChanged(bool value) { _settings.ShowStaleReminder = value; _dataChanged.NotifySettingsChanged(); }
 
+    
     // ── Toggle commands — flip the bool properties ────────────────────────────
 
     [RelayCommand]
@@ -195,6 +215,9 @@ public partial class SettingsViewModel : ObservableObject
 
     [RelayCommand]
     private void ToggleShowDate() => ShowDate = !ShowDate;
+
+    [RelayCommand]
+    private void ToggleAllotRemaining() => AllotRemaining = !AllotRemaining;
 
     [RelayCommand]
     private void ToggleShowCoolingOff() => ShowCoolingOff = !ShowCoolingOff;
