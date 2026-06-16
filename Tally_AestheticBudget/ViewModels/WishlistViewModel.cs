@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Globalization;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Tally_AestheticBudget.Models;
@@ -239,7 +240,29 @@ public partial class WishlistViewModel : ObservableObject
             return;
         }
 
-        decimal.TryParse(NewPrice, out var price);
+        decimal.TryParse(NewPrice, NumberStyles.Number, CultureInfo.InvariantCulture, out var price);
+
+        // Validate TargetMonth format: must be "YYYY-MM" or empty.
+        string? targetMonth = null;
+        if (!string.IsNullOrWhiteSpace(NewTargetMonth))
+        {
+            var raw = NewTargetMonth.Trim();
+            var parts = raw.Split('-');
+            bool validFormat =
+                parts.Length == 2
+                && int.TryParse(parts[0], out var tmYear) && tmYear >= 2000 && tmYear <= 2100
+                && int.TryParse(parts[1], out var tmMonth) && tmMonth >= 1 && tmMonth <= 12;
+
+            if (!validFormat)
+            {
+                await Shell.Current.DisplayAlertAsync(
+                    "Invalid target month",
+                    "Enter the target month as YYYY-MM (e.g. 2025-09).",
+                    "OK");
+                return;
+            }
+            targetMonth = raw;
+        }
 
         await _wishService.SaveWishItemAsync(new WishItemEntity
         {
@@ -249,10 +272,11 @@ public partial class WishlistViewModel : ObservableObject
             Category = NewCategory.ToString(),
             Caption = string.IsNullOrWhiteSpace(NewCaption) ? null : NewCaption.Trim(),
             PhotoPath = NewPhotoPath,
-            TargetMonth = string.IsNullOrWhiteSpace(NewTargetMonth) ? null : NewTargetMonth,
+            TargetMonth = targetMonth,
             Status = WishStatus.Planned.ToString(),
             CreatedAt = DateTime.Now
         });
+
 
         IsAddModalVisible = false;
         IsDirty = true;

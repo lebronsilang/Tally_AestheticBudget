@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Globalization;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Tally_AestheticBudget.Models;
@@ -227,8 +228,23 @@ public partial class FeedViewModel : ObservableObject
     [RelayCommand]
     private async Task SaveNewExpenseAsync()
     {
-        if (!decimal.TryParse(NewAmountText, out var amount) || amount <= 0) return;
-        if (string.IsNullOrWhiteSpace(NewTitle)) return;
+        if (string.IsNullOrWhiteSpace(NewTitle))
+        {
+            await Shell.Current.DisplayAlertAsync(
+                "Title required",
+                "Please give this expense a title before saving.",
+                "OK");
+            return;
+        }
+
+        if (!decimal.TryParse(NewAmountText, NumberStyles.Number, CultureInfo.InvariantCulture, out var amount) || amount <= 0)
+        {
+            await Shell.Current.DisplayAlertAsync(
+                "Invalid amount",
+                "Please enter a valid amount greater than zero.",
+                "OK");
+            return;
+        }
 
         await _expenseService.SaveExpenseAsync(new ExpenseEntity
         {
@@ -338,8 +354,23 @@ public partial class FeedViewModel : ObservableObject
     [RelayCommand]
     private async Task SaveEditExpenseAsync()
     {
-        if (!decimal.TryParse(EditAmountText, out var amount) || amount <= 0) return;
-        if (string.IsNullOrWhiteSpace(EditTitle)) return;
+        if (string.IsNullOrWhiteSpace(EditTitle))
+        {
+            await Shell.Current.DisplayAlertAsync(
+                "Title required",
+                "Please give this expense a title before saving.",
+                "OK");
+            return;
+        }
+
+        if (!decimal.TryParse(EditAmountText, NumberStyles.Number, CultureInfo.InvariantCulture, out var amount) || amount <= 0)
+        {
+            await Shell.Current.DisplayAlertAsync(
+                "Invalid amount",
+                "Please enter a valid amount greater than zero.",
+                "OK");
+            return;
+        }
 
         var expense = await _expenseService.GetExpenseByIdAsync(EditExpenseId);
         if (expense is null) return;

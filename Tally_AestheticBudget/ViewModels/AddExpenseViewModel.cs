@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Globalization;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Tally_AestheticBudget.Models;
 using Tally_AestheticBudget.Services;
@@ -73,17 +74,20 @@ public partial class AddExpenseViewModel : ObservableObject
     // ── Photo ─────────────────────────────────────────────────────────────────
 
     public bool HasPhoto => !string.IsNullOrEmpty(PhotoPath);
+
     // ── Display helpers ───────────────────────────────────────────────────────
+
     public string AmountLabel => $"Amount ({_settings.CurrencySymbol})";
 
     // ── Validation ────────────────────────────────────────────────────────────
 
+    // InvariantCulture ensures "1234.56" always parses correctly regardless of the
+    // device's regional number-format setting (e.g. locales that use "," as decimal).
     private bool CanSave() =>
-        decimal.TryParse(AmountText, out var v) && v > 0
+        decimal.TryParse(AmountText, NumberStyles.Number, CultureInfo.InvariantCulture, out var v) && v > 0
         && !string.IsNullOrWhiteSpace(Title);
 
     // ── Load existing expense when in edit mode ───────────────────────────────
-    // Called by the page's OnAppearing when ExpenseId > 0
 
     public async Task LoadExistingAsync()
     {
@@ -93,7 +97,7 @@ public partial class AddExpenseViewModel : ObservableObject
         if (expense is null) return;
 
         Title = expense.Title ?? string.Empty;
-        AmountText = expense.Amount.ToString("N2");
+        AmountText = expense.Amount.ToString("N2", CultureInfo.InvariantCulture);
         Note = expense.Note ?? string.Empty;
         SelectedDate = expense.Date;
         PhotoPath = expense.PhotoPath;
@@ -149,11 +153,13 @@ public partial class AddExpenseViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanSave))]
     private async Task SaveAsync()
     {
-        if (!decimal.TryParse(AmountText, out var amount) || amount <= 0) return;
+        // CanSave already guards the button — this is a safety net in case Save is
+        // somehow triggered programmatically with invalid state.
+        if (!decimal.TryParse(AmountText, NumberStyles.Number, CultureInfo.InvariantCulture, out var amount) || amount <= 0)
+            return;
 
         if (IsEditMode)
         {
-            // Edit mode — update the existing row
             var expense = await _expenseService.GetExpenseByIdAsync(ExpenseId);
             if (expense is null) return;
 
@@ -168,7 +174,6 @@ public partial class AddExpenseViewModel : ObservableObject
         }
         else
         {
-            // Add mode — insert a new row
             var expense = new ExpenseEntity
             {
                 Title = Title.Trim(),
