@@ -20,6 +20,7 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 fonts.AddFont("DMSans-Regular.ttf", "BodyFont");
                 fonts.AddFont("DMSerifDisplay-Regular.ttf", "DisplayFont");
+                fonts.AddFont("Phosphor.ttf", "PhosphorIcons");
             });
 
 

@@ -13,6 +13,7 @@
               BackgroundColor="{DynamicResource CardBackground}"
               Padding="16,0">
 
+            <!-- Brand / filter header -->
             <HorizontalStackLayout x:Name="HeaderInfo" Grid.Column="0" Spacing="4" VerticalOptions="Center">
                 <Label Text="{Binding Text}" FontFamily="DisplayFont" FontSize="18"
                        TextColor="{DynamicResource AccentColor}" VerticalOptions="Center" />
@@ -20,67 +21,110 @@
                        TextColor="{DynamicResource AccentColor}" VerticalOptions="Center" />
             </HorizontalStackLayout>
 
+            <!-- Navigation tabs -->
             <HorizontalStackLayout Grid.Column="1" Spacing="4"
                                    HorizontalOptions="Center" VerticalOptions="Center">
 
+                <!-- Feed -->
                 <Border x:Name="TabFeed"
                         BackgroundColor="Transparent" StrokeThickness="0"
                         StrokeShape="RoundRectangle 980" Padding="14,6">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="FeedPage" />
                     </Border.GestureRecognizers>
-                    <Label x:Name="TabFeedLabel" Text="≡  Feed" FontSize="13"
-                           TextColor="{DynamicResource TextSecondary}" />
+                    <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                        <!-- receipt  U+E3EC -->
+                        <Label x:Name="TabFeedIcon" Text="&#xE3EC;" FontFamily="PhosphorIcons"
+                               FontSize="16" TextColor="{DynamicResource TextSecondary}"
+                               VerticalOptions="Center" />
+                        <Label x:Name="TabFeedLabel" Text="Feed" FontSize="13"
+                               TextColor="{DynamicResource TextSecondary}" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
                 </Border>
 
+                <!-- Budget -->
                 <Border x:Name="TabBudget"
                         BackgroundColor="Transparent" StrokeThickness="0"
                         StrokeShape="RoundRectangle 980" Padding="14,6">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="BudgetPage" />
                     </Border.GestureRecognizers>
-                    <Label x:Name="TabBudgetLabel" Text="◈  Budget" FontSize="13"
-                           TextColor="{DynamicResource TextSecondary}" />
+                    <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                        <!-- wallet  U+E68A -->
+                        <Label x:Name="TabBudgetIcon" Text="&#xE68A;" FontFamily="PhosphorIcons"
+                               FontSize="16" TextColor="{DynamicResource TextSecondary}"
+                               VerticalOptions="Center" />
+                        <Label x:Name="TabBudgetLabel" Text="Budget" FontSize="13"
+                               TextColor="{DynamicResource TextSecondary}" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
                 </Border>
 
+                <!-- Wishlist -->
                 <Border x:Name="TabWishlist"
                         BackgroundColor="Transparent" StrokeThickness="0"
                         StrokeShape="RoundRectangle 980" Padding="14,6">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="WishlistPage" />
                     </Border.GestureRecognizers>
-                    <Label x:Name="TabWishlistLabel" Text="♡  Wishlist" FontSize="13"
-                           TextColor="{DynamicResource TextSecondary}" />
+                    <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                        <!-- heart  U+E2A8 -->
+                        <Label x:Name="TabWishlistIcon" Text="&#xE2A8;" FontFamily="PhosphorIcons"
+                               FontSize="16" TextColor="{DynamicResource TextSecondary}"
+                               VerticalOptions="Center" />
+                        <Label x:Name="TabWishlistLabel" Text="Wishlist" FontSize="13"
+                               TextColor="{DynamicResource TextSecondary}" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
                 </Border>
 
+                <!-- Grocery -->
                 <Border x:Name="TabGrocery"
                         BackgroundColor="Transparent" StrokeThickness="0"
                         StrokeShape="RoundRectangle 980" Padding="14,6">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="GroceryPage" />
                     </Border.GestureRecognizers>
-                    <Label x:Name="TabGroceryLabel" Text="⊟  Grocery" FontSize="13"
-                           TextColor="{DynamicResource TextSecondary}" />
+                    <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                        <!-- basket  U+E964 -->
+                        <Label x:Name="TabGroceryIcon" Text="&#xE964;" FontFamily="PhosphorIcons"
+                               FontSize="16" TextColor="{DynamicResource TextSecondary}"
+                               VerticalOptions="Center" />
+                        <Label x:Name="TabGroceryLabel" Text="Grocery" FontSize="13"
+                               TextColor="{DynamicResource TextSecondary}" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
                 </Border>
 
+                <!-- Themes -->
                 <Border x:Name="TabThemes"
                         BackgroundColor="Transparent" StrokeThickness="0"
                         StrokeShape="RoundRectangle 980" Padding="14,6">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="ThemesPage" />
                     </Border.GestureRecognizers>
-                    <Label x:Name="TabThemesLabel" Text="✦  Themes" FontSize="13"
-                           TextColor="{DynamicResource TextSecondary}" />
+                    <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                        <!-- palette  U+E6C8 -->
+                        <Label x:Name="TabThemesIcon" Text="&#xE6C8;" FontFamily="PhosphorIcons"
+                               FontSize="16" TextColor="{DynamicResource TextSecondary}"
+                               VerticalOptions="Center" />
+                        <Label x:Name="TabThemesLabel" Text="Themes" FontSize="13"
+                               TextColor="{DynamicResource TextSecondary}" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
                 </Border>
 
+                <!-- Settings -->
                 <Border x:Name="TabSettings"
                         BackgroundColor="Transparent" StrokeThickness="0"
                         StrokeShape="RoundRectangle 980" Padding="14,6">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="SettingsPage" />
                     </Border.GestureRecognizers>
-                    <Label x:Name="TabSettingsLabel" Text="⊙  Settings" FontSize="13"
-                           TextColor="{DynamicResource TextSecondary}" />
+                    <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                        <!-- gear  U+E270 -->
+                        <Label x:Name="TabSettingsIcon" Text="&#xE270;" FontFamily="PhosphorIcons"
+                               FontSize="16" TextColor="{DynamicResource TextSecondary}"
+                               VerticalOptions="Center" />
+                        <Label x:Name="TabSettingsLabel" Text="Settings" FontSize="13"
+                               TextColor="{DynamicResource TextSecondary}" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
                 </Border>
 
             </HorizontalStackLayout>
@@ -117,13 +161,10 @@
                           Route="ThemesPage" />
         </Tab>
 
-        <!-- ↓ NEW -->
         <Tab x:Name="SettingsTab" Title="Settings">
             <ShellContent ContentTemplate="{DataTemplate views:SettingsPage}"
                           Route="SettingsPage" />
         </Tab>
-
-
 
     </TabBar>
 

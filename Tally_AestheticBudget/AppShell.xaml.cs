@@ -5,7 +5,9 @@ namespace Tally_AestheticBudget;
 
 public partial class AppShell : Shell
 {
-    private readonly Dictionary<string, (Border tab, Label label)> _tabs;
+    // Each entry now carries both the icon label (Phosphor glyph) and the text label.
+    // SetActiveTab applies colour to both so the glyph recolours alongside the text.
+    private readonly Dictionary<string, (Border tab, Label iconLabel, Label textLabel)> _tabs;
     private string _currentRoute = "FeedPage";
     private readonly Services.HeaderState _header;
 
@@ -19,12 +21,12 @@ public partial class AppShell : Shell
 
         _tabs = new()
         {
-            ["FeedPage"] = (TabFeed, TabFeedLabel),
-            ["BudgetPage"] = (TabBudget, TabBudgetLabel),
-            ["WishlistPage"] = (TabWishlist, TabWishlistLabel),
-            ["GroceryPage"] = (TabGrocery, TabGroceryLabel),
-            ["ThemesPage"] = (TabThemes, TabThemesLabel),
-            ["SettingsPage"] = (TabSettings, TabSettingsLabel),
+            ["FeedPage"] = (TabFeed, TabFeedIcon, TabFeedLabel),
+            ["BudgetPage"] = (TabBudget, TabBudgetIcon, TabBudgetLabel),
+            ["WishlistPage"] = (TabWishlist, TabWishlistIcon, TabWishlistLabel),
+            ["GroceryPage"] = (TabGrocery, TabGroceryIcon, TabGroceryLabel),
+            ["ThemesPage"] = (TabThemes, TabThemesIcon, TabThemesLabel),
+            ["SettingsPage"] = (TabSettings, TabSettingsIcon, TabSettingsLabel),
         };
         SetActiveTab("FeedPage");
 
@@ -34,7 +36,7 @@ public partial class AppShell : Shell
             var page = _tabs.Keys.FirstOrDefault(k => route.Contains(k));
             if (page is not null) SetActiveTab(page);
 
-            // Feed & Budget own their filter label; every other page shows the brand.
+            // Feed & Budget push their own filter labels; every other page reverts to brand.
             if (page is not ("FeedPage" or "BudgetPage"))
                 _header.ShowBrand();
         };
@@ -45,12 +47,14 @@ public partial class AppShell : Shell
         _currentRoute = route;
         var accent = Color.FromArgb(App.CurrentAccent);
 
-        foreach (var (key, (tab, label)) in _tabs)
+        foreach (var (key, (tab, iconLabel, textLabel)) in _tabs)
         {
             bool isActive = key == route;
             tab.BackgroundColor = isActive ? accent.WithAlpha(0.12f) : Colors.Transparent;
-            label.TextColor = isActive ? accent : ThemeColors.Get("TextSecondary", "#6e6e73");
-            label.FontAttributes = isActive ? FontAttributes.Bold : FontAttributes.None;
+            var color = isActive ? accent : ThemeColors.Get("TextSecondary", "#6e6e73");
+            iconLabel.TextColor = color;
+            textLabel.TextColor = color;
+            textLabel.FontAttributes = isActive ? FontAttributes.Bold : FontAttributes.None;
         }
     }
 

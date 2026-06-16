@@ -183,11 +183,18 @@ public class ExpenseService : IExpenseService
     {
         var db = await _db.GetConnectionAsync();
 
-        // Delete all expense rows (including grocery line items)
-        await db.DeleteAllAsync<ExpenseEntity>();
+        // Collect photo paths before wiping — we clean up files after the DB commit
+        // so a failed delete doesn't leave the DB in a partially-deleted state.
+        var photoPaths = (await db.Table<ExpenseEntity>()
+            .Where(e => e.PhotoPath != null)
+            .ToListAsync())
+            .Select(e => e.PhotoPath!)
+            .ToList();
 
-        // Delete all grocery groups
+        await db.DeleteAllAsync<ExpenseEntity>();
         await db.DeleteAllAsync<GroceryGroupEntity>();
+
+        DeletePhotoFiles(photoPaths);
     }
 
     // Fetches the raw DB row by Id — used by edit mode to pre-fill the form
@@ -215,7 +222,18 @@ public class ExpenseService : IExpenseService
     public async Task DeleteExpenseAsync(int id)
     {
         var db = await _db.GetConnectionAsync();
+
+        // Read the photo path before deleting the row so we can clean up the file.
+        var entity = await db.Table<ExpenseEntity>()
+            .Where(e => e.Id == id)
+            .FirstOrDefaultAsync();
+
         await db.DeleteAsync<ExpenseEntity>(id);
+
+        // Delete the copied photo file if one exists. Failures are swallowed so a
+        // locked / already-missing file never blocks the logical delete.
+        if (entity?.PhotoPath is { } path)
+            DeletePhotoFiles([path]);
     }
 
     public async Task DeleteGroceryGroupAsync(int groupId)
@@ -223,12 +241,32 @@ public class ExpenseService : IExpenseService
         var db = await _db.GetConnectionAsync();
         await db.ExecuteAsync("DELETE FROM expenses WHERE GroceryGroupId = ?", groupId);
         await db.DeleteAsync<GroceryGroupEntity>(groupId);
+        // Grocery groups don't carry photos — no file cleanup needed here.
     }
 
     public async Task DeleteGroceryLineItemAsync(int lineItemId)
     {
         var db = await _db.GetConnectionAsync();
         await db.DeleteAsync<ExpenseEntity>(lineItemId);
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private static void DeletePhotoFiles(IEnumerable<string> paths)
+    {
+        foreach (var path in paths)
+        {
+            try
+            {
+                if (File.Exists(path))
+                    File.Delete(path);
+            }
+            catch (Exception ex)
+            {
+                // Log but never surface — a stuck/missing file must not break the delete flow.
+                System.Diagnostics.Debug.WriteLine($"Photo cleanup failed for {path}: {ex.Message}");
+            }
+        }
     }
 
     private static ExpenseCategory ParseCategory(string raw) =>

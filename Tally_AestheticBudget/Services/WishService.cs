@@ -15,8 +15,6 @@ public interface IWishService
     Task DeleteAllAsync();
 }
 
-// Implementation 
-
 public class WishService : IWishService
 {
     private readonly DatabaseService _db;
@@ -124,6 +122,8 @@ public class WishService : IWishService
             Amount = item.Price,
             Category = item.Category,
             Note = item.Caption,
+            // The photo file is shared — the expense takes ownership; the wish row
+            // is deleted below but we deliberately do NOT delete the file here.
             PhotoPath = item.PhotoPath,
             Date = DateTime.Now
         };
@@ -138,7 +138,16 @@ public class WishService : IWishService
     public async Task DeleteWishItemAsync(int id)
     {
         var db = await _db.GetConnectionAsync();
+
+        // Read the photo path before deleting the row.
+        var item = await db.Table<WishItemEntity>().Where(w => w.Id == id).FirstOrDefaultAsync();
+
         await db.DeleteAsync<WishItemEntity>(id);
+
+        // Clean up the copied photo file. Swallowed — a locked / missing file must
+        // never prevent the logical delete from completing.
+        if (item?.PhotoPath is { } path)
+            DeletePhotoFiles([path]);
     }
 
     public async Task<bool> IsDuplicateAsync(string name)
@@ -151,17 +160,40 @@ public class WishService : IWishService
             "SELECT COUNT(*) FROM wish_items WHERE TRIM(LOWER(Name)) = ?", trimmed);
         return count > 0;
     }
+
     public async Task DeleteAllAsync()
     {
         var db = await _db.GetConnectionAsync();
 
-        await db.RunInTransactionAsync(tran =>
-        {
-            tran.DeleteAll<WishItemEntity>();
-        });
+        // Collect photo paths before wiping.
+        var photoPaths = (await db.Table<WishItemEntity>()
+            .Where(w => w.PhotoPath != null)
+            .ToListAsync())
+            .Select(w => w.PhotoPath!)
+            .ToList();
+
+        await db.RunInTransactionAsync(tran => { tran.DeleteAll<WishItemEntity>(); });
+
+        DeletePhotoFiles(photoPaths);
     }
 
-    // Helpers
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private static void DeletePhotoFiles(IEnumerable<string> paths)
+    {
+        foreach (var path in paths)
+        {
+            try
+            {
+                if (File.Exists(path))
+                    File.Delete(path);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Photo cleanup failed for {path}: {ex.Message}");
+            }
+        }
+    }
 
     private static WishPriority ParsePriority(string raw) =>
         Enum.TryParse<WishPriority>(raw, true, out var p) ? p : WishPriority.Want;
