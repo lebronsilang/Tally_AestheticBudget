@@ -5,8 +5,6 @@ namespace Tally_AestheticBudget;
 
 public partial class AppShell : Shell
 {
-    // Each entry now carries both the icon label (Phosphor glyph) and the text label.
-    // SetActiveTab applies colour to both so the glyph recolours alongside the text.
     private readonly Dictionary<string, (Border tab, Label iconLabel, Label textLabel)> _tabs;
     private string _currentRoute = "FeedPage";
     private readonly Services.HeaderState _header;
@@ -36,8 +34,7 @@ public partial class AppShell : Shell
             var page = _tabs.Keys.FirstOrDefault(k => route.Contains(k));
             if (page is not null) SetActiveTab(page);
 
-            // Feed & Budget push their own filter labels; every other page reverts to brand.
-            if (page is not ("FeedPage" or "BudgetPage"))
+            if (page is not ("FeedPage" or "BudgetPage" or "GroceryPage" or "WishlistPage"))
                 _header.ShowBrand();
         };
     }
@@ -74,7 +71,6 @@ public partial class AppShell : Shell
             vm?.OpenAddModalCommand.Execute(null);
         }
     }
-
     public void RefreshAccent()
     {
         SetActiveTab(_currentRoute);

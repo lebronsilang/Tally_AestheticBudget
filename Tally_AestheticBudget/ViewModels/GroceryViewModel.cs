@@ -13,6 +13,7 @@ public partial class GroceryViewModel : ObservableObject
     private readonly ISettingsService _settings;
     private readonly DataChangedService _dataChanged;
     private readonly IThemeService _themeService;
+    private readonly HeaderState _header;
     private bool _themeSubscribed;
 
     private List<GroceryItem> _allItems = [];
@@ -22,7 +23,8 @@ public partial class GroceryViewModel : ObservableObject
         IBudgetService budgetService,
         ISettingsService settings,
         DataChangedService dataChanged,
-        IThemeService themeService)
+        IThemeService themeService,
+        HeaderState header)
     {
         _groceryService = groceryService;
         _budgetService = budgetService;
@@ -31,6 +33,7 @@ public partial class GroceryViewModel : ObservableObject
         _themeService = themeService;
 
         _dataChanged.GroceryChanged += () => IsDirty = true;
+        _header = header;
     }
 
     public string PriceLabelText => $"Price ({_settings.CurrencySymbol}) optional";
@@ -54,6 +57,12 @@ public partial class GroceryViewModel : ObservableObject
     public bool IsFilterPending => ActiveFilter == GroceryFilter.Pending;
     public bool IsFilterChecked => ActiveFilter == GroceryFilter.Checked;
 
+    private string FilterHeaderLabel => ActiveFilter switch
+    {
+        GroceryFilter.Pending => "Pending",
+        GroceryFilter.Checked => "Checked",
+        _ => string.Empty
+    };
     // ── Add modal ─────────────────────────────────────────────────────────────
 
     [ObservableProperty] private bool _isAddModalVisible;
@@ -156,6 +165,7 @@ public partial class GroceryViewModel : ObservableObject
             _themeSubscribed = true;
             _themeService.ThemeChanged += OnThemeChanged;
         }
+        _header.ShowFilter(FilterHeaderLabel);
         if (!IsDirty) return;
         IsDirty = false;
         await LoadAsync();
@@ -216,6 +226,7 @@ public partial class GroceryViewModel : ObservableObject
             _ => _allItems.AsEnumerable()
         };
         DisplayedItems = new ObservableCollection<GroceryItem>(filtered);
+        _header.ShowFilter(FilterHeaderLabel);
     }
 
     private void UpdateStats()

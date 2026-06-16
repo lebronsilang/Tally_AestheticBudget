@@ -14,6 +14,7 @@ public partial class WishlistViewModel : ObservableObject
     private readonly ISettingsService _settings;
     private readonly DataChangedService _dataChanged;
     private readonly IThemeService _themeService;
+    private readonly HeaderState _header;
     private bool _themeSubscribed;
 
     private List<WishCardItem> _allItems = [];
@@ -25,19 +26,20 @@ public partial class WishlistViewModel : ObservableObject
             IBudgetService budgetService,
             ISettingsService settings,
             DataChangedService dataChanged,
-            IThemeService themeService)
+            IThemeService themeService,
+            HeaderState header)
     {
         _wishService = wishService;
         _budgetService = budgetService;
         _settings = settings;
         _dataChanged = dataChanged;
         _themeService = themeService;
+        _header = header;
 
         _dataChanged.WishlistChanged += () => IsDirty = true;
         _dataChanged.SettingsChanged += () => IsDirty = true;
     }
 
-    // Exposed so XAML can bind the currency label dynamically
     public string CurrencySymbol => _settings.CurrencySymbol;
     public string PriceLabelText => $"Price ({_settings.CurrencySymbol})";
 
@@ -115,6 +117,16 @@ public partial class WishlistViewModel : ObservableObject
     public bool IsFilterWant => ActiveFilter == WishFilter.Want;
     public bool IsFilterNeed => ActiveFilter == WishFilter.Need;
     public bool IsFilterSomeday => ActiveFilter == WishFilter.Someday;
+
+    private string FilterHeaderLabel => ActiveFilter switch
+    {
+        WishFilter.Planned => "Planned",
+        WishFilter.Bought => "Bought",
+        WishFilter.Want => "Want",
+        WishFilter.Need => "Need",
+        WishFilter.Someday => "Someday",
+        _ => string.Empty
+    };
 
     // ── Add modal ─────────────────────────────────────────────────────────────
 
@@ -400,6 +412,7 @@ public partial class WishlistViewModel : ObservableObject
             _themeSubscribed = true;
             _themeService.ThemeChanged += OnThemeChanged;
         }
+        _header.ShowFilter(FilterHeaderLabel);
         if (!IsDirty) return;
         IsDirty = false;
         await LoadAsync();
@@ -474,6 +487,7 @@ public partial class WishlistViewModel : ObservableObject
             DistributeIntoColumns(CurrentColumnCount);
 
         DataLoaded?.Invoke();
+        _header.ShowFilter(FilterHeaderLabel);
     }
 
     public bool HasNoItems => DisplayedItems.Count == 0;
