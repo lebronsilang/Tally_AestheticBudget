@@ -234,8 +234,10 @@
                             </Grid>
 
                             <Border BackgroundColor="{DynamicResource AccentColor}"
-                                    StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 980" Padding="0,16">
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 980"
+                                Padding="36,14"
+                                HorizontalOptions="Center">
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding ApplyCustomThemeCommand}" />
                                 </Border.GestureRecognizers>
