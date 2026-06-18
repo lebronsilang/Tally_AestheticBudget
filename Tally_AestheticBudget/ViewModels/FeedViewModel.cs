@@ -18,6 +18,15 @@ public partial class FeedViewModel : ObservableObject
 
     public int CurrentColumnCount { get; set; } = 2;
 
+    // View mode (masonry vs. list) — refreshed from settings on each appear.
+    private bool _isListView;
+    public bool IsListView
+    {
+        get => _isListView;
+        private set { if (SetProperty(ref _isListView, value)) OnPropertyChanged(nameof(IsMasonryView)); }
+    }
+    public bool IsMasonryView => !IsListView;
+
     public FeedViewModel(IExpenseService expenseService, ISettingsService settings,
         DataChangedService dataChanged, IThemeService themeService, HeaderState header)
     {
@@ -418,6 +427,7 @@ public partial class FeedViewModel : ObservableObject
             _themeSubscribed = true;
             _themeService.ThemeChanged += OnThemeChanged;
         }
+        IsListView = _settings.FeedListView;
         _header.ShowFilter(FilterHeaderLabel);
         if (!IsDirty) return;
         IsDirty = false;
@@ -732,11 +742,13 @@ public partial class FeedViewModel : ObservableObject
             var showNotes = _settings.ShowNotes;
             var showPrice = _settings.ShowPrice;
             var showDate = _settings.ShowDate;
+            var listShowPhoto = _settings.ListViewShowsPhoto;
             foreach (var item in itemList)
             {
                 item.SettingShowNotes = showNotes;
                 item.SettingShowPrice = showPrice;
                 item.SettingShowDate = showDate;
+                item.SettingListShowPhoto = listShowPhoto;
             }
 
             FeedItems = new ObservableCollection<FeedCardItem>(itemList);

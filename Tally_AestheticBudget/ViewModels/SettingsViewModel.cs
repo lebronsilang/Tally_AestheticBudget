@@ -48,6 +48,9 @@ public partial class SettingsViewModel : ObservableObject
         _showCoolingOff = settings.ShowCoolingOff;
         _showStaleReminder = settings.ShowStaleReminder;
         _allotRemaining = settings.AllotRemainingToUnallocated;
+        _feedListView = settings.FeedListView;
+        _wishlistListView = settings.WishlistListView;
+        _listViewShowsPhoto = settings.ListViewShowsPhoto;
 
 
         FilteredCurrencies = new ObservableCollection<CurrencyOption>(
@@ -204,7 +207,21 @@ public partial class SettingsViewModel : ObservableObject
     private bool _showStaleReminder;
     partial void OnShowStaleReminderChanged(bool value) { _settings.ShowStaleReminder = value; _dataChanged.NotifySettingsChanged(); }
 
-    
+    // ── View-mode toggles ──────────────────────────────────────────────────────
+
+    [ObservableProperty]
+    private bool _feedListView;
+    partial void OnFeedListViewChanged(bool value) { _settings.FeedListView = value; _dataChanged.NotifySettingsChanged(); }
+
+    [ObservableProperty]
+    private bool _wishlistListView;
+    partial void OnWishlistListViewChanged(bool value) { _settings.WishlistListView = value; _dataChanged.NotifySettingsChanged(); }
+
+    [ObservableProperty]
+    private bool _listViewShowsPhoto;
+    partial void OnListViewShowsPhotoChanged(bool value) { _settings.ListViewShowsPhoto = value; _dataChanged.NotifySettingsChanged(); }
+
+
     // ── Toggle commands — flip the bool properties ────────────────────────────
 
     [RelayCommand]
@@ -224,6 +241,15 @@ public partial class SettingsViewModel : ObservableObject
 
     [RelayCommand]
     private void ToggleShowStaleReminder() => ShowStaleReminder = !ShowStaleReminder;
+
+    [RelayCommand]
+    private void ToggleFeedListView() => FeedListView = !FeedListView;
+
+    [RelayCommand]
+    private void ToggleWishlistListView() => WishlistListView = !WishlistListView;
+
+    [RelayCommand]
+    private void ToggleListViewShowsPhoto() => ListViewShowsPhoto = !ListViewShowsPhoto;
 
     // ── Clear data ────────────────────────────────────────────────────────────
 

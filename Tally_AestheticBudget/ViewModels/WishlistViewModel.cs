@@ -43,6 +43,25 @@ public partial class WishlistViewModel : ObservableObject
     public string CurrencySymbol => _settings.CurrencySymbol;
     public string PriceLabelText => $"Price ({_settings.CurrencySymbol})";
 
+    // View mode (masonry vs. list) — refreshed from settings on each appear.
+    private bool _isListView;
+    public bool IsListView
+    {
+        get => _isListView;
+        private set
+        {
+            if (SetProperty(ref _isListView, value))
+            {
+                OnPropertyChanged(nameof(IsMasonryView));
+                OnPropertyChanged(nameof(ShowMasonryArea));
+                OnPropertyChanged(nameof(ShowListArea));
+            }
+        }
+    }
+    public bool IsMasonryView => !IsListView;
+    public bool ShowMasonryArea => !HasNoItems && IsMasonryView;
+    public bool ShowListArea => !HasNoItems && IsListView;
+
     // ── Items ─────────────────────────────────────────────────────────────────
 
     [ObservableProperty]
@@ -412,6 +431,7 @@ public partial class WishlistViewModel : ObservableObject
             _themeSubscribed = true;
             _themeService.ThemeChanged += OnThemeChanged;
         }
+        IsListView = _settings.WishlistListView;
         _header.ShowFilter(FilterHeaderLabel);
         if (!IsDirty) return;
         IsDirty = false;
@@ -448,10 +468,12 @@ public partial class WishlistViewModel : ObservableObject
             // Inject current settings into each card item
             var showCooling = _settings.ShowCoolingOff;
             var showStale = _settings.ShowStaleReminder;
+            var listShowPhoto = _settings.ListViewShowsPhoto;
             foreach (var item in _allItems)
             {
                 item.SettingShowCooling = showCooling;
                 item.SettingShowStale = showStale;
+                item.SettingListShowPhoto = listShowPhoto;
             }
 
             UpdateStats();
@@ -481,6 +503,8 @@ public partial class WishlistViewModel : ObservableObject
         DisplayedItems = new ObservableCollection<WishCardItem>(filtered);
 
         OnPropertyChanged(nameof(HasNoItems));
+        OnPropertyChanged(nameof(ShowMasonryArea));
+        OnPropertyChanged(nameof(ShowListArea));
 
         // rebuild masonry columns automatically
         if (CurrentColumnCount > 0)

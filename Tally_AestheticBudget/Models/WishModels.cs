@@ -93,6 +93,11 @@ public partial class WishCardItem : ObservableObject
     public bool SettingShowCooling { get; set; } = true;
     public bool SettingShowStale { get; set; } = true;
 
+    // List-view photo presentation (set by WishlistViewModel during load)
+    public bool SettingListShowPhoto { get; set; } = true;
+    public bool ListShowThumbnail => HasPhoto && SettingListShowPhoto;
+    public bool ListShowPhotoIndicator => HasPhoto && !SettingListShowPhoto;
+
     private int DaysSinceAdded => (DateTime.Today - CreatedAt.Date).Days;
 
     public bool IsInCoolingOff => DaysSinceAdded < 3;

@@ -19,6 +19,11 @@ public interface ISettingsService
     bool ShowCoolingOff { get; set; }
     bool ShowStaleReminder { get; set; }
     bool AllotRemainingToUnallocated { get; set; }
+
+    // View-mode toggles (masonry vs. list)
+    bool FeedListView { get; set; }
+    bool WishlistListView { get; set; }
+    bool ListViewShowsPhoto { get; set; }
 }
 
 public class SettingsService : ISettingsService
@@ -33,6 +38,9 @@ public class SettingsService : ISettingsService
     private const string KeyCoolingOff = "show_cooling_off";
     private const string KeyStale = "show_stale_reminder";
     private const string KeyAllotRemaining = "allot_remaining_unallocated";
+    private const string KeyFeedListView = "feed_list_view";
+    private const string KeyWishlistListView = "wishlist_list_view";
+    private const string KeyListViewShowsPhoto = "list_view_shows_photo";
 
     public string CurrencySymbol => Preferences.Get(KeySymbol, "₱");
     public string CurrencyCode => Preferences.Get(KeyCode, "PHP");
@@ -81,5 +89,23 @@ public class SettingsService : ISettingsService
     {
         get => Preferences.Get("allot_remaining_to_unallocated", false);
         set => Preferences.Set("allot_remaining_to_unallocated", value);
+    }
+
+    public bool FeedListView
+    {
+        get => Preferences.Get(KeyFeedListView, false);
+        set => Preferences.Set(KeyFeedListView, value);
+    }
+
+    public bool WishlistListView
+    {
+        get => Preferences.Get(KeyWishlistListView, false);
+        set => Preferences.Set(KeyWishlistListView, value);
+    }
+
+    public bool ListViewShowsPhoto
+    {
+        get => Preferences.Get(KeyListViewShowsPhoto, true);
+        set => Preferences.Set(KeyListViewShowsPhoto, value);
     }
 }

@@ -137,12 +137,74 @@
 
             <ScrollView
                 x:Name="MasonryScrollView"
-                IsVisible="{Binding HasNoItems, Converter={StaticResource InverseBool}}">
+                IsVisible="{Binding ShowMasonryArea}">
                 <Grid
                     x:Name="MasonryGrid"
                     ColumnSpacing="10"
                     Padding="14,12,14,100"
                     VerticalOptions="Start" />
+            </ScrollView>
+
+            <!-- List view (alternate to masonry) -->
+            <ScrollView IsVisible="{Binding ShowListArea}">
+                <VerticalStackLayout Spacing="8" Padding="14,12,14,100"
+                                     BindableLayout.ItemsSource="{Binding DisplayedItems}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:WishCardItem">
+                            <Border BackgroundColor="{DynamicResource CardBackground}"
+                                    Stroke="{DynamicResource CardBorder}"
+                                    StrokeThickness="1" StrokeShape="RoundRectangle 16"
+                                    Padding="12">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:WishlistViewModel}}, Path=OpenDetailCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                    <Image Grid.Column="0" Source="{Binding PhotoPath}"
+                                           Aspect="AspectFill" WidthRequest="52" HeightRequest="52"
+                                           VerticalOptions="Center"
+                                           IsVisible="{Binding ListShowThumbnail}">
+                                        <Image.Clip>
+                                            <RoundRectangleGeometry Rect="0,0,52,52" CornerRadius="12" />
+                                        </Image.Clip>
+                                    </Image>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                        <HorizontalStackLayout Spacing="5">
+                                            <Label Text="{Binding PriorityLabel}" FontSize="10"
+                                                   FontAttributes="Bold" CharacterSpacing="0.5"
+                                                   TextColor="{DynamicResource AccentColor}" />
+                                            <Label Text="·" FontSize="10" VerticalOptions="Center"
+                                                   TextColor="{DynamicResource TextSecondary}" />
+                                            <Label Text="{Binding CategoryLabel}" FontSize="10"
+                                                   VerticalOptions="Center"
+                                                   TextColor="{DynamicResource TextSecondary}" />
+                                            <Label Text="📷" FontSize="10" VerticalOptions="Center"
+                                                   IsVisible="{Binding ListShowPhotoIndicator}" />
+                                            <Label Text="📌" FontSize="10" VerticalOptions="Center"
+                                                   IsVisible="{Binding IsPinned}" />
+                                        </HorizontalStackLayout>
+                                        <Label Text="{Binding Name}" FontSize="15" FontAttributes="Bold"
+                                               LineBreakMode="TailTruncation"
+                                               TextColor="{DynamicResource TextPrimary}" />
+                                        <Label Text="{Binding Caption}" FontSize="12" MaxLines="1"
+                                               LineBreakMode="TailTruncation" IsVisible="{Binding HasCaption}"
+                                               TextColor="{DynamicResource TextSecondary}" />
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="2" Spacing="2"
+                                                         VerticalOptions="Center" HorizontalOptions="End">
+                                        <Label Text="{Binding PriceFormatted}" FontSize="15"
+                                               FontAttributes="Bold" HorizontalOptions="End"
+                                               TextColor="{DynamicResource TextPrimary}" />
+                                        <Label Text="{Binding StatusLabel}" FontSize="10"
+                                               HorizontalOptions="End"
+                                               TextColor="{DynamicResource TextSecondary}" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
             </ScrollView>
 
         </Grid>

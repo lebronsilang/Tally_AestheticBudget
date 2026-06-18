@@ -408,6 +408,116 @@
                         </VerticalStackLayout>
                     </Border>
 
+                    <!-- ── View Mode section ───────────────── -->
+                    <Label Text="VIEW MODE" FontSize="11" FontAttributes="Bold"
+                           CharacterSpacing="0.6" TextColor="{DynamicResource TextSecondary}"
+                           Margin="4,4,0,0" />
+
+                    <Border BackgroundColor="{DynamicResource CardBackground}"
+                            Stroke="{DynamicResource CardBorder}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 20"
+                            Padding="0">
+                        <VerticalStackLayout Spacing="0">
+
+                            <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,14"
+                              ColumnSpacing="14">
+                                <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
+                                    StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                    WidthRequest="36" HeightRequest="36">
+                                    <Label Text="🧱" FontSize="16"
+                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                    <Label Text="Feed: List View" FontSize="14" FontAttributes="Bold"
+                                       TextColor="{DynamicResource TextPrimary}" />
+                                    <Label Text="Show the feed as a list instead of masonry" FontSize="12"
+                                       TextColor="{DynamicResource TextSecondary}" />
+                                </VerticalStackLayout>
+                                <Border Grid.Column="2"
+                                    BackgroundColor="{Binding FeedListView, Converter={StaticResource BoolToChipBg}}"
+                                    Stroke="{Binding FeedListView, Converter={StaticResource BoolToChipBorder}}"
+                                    StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
+                                    WidthRequest="48" HeightRequest="28" VerticalOptions="Center">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ToggleFeedListViewCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 980"
+                                        WidthRequest="20" HeightRequest="20"
+                                        HorizontalOptions="{Binding FeedListView, Converter={StaticResource BoolToToggleAlign}}"
+                                        VerticalOptions="Center" Margin="4,0" />
+                                </Border>
+                            </Grid>
+
+                            <BoxView HeightRequest="0.5" Color="{DynamicResource CardBorder}"
+                                 Margin="20,0" />
+
+                            <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,14"
+                              ColumnSpacing="14">
+                                <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
+                                    StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                    WidthRequest="36" HeightRequest="36">
+                                    <Label Text="📖" FontSize="16"
+                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                    <Label Text="Wishlist: List View" FontSize="14" FontAttributes="Bold"
+                                       TextColor="{DynamicResource TextPrimary}" />
+                                    <Label Text="Show the dream board as a list instead of masonry" FontSize="12"
+                                       TextColor="{DynamicResource TextSecondary}" />
+                                </VerticalStackLayout>
+                                <Border Grid.Column="2"
+                                    BackgroundColor="{Binding WishlistListView, Converter={StaticResource BoolToChipBg}}"
+                                    Stroke="{Binding WishlistListView, Converter={StaticResource BoolToChipBorder}}"
+                                    StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
+                                    WidthRequest="48" HeightRequest="28" VerticalOptions="Center">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ToggleWishlistListViewCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 980"
+                                        WidthRequest="20" HeightRequest="20"
+                                        HorizontalOptions="{Binding WishlistListView, Converter={StaticResource BoolToToggleAlign}}"
+                                        VerticalOptions="Center" Margin="4,0" />
+                                </Border>
+                            </Grid>
+
+                            <BoxView HeightRequest="0.5" Color="{DynamicResource CardBorder}"
+                                 Margin="20,0" />
+
+                            <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,14"
+                              ColumnSpacing="14">
+                                <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
+                                    StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                    WidthRequest="36" HeightRequest="36">
+                                    <Label Text="🖼" FontSize="16"
+                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                    <Label Text="Show Photos in List" FontSize="14" FontAttributes="Bold"
+                                       TextColor="{DynamicResource TextPrimary}" />
+                                    <Label Text="Off shows a 📷 marker instead of a thumbnail" FontSize="12"
+                                       TextColor="{DynamicResource TextSecondary}" />
+                                </VerticalStackLayout>
+                                <Border Grid.Column="2"
+                                    BackgroundColor="{Binding ListViewShowsPhoto, Converter={StaticResource BoolToChipBg}}"
+                                    Stroke="{Binding ListViewShowsPhoto, Converter={StaticResource BoolToChipBorder}}"
+                                    StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
+                                    WidthRequest="48" HeightRequest="28" VerticalOptions="Center">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ToggleListViewShowsPhotoCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 980"
+                                        WidthRequest="20" HeightRequest="20"
+                                        HorizontalOptions="{Binding ListViewShowsPhoto, Converter={StaticResource BoolToToggleAlign}}"
+                                        VerticalOptions="Center" Margin="4,0" />
+                                </Border>
+                            </Grid>
+
+                        </VerticalStackLayout>
+                    </Border>
+
                     <!-- ── Clear Data section ─────────────────────────────── -->
                     <Label Text="DATA" FontSize="11" FontAttributes="Bold"
                            CharacterSpacing="0.6" TextColor="{DynamicResource TextSecondary}"

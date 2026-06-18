@@ -40,6 +40,11 @@ public partial class FeedCardItem : ObservableObject
     public bool SettingShowPrice { get; set; } = true;
     public bool SettingShowDate { get; set; } = true;
 
+    // List-view photo presentation (set by FeedViewModel during load)
+    public bool SettingListShowPhoto { get; set; } = true;
+    public bool ListShowThumbnail => HasPhoto && SettingListShowPhoto;
+    public bool ListShowPhotoIndicator => HasPhoto && !SettingListShowPhoto;
+
     //data exists AND setting is on
     public bool ShowNote => HasNote && SettingShowNotes;
     public bool ShowPrice => SettingShowPrice;
