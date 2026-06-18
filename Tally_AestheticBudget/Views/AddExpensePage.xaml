@@ -15,7 +15,7 @@
         </Grid.GestureRecognizers>
 
         <!-- Centered modal card -->
-        <Border BackgroundColor="{StaticResource CardBackground}"
+        <Border BackgroundColor="{DynamicResource CardBackground}"
                 StrokeThickness="0" StrokeShape="RoundRectangle 16"
                 HorizontalOptions="Center" VerticalOptions="Center"
                 MaximumWidthRequest="360"
@@ -27,17 +27,17 @@
                     <Grid ColumnDefinitions="*,Auto">
                         <VerticalStackLayout Grid.Column="0" Spacing="1">
                             <Label Text="{Binding PageTitle}" FontFamily="DisplayFont"
-                                   FontSize="18" TextColor="{StaticResource TextPrimary}" />
+                                   FontSize="18" TextColor="{DynamicResource TextPrimary}" />
                             <Label Text="{Binding IsEditMode, Converter={StaticResource BoolToEditSubtitle}}"
-                                   FontSize="11" TextColor="{StaticResource TextSecondary}" />
+                                   FontSize="11" TextColor="{DynamicResource TextSecondary}" />
                         </VerticalStackLayout>
-                        <Border Grid.Column="1" BackgroundColor="{StaticResource PageBackground}"
+                        <Border Grid.Column="1" BackgroundColor="{DynamicResource PageBackground}"
                                 StrokeThickness="0" StrokeShape="RoundRectangle 980"
                                 WidthRequest="28" HeightRequest="28" VerticalOptions="Start">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding CancelCommand}" />
                             </Border.GestureRecognizers>
-                            <Label Text="✕" FontSize="12" TextColor="{StaticResource TextSecondary}"
+                            <Label Text="✕" FontSize="12" TextColor="{DynamicResource TextSecondary}"
                                    HorizontalOptions="Center" VerticalOptions="Center" />
                         </Border>
                     </Grid>
@@ -45,13 +45,13 @@
                     <!-- Title -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Title" FontSize="11" FontAttributes="Bold"
-                               TextColor="{StaticResource TextPrimary}" />
-                        <Border BackgroundColor="{StaticResource PageBackground}"
-                                Stroke="{StaticResource CardBorder}"
+                               TextColor="{DynamicResource TextPrimary}" />
+                        <Border BackgroundColor="{DynamicResource PageBackground}"
+                                Stroke="{DynamicResource CardBorder}"
                                 StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,0">
                             <Entry Text="{Binding Title}" Placeholder="e.g. Lunch with friends"
                                    PlaceholderColor="#C0C0C5" FontSize="13"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   TextColor="{DynamicResource TextPrimary}"
                                    BackgroundColor="Transparent" HeightRequest="40" />
                         </Border>
                     </VerticalStackLayout>
@@ -59,13 +59,13 @@
                     <!-- Amount -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="{Binding AmountLabel}" FontSize="11" FontAttributes="Bold"
-                               TextColor="{StaticResource TextPrimary}" />
-                        <Border BackgroundColor="{StaticResource PageBackground}"
-                                Stroke="{StaticResource CardBorder}"
+                               TextColor="{DynamicResource TextPrimary}" />
+                        <Border BackgroundColor="{DynamicResource PageBackground}"
+                                Stroke="{DynamicResource CardBorder}"
                                 StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,0">
                             <Entry Text="{Binding AmountText}" Placeholder="0.00"
                                    PlaceholderColor="#C0C0C5" Keyboard="Numeric" FontSize="13"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   TextColor="{DynamicResource TextPrimary}"
                                    BackgroundColor="Transparent" HeightRequest="40" />
                         </Border>
                     </VerticalStackLayout>
@@ -73,7 +73,7 @@
                     <!-- Category -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Category" FontSize="11" FontAttributes="Bold"
-                               TextColor="{StaticResource TextPrimary}" />
+                               TextColor="{DynamicResource TextPrimary}" />
                         <FlexLayout Wrap="Wrap" Direction="Row" JustifyContent="Start" AlignItems="Center">
                             <Border BackgroundColor="{Binding IsFoodSelected, Converter={StaticResource BoolToChipBg}}"
                                     Stroke="{Binding IsFoodSelected, Converter={StaticResource BoolToChipBorder}}"
@@ -141,13 +141,13 @@
                     <!-- Note -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Note (optional)" FontSize="11" FontAttributes="Bold"
-                               TextColor="{StaticResource TextPrimary}" />
-                        <Border BackgroundColor="{StaticResource PageBackground}"
-                                Stroke="{StaticResource CardBorder}"
+                               TextColor="{DynamicResource TextPrimary}" />
+                        <Border BackgroundColor="{DynamicResource PageBackground}"
+                                Stroke="{DynamicResource CardBorder}"
                                 StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,0">
                             <Entry Text="{Binding Note}" Placeholder="Any extra details..."
                                    PlaceholderColor="#C0C0C5" FontSize="13"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   TextColor="{DynamicResource TextPrimary}"
                                    BackgroundColor="Transparent" HeightRequest="40" />
                         </Border>
                     </VerticalStackLayout>
@@ -155,12 +155,12 @@
                     <!-- Date -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Date" FontSize="11" FontAttributes="Bold"
-                               TextColor="{StaticResource TextPrimary}" />
-                        <Border BackgroundColor="{StaticResource PageBackground}"
-                                Stroke="{StaticResource CardBorder}"
+                               TextColor="{DynamicResource TextPrimary}" />
+                        <Border BackgroundColor="{DynamicResource PageBackground}"
+                                Stroke="{DynamicResource CardBorder}"
                                 StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,4">
                             <DatePicker Date="{Binding SelectedDate}" Format="MMMM dd, yyyy"
-                                        FontSize="13" TextColor="{StaticResource TextPrimary}"
+                                        FontSize="13" TextColor="{DynamicResource TextPrimary}"
                                         BackgroundColor="Transparent" />
                         </Border>
                     </VerticalStackLayout>
@@ -168,10 +168,10 @@
                     <!-- Photo -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Photo (optional)" FontSize="11" FontAttributes="Bold"
-                               TextColor="{StaticResource TextPrimary}" />
+                               TextColor="{DynamicResource TextPrimary}" />
                         <Border IsVisible="{Binding HasPhoto, Converter={StaticResource InverseBool}}"
-                                BackgroundColor="{StaticResource PageBackground}"
-                                Stroke="{StaticResource CardBorder}"
+                                BackgroundColor="{DynamicResource PageBackground}"
+                                Stroke="{DynamicResource CardBorder}"
                                 StrokeThickness="0.8" StrokeShape="RoundRectangle 10" HeightRequest="72">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding PickPhotoCommand}" />
@@ -179,12 +179,12 @@
                             <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="3">
                                 <Label Text="📷" FontSize="20" HorizontalOptions="Center" />
                                 <Label Text="Tap to add a photo" FontSize="11"
-                                       TextColor="{StaticResource TextSecondary}" HorizontalOptions="Center" />
+                                       TextColor="{DynamicResource TextSecondary}" HorizontalOptions="Center" />
                             </VerticalStackLayout>
                         </Border>
                         <VerticalStackLayout IsVisible="{Binding HasPhoto}" Spacing="0">
-                            <Border BackgroundColor="{StaticResource PageBackground}"
-                                    Stroke="{StaticResource CardBorder}"
+                            <Border BackgroundColor="{DynamicResource PageBackground}"
+                                    Stroke="{DynamicResource CardBorder}"
                                     StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="0">
                                 <Grid RowDefinitions="Auto,Auto">
                                     <Image Grid.Row="0" Source="{Binding PhotoPath}"
@@ -207,14 +207,14 @@
                     </VerticalStackLayout>
 
                     <!-- Save -->
-                    <Border BackgroundColor="{StaticResource AccentColor}" StrokeThickness="0"
+                    <Border BackgroundColor="{DynamicResource AccentColor}" StrokeThickness="0"
                             Style="{StaticResource HoverButton}"
                             StrokeShape="RoundRectangle 980" Padding="0,12">
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding SaveCommand}" />
                         </Border.GestureRecognizers>
                         <Label Text="{Binding SaveButtonLabel}" FontSize="13" FontAttributes="Bold"
-                               TextColor="White" HorizontalOptions="Center" />
+                               TextColor="{DynamicResource OnAccentColor}" HorizontalOptions="Center" />
                     </Border>
 
                 </VerticalStackLayout>

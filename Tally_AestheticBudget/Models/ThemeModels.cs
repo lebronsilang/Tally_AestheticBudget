@@ -14,6 +14,10 @@ public class AppTheme
     public string TextPrimary { get; set; } = string.Empty;
     public string TextSecondary { get; set; } = string.Empty;
     public string Border { get; set; } = string.Empty;
+
+    /// <summary>Text/icon color placed ON the accent fill (buttons, selected chips).
+    /// Defaults to white; override per theme when the accent is too pale for white.</summary>
+    public string OnAccent { get; set; } = "#FFFFFF";
 }
 
 /// <summary>
@@ -99,7 +103,8 @@ public static class AppThemes
             Accent       = "#a78bfa",
             TextPrimary  = "#cdc8d8",
             TextSecondary = "#908aa0",
-            Border       = "#2e2e3a"
+            Border       = "#2e2e3a",
+            OnAccent     = "#1d1d1f"   // white fails WCAG AA on #a78bfa
         },
     ];
 

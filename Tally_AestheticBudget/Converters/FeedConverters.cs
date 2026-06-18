@@ -92,7 +92,7 @@ public class BoolToChipTextConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         => value is true
-            ? Colors.White
+            ? ThemeColors.Get("OnAccentColor", "#FFFFFF")
             : ThemeColors.Get("TextSecondary", "#6e6e73");
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

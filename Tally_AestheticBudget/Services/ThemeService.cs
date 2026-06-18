@@ -50,7 +50,8 @@ public class ThemeService : IThemeService
             theme.Card,
             theme.TextPrimary,
             theme.TextSecondary,
-            theme.Border);
+            theme.Border,
+            theme.OnAccent);
 
         ApplyTabBarColors(theme.Accent, theme.Card, theme.TextSecondary);
         ThemeChanged?.Invoke();
@@ -99,7 +100,8 @@ public class ThemeService : IThemeService
             var theme = AppThemes.GetById(id);
             ApplyColorsToResources(
                 theme.Background, theme.Accent, theme.Card,
-                theme.TextPrimary, theme.TextSecondary, theme.Border);
+                theme.TextPrimary, theme.TextSecondary, theme.Border,
+                theme.OnAccent);
         }
     }
 
@@ -118,7 +120,8 @@ public class ThemeService : IThemeService
                 theme.Card,
                 theme.TextPrimary,
                 theme.TextSecondary,
-                theme.Border);
+                theme.Border,
+                theme.OnAccent);
             ApplyTabBarColors(theme.Accent, theme.Card, theme.TextSecondary);
         }
         catch
@@ -183,7 +186,8 @@ public class ThemeService : IThemeService
         var theme = AppThemes.GetById(themeId);
         ApplyColorsToResources(
             theme.Background, theme.Accent, theme.Card,
-            theme.TextPrimary, theme.TextSecondary, theme.Border);
+            theme.TextPrimary, theme.TextSecondary, theme.Border,
+            theme.OnAccent);
         ApplyTabBarColors(theme.Accent, theme.Card, theme.TextSecondary);
         ThemeChanged?.Invoke();
     }
@@ -205,7 +209,8 @@ public class ThemeService : IThemeService
             var theme = AppThemes.GetById(id);
             ApplyColorsToResources(
                 theme.Background, theme.Accent, theme.Card,
-                theme.TextPrimary, theme.TextSecondary, theme.Border);
+                theme.TextPrimary, theme.TextSecondary, theme.Border,
+                theme.OnAccent);
             ApplyTabBarColors(theme.Accent, theme.Card, theme.TextSecondary);
         }
         ThemeChanged?.Invoke();
@@ -215,7 +220,8 @@ public class ThemeService : IThemeService
 
     private static void ApplyColorsToResources(
         string bg, string accent, string card,
-        string textPrimary, string textSecondary, string border)
+        string textPrimary, string textSecondary, string border,
+        string? onAccent = null)
     {
         if (Application.Current?.Resources is not ResourceDictionary res) return;
 
@@ -233,7 +239,18 @@ public class ThemeService : IThemeService
         Set("AccentColor", accent);
 
         if (Color.TryParse(accent, out var accentColor))
+        {
             res["AccentColorAlpha"] = accentColor.WithAlpha(0x1F / 255f);
+
+            // Text/icon color for anything sitting ON the accent fill.
+            // Presets supply this explicitly (preserves the established look);
+            // the custom palette has no designer choice, so we fall back to the
+            // higher-contrast of near-black / white per WCAG.
+            res["OnAccentColor"] =
+                (!string.IsNullOrWhiteSpace(onAccent) && Color.TryParse(onAccent, out var onAccentColor))
+                    ? onAccentColor
+                    : BestTextColorOn(accentColor);
+        }
 
         App.CurrentAccent = accent;
     }
@@ -252,6 +269,33 @@ public class ThemeService : IThemeService
 
         if (shell is AppShell appShell)
             appShell.RefreshAccent();
+    }
+
+    // ── Accent text-contrast helpers ───────────────────────────────────────────
+
+    private static readonly Color DarkOnAccent = Color.FromArgb("#1d1d1f");
+
+    /// <summary>
+    /// Returns near-black or white — whichever has the higher WCAG contrast
+    /// ratio against the given accent fill.
+    /// </summary>
+    private static Color BestTextColorOn(Color accent)
+    {
+        double bgLum = RelativeLuminance(accent);
+        double contrastWithWhite = (1.0 + 0.05) / (bgLum + 0.05);
+        double contrastWithDark = (bgLum + 0.05) / (RelativeLuminance(DarkOnAccent) + 0.05);
+        return contrastWithDark >= contrastWithWhite ? DarkOnAccent : Colors.White;
+    }
+
+    /// <summary>WCAG 2.1 relative luminance of an sRGB color.</summary>
+    private static double RelativeLuminance(Color c)
+    {
+        static double Linearize(double channel) =>
+            channel <= 0.03928 ? channel / 12.92 : Math.Pow((channel + 0.055) / 1.055, 2.4);
+
+        return 0.2126 * Linearize(c.Red)
+             + 0.7152 * Linearize(c.Green)
+             + 0.0722 * Linearize(c.Blue);
     }
 
     private static bool IsValidHex(string hex) =>

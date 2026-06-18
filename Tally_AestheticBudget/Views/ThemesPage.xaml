@@ -242,7 +242,7 @@
                                     <TapGestureRecognizer Command="{Binding ApplyCustomThemeCommand}" />
                                 </Border.GestureRecognizers>
                                 <Label Text="Apply Custom Palette" FontSize="15"
-                                       FontAttributes="Bold" TextColor="White"
+                                       FontAttributes="Bold" TextColor="{DynamicResource OnAccentColor}"
                                        HorizontalOptions="Center" />
                             </Border>
 
@@ -459,7 +459,7 @@
                                     <TapGestureRecognizer Command="{Binding ApplyHexInputCommand}" />
                                 </Border.GestureRecognizers>
                                 <Label Text="Apply" FontSize="13" FontAttributes="Bold"
-                                       TextColor="White"
+                                       TextColor="{DynamicResource OnAccentColor}"
                                        HorizontalOptions="Center" VerticalOptions="Center" />
                             </Border>
                         </Grid>

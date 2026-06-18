@@ -56,7 +56,7 @@
                                     <TapGestureRecognizer Command="{Binding ShowTotalEditorCommand}" />
                                 </Border.GestureRecognizers>
                                 <Label Text="{Binding TotalLimitLabel}"
-                                       FontSize="13" FontAttributes="Bold" TextColor="White" />
+                                       FontSize="13" FontAttributes="Bold" TextColor="{DynamicResource OnAccentColor}" />
                             </Border>
                         </Grid>
 
@@ -265,7 +265,7 @@
                                                         Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=SaveLimitCommand}"
                                                         CommandParameter="{Binding .}" />
                                                 </Border.GestureRecognizers>
-                                                <Label Text="Save" FontSize="13" FontAttributes="Bold" TextColor="White" />
+                                                <Label Text="Save" FontSize="13" FontAttributes="Bold" TextColor="{DynamicResource OnAccentColor}" />
                                             </Border>
                                             <Border Grid.Column="2"
                                                     Style="{StaticResource HoverButton}"
@@ -324,7 +324,7 @@
                             <TapGestureRecognizer Command="{Binding SaveTotalCommand}" />
                         </Border.GestureRecognizers>
                         <Label Text="Save" FontSize="14" FontAttributes="Bold"
-                               TextColor="White" HorizontalOptions="Center" />
+                               TextColor="{DynamicResource OnAccentColor}" HorizontalOptions="Center" />
                     </Border>
                 </VerticalStackLayout>
             </Border>
@@ -360,7 +360,7 @@
                             <TapGestureRecognizer Command="{Binding ConfirmDayPickerCommand}" />
                         </Border.GestureRecognizers>
                         <Label Text="Apply" FontSize="14" FontAttributes="Bold"
-                               TextColor="White" HorizontalOptions="Center" />
+                               TextColor="{DynamicResource OnAccentColor}" HorizontalOptions="Center" />
                     </Border>
                 </VerticalStackLayout>
             </Border>

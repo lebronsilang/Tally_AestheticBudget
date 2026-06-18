@@ -72,7 +72,7 @@
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding OpenAddModalCommand}" />
                                 </Border.GestureRecognizers>
-                                <Label Text="+ Add" FontSize="14" FontAttributes="Bold" TextColor="White" />
+                                <Label Text="+ Add" FontSize="14" FontAttributes="Bold" TextColor="{DynamicResource OnAccentColor}" />
                             </Border>
                         </Grid>
 
@@ -500,7 +500,7 @@
                                 <TapGestureRecognizer Command="{Binding SaveNewExpenseCommand}" />
                             </Border.GestureRecognizers>
                             <Label Text="Save Entry" FontSize="13" FontAttributes="Bold"
-                                   TextColor="White" HorizontalOptions="Center" />
+                                   TextColor="{DynamicResource OnAccentColor}" HorizontalOptions="Center" />
                         </Border>
 
                     </VerticalStackLayout>
@@ -775,7 +775,7 @@
                                 <TapGestureRecognizer Command="{Binding SaveEditExpenseCommand}" />
                             </Border.GestureRecognizers>
                             <Label Text="Update Entry" FontSize="13" FontAttributes="Bold"
-                                   TextColor="White" HorizontalOptions="Center" />
+                                   TextColor="{DynamicResource OnAccentColor}" HorizontalOptions="Center" />
                         </Border>
 
                     </VerticalStackLayout>
@@ -1009,7 +1009,7 @@
                             <TapGestureRecognizer Command="{Binding ConfirmDayPickerCommand}" />
                         </Border.GestureRecognizers>
                         <Label Text="Apply" FontSize="14" FontAttributes="Bold"
-                               TextColor="White" HorizontalOptions="Center" />
+                               TextColor="{DynamicResource OnAccentColor}" HorizontalOptions="Center" />
                     </Border>
 
                 </VerticalStackLayout>

@@ -48,7 +48,7 @@
                             <TapGestureRecognizer Command="{Binding OpenAddModalCommand}" />
                         </Border.GestureRecognizers>
                         <Label Text="+ Add Item" FontSize="13" FontAttributes="Bold"
-                               TextColor="White" />
+                               TextColor="{DynamicResource OnAccentColor}" />
                     </Border>
                 </Grid>
 
@@ -165,7 +165,7 @@
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:GroceryViewModel}}, Path=ToggleCheckedCommand}"
                                             CommandParameter="{Binding .}" />
                                     </Border.GestureRecognizers>
-                                    <Label Text="✓" FontSize="13" TextColor="White"
+                                    <Label Text="✓" FontSize="13" TextColor="{DynamicResource OnAccentColor}"
                                            IsVisible="{Binding IsChecked}"
                                            HorizontalOptions="Center" VerticalOptions="Center" />
                                 </Border>
@@ -281,7 +281,7 @@
                             <TapGestureRecognizer Command="{Binding SaveItemCommand}" />
                         </Border.GestureRecognizers>
                         <Label Text="Add to List" FontSize="15" FontAttributes="Bold"
-                               TextColor="White" HorizontalOptions="Center" />
+                               TextColor="{DynamicResource OnAccentColor}" HorizontalOptions="Center" />
                     </Border>
 
                 </VerticalStackLayout>

@@ -99,7 +99,8 @@ public partial class GroceryViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanSaveItem))]
     private async Task SaveItemAsync()
     {
-        decimal.TryParse(NewItemPrice, out var price);
+        decimal.TryParse(NewItemPrice, System.Globalization.NumberStyles.Number,
+            System.Globalization.CultureInfo.InvariantCulture, out var price);
         int.TryParse(NewItemQuantity, out var qty);
         if (qty < 1) qty = 1;
 
