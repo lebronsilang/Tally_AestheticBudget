@@ -385,7 +385,7 @@
                                                 <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Food}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource AccentColor}"  />
+                                           TextColor="{Binding NewIsFoodSelected, Converter={StaticResource BoolToIconColor}}" />
 
                                                 <Label Text="Food"
                                            FontSize="12"
@@ -407,7 +407,7 @@
                                                 <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Transport}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource AccentColor}"  />
+                                           TextColor="{Binding NewIsTransportSelected, Converter={StaticResource BoolToIconColor}}"  />
 
                                                 <Label Text="Transport"
                                            FontSize="12"
@@ -427,7 +427,7 @@
                                                 <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Shopping}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource AccentColor}"  />
+                                           TextColor="{Binding NewIsShoppingSelected, Converter={StaticResource BoolToIconColor}}"  />
 
                                                 <Label Text="Shopping"
                                            FontSize="12"
@@ -448,7 +448,7 @@
                                                 <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Health}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource AccentColor}"  />
+                                           TextColor="{Binding NewIsHealthSelected, Converter={StaticResource BoolToIconColor}}"  />
 
                                                 <Label Text="Health"
                                            FontSize="12"
@@ -469,7 +469,7 @@
                                                 <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Fun}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource AccentColor}"  />
+                                           TextColor="{Binding NewIsFunSelected, Converter={StaticResource BoolToIconColor}}"  />
 
                                                 <Label Text="Fun"
                                            FontSize="12"
@@ -490,7 +490,7 @@
                                                 <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Default}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource AccentColor}"  />
+                                           TextColor="{Binding NewIsOtherSelected, Converter={StaticResource BoolToIconColor}}"  />
 
                                                 <Label Text="Other"
                                            FontSize="12"
@@ -655,7 +655,7 @@
                                                 <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Food}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource AccentColor}"  />
+                                           TextColor="{Binding EditIsFoodSelected, Converter={StaticResource BoolToIconColor}}"  />
 
                                                 <Label Text="Food"
                                            FontSize="12"
@@ -675,7 +675,7 @@
                                                 <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Transport}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource AccentColor}"  />
+                                           TextColor="{Binding EditIsTransportSelected, Converter={StaticResource BoolToIconColor}}"  />
                                                 <Label Text="Transport"
                                             FontSize="12"
                                             VerticalOptions="Center"
@@ -694,9 +694,9 @@
                                                 <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Shopping}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource AccentColor}"  />
+                                           TextColor="{Binding EditIsShoppingSelected, Converter={StaticResource BoolToIconColor}}"  />
 
-                                                <Label Text="Shopping"
+                                           <Label Text="Shopping"
                                            FontSize="12"
                                            VerticalOptions="Center"
                                            TextColor="{Binding EditIsShoppingSelected, Converter={StaticResource BoolToChipText}}" />
@@ -715,7 +715,7 @@
                                                 <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Health}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource AccentColor}"  />
+                                           TextColor="{Binding EditIsHealthSelected, Converter={StaticResource BoolToIconColor}}"  />
 
                                                 <Label Text="Health"
                                            FontSize="12"
@@ -735,7 +735,7 @@
                                                 <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Fun}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource AccentColor}"  />
+                                           TextColor="{Binding EditIsFunSelected, Converter={StaticResource BoolToIconColor}}"  />
 
                                                 <Label Text="Fun"
                                            FontSize="12"
@@ -756,7 +756,7 @@
                                                 <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Default}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource AccentColor}"  />
+                                           TextColor="{Binding EditIsOtherSelected, Converter={StaticResource BoolToIconColor}}"  />
 
                                                 <Label Text="Other"
                                            FontSize="12"
@@ -964,7 +964,7 @@
                                 <Label Style="{StaticResource PhosphorIcon}"
                                    Text="{x:Static ph:PhosphorIcons.Food}"
                                    FontSize="14"
-                                   TextColor="{DynamicResource AccentColor}"  />
+                                   TextColor="{Binding NewIsFoodSelected, Converter={StaticResource BoolToIconColor}}"  />
 
                                 <Label Text="Food"
                                    FontSize="12"
@@ -986,7 +986,7 @@
                                 <Label Style="{StaticResource PhosphorIcon}"
                                    Text="{x:Static ph:PhosphorIcons.Transport}"
                                    FontSize="14"
-                                   TextColor="{DynamicResource AccentColor}"  />
+                                   TextColor="{Binding NewIsTransportSelected, Converter={StaticResource BoolToIconColor}}"  />
 
                                 <Label Text="Transport"
                                    FontSize="12"
@@ -1008,7 +1008,7 @@
                                 <Label Style="{StaticResource PhosphorIcon}"
                                    Text="{x:Static ph:PhosphorIcons.Shopping}"
                                    FontSize="14"
-                                   TextColor="{DynamicResource AccentColor}"  />
+                                   TextColor="{Binding NewIsShoppingSelected, Converter={StaticResource BoolToIconColor}}"  />
 
                                 <Label Text="Shopping"
                                    FontSize="12"
@@ -1030,7 +1030,7 @@
                                 <Label Style="{StaticResource PhosphorIcon}"
                                    Text="{x:Static ph:PhosphorIcons.Health}"
                                    FontSize="14"
-                                   TextColor="{DynamicResource AccentColor}"  />
+                                   TextColor="{Binding NewIsHealthSelected, Converter={StaticResource BoolToIconColor}}"  />
 
                                 <Label Text="Health"
                                    FontSize="12"
@@ -1052,7 +1052,7 @@
                                 <Label Style="{StaticResource PhosphorIcon}"
                                    Text="{x:Static ph:PhosphorIcons.Fun}"
                                    FontSize="14"
-                                   TextColor="{DynamicResource AccentColor}"  />
+                                   TextColor="{Binding NewIsFunSelected, Converter={StaticResource BoolToIconColor}}"  />
 
                                 <Label Text="Fun" FontSize="12"
                                    TextColor="{DynamicResource TextPrimary}" />
@@ -1072,7 +1072,7 @@
                                 <Label Style="{StaticResource PhosphorIcon}"
                                    Text="{x:Static ph:PhosphorIcons.Default}"
                                    FontSize="14"
-                                   TextColor="{DynamicResource AccentColor}"  />
+                                   TextColor="{Binding NewIsOtherSelected, Converter={StaticResource BoolToIconColor}}"  />
 
                                 <Label Text="Other"
                                    FontSize="12"
@@ -1094,7 +1094,7 @@
                                 <Label Style="{StaticResource PhosphorIcon}"
                                    Text="{x:Static ph:PhosphorIcons.Grocery}"
                                    FontSize="14"
-                                   TextColor="{DynamicResource AccentColor}"  />
+                                   TextColor="{Binding NewIsGrocerySelected, Converter={StaticResource BoolToIconColor}}"  />
 
                                 <Label Text="Grocery"
                                    FontSize="12"

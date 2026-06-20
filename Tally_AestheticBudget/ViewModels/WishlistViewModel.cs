@@ -37,7 +37,11 @@ public partial class WishlistViewModel : ObservableObject
         _header = header;
 
         _dataChanged.WishlistChanged += () => IsDirty = true;
-        _dataChanged.SettingsChanged += () => IsDirty = true;
+        _dataChanged.SettingsChanged += () =>
+        {
+            IsDirty = true;
+            OnPropertyChanged(nameof(ExpensePanelOnLeft));
+        };
     }
 
     public bool ExpensePanelOnLeft => _settings.ExpensePanelOnLeft;

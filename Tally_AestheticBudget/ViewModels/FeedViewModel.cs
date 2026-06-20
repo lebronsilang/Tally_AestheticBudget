@@ -40,7 +40,11 @@ public partial class FeedViewModel : ObservableObject
         BuildMonthOptions();
 
         _dataChanged.ExpensesChanged += () => IsDirty = true;
-        _dataChanged.SettingsChanged += () => IsDirty = true;
+        _dataChanged.SettingsChanged += () =>
+        {
+            IsDirty = true;
+            OnPropertyChanged(nameof(ExpensePanelOnLeft));
+        };
     }
 
     // ── Feed items ────────────────────────────────────────────────────────────

@@ -53,6 +53,7 @@
             <converters:BoolToPinLabelConverter       x:Key="BoolToPinLabel" />
             <converters:ThemeActiveBorderConverter    x:Key="ThemeActiveBorder" />
             <converters:BoolToToggleAlignConverter x:Key="BoolToToggleAlign" />
+            <converters:BoolToIconColorConverter x:Key="BoolToIconColor" />
 
         </ResourceDictionary>
     </Application.Resources>

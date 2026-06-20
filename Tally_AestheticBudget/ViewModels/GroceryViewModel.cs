@@ -33,6 +33,11 @@ public partial class GroceryViewModel : ObservableObject
         _themeService = themeService;
 
         _dataChanged.GroceryChanged += () => IsDirty = true;
+        _dataChanged.SettingsChanged += () =>
+        {
+            IsDirty = true;
+            OnPropertyChanged(nameof(ExpensePanelOnLeft));
+        };
         _header = header;
     }
 

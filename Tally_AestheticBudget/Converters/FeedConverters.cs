@@ -382,3 +382,16 @@ public class BoolToToggleAlignConverter : IValueConverter
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotImplementedException();
 }
+
+// Category glyph colour: accent when idle, OnAccent when the pill is selected
+// (so the icon stays visible once the pill background turns accent).
+public class BoolToIconColorConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => value is true
+            ? ThemeColors.Get("OnAccentColor", "#FFFFFF")
+            : ThemeColors.Get("AccentColor", "#ff6b6b");
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}

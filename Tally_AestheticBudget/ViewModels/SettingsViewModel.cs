@@ -256,6 +256,9 @@ public partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     private void ToggleListViewShowsPhoto() => ListViewShowsPhoto = !ListViewShowsPhoto;
 
+    [RelayCommand]
+    private void ToggleExpensePanelOnLeft() => ExpensePanelOnLeft = !ExpensePanelOnLeft;
+
     // ── Clear data ────────────────────────────────────────────────────────────
 
     [ObservableProperty]
