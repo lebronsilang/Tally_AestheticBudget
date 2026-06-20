@@ -40,6 +40,7 @@ public partial class WishlistViewModel : ObservableObject
         _dataChanged.SettingsChanged += () => IsDirty = true;
     }
 
+    public bool ExpensePanelOnLeft => _settings.ExpensePanelOnLeft;
     public string CurrencySymbol => _settings.CurrencySymbol;
     public string PriceLabelText => $"Price ({_settings.CurrencySymbol})";
 

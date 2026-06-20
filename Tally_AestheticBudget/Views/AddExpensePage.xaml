@@ -20,7 +20,7 @@
                 HorizontalOptions="Center" VerticalOptions="Center"
                 MaximumWidthRequest="360"
                 Margin="20,0">
-            <ScrollView MaximumHeightRequest="580">
+            <ScrollView VerticalOptions="Fill">
                 <VerticalStackLayout Padding="18,16,18,18" Spacing="12">
 
                     <!-- Header -->

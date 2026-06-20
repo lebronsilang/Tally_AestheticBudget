@@ -36,6 +36,7 @@ public partial class GroceryViewModel : ObservableObject
         _header = header;
     }
 
+    public bool ExpensePanelOnLeft => _settings.ExpensePanelOnLeft;
     public string PriceLabelText => $"Price ({_settings.CurrencySymbol}) optional";
 
     // ── Items ─────────────────────────────────────────────────────────────────
@@ -109,6 +110,7 @@ public partial class GroceryViewModel : ObservableObject
         IsDirty = true;
         await LoadAsync();
     }
+
 
     // ── List commands ─────────────────────────────────────────────────────────
 

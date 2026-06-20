@@ -24,6 +24,7 @@ public interface ISettingsService
     bool FeedListView { get; set; }
     bool WishlistListView { get; set; }
     bool ListViewShowsPhoto { get; set; }
+    bool ExpensePanelOnLeft { get; set; }
 }
 
 public class SettingsService : ISettingsService
@@ -108,4 +109,11 @@ public class SettingsService : ISettingsService
         get => Preferences.Get(KeyListViewShowsPhoto, true);
         set => Preferences.Set(KeyListViewShowsPhoto, value);
     }
+
+    public bool ExpensePanelOnLeft
+    {
+        get => Preferences.Get("expense_panel_on_left", false);
+        set => Preferences.Set("expense_panel_on_left", value);
+    }
+
 }

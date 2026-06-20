@@ -174,7 +174,7 @@ public partial class FeedViewModel : ObservableObject
 
     // ── Add modal ─────────────────────────────────────────────────────────────
 
-    [ObservableProperty] private bool _isAddModalVisible;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsExpensePanelOpen))] private bool _isAddModalVisible;
     [ObservableProperty] private string _newTitle = string.Empty;
     [ObservableProperty] private string _newAmountText = string.Empty;
     [ObservableProperty] private string _newNote = string.Empty;
@@ -271,6 +271,17 @@ public partial class FeedViewModel : ObservableObject
         await LoadFeedAsync();
     }
 
+    public bool IsExpensePanelOpen => IsAddModalVisible || IsEditModalVisible;
+
+    public bool ExpensePanelOnLeft => _settings.ExpensePanelOnLeft;
+
+    [RelayCommand]
+    private void DismissExpensePanel()
+    {
+        IsAddModalVisible = false;
+        IsEditModalVisible = false;
+    }
+
     // ── Add modal open/close ──────────────────────────────────────────────────
 
     [RelayCommand]
@@ -297,7 +308,7 @@ public partial class FeedViewModel : ObservableObject
 
     // ── Edit modal ────────────────────────────────────────────────────────────
 
-    [ObservableProperty] private bool _isEditModalVisible;
+    [ObservableProperty][NotifyPropertyChangedFor(nameof(IsExpensePanelOpen))] private bool _isEditModalVisible;
     [ObservableProperty] private int _editExpenseId;
     [ObservableProperty] private string _editTitle = string.Empty;
     [ObservableProperty] private string _editAmountText = string.Empty;

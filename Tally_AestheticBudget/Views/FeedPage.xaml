@@ -14,218 +14,228 @@
 
     <Grid>
 
-        <!-- Empty state -->
-        <VerticalStackLayout
+        <controls:DrawerHost
+            Grid.RowSpan="2"
+            IsOpen="{Binding IsExpensePanelOpen}"
+            OpenFromLeft="{Binding ExpensePanelOnLeft}"
+            DrawerWidth="380"
+            CloseCommand="{Binding DismissExpensePanelCommand}">
+
+            <controls:DrawerHost.BodyContent>
+                <Grid>
+
+                    <!-- Empty state -->
+                    <VerticalStackLayout
             IsVisible="{Binding HasNoEntries}"
             HorizontalOptions="Center" VerticalOptions="Center"
             Spacing="12" Padding="40">
-            <Image Source="icon_sakura.png"
+                        <Image Source="icon_sakura.png"
                WidthRequest="48"
                HeightRequest="48"
                HorizontalOptions="Center" />
-            <Label Text="No entries yet. Add your first expense!"
+                        <Label Text="No entries yet. Add your first expense!"
                    FontSize="15" HorizontalOptions="Center"
                    TextColor="{DynamicResource TextSecondary}" />
-        </VerticalStackLayout>
+                    </VerticalStackLayout>
 
-        <!-- Main scrollable content -->
-        <ScrollView
+                    <!-- Main scrollable content -->
+                    <ScrollView
             x:Name="MasonryScrollView">
 
-            <VerticalStackLayout Spacing="0">
+                        <VerticalStackLayout Spacing="0">
 
-                <!-- ── Floating header card ───────────────────────────────── -->
-                <Border
+                            <!-- ── Floating header card ───────────────────────────────── -->
+                            <Border
                     BackgroundColor="{DynamicResource CardBackground}"
                     Stroke="{DynamicResource CardBorder}"
                     StrokeThickness="1" StrokeShape="RoundRectangle 20"
                     Padding="20,16,20,12"
                     Margin="16,16,16,12">
-                    <VerticalStackLayout Spacing="0">
-                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
-                            <VerticalStackLayout Grid.Column="0" Spacing="2">
-                                <Label Text="My Spending Journal"
+                                <VerticalStackLayout Spacing="0">
+                                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                            <Label Text="My Spending Journal"
                                        FontFamily="DisplayFont" FontSize="28"
                                        TextColor="{DynamicResource TextPrimary}" />
-                                <Label Text="{Binding SummaryLabel}"
+                                            <Label Text="{Binding SummaryLabel}"
                                        FontSize="13"
                                        TextColor="{DynamicResource TextSecondary}" />
-                            </VerticalStackLayout>
-                            <Border Grid.Column="1"
+                                        </VerticalStackLayout>
+                                        <Border Grid.Column="1"
                                     Style="{StaticResource HoverButton}"
                                     BackgroundColor="{DynamicResource AccentColorAlpha}"
                                     Stroke="{DynamicResource AccentColor}"
                                     StrokeThickness="0.8" StrokeShape="RoundRectangle 980"
                                     Padding="14,8" VerticalOptions="Center">
-                                <HorizontalStackLayout Spacing="4">
-                                    <Label Text="Spent: " FontSize="13"
+                                            <HorizontalStackLayout Spacing="4">
+                                                <Label Text="Spent: " FontSize="13"
                                            TextColor="{DynamicResource TextPrimary}" />
-                                    <Label Text="{Binding TotalSpentFormatted}"
+                                                <Label Text="{Binding TotalSpentFormatted}"
                                            FontSize="13" FontAttributes="Bold"
                                            TextColor="{DynamicResource AccentColor}" />
-                                </HorizontalStackLayout>
-                            </Border>
-                            <Border Grid.Column="2"
+                                            </HorizontalStackLayout>
+                                        </Border>
+                                        <Border Grid.Column="2"
                                     Style="{StaticResource HoverButton}"
                                     BackgroundColor="{DynamicResource AccentColor}"
                                     StrokeShape="RoundRectangle 980"
                                     Padding="16,8" VerticalOptions="Center">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding OpenAddModalCommand}" />
-                                </Border.GestureRecognizers>
-                                <Label Text="+ Add" FontSize="14" FontAttributes="Bold" TextColor="{DynamicResource OnAccentColor}" />
-                            </Border>
-                        </Grid>
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding OpenAddModalCommand}" />
+                                            </Border.GestureRecognizers>
+                                            <Label Text="+ Add" FontSize="14" FontAttributes="Bold" TextColor="{DynamicResource OnAccentColor}" />
+                                        </Border>
+                                    </Grid>
 
-                        <ScrollView Orientation="Horizontal"
+                                    <ScrollView Orientation="Horizontal"
                                     HorizontalScrollBarVisibility="Never"
                                     Margin="0,12,0,0">
-                            <HorizontalStackLayout Spacing="8">
+                                        <HorizontalStackLayout Spacing="8">
 
-                                <!-- ALL -->
-                                <Border Style="{StaticResource HoverButton}"
+                                            <!-- ALL -->
+                                            <Border Style="{StaticResource HoverButton}"
                                         BackgroundColor="{Binding IsFilterAll, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding IsFilterAll, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
                                         Padding="16,7">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding FilterAllCommand}" />
-                                    </Border.GestureRecognizers>
-                                    <Label Text="All" FontSize="14"
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding FilterAllCommand}" />
+                                                </Border.GestureRecognizers>
+                                                <Label Text="All" FontSize="14"
                                            FontAttributes="{Binding IsFilterAll, Converter={StaticResource BoolToFontAttr}}"
                                            TextColor="{Binding IsFilterAll, Converter={StaticResource BoolToChipText}}" />
-                                </Border>
+                                            </Border>
 
-                                <!-- TODAY — tap label = today, tap ▾ = pick date -->
-                                <Border Style="{StaticResource HoverButton}"
+                                            <!-- TODAY — tap label = today, tap ▾ = pick date -->
+                                            <Border Style="{StaticResource HoverButton}"
                                         BackgroundColor="{Binding IsFilterDay, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding IsFilterDay, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
                                         Padding="12,7,6,7">
-                                    <HorizontalStackLayout Spacing="0">
-                                        <Label Text="{Binding SelectedDayLabel}" FontSize="14"
+                                                <HorizontalStackLayout Spacing="0">
+                                                    <Label Text="{Binding SelectedDayLabel}" FontSize="14"
                                                FontAttributes="{Binding IsFilterDay, Converter={StaticResource BoolToFontAttr}}"
                                                TextColor="{Binding IsFilterDay, Converter={StaticResource BoolToChipText}}">
-                                            <Label.GestureRecognizers>
-                                                <TapGestureRecognizer Command="{Binding FilterDayCommand}" />
-                                            </Label.GestureRecognizers>
-                                        </Label>
-                                        <Border BackgroundColor="Transparent" StrokeThickness="0"
+                                                        <Label.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding FilterDayCommand}" />
+                                                        </Label.GestureRecognizers>
+                                                    </Label>
+                                                    <Border BackgroundColor="Transparent" StrokeThickness="0"
                                                 Padding="6,0,6,0" VerticalOptions="Center">
-                                            <Border.GestureRecognizers>
-                                                <TapGestureRecognizer Command="{Binding ShowDayPickerCommand}" />
-                                            </Border.GestureRecognizers>
-                                            <Label Text="▾" FontSize="11"
+                                                        <Border.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding ShowDayPickerCommand}" />
+                                                        </Border.GestureRecognizers>
+                                                        <Label Text="▾" FontSize="11"
                                                    TextColor="{Binding IsFilterDay, Converter={StaticResource BoolToChipText}}"
                                                    VerticalOptions="Center" />
-                                        </Border>
-                                    </HorizontalStackLayout>
-                                </Border>
+                                                    </Border>
+                                                </HorizontalStackLayout>
+                                            </Border>
 
-                                <!-- THIS WEEK — tap label = current week, tap ▾ = pick week -->
-                                <Border Style="{StaticResource HoverButton}"
+                                            <!-- THIS WEEK — tap label = current week, tap ▾ = pick week -->
+                                            <Border Style="{StaticResource HoverButton}"
                                         BackgroundColor="{Binding IsFilterWeek, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding IsFilterWeek, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
                                         Padding="12,7,6,7">
-                                    <HorizontalStackLayout Spacing="0">
-                                        <Label Text="{Binding SelectedWeekLabel}" FontSize="14"
+                                                <HorizontalStackLayout Spacing="0">
+                                                    <Label Text="{Binding SelectedWeekLabel}" FontSize="14"
                                                FontAttributes="{Binding IsFilterWeek, Converter={StaticResource BoolToFontAttr}}"
                                                TextColor="{Binding IsFilterWeek, Converter={StaticResource BoolToChipText}}">
-                                            <Label.GestureRecognizers>
-                                                <TapGestureRecognizer Command="{Binding FilterWeekCommand}" />
-                                            </Label.GestureRecognizers>
-                                        </Label>
-                                        <Border BackgroundColor="Transparent" StrokeThickness="0"
+                                                        <Label.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding FilterWeekCommand}" />
+                                                        </Label.GestureRecognizers>
+                                                    </Label>
+                                                    <Border BackgroundColor="Transparent" StrokeThickness="0"
                                                 Padding="6,0,6,0" VerticalOptions="Center">
-                                            <Border.GestureRecognizers>
-                                                <TapGestureRecognizer Command="{Binding ShowWeekPickerCommand}" />
-                                            </Border.GestureRecognizers>
-                                            <Label Text="▾" FontSize="11"
+                                                        <Border.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding ShowWeekPickerCommand}" />
+                                                        </Border.GestureRecognizers>
+                                                        <Label Text="▾" FontSize="11"
                                                    TextColor="{Binding IsFilterWeek, Converter={StaticResource BoolToChipText}}"
                                                    VerticalOptions="Center" />
-                                        </Border>
-                                    </HorizontalStackLayout>
-                                </Border>
+                                                    </Border>
+                                                </HorizontalStackLayout>
+                                            </Border>
 
-                                <!-- THIS MONTH — tap label = current month, tap ▾ = month picker -->
-                                <Border Style="{StaticResource HoverButton}"
+                                            <!-- THIS MONTH — tap label = current month, tap ▾ = month picker -->
+                                            <Border Style="{StaticResource HoverButton}"
                                         BackgroundColor="{Binding IsFilterMonth, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding IsFilterMonth, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
                                         Padding="12,7,6,7">
-                                    <HorizontalStackLayout Spacing="0">
-                                        <Label Text="{Binding SelectedMonthLabel}" FontSize="14"
+                                                <HorizontalStackLayout Spacing="0">
+                                                    <Label Text="{Binding SelectedMonthLabel}" FontSize="14"
                                                FontAttributes="{Binding IsFilterMonth, Converter={StaticResource BoolToFontAttr}}"
                                                TextColor="{Binding IsFilterMonth, Converter={StaticResource BoolToChipText}}">
-                                            <Label.GestureRecognizers>
-                                                <TapGestureRecognizer Command="{Binding FilterMonthCommand}" />
-                                            </Label.GestureRecognizers>
-                                        </Label>
-                                        <Border BackgroundColor="Transparent" StrokeThickness="0"
+                                                        <Label.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding FilterMonthCommand}" />
+                                                        </Label.GestureRecognizers>
+                                                    </Label>
+                                                    <Border BackgroundColor="Transparent" StrokeThickness="0"
                                                 Padding="6,0,6,0" VerticalOptions="Center">
-                                            <Border.GestureRecognizers>
-                                                <TapGestureRecognizer Command="{Binding ShowMonthPickerCommand}" />
-                                            </Border.GestureRecognizers>
-                                            <Label Text="▾" FontSize="11"
+                                                        <Border.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding ShowMonthPickerCommand}" />
+                                                        </Border.GestureRecognizers>
+                                                        <Label Text="▾" FontSize="11"
                                                    TextColor="{Binding IsFilterMonth, Converter={StaticResource BoolToChipText}}"
                                                    VerticalOptions="Center" />
-                                        </Border>
-                                    </HorizontalStackLayout>
-                                </Border>
+                                                    </Border>
+                                                </HorizontalStackLayout>
+                                            </Border>
 
-                                <!-- THIS YEAR — tap label = current year, tap ▾ = pick year -->
-                                <Border Style="{StaticResource HoverButton}"
+                                            <!-- THIS YEAR — tap label = current year, tap ▾ = pick year -->
+                                            <Border Style="{StaticResource HoverButton}"
                                         BackgroundColor="{Binding IsFilterYear, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding IsFilterYear, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
                                         Padding="12,7,6,7">
-                                    <HorizontalStackLayout Spacing="0">
-                                        <Label Text="{Binding SelectedYearLabel}" FontSize="14"
+                                                <HorizontalStackLayout Spacing="0">
+                                                    <Label Text="{Binding SelectedYearLabel}" FontSize="14"
                                                FontAttributes="{Binding IsFilterYear, Converter={StaticResource BoolToFontAttr}}"
                                                TextColor="{Binding IsFilterYear, Converter={StaticResource BoolToChipText}}">
-                                            <Label.GestureRecognizers>
-                                                <TapGestureRecognizer Command="{Binding FilterYearCommand}" />
-                                            </Label.GestureRecognizers>
-                                        </Label>
-                                        <Border BackgroundColor="Transparent" StrokeThickness="0"
+                                                        <Label.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding FilterYearCommand}" />
+                                                        </Label.GestureRecognizers>
+                                                    </Label>
+                                                    <Border BackgroundColor="Transparent" StrokeThickness="0"
                                                 Padding="6,0,6,0" VerticalOptions="Center">
-                                            <Border.GestureRecognizers>
-                                                <TapGestureRecognizer Command="{Binding ShowYearPickerCommand}" />
-                                            </Border.GestureRecognizers>
-                                            <Label Text="▾" FontSize="11"
+                                                        <Border.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding ShowYearPickerCommand}" />
+                                                        </Border.GestureRecognizers>
+                                                        <Label Text="▾" FontSize="11"
                                                    TextColor="{Binding IsFilterYear, Converter={StaticResource BoolToChipText}}"
                                                    VerticalOptions="Center" />
-                                        </Border>
-                                    </HorizontalStackLayout>
-                                </Border>
+                                                    </Border>
+                                                </HorizontalStackLayout>
+                                            </Border>
 
-                                <!-- CATEGORY — dropdown only -->
-                                <Border Style="{StaticResource HoverButton}"
+                                            <!-- CATEGORY — dropdown only -->
+                                            <Border Style="{StaticResource HoverButton}"
                                         BackgroundColor="{Binding IsFilterCategory, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding IsFilterCategory, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
                                         Padding="16,7">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding ShowCategoryPickerCommand}" />
-                                    </Border.GestureRecognizers>
-                                    <HorizontalStackLayout Spacing="5">
-                                        <Label Text="{Binding SelectedCategoryLabel}" FontSize="14"
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding ShowCategoryPickerCommand}" />
+                                                </Border.GestureRecognizers>
+                                                <HorizontalStackLayout Spacing="5">
+                                                    <Label Text="{Binding SelectedCategoryLabel}" FontSize="14"
                                                FontAttributes="{Binding IsFilterCategory, Converter={StaticResource BoolToFontAttr}}"
                                                TextColor="{Binding IsFilterCategory, Converter={StaticResource BoolToChipText}}" />
-                                        <Label Text="▾" FontSize="11"
+                                                    <Label Text="▾" FontSize="11"
                                                TextColor="{Binding IsFilterCategory, Converter={StaticResource BoolToChipText}}"
                                                VerticalOptions="Center" />
-                                    </HorizontalStackLayout>
-                                </Border>
+                                                </HorizontalStackLayout>
+                                            </Border>
 
-                            </HorizontalStackLayout>
-                        </ScrollView>
-                    </VerticalStackLayout>
-                </Border>
+                                        </HorizontalStackLayout>
+                                    </ScrollView>
+                                </VerticalStackLayout>
+                            </Border>
 
-                <!-- ── Masonry grid ───────────────────────────────────────── -->
-                <Grid
+                            <!-- ── Masonry grid ───────────────────────────────────────── -->
+                            <Grid
                     x:Name="MasonryGrid"
                     IsVisible="{Binding IsMasonryView}"
                     ColumnSpacing="10"
@@ -233,619 +243,622 @@
                     VerticalOptions="Start" 
                     SizeChanged="MasonryGrid_SizeChanged"/>
 
-                <!-- List view (alternate to masonry) -->
-                <VerticalStackLayout
+                            <!-- List view (alternate to masonry) -->
+                            <VerticalStackLayout
                     IsVisible="{Binding IsListView}"
                     Spacing="8"
                     Padding="16,0,16,100"
                     BindableLayout.ItemsSource="{Binding FeedItems}">
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate x:DataType="models:FeedCardItem">
-                            <Border BackgroundColor="{DynamicResource CardBackground}"
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="models:FeedCardItem">
+                                        <Border BackgroundColor="{DynamicResource CardBackground}"
                                     Stroke="{DynamicResource CardBorder}"
                                     StrokeThickness="1" StrokeShape="RoundRectangle 16"
                                     Padding="12">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type vm:FeedViewModel}}, Path=OpenDetailCommand}"
                                         CommandParameter="{Binding .}" />
-                                </Border.GestureRecognizers>
-                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                                    <Image Grid.Column="0" Source="{Binding PhotoPath}"
+                                            </Border.GestureRecognizers>
+                                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                                <Image Grid.Column="0" Source="{Binding PhotoPath}"
                                            Aspect="AspectFill" WidthRequest="52" HeightRequest="52"
                                            VerticalOptions="Center"
                                            IsVisible="{Binding ListShowThumbnail}">
-                                        <Image.Clip>
-                                            <RoundRectangleGeometry Rect="0,0,52,52" CornerRadius="12" />
-                                        </Image.Clip>
-                                    </Image>
-                                    <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-                                        <HorizontalStackLayout Spacing="5">
-                                            <Label Text="{Binding CategoryLabel}" FontSize="10"
+                                                    <Image.Clip>
+                                                        <RoundRectangleGeometry Rect="0,0,52,52" CornerRadius="12" />
+                                                    </Image.Clip>
+                                                </Image>
+                                                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                                    <HorizontalStackLayout Spacing="5">
+                                                        <Label Text="{Binding CategoryLabel}" FontSize="10"
                                                    FontAttributes="Bold" CharacterSpacing="0.5"
                                                    TextTransform="Uppercase"
                                                    TextColor="{DynamicResource AccentColor}" />
-                                            <Label Text="·" FontSize="10" VerticalOptions="Center"
+                                                        <Label Text="·" FontSize="10" VerticalOptions="Center"
                                                    IsVisible="{Binding ShowDate}"
                                                    TextColor="{DynamicResource TextSecondary}" />
-                                            <Label Text="{Binding DateFormatted}" FontSize="10"
+                                                        <Label Text="{Binding DateFormatted}" FontSize="10"
                                                    VerticalOptions="Center" IsVisible="{Binding ShowDate}"
                                                    TextColor="{DynamicResource TextSecondary}" />
-                                            <Label Text="📷" FontSize="10" VerticalOptions="Center"
+                                                        <Label Text="📷" FontSize="10" VerticalOptions="Center"
                                                    IsVisible="{Binding ListShowPhotoIndicator}" />
-                                        </HorizontalStackLayout>
-                                        <Label Text="{Binding Title}" FontSize="15" FontAttributes="Bold"
+                                                    </HorizontalStackLayout>
+                                                    <Label Text="{Binding Title}" FontSize="15" FontAttributes="Bold"
                                                LineBreakMode="TailTruncation" IsVisible="{Binding HasTitle}"
                                                TextColor="{DynamicResource TextPrimary}" />
-                                        <Label Text="{Binding GroceryItemCountLabel}" FontSize="15"
+                                                    <Label Text="{Binding GroceryItemCountLabel}" FontSize="15"
                                                FontAttributes="Bold" IsVisible="{Binding IsGroceryGroup}"
                                                TextColor="{DynamicResource TextPrimary}" />
-                                        <Label Text="{Binding Note}" FontSize="12" MaxLines="1"
+                                                    <Label Text="{Binding Note}" FontSize="12" MaxLines="1"
                                                LineBreakMode="TailTruncation" IsVisible="{Binding ShowNote}"
                                                TextColor="{DynamicResource TextSecondary}" />
-                                    </VerticalStackLayout>
-                                    <Label Grid.Column="2" Text="{Binding AmountFormatted}"
+                                                </VerticalStackLayout>
+                                                <Label Grid.Column="2" Text="{Binding AmountFormatted}"
                                            FontSize="15" FontAttributes="Bold"
                                            IsVisible="{Binding ShowPrice}"
                                            VerticalOptions="Center" HorizontalOptions="End"
                                            TextColor="{DynamicResource TextPrimary}" />
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
-                </VerticalStackLayout>
-
-            </VerticalStackLayout>
-        </ScrollView>
-
-        <!-- ── Add Expense modal ─────────────────────────────────────────── -->
-        <Grid IsVisible="{Binding IsAddModalVisible}">
-            <Grid.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding DismissAddModalCommand}" />
-            </Grid.GestureRecognizers>
-            <controls:BlurOverlay />
-            <Border BackgroundColor="{DynamicResource CardBackground}"
-                    Style="{StaticResource ModalCard}"
-                    StrokeShape="RoundRectangle 16"
-                    HorizontalOptions="Center" VerticalOptions="Center"
-                    MaximumWidthRequest="360" Margin="20,0">
-                <ScrollView MaximumHeightRequest="560">
-                    <VerticalStackLayout Padding="18,16,18,18" Spacing="12">
-
-                        <Grid ColumnDefinitions="*,Auto">
-                            <VerticalStackLayout Grid.Column="0" Spacing="1">
-                                <Label Text="New Entry ✦" FontFamily="DisplayFont"
-                                       FontSize="18" TextColor="{DynamicResource TextPrimary}" />
-                                <Label Text="Log what you spent" FontSize="11"
-                                       TextColor="{DynamicResource TextSecondary}" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
                             </VerticalStackLayout>
-                            <Border Grid.Column="1" BackgroundColor="{DynamicResource PageBackground}"
+
+                        </VerticalStackLayout>
+                    </ScrollView>
+
+                    <!-- ── Add Expense modal ─────────────────────────────────────────── -->
+                </Grid>
+            </controls:DrawerHost.BodyContent>
+
+            <controls:DrawerHost.DrawerContent>
+                <Grid>
+
+                    <Border BackgroundColor="{DynamicResource CardBackground}"
+                    
+                    StrokeThickness="0"
+                    IsVisible="{Binding IsAddModalVisible}"
+                    HorizontalOptions="Fill" VerticalOptions="Fill"
+                    >
+                        <ScrollView VerticalOptions="Fill">
+                            <VerticalStackLayout Padding="18,16,18,18" Spacing="12">
+
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <VerticalStackLayout Grid.Column="0" Spacing="1">
+                                        <Label Text="New Entry ✦" FontFamily="DisplayFont"
+                                       FontSize="18" TextColor="{DynamicResource TextPrimary}" />
+                                        <Label Text="Log what you spent" FontSize="11"
+                                       TextColor="{DynamicResource TextSecondary}" />
+                                    </VerticalStackLayout>
+                                    <Border Grid.Column="1" BackgroundColor="{DynamicResource PageBackground}"
                                     StrokeThickness="0" StrokeShape="RoundRectangle 980"
                                     WidthRequest="28" HeightRequest="28" VerticalOptions="Start">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding DismissAddModalCommand}" />
-                                </Border.GestureRecognizers>
-                                <Label Text="✕" FontSize="12" TextColor="{DynamicResource TextSecondary}"
-                                       HorizontalOptions="Center" VerticalOptions="Center" />
-                            </Border>
-                        </Grid>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding DismissAddModalCommand}" />
+                                        </Border.GestureRecognizers>
+                                        <Label Text="✕" FontSize="12" TextColor="{DynamicResource TextSecondary}"
+                                       IsVisible="{Binding IsAddModalVisible}"
+                    HorizontalOptions="Center" VerticalOptions="Center" />
+                                    </Border>
+                                </Grid>
 
-                        <VerticalStackLayout Spacing="5">
-                            <Label Text="Title" FontSize="11" FontAttributes="Bold"
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="Title" FontSize="11" FontAttributes="Bold"
                                    TextColor="{DynamicResource TextPrimary}" />
-                            <Border BackgroundColor="{DynamicResource PageBackground}"
+                                    <Border BackgroundColor="{DynamicResource PageBackground}"
                                     Stroke="{DynamicResource CardBorder}"
                                     StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,0">
-                                <Entry Text="{Binding NewTitle}" Placeholder="e.g. Lunch with friends"
+                                        <Entry Text="{Binding NewTitle}" Placeholder="e.g. Lunch with friends"
                                        PlaceholderColor="#C0C0C5" FontSize="13"
                                        TextColor="{DynamicResource TextPrimary}"
                                        BackgroundColor="Transparent" HeightRequest="40" />
-                            </Border>
-                        </VerticalStackLayout>
+                                    </Border>
+                                </VerticalStackLayout>
 
-                        <VerticalStackLayout Spacing="5">
-                            <Label Text="Amount (₱)" FontSize="11" FontAttributes="Bold"
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="Amount (₱)" FontSize="11" FontAttributes="Bold"
                                    TextColor="{DynamicResource TextPrimary}" />
-                            <Border BackgroundColor="{DynamicResource PageBackground}"
+                                    <Border BackgroundColor="{DynamicResource PageBackground}"
                                     Stroke="{DynamicResource CardBorder}"
                                     StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,0">
-                                <Entry Text="{Binding NewAmountText}" Placeholder="0.00"
+                                        <Entry Text="{Binding NewAmountText}" Placeholder="0.00"
                                        PlaceholderColor="#C0C0C5" Keyboard="Numeric" FontSize="13"
                                        TextColor="{DynamicResource TextPrimary}"
                                        BackgroundColor="Transparent" HeightRequest="40" />
-                            </Border>
-                        </VerticalStackLayout>
+                                    </Border>
+                                </VerticalStackLayout>
 
-                        <VerticalStackLayout Spacing="5">
-                            <Label Text="Category" FontSize="11" FontAttributes="Bold"
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="Category" FontSize="11" FontAttributes="Bold"
                                    TextColor="{DynamicResource TextPrimary}" />
-                            <FlexLayout Wrap="Wrap" Direction="Row" JustifyContent="Start" AlignItems="Center">
-                                <Border BackgroundColor="{Binding NewIsFoodSelected, Converter={StaticResource BoolToChipBg}}"
+                                    <FlexLayout Wrap="Wrap" Direction="Row" JustifyContent="Start" AlignItems="Center">
+                                        <Border BackgroundColor="{Binding NewIsFoodSelected, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding NewIsFoodSelected, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
                                         Padding="12,6" Margin="0,0,6,6">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding SelectNewCategoryCommand}" CommandParameter="Food" />
-                                    </Border.GestureRecognizers>
-                                    <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding SelectNewCategoryCommand}" CommandParameter="Food" />
+                                            </Border.GestureRecognizers>
+                                            <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
-                                        <Label Style="{StaticResource PhosphorIcon}"
+                                                <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Food}"
                                            FontSize="14"
                                            TextColor="{DynamicResource AccentColor}"  />
 
-                                        <Label Text="Food"
+                                                <Label Text="Food"
                                            FontSize="12"
                                            VerticalOptions="Center"
                                            TextColor="{Binding NewIsFoodSelected, Converter={StaticResource BoolToChipText}}" />
 
-                                    </HorizontalStackLayout>
+                                            </HorizontalStackLayout>
 
-                                </Border>
-                                <Border BackgroundColor="{Binding NewIsTransportSelected, Converter={StaticResource BoolToChipBg}}"
+                                        </Border>
+                                        <Border BackgroundColor="{Binding NewIsTransportSelected, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding NewIsTransportSelected, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
                                         Padding="12,6" Margin="0,0,6,6">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding SelectNewCategoryCommand}" CommandParameter="Transport" />
-                                    </Border.GestureRecognizers>
-                                    <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding SelectNewCategoryCommand}" CommandParameter="Transport" />
+                                            </Border.GestureRecognizers>
+                                            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
 
-                                        <Label Style="{StaticResource PhosphorIcon}"
+                                                <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Transport}"
                                            FontSize="14"
                                            TextColor="{DynamicResource AccentColor}"  />
 
-                                        <Label Text="Transport"
+                                                <Label Text="Transport"
                                            FontSize="12"
                                            VerticalOptions="Center"
                                            TextColor="{Binding NewIsTransportSelected, Converter={StaticResource BoolToChipText}}" />
-                                    </HorizontalStackLayout>
-                                </Border>
-                                <Border BackgroundColor="{Binding NewIsShoppingSelected, Converter={StaticResource BoolToChipBg}}"
+                                            </HorizontalStackLayout>
+                                        </Border>
+                                        <Border BackgroundColor="{Binding NewIsShoppingSelected, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding NewIsShoppingSelected, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
                                         Padding="12,6" Margin="0,0,6,6">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding SelectNewCategoryCommand}" CommandParameter="Shopping" />
-                                    </Border.GestureRecognizers>
-                                    <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding SelectNewCategoryCommand}" CommandParameter="Shopping" />
+                                            </Border.GestureRecognizers>
+                                            <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
-                                        <Label Style="{StaticResource PhosphorIcon}"
+                                                <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Shopping}"
                                            FontSize="14"
                                            TextColor="{DynamicResource AccentColor}"  />
 
-                                        <Label Text="Shopping"
+                                                <Label Text="Shopping"
                                            FontSize="12"
                                            VerticalOptions="Center"
                                            TextColor="{Binding NewIsShoppingSelected, Converter={StaticResource BoolToChipText}}" />
 
-                                    </HorizontalStackLayout>
-                                </Border>
-                                <Border BackgroundColor="{Binding NewIsHealthSelected, Converter={StaticResource BoolToChipBg}}"
+                                            </HorizontalStackLayout>
+                                        </Border>
+                                        <Border BackgroundColor="{Binding NewIsHealthSelected, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding NewIsHealthSelected, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
                                         Padding="12,6" Margin="0,0,6,6">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding SelectNewCategoryCommand}" CommandParameter="Health" />
-                                    </Border.GestureRecognizers>
-                                    <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding SelectNewCategoryCommand}" CommandParameter="Health" />
+                                            </Border.GestureRecognizers>
+                                            <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
-                                        <Label Style="{StaticResource PhosphorIcon}"
+                                                <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Health}"
                                            FontSize="14"
                                            TextColor="{DynamicResource AccentColor}"  />
 
-                                        <Label Text="Health"
+                                                <Label Text="Health"
                                            FontSize="12"
                                            VerticalOptions="Center"
                                            TextColor="{Binding NewIsHealthSelected, Converter={StaticResource BoolToChipText}}" />
 
-                                    </HorizontalStackLayout>
-                                </Border>
-                                <Border BackgroundColor="{Binding NewIsFunSelected, Converter={StaticResource BoolToChipBg}}"
+                                            </HorizontalStackLayout>
+                                        </Border>
+                                        <Border BackgroundColor="{Binding NewIsFunSelected, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding NewIsFunSelected, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
                                         Padding="12,6" Margin="0,0,6,6">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding SelectNewCategoryCommand}" CommandParameter="Fun" />
-                                    </Border.GestureRecognizers>
-                                    <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding SelectNewCategoryCommand}" CommandParameter="Fun" />
+                                            </Border.GestureRecognizers>
+                                            <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
-                                        <Label Style="{StaticResource PhosphorIcon}"
+                                                <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Fun}"
                                            FontSize="14"
                                            TextColor="{DynamicResource AccentColor}"  />
 
-                                        <Label Text="Fun"
+                                                <Label Text="Fun"
                                            FontSize="12"
                                            VerticalOptions="Center"
                                            TextColor="{Binding NewIsFunSelected, Converter={StaticResource BoolToChipText}}" />
 
-                                    </HorizontalStackLayout>
-                                </Border>
-                                <Border BackgroundColor="{Binding NewIsOtherSelected, Converter={StaticResource BoolToChipBg}}"
+                                            </HorizontalStackLayout>
+                                        </Border>
+                                        <Border BackgroundColor="{Binding NewIsOtherSelected, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding NewIsOtherSelected, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
                                         Padding="12,6" Margin="0,0,6,6">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding SelectNewCategoryCommand}" CommandParameter="Other" />
-                                    </Border.GestureRecognizers>
-                                    <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding SelectNewCategoryCommand}" CommandParameter="Other" />
+                                            </Border.GestureRecognizers>
+                                            <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
-                                        <Label Style="{StaticResource PhosphorIcon}"
+                                                <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Default}"
                                            FontSize="14"
                                            TextColor="{DynamicResource AccentColor}"  />
 
-                                        <Label Text="Other"
+                                                <Label Text="Other"
                                            FontSize="12"
                                            VerticalOptions="Center"
                                            TextColor="{Binding NewIsOtherSelected, Converter={StaticResource BoolToChipText}}" />
 
-                                    </HorizontalStackLayout>
-                                </Border>
-                            </FlexLayout>
-                        </VerticalStackLayout>
+                                            </HorizontalStackLayout>
+                                        </Border>
+                                    </FlexLayout>
+                                </VerticalStackLayout>
 
-                        <VerticalStackLayout Spacing="5">
-                            <Label Text="Note (optional)" FontSize="11" FontAttributes="Bold"
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="Note (optional)" FontSize="11" FontAttributes="Bold"
                                    TextColor="{DynamicResource TextPrimary}" />
-                            <Border BackgroundColor="{DynamicResource PageBackground}"
+                                    <Border BackgroundColor="{DynamicResource PageBackground}"
                                     Stroke="{DynamicResource CardBorder}"
                                     StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,0">
-                                <Entry Text="{Binding NewNote}" Placeholder="Any extra details..."
+                                        <Entry Text="{Binding NewNote}" Placeholder="Any extra details..."
                                        PlaceholderColor="#C0C0C5" FontSize="13"
                                        TextColor="{DynamicResource TextPrimary}"
                                        BackgroundColor="Transparent" HeightRequest="40" />
-                            </Border>
-                        </VerticalStackLayout>
+                                    </Border>
+                                </VerticalStackLayout>
 
-                        <VerticalStackLayout Spacing="5">
-                            <Label Text="Date" FontSize="11" FontAttributes="Bold"
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="Date" FontSize="11" FontAttributes="Bold"
                                    TextColor="{DynamicResource TextPrimary}" />
-                            <Border BackgroundColor="{DynamicResource PageBackground}"
+                                    <Border BackgroundColor="{DynamicResource PageBackground}"
                                     Stroke="{DynamicResource CardBorder}"
                                     StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,4">
-                                <DatePicker Date="{Binding NewSelectedDate}" Format="MMMM dd, yyyy"
+                                        <DatePicker Date="{Binding NewSelectedDate}" Format="MMMM dd, yyyy"
                                             FontSize="13" TextColor="{DynamicResource TextPrimary}"
                                             BackgroundColor="Transparent" />
-                            </Border>
-                        </VerticalStackLayout>
+                                    </Border>
+                                </VerticalStackLayout>
 
-                        <VerticalStackLayout Spacing="5">
-                            <Label Text="Photo (optional)" FontSize="11" FontAttributes="Bold"
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="Photo (optional)" FontSize="11" FontAttributes="Bold"
                                    TextColor="{DynamicResource TextPrimary}" />
-                            <Border IsVisible="{Binding NewHasPhoto, Converter={StaticResource InverseBool}}"
+                                    <Border IsVisible="{Binding NewHasPhoto, Converter={StaticResource InverseBool}}"
                                     BackgroundColor="{DynamicResource PageBackground}"
                                     Stroke="{DynamicResource CardBorder}"
                                     StrokeThickness="0.8" StrokeShape="RoundRectangle 10" HeightRequest="72">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding PickNewPhotoCommand}" />
-                                </Border.GestureRecognizers>
-                                <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="3">
-                                    <Label Text="📷" FontSize="20" HorizontalOptions="Center" />
-                                    <Label Text="Tap to add a photo" FontSize="11"
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding PickNewPhotoCommand}" />
+                                        </Border.GestureRecognizers>
+                                        <VerticalStackLayout IsVisible="{Binding IsAddModalVisible}"
+                    HorizontalOptions="Fill" VerticalOptions="Fill" Spacing="3">
+                                            <Label Text="📷" FontSize="20" HorizontalOptions="Center" />
+                                            <Label Text="Tap to add a photo" FontSize="11"
                                            TextColor="{DynamicResource TextSecondary}"
                                            HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <VerticalStackLayout IsVisible="{Binding NewHasPhoto}" Spacing="0">
-                                <Border BackgroundColor="{DynamicResource PageBackground}"
+                                        </VerticalStackLayout>
+                                    </Border>
+                                    <VerticalStackLayout IsVisible="{Binding NewHasPhoto}" Spacing="0">
+                                        <Border BackgroundColor="{DynamicResource PageBackground}"
                                         Stroke="{DynamicResource CardBorder}"
                                         StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="0">
-                                    <Grid RowDefinitions="Auto,Auto">
-                                        <Image Grid.Row="0" Source="{Binding NewPhotoPath}"
+                                            <Grid RowDefinitions="Auto,Auto">
+                                                <Image Grid.Row="0" Source="{Binding NewPhotoPath}"
                                                Aspect="AspectFill" HeightRequest="110">
-                                            <Image.Clip>
-                                                <RoundRectangleGeometry Rect="0,0,1000,110"
+                                                    <Image.Clip>
+                                                        <RoundRectangleGeometry Rect="0,0,1000,110"
                                                                         CornerRadius="10,10,0,0" />
-                                            </Image.Clip>
-                                        </Image>
-                                        <Border Grid.Row="1" BackgroundColor="#1Fff3b30"
+                                                    </Image.Clip>
+                                                </Image>
+                                                <Border Grid.Row="1" BackgroundColor="#1Fff3b30"
                                                 StrokeThickness="0"
                                                 StrokeShape="RoundRectangle 0,0,10,10" Padding="0,7">
-                                            <Border.GestureRecognizers>
-                                                <TapGestureRecognizer Command="{Binding RemoveNewPhotoCommand}" />
-                                            </Border.GestureRecognizers>
-                                            <Label Text="✕ Remove photo" FontSize="12"
+                                                    <Border.GestureRecognizers>
+                                                        <TapGestureRecognizer Command="{Binding RemoveNewPhotoCommand}" />
+                                                    </Border.GestureRecognizers>
+                                                    <Label Text="✕ Remove photo" FontSize="12"
                                                    TextColor="#ff3b30" HorizontalOptions="Center" />
+                                                </Border>
+                                            </Grid>
                                         </Border>
-                                    </Grid>
-                                </Border>
-                            </VerticalStackLayout>
-                        </VerticalStackLayout>
+                                    </VerticalStackLayout>
+                                </VerticalStackLayout>
 
-                        <Border BackgroundColor="{DynamicResource AccentColor}" StrokeThickness="0"
+                                <Border BackgroundColor="{DynamicResource AccentColor}" StrokeThickness="0"
                                 Style="{StaticResource HoverButton}"
                                 StrokeShape="RoundRectangle 980" Padding="0,12">
-                            <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding SaveNewExpenseCommand}" />
-                            </Border.GestureRecognizers>
-                            <Label Text="Save Entry" FontSize="13" FontAttributes="Bold"
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding SaveNewExpenseCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="Save Entry" FontSize="13" FontAttributes="Bold"
                                    TextColor="{DynamicResource OnAccentColor}" HorizontalOptions="Center" />
-                        </Border>
+                                </Border>
 
-                    </VerticalStackLayout>
-                </ScrollView>
-            </Border>
-        </Grid>
-
-        <!-- ── Edit Expense modal ────────────────────────────────────────── -->
-        <Grid IsVisible="{Binding IsEditModalVisible}">
-            <Grid.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding DismissEditModalCommand}" />
-            </Grid.GestureRecognizers>
-            <controls:BlurOverlay />
-            <Border BackgroundColor="{DynamicResource CardBackground}"
-                    Style="{StaticResource ModalCard}"
-                    StrokeShape="RoundRectangle 16"
-                    HorizontalOptions="Center" VerticalOptions="Center"
-                    MaximumWidthRequest="360" Margin="20,0">
-                <ScrollView MaximumHeightRequest="560">
-                    <VerticalStackLayout Padding="18,16,18,18" Spacing="12">
-
-                        <Grid ColumnDefinitions="*,Auto">
-                            <VerticalStackLayout Grid.Column="0" Spacing="1">
-                                <Label Text="Edit Entry ✦" FontFamily="DisplayFont"
-                                       FontSize="18" TextColor="{DynamicResource TextPrimary}" />
-                                <Label Text="Update your expense" FontSize="11"
-                                       TextColor="{DynamicResource TextSecondary}" />
                             </VerticalStackLayout>
-                            <Border Grid.Column="1" BackgroundColor="{DynamicResource PageBackground}"
+                        </ScrollView>
+                    </Border>
+
+                    <Border BackgroundColor="{DynamicResource CardBackground}"
+                    
+                    StrokeThickness="0"
+                    IsVisible="{Binding IsEditModalVisible}"
+                    HorizontalOptions="Fill" VerticalOptions="Fill"
+                    >
+                        <ScrollView>
+                            <VerticalStackLayout Padding="18,16,18,18" Spacing="12">
+
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <VerticalStackLayout Grid.Column="0" Spacing="1">
+                                        <Label Text="Edit Entry ✦" FontFamily="DisplayFont"
+                                       FontSize="18" TextColor="{DynamicResource TextPrimary}" />
+                                        <Label Text="Update your expense" FontSize="11"
+                                       TextColor="{DynamicResource TextSecondary}" />
+                                    </VerticalStackLayout>
+                                    <Border Grid.Column="1" BackgroundColor="{DynamicResource PageBackground}"
                                     StrokeThickness="0" StrokeShape="RoundRectangle 980"
                                     WidthRequest="28" HeightRequest="28" VerticalOptions="Start">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding DismissEditModalCommand}" />
-                                </Border.GestureRecognizers>
-                                <Label Text="✕" FontSize="12" TextColor="{DynamicResource TextSecondary}"
-                                       HorizontalOptions="Center" VerticalOptions="Center" />
-                            </Border>
-                        </Grid>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding DismissEditModalCommand}" />
+                                        </Border.GestureRecognizers>
+                                        <Label Text="✕" FontSize="12" TextColor="{DynamicResource TextSecondary}"
+                                       IsVisible="{Binding IsEditModalVisible}"
+                    HorizontalOptions="Center" VerticalOptions="Center" />
+                                    </Border>
+                                </Grid>
 
-                        <VerticalStackLayout Spacing="5">
-                            <Label Text="Title" FontSize="11" FontAttributes="Bold"
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="Title" FontSize="11" FontAttributes="Bold"
                                    TextColor="{DynamicResource TextPrimary}" />
-                            <Border BackgroundColor="{DynamicResource PageBackground}"
+                                    <Border BackgroundColor="{DynamicResource PageBackground}"
                                     Stroke="{DynamicResource CardBorder}"
                                     StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,0">
-                                <Entry Text="{Binding EditTitle}" Placeholder="e.g. Lunch with friends"
+                                        <Entry Text="{Binding EditTitle}" Placeholder="e.g. Lunch with friends"
                                        PlaceholderColor="#C0C0C5" FontSize="13"
                                        TextColor="{DynamicResource TextPrimary}"
                                        BackgroundColor="Transparent" HeightRequest="40" />
-                            </Border>
-                        </VerticalStackLayout>
+                                    </Border>
+                                </VerticalStackLayout>
 
-                        <VerticalStackLayout Spacing="5">
-                            <Label Text="Amount (₱)" FontSize="11" FontAttributes="Bold"
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="Amount (₱)" FontSize="11" FontAttributes="Bold"
                                    TextColor="{DynamicResource TextPrimary}" />
-                            <Border BackgroundColor="{DynamicResource PageBackground}"
+                                    <Border BackgroundColor="{DynamicResource PageBackground}"
                                     Stroke="{DynamicResource CardBorder}"
                                     StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,0">
-                                <Entry Text="{Binding EditAmountText}" Placeholder="0.00"
+                                        <Entry Text="{Binding EditAmountText}" Placeholder="0.00"
                                        PlaceholderColor="#C0C0C5" Keyboard="Numeric" FontSize="13"
                                        TextColor="{DynamicResource TextPrimary}"
                                        BackgroundColor="Transparent" HeightRequest="40" />
-                            </Border>
-                        </VerticalStackLayout>
+                                    </Border>
+                                </VerticalStackLayout>
 
-                        <VerticalStackLayout Spacing="5">
-                            <Label Text="Category" FontSize="11" FontAttributes="Bold"
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="Category" FontSize="11" FontAttributes="Bold"
                                    TextColor="{DynamicResource TextPrimary}" />
-                            <FlexLayout Wrap="Wrap" Direction="Row" JustifyContent="Start" AlignItems="Center">
-                                <Border BackgroundColor="{Binding EditIsFoodSelected, Converter={StaticResource BoolToChipBg}}"
+                                    <FlexLayout Wrap="Wrap" Direction="Row" JustifyContent="Start" AlignItems="Center">
+                                        <Border BackgroundColor="{Binding EditIsFoodSelected, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding EditIsFoodSelected, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
                                         Padding="12,6" Margin="0,0,6,6">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding SelectEditCategoryCommand}" CommandParameter="Food" />
-                                    </Border.GestureRecognizers>
-                                    <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding SelectEditCategoryCommand}" CommandParameter="Food" />
+                                            </Border.GestureRecognizers>
+                                            <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
-                                        <Label Style="{StaticResource PhosphorIcon}"
+                                                <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Food}"
                                            FontSize="14"
                                            TextColor="{DynamicResource AccentColor}"  />
 
-                                        <Label Text="Food"
+                                                <Label Text="Food"
                                            FontSize="12"
                                            VerticalOptions="Center"
                                            TextColor="{Binding EditIsFoodSelected, Converter={StaticResource BoolToChipText}}" />
 
-                                    </HorizontalStackLayout>
-                                </Border>
-                                <Border BackgroundColor="{Binding EditIsTransportSelected, Converter={StaticResource BoolToChipBg}}"
+                                            </HorizontalStackLayout>
+                                        </Border>
+                                        <Border BackgroundColor="{Binding EditIsTransportSelected, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding EditIsTransportSelected, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
                                         Padding="12,6" Margin="0,0,6,6">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding SelectEditCategoryCommand}" CommandParameter="Transport" />
-                                    </Border.GestureRecognizers>
-                                    <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-                                        <Label Style="{StaticResource PhosphorIcon}"
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding SelectEditCategoryCommand}" CommandParameter="Transport" />
+                                            </Border.GestureRecognizers>
+                                            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                                                <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Transport}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource AccentColor}"  />        
-                                        <Label Text="Transport"
+                                           TextColor="{DynamicResource AccentColor}"  />
+                                                <Label Text="Transport"
                                             FontSize="12"
                                             VerticalOptions="Center"
                                             TextColor="{Binding EditIsTransportSelected, Converter={StaticResource BoolToChipText}}" />
-                                    </HorizontalStackLayout>
-                                </Border>
-                                <Border BackgroundColor="{Binding EditIsShoppingSelected, Converter={StaticResource BoolToChipBg}}"
+                                            </HorizontalStackLayout>
+                                        </Border>
+                                        <Border BackgroundColor="{Binding EditIsShoppingSelected, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding EditIsShoppingSelected, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
                                         Padding="12,6" Margin="0,0,6,6">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding SelectEditCategoryCommand}" CommandParameter="Shopping" />
-                                    </Border.GestureRecognizers>
-                                    <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding SelectEditCategoryCommand}" CommandParameter="Shopping" />
+                                            </Border.GestureRecognizers>
+                                            <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
-                                        <Label Style="{StaticResource PhosphorIcon}"
+                                                <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Shopping}"
                                            FontSize="14"
                                            TextColor="{DynamicResource AccentColor}"  />
 
-                                        <Label Text="Shopping"
+                                                <Label Text="Shopping"
                                            FontSize="12"
                                            VerticalOptions="Center"
                                            TextColor="{Binding EditIsShoppingSelected, Converter={StaticResource BoolToChipText}}" />
 
-                                    </HorizontalStackLayout>
-                                </Border>
-                                <Border BackgroundColor="{Binding EditIsHealthSelected, Converter={StaticResource BoolToChipBg}}"
+                                            </HorizontalStackLayout>
+                                        </Border>
+                                        <Border BackgroundColor="{Binding EditIsHealthSelected, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding EditIsHealthSelected, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
                                         Padding="12,6" Margin="0,0,6,6">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding SelectEditCategoryCommand}" CommandParameter="Health" />
-                                    </Border.GestureRecognizers>
-                                    <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding SelectEditCategoryCommand}" CommandParameter="Health" />
+                                            </Border.GestureRecognizers>
+                                            <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
-                                        <Label Style="{StaticResource PhosphorIcon}"
+                                                <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Health}"
                                            FontSize="14"
                                            TextColor="{DynamicResource AccentColor}"  />
 
-                                        <Label Text="Health"
+                                                <Label Text="Health"
                                            FontSize="12"
                                            VerticalOptions="Center"
                                            TextColor="{Binding EditIsHealthSelected, Converter={StaticResource BoolToChipText}}" />
 
-                                    </HorizontalStackLayout>
-                                </Border>
-                                <Border BackgroundColor="{Binding EditIsFunSelected, Converter={StaticResource BoolToChipBg}}"
+                                            </HorizontalStackLayout>
+                                        </Border>
+                                        <Border BackgroundColor="{Binding EditIsFunSelected, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding EditIsFunSelected, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
                                         Padding="12,6" Margin="0,0,6,6">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding SelectEditCategoryCommand}" CommandParameter="Fun" />
-                                    </Border.GestureRecognizers>
-                                    <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
-                                        <Label Style="{StaticResource PhosphorIcon}"
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding SelectEditCategoryCommand}" CommandParameter="Fun" />
+                                            </Border.GestureRecognizers>
+                                            <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+                                                <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Fun}"
                                            FontSize="14"
                                            TextColor="{DynamicResource AccentColor}"  />
 
-                                        <Label Text="Fun"
+                                                <Label Text="Fun"
                                            FontSize="12"
                                            VerticalOptions="Center"
                                            TextColor="{Binding EditIsFunSelected, Converter={StaticResource BoolToChipText}}" />
 
-                                    </HorizontalStackLayout>
-                                </Border>
-                                <Border BackgroundColor="{Binding EditIsOtherSelected, Converter={StaticResource BoolToChipBg}}"
+                                            </HorizontalStackLayout>
+                                        </Border>
+                                        <Border BackgroundColor="{Binding EditIsOtherSelected, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding EditIsOtherSelected, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
                                         Padding="12,6" Margin="0,0,6,6">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding SelectEditCategoryCommand}" CommandParameter="Other" />
-                                    </Border.GestureRecognizers>
-                                    <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding SelectEditCategoryCommand}" CommandParameter="Other" />
+                                            </Border.GestureRecognizers>
+                                            <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
-                                        <Label Style="{StaticResource PhosphorIcon}"
+                                                <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Default}"
                                            FontSize="14"
                                            TextColor="{DynamicResource AccentColor}"  />
 
-                                        <Label Text="Other"
+                                                <Label Text="Other"
                                            FontSize="12"
                                            VerticalOptions="Center"
                                            TextColor="{Binding EditIsOtherSelected, Converter={StaticResource BoolToChipText}}" />
 
-                                    </HorizontalStackLayout>
-                                </Border>
-                            </FlexLayout>
-                        </VerticalStackLayout>
+                                            </HorizontalStackLayout>
+                                        </Border>
+                                    </FlexLayout>
+                                </VerticalStackLayout>
 
-                        <VerticalStackLayout Spacing="5">
-                            <Label Text="Note (optional)" FontSize="11" FontAttributes="Bold"
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="Note (optional)" FontSize="11" FontAttributes="Bold"
                                    TextColor="{DynamicResource TextPrimary}" />
-                            <Border BackgroundColor="{DynamicResource PageBackground}"
+                                    <Border BackgroundColor="{DynamicResource PageBackground}"
                                     Stroke="{DynamicResource CardBorder}"
                                     StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,0">
-                                <Entry Text="{Binding EditNote}" Placeholder="Any extra details..."
+                                        <Entry Text="{Binding EditNote}" Placeholder="Any extra details..."
                                        PlaceholderColor="#C0C0C5" FontSize="13"
                                        TextColor="{DynamicResource TextPrimary}"
                                        BackgroundColor="Transparent" HeightRequest="40" />
-                            </Border>
-                        </VerticalStackLayout>
+                                    </Border>
+                                </VerticalStackLayout>
 
-                        <VerticalStackLayout Spacing="5">
-                            <Label Text="Date" FontSize="11" FontAttributes="Bold"
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="Date" FontSize="11" FontAttributes="Bold"
                                    TextColor="{DynamicResource TextPrimary}" />
-                            <Border BackgroundColor="{DynamicResource PageBackground}"
+                                    <Border BackgroundColor="{DynamicResource PageBackground}"
                                     Stroke="{DynamicResource CardBorder}"
                                     StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,4">
-                                <DatePicker Date="{Binding EditSelectedDate}" Format="MMMM dd, yyyy"
+                                        <DatePicker Date="{Binding EditSelectedDate}" Format="MMMM dd, yyyy"
                                             FontSize="13" TextColor="{DynamicResource TextPrimary}"
                                             BackgroundColor="Transparent" />
-                            </Border>
-                        </VerticalStackLayout>
+                                    </Border>
+                                </VerticalStackLayout>
 
-                        <VerticalStackLayout Spacing="5">
-                            <Label Text="Photo (optional)" FontSize="11" FontAttributes="Bold"
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="Photo (optional)" FontSize="11" FontAttributes="Bold"
                                    TextColor="{DynamicResource TextPrimary}" />
-                            <Border IsVisible="{Binding EditHasPhoto, Converter={StaticResource InverseBool}}"
+                                    <Border IsVisible="{Binding EditHasPhoto, Converter={StaticResource InverseBool}}"
                                     BackgroundColor="{DynamicResource PageBackground}"
                                     Stroke="{DynamicResource CardBorder}"
                                     StrokeThickness="0.8" StrokeShape="RoundRectangle 10" HeightRequest="72">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding PickEditPhotoCommand}" />
-                                </Border.GestureRecognizers>
-                                <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="3">
-                                    <Label Style="{StaticResource PhosphorIcon}"
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding PickEditPhotoCommand}" />
+                                        </Border.GestureRecognizers>
+                                        <VerticalStackLayout IsVisible="{Binding IsEditModalVisible}"
+                    HorizontalOptions="Fill" VerticalOptions="Fill" Spacing="3">
+                                            <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Camera}"
                                            FontSize="14"
                                            TextColor="{DynamicResource AccentColor}"  />
-                                    <Label Text="Tap to add a photo" FontSize="11"
+                                            <Label Text="Tap to add a photo" FontSize="11"
                                            TextColor="{DynamicResource TextSecondary}"
                                            HorizontalOptions="Center" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <VerticalStackLayout IsVisible="{Binding EditHasPhoto}" Spacing="0">
-                                <Border BackgroundColor="{DynamicResource PageBackground}"
+                                        </VerticalStackLayout>
+                                    </Border>
+                                    <VerticalStackLayout IsVisible="{Binding EditHasPhoto}" Spacing="0">
+                                        <Border BackgroundColor="{DynamicResource PageBackground}"
                                         Stroke="{DynamicResource CardBorder}"
                                         StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="0">
-                                    <Grid RowDefinitions="Auto,Auto">
-                                        <Image Grid.Row="0" Source="{Binding EditPhotoPath}"
+                                            <Grid RowDefinitions="Auto,Auto">
+                                                <Image Grid.Row="0" Source="{Binding EditPhotoPath}"
                                                Aspect="AspectFill" HeightRequest="110">
-                                            <Image.Clip>
-                                                <RoundRectangleGeometry Rect="0,0,1000,110"
+                                                    <Image.Clip>
+                                                        <RoundRectangleGeometry Rect="0,0,1000,110"
                                                                         CornerRadius="10,10,0,0" />
-                                            </Image.Clip>
-                                        </Image>
-                                        <Border Grid.Row="1" BackgroundColor="#1Fff3b30"
+                                                    </Image.Clip>
+                                                </Image>
+                                                <Border Grid.Row="1" BackgroundColor="#1Fff3b30"
                                                 StrokeThickness="0"
                                                 StrokeShape="RoundRectangle 0,0,10,10" Padding="0,7">
-                                            <Border.GestureRecognizers>
-                                                <TapGestureRecognizer Command="{Binding RemoveEditPhotoCommand}" />
-                                            </Border.GestureRecognizers>
-                                            <Label Text="✕ Remove photo" FontSize="12"
+                                                    <Border.GestureRecognizers>
+                                                        <TapGestureRecognizer Command="{Binding RemoveEditPhotoCommand}" />
+                                                    </Border.GestureRecognizers>
+                                                    <Label Text="✕ Remove photo" FontSize="12"
                                                    TextColor="#ff3b30" HorizontalOptions="Center" />
+                                                </Border>
+                                            </Grid>
                                         </Border>
-                                    </Grid>
-                                </Border>
-                            </VerticalStackLayout>
-                        </VerticalStackLayout>
+                                    </VerticalStackLayout>
+                                </VerticalStackLayout>
 
-                        <Border BackgroundColor="{DynamicResource AccentColor}" StrokeThickness="0"
+                                <Border BackgroundColor="{DynamicResource AccentColor}" StrokeThickness="0"
                                 Style="{StaticResource HoverButton}"
                                 StrokeShape="RoundRectangle 980" Padding="0,12">
-                            <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding SaveEditExpenseCommand}" />
-                            </Border.GestureRecognizers>
-                            <Label Text="Update Entry" FontSize="13" FontAttributes="Bold"
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding SaveEditExpenseCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="Update Entry" FontSize="13" FontAttributes="Bold"
                                    TextColor="{DynamicResource OnAccentColor}" HorizontalOptions="Center" />
-                        </Border>
+                                </Border>
 
-                    </VerticalStackLayout>
-                </ScrollView>
-            </Border>
-        </Grid>
+                            </VerticalStackLayout>
+                        </ScrollView>
+                    </Border>
 
-        <!-- ── Month picker overlay ──────────────────────────────────────── -->
+                </Grid>
+            </controls:DrawerHost.DrawerContent>
+
+        </controls:DrawerHost>
+
         <Grid IsVisible="{Binding IsMonthPickerVisible}">
             <Grid.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding DismissMonthPickerCommand}" />

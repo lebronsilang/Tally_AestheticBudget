@@ -21,7 +21,7 @@ public static class MauiProgram
                 fonts.AddFont("DMSans-Regular.ttf", "BodyFont");
                 fonts.AddFont("DMSerifDisplay-Regular.ttf", "DisplayFont");
                 fonts.AddFont("Phosphor.ttf", "PhosphorIcons");
-                fonts.AddFont("Phosphor-Bold.ttf", "PhosphorIconsBold");
+
             });
 
 
@@ -59,10 +59,57 @@ public static class MauiProgram
         builder.Services.AddTransient<SettingsPage>();
 
 
-#if DEBUG
-        builder.Logging.AddDebug();
-#endif
+    #if DEBUG
+            builder.Logging.AddDebug();
+    #endif
 
-        return builder.Build();
+    #if WINDOWS
+            ConfigureBorderlessInputs();
+    #endif
+            return builder.Build();
     }
+    #if WINDOWS
+    static void ConfigureBorderlessInputs()
+    {
+        static void StripTextBox(Microsoft.UI.Xaml.Controls.TextBox tb)
+        {
+            var zero = new Microsoft.UI.Xaml.Thickness(0);
+            var clear = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
+            tb.BorderThickness = zero;
+            // override theme resources so focus/hover/disabled states don't re-add it
+            tb.Resources["TextControlBorderThemeThickness"] = zero;
+            tb.Resources["TextControlBorderThemeThicknessFocused"] = zero;
+            tb.Resources["TextControlBackground"] = clear;
+            tb.Resources["TextControlBackgroundPointerOver"] = clear;
+            tb.Resources["TextControlBackgroundFocused"] = clear;
+            tb.Resources["TextControlBackgroundDisabled"] = clear;
+            tb.Resources["TextControlCornerRadius"] = new Microsoft.UI.Xaml.CornerRadius(0);
+        }
+
+        Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping("TallyBorderless", (h, _) =>
+        {
+            if (h.PlatformView is Microsoft.UI.Xaml.Controls.TextBox tb) StripTextBox(tb);
+        });
+        Microsoft.Maui.Handlers.EditorHandler.Mapper.AppendToMapping("TallyBorderless", (h, _) =>
+        {
+            if (h.PlatformView is Microsoft.UI.Xaml.Controls.TextBox tb) StripTextBox(tb);
+        });
+        Microsoft.Maui.Handlers.DatePickerHandler.Mapper.AppendToMapping("TallyBorderless", (h, _) =>
+        {
+            if (h.PlatformView is Microsoft.UI.Xaml.Controls.CalendarDatePicker cdp)
+            {
+                cdp.BorderThickness = new Microsoft.UI.Xaml.Thickness(0);
+                cdp.Resources["CalendarDatePickerBorderThemeThickness"] = new Microsoft.UI.Xaml.Thickness(0);
+            }
+        });
+        Microsoft.Maui.Handlers.PickerHandler.Mapper.AppendToMapping("TallyBorderless", (h, _) =>
+        {
+            if (h.PlatformView is Microsoft.UI.Xaml.Controls.ComboBox cb)
+            {
+                cb.BorderThickness = new Microsoft.UI.Xaml.Thickness(0);
+                cb.Resources["ComboBoxBorderThemeThickness"] = new Microsoft.UI.Xaml.Thickness(0);
+            }
+        });
+    }
+#endif
 }

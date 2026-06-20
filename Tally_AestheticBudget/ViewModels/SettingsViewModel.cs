@@ -51,6 +51,7 @@ public partial class SettingsViewModel : ObservableObject
         _feedListView = settings.FeedListView;
         _wishlistListView = settings.WishlistListView;
         _listViewShowsPhoto = settings.ListViewShowsPhoto;
+        _expensePanelOnLeft = settings.ExpensePanelOnLeft;
 
 
         FilteredCurrencies = new ObservableCollection<CurrencyOption>(
@@ -208,6 +209,10 @@ public partial class SettingsViewModel : ObservableObject
     partial void OnShowStaleReminderChanged(bool value) { _settings.ShowStaleReminder = value; _dataChanged.NotifySettingsChanged(); }
 
     // ── View-mode toggles ──────────────────────────────────────────────────────
+
+    [ObservableProperty]
+    private bool _expensePanelOnLeft;
+    partial void OnExpensePanelOnLeftChanged(bool value) { _settings.ExpensePanelOnLeft = value; _dataChanged.NotifySettingsChanged(); }
 
     [ObservableProperty]
     private bool _feedListView;
