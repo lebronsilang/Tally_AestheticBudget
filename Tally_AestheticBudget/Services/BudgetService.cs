@@ -7,15 +7,12 @@ namespace Tally_AestheticBudget.Services;
 
 public interface IBudgetService
 {
-    // Per-category items for a single month (limit + spent), scale 1:1.
-    // Kept for the Grocery screen and Wishlist affordability checks.
     Task<IEnumerable<BudgetCategoryItem>> GetBudgetItemsAsync(int year, int month);
 
-    // Fully-computed page state for a given period (total, categories, unallocated).
     Task<BudgetOverview> GetOverviewAsync(BudgetPeriod period);
 
-    // Persist a category limit / the monthly total. Both write to a specific month.
-    Task SetLimitAsync(int year, int month, ExpenseCategory category, decimal limit);
+    // null limit = Unlimited (no cap). 0 = an intentional ₱0 cap. > 0 = normal.
+    Task SetLimitAsync(int year, int month, ExpenseCategory category, decimal? limit);
     Task SetTotalAsync(int year, int month, decimal total);
 }
 
@@ -27,10 +24,15 @@ public class BudgetService : IBudgetService
     private readonly IExpenseService _expenseService;
     private readonly ISettingsService _settings;
 
-    // Sentinel Category value for the all-up monthly budget row.
     private const string TotalCategoryKey = "Total";
 
-    // The categories we always surface on the Budget screen.
+    // Stored value that encodes "Unlimited" in the non-nullable DB column.
+    // Kept private — the sentinel never leaves this service; the domain uses decimal?.
+    private const decimal UnlimitedSentinel = -1m;
+
+    private static decimal? FromStored(decimal stored) => stored < 0m ? (decimal?)null : stored;
+    private static decimal ToStored(decimal? limit) => limit ?? UnlimitedSentinel;
+
     private static readonly ExpenseCategory[] AllCategories =
     [
         ExpenseCategory.Food,
@@ -61,7 +63,7 @@ public class BudgetService : IBudgetService
         return AllCategories.Select(cat => new BudgetCategoryItem
         {
             Category = cat,
-            Limit = limits.TryGetValue(cat, out var l) ? l : 0m,
+            Limit = limits.TryGetValue(cat, out var l) ? l : null,   // missing row → unlimited
             Spent = spent.TryGetValue(cat, out var s) ? s : 0m,
             CurrencySymbol = sym
         });
@@ -69,7 +71,7 @@ public class BudgetService : IBudgetService
 
     public async Task<BudgetOverview> GetOverviewAsync(BudgetPeriod period)
     {
-        // 1. Spending for this window — reuse the proven expense queries.
+        // 1. Spending for this window.
         var spentItems = period.Mode switch
         {
             BudgetFilterMode.Day => await _expenseService.GetFeedItemsForDayAsync(period.Day),
@@ -80,9 +82,9 @@ public class BudgetService : IBudgetService
         var spentByCat = SpentByCategory(spentItems);
         var totalSpent = spentItems.Sum(e => e.Amount);
 
-        // 2. Limit source: a scaled single-month figure, or a year-wide sum.
-        Dictionary<ExpenseCategory, decimal> limits;
-        decimal total;
+        // 2. Limits (nullable: null = unlimited).
+        Dictionary<ExpenseCategory, decimal?> limits;
+        decimal? total;
         bool editable;
 
         if (period.Mode == BudgetFilterMode.Year)
@@ -111,8 +113,11 @@ public class BudgetService : IBudgetService
 
             if (scale != 1m)
             {
-                limits = limits.ToDictionary(kv => kv.Key, kv => kv.Value * scale);
-                total *= scale;
+                // Scale numeric caps; unlimited stays unlimited.
+                limits = limits.ToDictionary(
+                    kv => kv.Key,
+                    kv => kv.Value is decimal lv ? (decimal?)(lv * scale) : null);
+                total = total is decimal tv ? (decimal?)(tv * scale) : null;
             }
             editable = period.Mode == BudgetFilterMode.Month;
         }
@@ -124,8 +129,8 @@ public class BudgetService : IBudgetService
 
         foreach (var cat in AllCategories)
         {
-            var lim = limits.TryGetValue(cat, out var l) ? l : 0m;
-            if (lim > 0) allocatedLimitSum += lim;
+            var lim = limits.TryGetValue(cat, out var l) ? l : null; // missing → unlimited
+            if (lim is decimal pos && pos > 0m) allocatedLimitSum += pos;
 
             items.Add(new BudgetCategoryItem
             {
@@ -137,17 +142,18 @@ public class BudgetService : IBudgetService
             });
         }
 
-        // 4. Unallocated residual (opt-in): one summary row over the un-capped categories.
+        // 4. Unallocated residual (opt-in): the un-capped (unlimited) categories.
         if (_settings.AllotRemainingToUnallocated)
         {
             var uncapped = AllCategories
-                .Where(c => !(limits.TryGetValue(c, out var l) && l > 0))
+                .Where(c => !(limits.TryGetValue(c, out var l) && l.HasValue))  // null/missing = uncapped
                 .ToHashSet();
 
             items.Add(new BudgetCategoryItem
             {
                 IsUnallocated = true,
-                Limit = Math.Max(0m, total - allocatedLimitSum),
+                // If the total is itself unlimited, the residual is unlimited too.
+                Limit = total is decimal t ? (decimal?)Math.Max(0m, t - allocatedLimitSum) : null,
                 Spent = spentByCat.Where(kv => uncapped.Contains(kv.Key)).Sum(kv => kv.Value),
                 CurrencySymbol = sym,
                 CanEditLimit = false
@@ -156,7 +162,9 @@ public class BudgetService : IBudgetService
 
         return new BudgetOverview
         {
-            TotalLimit = total,
+            // For the *total* pill, "unlimited" and "unset" are the same UX, so we
+            // collapse null → 0 here; HasTotal/IsOverTotal then behave as before.
+            TotalLimit = total ?? 0m,
             TotalSpent = totalSpent,
             IsEditable = editable,
             CurrencySymbol = sym,
@@ -166,13 +174,13 @@ public class BudgetService : IBudgetService
 
     // ── Public writes ─────────────────────────────────────────────────────────
 
-    public Task SetLimitAsync(int year, int month, ExpenseCategory category, decimal limit)
-        => UpsertAsync(year, month, category.ToString(), limit);
+    public Task SetLimitAsync(int year, int month, ExpenseCategory category, decimal? limit)
+        => UpsertAsync(year, month, category.ToString(), ToStored(limit));
 
     public Task SetTotalAsync(int year, int month, decimal total)
         => UpsertAsync(year, month, TotalCategoryKey, total);
 
-    private async Task UpsertAsync(int year, int month, string categoryStr, decimal limit)
+    private async Task UpsertAsync(int year, int month, string categoryStr, decimal storedLimit)
     {
         var db = await _db.GetConnectionAsync();
         var existing = await db.Table<BudgetEntity>()
@@ -183,7 +191,7 @@ public class BudgetService : IBudgetService
 
         if (match is not null)
         {
-            match.Limit = limit;
+            match.Limit = storedLimit;
             await db.UpdateAsync(match);
         }
         else
@@ -191,7 +199,7 @@ public class BudgetService : IBudgetService
             await db.InsertAsync(new BudgetEntity
             {
                 Category = categoryStr,
-                Limit = limit,
+                Limit = storedLimit,
                 Month = month,
                 Year = year
             });
@@ -200,8 +208,7 @@ public class BudgetService : IBudgetService
 
     // ── Limit loading ───────────────────────────────────────────────────────────
 
-    // Single month, with carry-forward. Splits out the "Total" sentinel.
-    private async Task<(Dictionary<ExpenseCategory, decimal> limits, decimal total)>
+    private async Task<(Dictionary<ExpenseCategory, decimal?> limits, decimal? total)>
         LoadMonthlyLimitsAsync(int year, int month)
     {
         var db = await _db.GetConnectionAsync();
@@ -213,51 +220,67 @@ public class BudgetService : IBudgetService
         if (saved.Count == 0)
             saved = await CarryForwardLimitsAsync(year, month);
 
-        var limits = new Dictionary<ExpenseCategory, decimal>();
-        decimal total = 0m;
+        var limits = new Dictionary<ExpenseCategory, decimal?>();
+        decimal? total = null;
 
         foreach (var row in saved)
         {
+            var val = FromStored(row.Limit);
             if (string.Equals(row.Category, TotalCategoryKey, StringComparison.OrdinalIgnoreCase))
-                total = row.Limit;
+                total = val;
             else if (Enum.TryParse<ExpenseCategory>(row.Category, true, out var cat))
-                limits[cat] = row.Limit;
+                limits[cat] = val;
         }
 
         return (limits, total);
     }
 
-    // Whole year: sum of stored monthly limits per category + total. No carry-forward —
-    // months with no row contribute nothing, by design.
-    private async Task<(Dictionary<ExpenseCategory, decimal> limits, decimal total)>
+    // Whole year: a category is unlimited for the year if ANY of its months is
+    // unlimited (there is no finite ceiling); otherwise it's the sum of the caps.
+    private async Task<(Dictionary<ExpenseCategory, decimal?> limits, decimal? total)>
         LoadYearlyLimitsAsync(int year)
     {
         var db = await _db.GetConnectionAsync();
         var rows = await db.Table<BudgetEntity>().Where(b => b.Year == year).ToListAsync();
 
-        var limits = new Dictionary<ExpenseCategory, decimal>();
-        decimal total = 0m;
+        var sums = new Dictionary<ExpenseCategory, decimal>();
+        var unlimited = new HashSet<ExpenseCategory>();
+        var touched = new HashSet<ExpenseCategory>();
+
+        decimal totalSum = 0m;
+        bool totalTouched = false;
+        bool totalUnlimited = false;
 
         foreach (var row in rows)
         {
+            var val = FromStored(row.Limit);
+
             if (string.Equals(row.Category, TotalCategoryKey, StringComparison.OrdinalIgnoreCase))
             {
-                total += row.Limit;
+                totalTouched = true;
+                if (val is decimal tv) totalSum += tv;
+                else totalUnlimited = true;
             }
             else if (Enum.TryParse<ExpenseCategory>(row.Category, true, out var cat))
             {
-                limits[cat] = limits.TryGetValue(cat, out var existing)
-                    ? existing + row.Limit
-                    : row.Limit;
+                touched.Add(cat);
+                if (val is decimal cv) sums[cat] = sums.GetValueOrDefault(cat) + cv;
+                else unlimited.Add(cat);
             }
         }
+
+        var limits = new Dictionary<ExpenseCategory, decimal?>();
+        foreach (var cat in touched)
+            limits[cat] = unlimited.Contains(cat) ? null : sums.GetValueOrDefault(cat);
+
+        decimal? total = totalTouched ? (totalUnlimited ? null : totalSum) : null;
 
         return (limits, total);
     }
 
     // ── Carry forward ───────────────────────────────────────────────────────────
-    // Copies the most recent prior month's rows (including the "Total" sentinel)
-    // into the requested month when it has none of its own.
+    // Copies the most recent prior month's rows (the sentinel -1 carries verbatim,
+    // so an unlimited category stays unlimited next month).
 
     private async Task<List<BudgetEntity>> CarryForwardLimitsAsync(int year, int month)
     {

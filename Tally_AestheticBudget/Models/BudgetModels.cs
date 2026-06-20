@@ -13,13 +13,19 @@ public partial class BudgetCategoryItem : ObservableObject
 
     public ExpenseCategory Category { get; set; }
 
-    // How much the user has set as their limit for this category
+    // The user's limit for this category.
+    //   null  → Unlimited (no cap, no over-warning, neutral/hidden progress)
+    //   0     → an intentional ₱0 budget (any spend counts as over)
+    //   > 0   → normal cap
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ProgressPercent))]
     [NotifyPropertyChangedFor(nameof(IsOverLimit))]
+    [NotifyPropertyChangedFor(nameof(IsUnlimited))]
+    [NotifyPropertyChangedFor(nameof(HasLimit))]
+    [NotifyPropertyChangedFor(nameof(ShowProgressBar))]
     [NotifyPropertyChangedFor(nameof(StatusLabel))]
     [NotifyPropertyChangedFor(nameof(LimitFormatted))]
-    private decimal _limit;
+    private decimal? _limit;
 
     // How much has actually been spent this month in this category
     [ObservableProperty]
@@ -74,28 +80,57 @@ public partial class BudgetCategoryItem : ObservableObject
     public string CurrencySymbol { get; set; } = "₱";
 
     public string SpentFormatted => $"{CurrencySymbol}{Spent:N2}";
-    public string LimitFormatted => Limit > 0 ? $"{CurrencySymbol}{Limit:N2}" : "No limit set";
 
-    // e.g. "₱1,200 of ₱3,000" or "₱800 over limit"
+    // ── Limit-state helpers (item 5) ──────────────────────────────────────────
+
+    /// <summary>No cap at all — spending is never flagged.</summary>
+    public bool IsUnlimited => Limit is null;
+
+    /// <summary>A cap exists (including an intentional ₱0).</summary>
+    public bool HasLimit => Limit is not null;
+
+    /// <summary>
+    /// A determinate progress fill only makes sense for a positive cap. Bind the
+    /// whole progress track's IsVisible to <see cref="HasLimit"/> (hide for
+    /// unlimited); a ₱0 cap still shows a determinate track that fills red the
+    /// moment anything is spent.
+    /// </summary>
+    public bool ShowProgressBar => Limit is decimal v && v > 0m;
+
+    public string LimitFormatted => Limit is decimal v
+        ? $"{CurrencySymbol}{v:N2}"
+        : "Unlimited";
+
+    // e.g. "₱1,200 of ₱3,000", "₱800 over limit", "₱1,200 spent · unlimited"
     public string StatusLabel
     {
         get
         {
-            if (Limit <= 0) return $"{CurrencySymbol}{Spent:N2} spent · no limit";
-            if (IsOverLimit) return $"{CurrencySymbol}{Spent - Limit:N2} over limit";
-            return $"{CurrencySymbol}{Spent:N2} of {CurrencySymbol}{Limit:N2}";
+            if (Limit is not decimal lim)
+                return $"{CurrencySymbol}{Spent:N2} spent · unlimited";
+            if (Spent > lim)
+                return $"{CurrencySymbol}{Spent - lim:N2} over limit";
+            if (lim == 0m)
+                return $"{CurrencySymbol}0.00 budget";
+            return $"{CurrencySymbol}{Spent:N2} of {CurrencySymbol}{lim:N2}";
         }
     }
 
-    // Progress 0.0 -> 1.0 capped at 1.0 for the bar width
-    public double ProgressPercent =>
-        Limit > 0 ? (double)Math.Min(Spent / Limit, 1.0m) : 0;
+    // Progress 0.0 -> 1.0 for the bar width.
+    public double ProgressPercent
+    {
+        get
+        {
+            if (Limit is not decimal lim) return 0d;        // unlimited → track hidden anyway
+            if (lim <= 0m) return Spent > 0m ? 1d : 0d;     // ₱0 cap → full once anything is spent
+            return (double)Math.Min(Spent / lim, 1.0m);
+        }
+    }
 
-    // True when spending exceeds the limit then bar turns red
-    public bool IsOverLimit => Limit > 0 && Spent > Limit;
+    // True when spending exceeds the cap. For a ₱0 cap, any spend is "over".
+    public bool IsOverLimit => Limit is decimal lim && Spent > lim;
 
     // ── Inline edit state ─────────────────────────────────────────────────────
-    // These control the inline edit row visibility
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNotEditing))]
@@ -104,18 +139,19 @@ public partial class BudgetCategoryItem : ObservableObject
 
     public bool IsNotEditing => !IsEditing;
 
+    /// <summary>Edit-row toggle: when on, Save persists a null (unlimited) limit.</summary>
+    [ObservableProperty]
+    private bool _editIsUnlimited;
+
     // ── Unallocated / period state ─────────────────────────────────────────────
 
-    // The residual "Unallocated" summary row — derived, never directly editable.
     public bool IsUnallocated { get; set; }
 
-    // False in This Year view (read-only aggregate) and on the Unallocated row.
     public bool CanEditLimit { get; set; } = true;
 
     public bool ShowEditButton => CanEditLimit && IsNotEditing;
     public string DisplayName => IsUnallocated ? "Unallocated" : CategoryLabel;
 
-    // The text the user types into the inline edit field
     [ObservableProperty]
     private string _editLimitText = string.Empty;
 
@@ -125,10 +161,6 @@ public partial class BudgetCategoryItem : ObservableObject
     /// <summary>How the Budget screen scales limits and scopes spending.</summary>
     public enum BudgetFilterMode { Day, Week, Month, Year }
 
-    /// <summary>
-    /// Describes the window the Budget page is showing. Only the fields relevant to
-    /// <see cref="Mode"/> are read; the view-model fills the rest with harmless defaults.
-    /// </summary>
     public sealed record BudgetPeriod(
         BudgetFilterMode Mode,
         DateTime Day,
@@ -136,7 +168,6 @@ public partial class BudgetCategoryItem : ObservableObject
         int Year,
         int Month);
 
-    /// <summary>Everything the Budget page renders for one period, fully computed by the service.</summary>
     public sealed class BudgetOverview
     {
         public decimal TotalLimit { get; init; }

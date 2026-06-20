@@ -311,19 +311,35 @@ public partial class BudgetViewModel : ObservableObject
     {
         if (!item.CanEditLimit) return;
         foreach (var other in BudgetItems) other.IsEditing = false;
-        item.EditLimitText = item.Limit > 0 ? item.Limit.ToString("N2") : string.Empty;
+
+        item.EditIsUnlimited = item.Limit is null;
+        item.EditLimitText = item.Limit is decimal v
+            ? v.ToString("N2", CultureInfo.InvariantCulture)
+            : string.Empty;
         item.IsEditing = true;
     }
 
     [RelayCommand]
     private async Task SaveLimitAsync(BudgetCategoryItem item)
     {
-        if (!decimal.TryParse(item.EditLimitText, NumberStyles.Number,
-                CultureInfo.InvariantCulture, out var newLimit) || newLimit < 0)
+        decimal? newLimit;
+
+        if (item.EditIsUnlimited)
         {
-            await Shell.Current.DisplayAlertAsync("Invalid amount", "Please enter a valid number.", "OK");
-            return;
+            newLimit = null; // Unlimited
         }
+        else
+        {
+            if (!decimal.TryParse(item.EditLimitText, NumberStyles.Number,
+                    CultureInfo.InvariantCulture, out var v) || v < 0)
+            {
+                await Shell.Current.DisplayAlertAsync("Invalid amount",
+                    "Enter a valid number, or switch on \u201CNo spending limit.\u201D", "OK");
+                return;
+            }
+            newLimit = v; // 0 is allowed = an intentional \u20B10 cap
+        }
+
         await _budgetService.SetLimitAsync(PickerYear, _selectedMonth, item.Category, newLimit);
         item.IsEditing = false;
         _dataChanged.NotifyBudgetChanged();
@@ -335,6 +351,7 @@ public partial class BudgetViewModel : ObservableObject
     {
         item.IsEditing = false;
         item.EditLimitText = string.Empty;
+        item.EditIsUnlimited = false;
     }
 
     // ── Load ──────────────────────────────────────────────────────────────────

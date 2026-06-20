@@ -372,7 +372,7 @@
                                         <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Food}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource TextPrimary}"  />
+                                           TextColor="{DynamicResource AccentColor}"  />
 
                                         <Label Text="Food"
                                            FontSize="12"
@@ -394,7 +394,7 @@
                                         <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Transport}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource TextPrimary}"  />
+                                           TextColor="{DynamicResource AccentColor}"  />
 
                                         <Label Text="Transport"
                                            FontSize="12"
@@ -414,7 +414,7 @@
                                         <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Shopping}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource TextPrimary}"  />
+                                           TextColor="{DynamicResource AccentColor}"  />
 
                                         <Label Text="Shopping"
                                            FontSize="12"
@@ -435,7 +435,7 @@
                                         <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Health}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource TextPrimary}"  />
+                                           TextColor="{DynamicResource AccentColor}"  />
 
                                         <Label Text="Health"
                                            FontSize="12"
@@ -456,7 +456,7 @@
                                         <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Fun}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource TextPrimary}"  />
+                                           TextColor="{DynamicResource AccentColor}"  />
 
                                         <Label Text="Fun"
                                            FontSize="12"
@@ -477,7 +477,7 @@
                                         <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Default}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource TextPrimary}"  />
+                                           TextColor="{DynamicResource AccentColor}"  />
 
                                         <Label Text="Other"
                                            FontSize="12"
@@ -646,7 +646,7 @@
                                         <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Food}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource TextPrimary}"  />
+                                           TextColor="{DynamicResource AccentColor}"  />
 
                                         <Label Text="Food"
                                            FontSize="12"
@@ -666,7 +666,7 @@
                                         <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Transport}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource TextPrimary}"  />        
+                                           TextColor="{DynamicResource AccentColor}"  />        
                                         <Label Text="Transport"
                                             FontSize="12"
                                             VerticalOptions="Center"
@@ -685,7 +685,7 @@
                                         <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Shopping}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource TextPrimary}"  />
+                                           TextColor="{DynamicResource AccentColor}"  />
 
                                         <Label Text="Shopping"
                                            FontSize="12"
@@ -706,7 +706,7 @@
                                         <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Health}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource TextPrimary}"  />
+                                           TextColor="{DynamicResource AccentColor}"  />
 
                                         <Label Text="Health"
                                            FontSize="12"
@@ -726,7 +726,7 @@
                                         <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Fun}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource TextPrimary}"  />
+                                           TextColor="{DynamicResource AccentColor}"  />
 
                                         <Label Text="Fun"
                                            FontSize="12"
@@ -747,7 +747,7 @@
                                         <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Default}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource TextPrimary}"  />
+                                           TextColor="{DynamicResource AccentColor}"  />
 
                                         <Label Text="Other"
                                            FontSize="12"
@@ -798,7 +798,7 @@
                                     <Label Style="{StaticResource PhosphorIcon}"
                                            Text="{x:Static ph:PhosphorIcons.Camera}"
                                            FontSize="14"
-                                           TextColor="{DynamicResource TextPrimary}"  />
+                                           TextColor="{DynamicResource AccentColor}"  />
                                     <Label Text="Tap to add a photo" FontSize="11"
                                            TextColor="{DynamicResource TextSecondary}"
                                            HorizontalOptions="Center" />
@@ -951,7 +951,7 @@
                                 <Label Style="{StaticResource PhosphorIcon}"
                                    Text="{x:Static ph:PhosphorIcons.Food}"
                                    FontSize="14"
-                                   TextColor="{DynamicResource TextPrimary}"  />
+                                   TextColor="{DynamicResource AccentColor}"  />
 
                                 <Label Text="Food"
                                    FontSize="12"
@@ -973,7 +973,7 @@
                                 <Label Style="{StaticResource PhosphorIcon}"
                                    Text="{x:Static ph:PhosphorIcons.Transport}"
                                    FontSize="14"
-                                   TextColor="{DynamicResource TextPrimary}"  />
+                                   TextColor="{DynamicResource AccentColor}"  />
 
                                 <Label Text="Transport"
                                    FontSize="12"
@@ -995,7 +995,7 @@
                                 <Label Style="{StaticResource PhosphorIcon}"
                                    Text="{x:Static ph:PhosphorIcons.Shopping}"
                                    FontSize="14"
-                                   TextColor="{DynamicResource TextPrimary}"  />
+                                   TextColor="{DynamicResource AccentColor}"  />
 
                                 <Label Text="Shopping"
                                    FontSize="12"
@@ -1017,7 +1017,7 @@
                                 <Label Style="{StaticResource PhosphorIcon}"
                                    Text="{x:Static ph:PhosphorIcons.Health}"
                                    FontSize="14"
-                                   TextColor="{DynamicResource TextPrimary}"  />
+                                   TextColor="{DynamicResource AccentColor}"  />
 
                                 <Label Text="Health"
                                    FontSize="12"
@@ -1039,7 +1039,7 @@
                                 <Label Style="{StaticResource PhosphorIcon}"
                                    Text="{x:Static ph:PhosphorIcons.Fun}"
                                    FontSize="14"
-                                   TextColor="{DynamicResource TextPrimary}"  />
+                                   TextColor="{DynamicResource AccentColor}"  />
 
                                 <Label Text="Fun" FontSize="12"
                                    TextColor="{DynamicResource TextPrimary}" />
@@ -1059,7 +1059,7 @@
                                 <Label Style="{StaticResource PhosphorIcon}"
                                    Text="{x:Static ph:PhosphorIcons.Default}"
                                    FontSize="14"
-                                   TextColor="{DynamicResource TextPrimary}"  />
+                                   TextColor="{DynamicResource AccentColor}"  />
 
                                 <Label Text="Other"
                                    FontSize="12"
@@ -1081,7 +1081,7 @@
                                 <Label Style="{StaticResource PhosphorIcon}"
                                    Text="{x:Static ph:PhosphorIcons.Grocery}"
                                    FontSize="14"
-                                   TextColor="{DynamicResource TextPrimary}"  />
+                                   TextColor="{DynamicResource AccentColor}"  />
 
                                 <Label Text="Grocery"
                                    FontSize="12"

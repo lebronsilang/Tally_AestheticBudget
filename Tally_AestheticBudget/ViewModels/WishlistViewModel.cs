@@ -402,9 +402,12 @@ public partial class WishlistViewModel : ObservableObject
         var budgets = await _budgetService.GetBudgetItemsAsync(now.Year, now.Month);
         var budget = budgets.FirstOrDefault(b => b.Category == item.Category);
 
-        if (budget is null || budget.Limit <= 0) { ShowAffordResult = false; return; }
-
-        var remaining = budget.Limit - budget.Spent;
+        if (budget is null || budget.Limit is not decimal lim || lim <= 0m)
+        {
+            ShowAffordResult = false;
+            return;
+        }
+        var remaining = lim - budget.Spent;
         var canAfford = remaining >= item.Price;
         var sym = _settings.CurrencySymbol;
 

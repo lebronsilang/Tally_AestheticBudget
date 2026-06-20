@@ -7,6 +7,7 @@
     xmlns:vm="clr-namespace:Tally_AestheticBudget.ViewModels"
     xmlns:models="clr-namespace:Tally_AestheticBudget.Models"
     xmlns:controls="clr-namespace:Tally_AestheticBudget.Controls"
+    xmlns:ph="clr-namespace:Tally_AestheticBudget.Helpers"
     x:DataType="vm:BudgetViewModel"
     Shell.NavBarIsVisible="True"
     BackgroundColor="{DynamicResource PageBackground}">
@@ -227,13 +228,14 @@
                                                         Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=StartEditCommand}"
                                                         CommandParameter="{Binding .}" />
                                                 </Border.GestureRecognizers>
-                                                <Image Source="icon_add.png"
-                                                       WidthRequest="16" HeightRequest="16"
-                                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                                                <Label Style="{StaticResource PhosphorIcon}"
+                                                   Text="{x:Static ph:PhosphorIcons.Edit}"
+                                                   FontSize="16"
+                                                   TextColor="{DynamicResource AccentColor}"  />
                                             </Border>
                                         </Grid>
 
-                                        <Grid HeightRequest="8">
+                                        <Grid HeightRequest="8" IsVisible="{Binding HasLimit}">
                                             <Border BackgroundColor="{DynamicResource AccentColorAlpha}"
                                                     StrokeThickness="0" StrokeShape="RoundRectangle 980"
                                                     HeightRequest="8" />
@@ -243,42 +245,55 @@
                                                     WidthRequest="{Binding ProgressPercent, Converter={StaticResource PercentToWidth}}" />
                                         </Grid>
 
-                                        <Grid IsVisible="{Binding IsEditing}"
-                                              ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
-                                            <Border Grid.Column="0"
-                                                    BackgroundColor="{DynamicResource PageBackground}"
-                                                    Stroke="{DynamicResource CardBorder}"
-                                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 12"
-                                                    Padding="12,0">
-                                                <Entry Text="{Binding EditLimitText}"
-                                                       Placeholder="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=LimitPlaceholder}"
-                                                       PlaceholderColor="#C0C0C5" Keyboard="Numeric"
-                                                       FontSize="14" TextColor="{DynamicResource TextPrimary}"
-                                                       BackgroundColor="Transparent" HeightRequest="40" />
-                                            </Border>
-                                            <Border Grid.Column="1"
-                                                    Style="{StaticResource HoverButton}"
-                                                    BackgroundColor="{DynamicResource AccentColor}"
-                                                    StrokeShape="RoundRectangle 12" Padding="14,10">
-                                                <Border.GestureRecognizers>
-                                                    <TapGestureRecognizer
-                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=SaveLimitCommand}"
-                                                        CommandParameter="{Binding .}" />
-                                                </Border.GestureRecognizers>
-                                                <Label Text="Save" FontSize="13" FontAttributes="Bold" TextColor="{DynamicResource OnAccentColor}" />
-                                            </Border>
-                                            <Border Grid.Column="2"
-                                                    Style="{StaticResource HoverButton}"
-                                                    BackgroundColor="{DynamicResource PageBackground}"
-                                                    StrokeShape="RoundRectangle 12" Padding="14,10">
-                                                <Border.GestureRecognizers>
-                                                    <TapGestureRecognizer
-                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=CancelEditCommand}"
-                                                        CommandParameter="{Binding .}" />
-                                                </Border.GestureRecognizers>
-                                                <Label Text="Cancel" FontSize="13" TextColor="{DynamicResource TextSecondary}" />
-                                            </Border>
-                                        </Grid>
+                                        <VerticalStackLayout IsVisible="{Binding IsEditing}" Spacing="8">
+
+                                            <!-- No-limit toggle -->
+                                            <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                                                <Label Text="No spending limit" FontSize="13"
+               TextColor="{DynamicResource TextSecondary}" VerticalOptions="Center" />
+                                                <Switch IsToggled="{Binding EditIsUnlimited}"
+                OnColor="{DynamicResource AccentColor}"
+                ThumbColor="{DynamicResource CardBackground}"
+                VerticalOptions="Center" />
+                                            </HorizontalStackLayout>
+
+                                            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                                                <Border Grid.Column="0"
+                BackgroundColor="{DynamicResource PageBackground}"
+                Stroke="{DynamicResource CardBorder}"
+                StrokeThickness="0.8" StrokeShape="RoundRectangle 12"
+                Padding="12,0">
+                                                    <Entry Text="{Binding EditLimitText}"
+                   IsEnabled="{Binding EditIsUnlimited, Converter={StaticResource InverseBool}}"
+                   Placeholder="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=LimitPlaceholder}"
+                   PlaceholderColor="#C0C0C5" Keyboard="Numeric"
+                   FontSize="14" TextColor="{DynamicResource TextPrimary}"
+                   BackgroundColor="Transparent" HeightRequest="40" />
+                                                </Border>
+                                                <Border Grid.Column="1"
+                Style="{StaticResource HoverButton}"
+                BackgroundColor="{DynamicResource AccentColor}"
+                StrokeShape="RoundRectangle 12" Padding="14,10">
+                                                    <Border.GestureRecognizers>
+                                                        <TapGestureRecognizer
+                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=SaveLimitCommand}"
+                    CommandParameter="{Binding .}" />
+                                                    </Border.GestureRecognizers>
+                                                    <Label Text="Save" FontSize="13" FontAttributes="Bold" TextColor="{DynamicResource OnAccentColor}" />
+                                                </Border>
+                                                <Border Grid.Column="2"
+                Style="{StaticResource HoverButton}"
+                BackgroundColor="{DynamicResource PageBackground}"
+                StrokeShape="RoundRectangle 12" Padding="14,10">
+                                                    <Border.GestureRecognizers>
+                                                        <TapGestureRecognizer
+                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=CancelEditCommand}"
+                    CommandParameter="{Binding .}" />
+                                                    </Border.GestureRecognizers>
+                                                    <Label Text="Cancel" FontSize="13" TextColor="{DynamicResource TextSecondary}" />
+                                                </Border>
+                                            </Grid>
+                                        </VerticalStackLayout>
 
                                     </VerticalStackLayout>
                                 </Border>
