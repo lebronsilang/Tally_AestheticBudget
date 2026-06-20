@@ -7,6 +7,7 @@
     xmlns:vm="clr-namespace:Tally_AestheticBudget.ViewModels"
     xmlns:models="clr-namespace:Tally_AestheticBudget.Models"
     xmlns:controls="clr-namespace:Tally_AestheticBudget.Controls"
+    xmlns:ph="clr-namespace:Tally_AestheticBudget.Helpers"
     x:DataType="vm:FeedViewModel"
     Shell.NavBarIsVisible="True"
     BackgroundColor="{DynamicResource PageBackground}">
@@ -368,10 +369,10 @@
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
-                                        <Image Source="icon_food.png"
-                                           WidthRequest="14"
-                                           HeightRequest="14"
-                                           VerticalOptions="Center" />
+                                        <Label Style="{StaticResource PhosphorIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.Food}"
+                                           FontSize="14"
+                                           TextColor="{DynamicResource TextPrimary}"  />
 
                                         <Label Text="Food"
                                            FontSize="12"
@@ -390,10 +391,10 @@
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
 
-                                        <Image Source="icon_transport.png"
-                                           WidthRequest="14"
-                                           HeightRequest="14" 
-                                           VerticalOptions="Center"/>
+                                        <Label Style="{StaticResource PhosphorIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.Transport}"
+                                           FontSize="14"
+                                           TextColor="{DynamicResource TextPrimary}"  />
 
                                         <Label Text="Transport"
                                            FontSize="12"
@@ -410,10 +411,10 @@
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
-                                        <Image Source="icon_shopping.png"
-                                           WidthRequest="14"
-                                           HeightRequest="14"
-                                           VerticalOptions="Center" />
+                                        <Label Style="{StaticResource PhosphorIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.Shopping}"
+                                           FontSize="14"
+                                           TextColor="{DynamicResource TextPrimary}"  />
 
                                         <Label Text="Shopping"
                                            FontSize="12"
@@ -431,10 +432,10 @@
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
-                                        <Image Source="icon_health.png"
-                                            WidthRequest="14"
-                                            HeightRequest="14"
-                                            VerticalOptions="Center" />
+                                        <Label Style="{StaticResource PhosphorIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.Health}"
+                                           FontSize="14"
+                                           TextColor="{DynamicResource TextPrimary}"  />
 
                                         <Label Text="Health"
                                            FontSize="12"
@@ -452,10 +453,10 @@
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
-                                        <Image Source="icon_fun.png"
-                                           WidthRequest="14"
-                                           HeightRequest="14"
-                                           VerticalOptions="Center" />
+                                        <Label Style="{StaticResource PhosphorIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.Fun}"
+                                           FontSize="14"
+                                           TextColor="{DynamicResource TextPrimary}"  />
 
                                         <Label Text="Fun"
                                            FontSize="12"
@@ -473,10 +474,10 @@
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
-                                        <Image Source="icon_default.png"
-                                            WidthRequest="14"
-                                            HeightRequest="14"
-                                            VerticalOptions="Center" />
+                                        <Label Style="{StaticResource PhosphorIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.Default}"
+                                           FontSize="14"
+                                           TextColor="{DynamicResource TextPrimary}"  />
 
                                         <Label Text="Other"
                                            FontSize="12"
@@ -642,10 +643,10 @@
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
-                                        <Image Source="icon_food.png"
-                                           WidthRequest="14"
-                                           HeightRequest="14"
-                                           VerticalOptions="Center" />
+                                        <Label Style="{StaticResource PhosphorIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.Food}"
+                                           FontSize="14"
+                                           TextColor="{DynamicResource TextPrimary}"  />
 
                                         <Label Text="Food"
                                            FontSize="12"
@@ -662,10 +663,10 @@
                                         <TapGestureRecognizer Command="{Binding SelectEditCategoryCommand}" CommandParameter="Transport" />
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-                                        <Image Source="icon_transport.png"
-                                           WidthRequest="14"
-                                           HeightRequest="14"
-                                           VerticalOptions="Center"/>
+                                        <Label Style="{StaticResource PhosphorIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.Transport}"
+                                           FontSize="14"
+                                           TextColor="{DynamicResource TextPrimary}"  />        
                                         <Label Text="Transport"
                                             FontSize="12"
                                             VerticalOptions="Center"
@@ -681,10 +682,10 @@
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
-                                        <Image Source="icon_shopping.png"
-                                            WidthRequest="14"
-                                            HeightRequest="14"
-                                            VerticalOptions="Center" />
+                                        <Label Style="{StaticResource PhosphorIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.Shopping}"
+                                           FontSize="14"
+                                           TextColor="{DynamicResource TextPrimary}"  />
 
                                         <Label Text="Shopping"
                                            FontSize="12"
@@ -702,10 +703,10 @@
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
-                                        <Image Source="icon_health.png"
-                                           WidthRequest="14"
-                                           HeightRequest="14"
-                                           VerticalOptions="Center" />
+                                        <Label Style="{StaticResource PhosphorIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.Health}"
+                                           FontSize="14"
+                                           TextColor="{DynamicResource TextPrimary}"  />
 
                                         <Label Text="Health"
                                            FontSize="12"
@@ -722,11 +723,10 @@
                                         <TapGestureRecognizer Command="{Binding SelectEditCategoryCommand}" CommandParameter="Fun" />
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
-
-                                        <Image Source="icon_fun.png"
-                                           WidthRequest="14"
-                                           HeightRequest="14"
-                                           VerticalOptions="Center" />
+                                        <Label Style="{StaticResource PhosphorIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.Fun}"
+                                           FontSize="14"
+                                           TextColor="{DynamicResource TextPrimary}"  />
 
                                         <Label Text="Fun"
                                            FontSize="12"
@@ -744,10 +744,10 @@
                                     </Border.GestureRecognizers>
                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
-                                        <Image Source="icon_default.png"
-                                           WidthRequest="14"
-                                           HeightRequest="14"
-                                           VerticalOptions="Center" />
+                                        <Label Style="{StaticResource PhosphorIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.Default}"
+                                           FontSize="14"
+                                           TextColor="{DynamicResource TextPrimary}"  />
 
                                         <Label Text="Other"
                                            FontSize="12"
@@ -795,11 +795,10 @@
                                     <TapGestureRecognizer Command="{Binding PickEditPhotoCommand}" />
                                 </Border.GestureRecognizers>
                                 <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="3">
-                                    <Image Source="icon_camera.png"
-                                       WidthRequest="20"
-                                       HeightRequest="20"
-                                       HorizontalOptions="Center"
-                                       VerticalOptions="Center" />
+                                    <Label Style="{StaticResource PhosphorIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.Camera}"
+                                           FontSize="14"
+                                           TextColor="{DynamicResource TextPrimary}"  />
                                     <Label Text="Tap to add a photo" FontSize="11"
                                            TextColor="{DynamicResource TextSecondary}"
                                            HorizontalOptions="Center" />
@@ -947,8 +946,18 @@
                                 <TapGestureRecognizer Command="{Binding SelectCategoryFilterCommand}"
                                                       CommandParameter="Food" />
                             </Border.GestureRecognizers>
-                            <Label Text="🍜 Food" FontSize="13"
+                            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+
+                                <Label Style="{StaticResource PhosphorIcon}"
+                                   Text="{x:Static ph:PhosphorIcons.Food}"
+                                   FontSize="14"
+                                   TextColor="{DynamicResource TextPrimary}"  />
+
+                                <Label Text="Food"
+                                   FontSize="12"
+                                   VerticalOptions="Center"
                                    TextColor="{DynamicResource TextPrimary}" />
+                            </HorizontalStackLayout>
                         </Border>
                         <Border Style="{StaticResource HoverButton}"
                                 BackgroundColor="{DynamicResource PageBackground}"
@@ -959,8 +968,18 @@
                                 <TapGestureRecognizer Command="{Binding SelectCategoryFilterCommand}"
                                                       CommandParameter="Transport" />
                             </Border.GestureRecognizers>
-                            <Label Text="🚌 Transport" FontSize="13"
+                            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+
+                                <Label Style="{StaticResource PhosphorIcon}"
+                                   Text="{x:Static ph:PhosphorIcons.Transport}"
+                                   FontSize="14"
+                                   TextColor="{DynamicResource TextPrimary}"  />
+
+                                <Label Text="Transport"
+                                   FontSize="12"
+                                   VerticalOptions="Center"
                                    TextColor="{DynamicResource TextPrimary}" />
+                            </HorizontalStackLayout>
                         </Border>
                         <Border Style="{StaticResource HoverButton}"
                                 BackgroundColor="{DynamicResource PageBackground}"
@@ -971,8 +990,18 @@
                                 <TapGestureRecognizer Command="{Binding SelectCategoryFilterCommand}"
                                                       CommandParameter="Shopping" />
                             </Border.GestureRecognizers>
-                            <Label Text="🛍 Shopping" FontSize="13"
+                            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+
+                                <Label Style="{StaticResource PhosphorIcon}"
+                                   Text="{x:Static ph:PhosphorIcons.Shopping}"
+                                   FontSize="14"
+                                   TextColor="{DynamicResource TextPrimary}"  />
+
+                                <Label Text="Shopping"
+                                   FontSize="12"
+                                   VerticalOptions="Center"
                                    TextColor="{DynamicResource TextPrimary}" />
+                            </HorizontalStackLayout>
                         </Border>
                         <Border Style="{StaticResource HoverButton}"
                                 BackgroundColor="{DynamicResource PageBackground}"
@@ -983,8 +1012,18 @@
                                 <TapGestureRecognizer Command="{Binding SelectCategoryFilterCommand}"
                                                       CommandParameter="Health" />
                             </Border.GestureRecognizers>
-                            <Label Text="💊 Health" FontSize="13"
+                            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+
+                                <Label Style="{StaticResource PhosphorIcon}"
+                                   Text="{x:Static ph:PhosphorIcons.Health}"
+                                   FontSize="14"
+                                   TextColor="{DynamicResource TextPrimary}"  />
+
+                                <Label Text="Health"
+                                   FontSize="12"
+                                   VerticalOptions="Center"
                                    TextColor="{DynamicResource TextPrimary}" />
+                            </HorizontalStackLayout>
                         </Border>
                         <Border Style="{StaticResource HoverButton}"
                                 BackgroundColor="{DynamicResource PageBackground}"
@@ -995,8 +1034,16 @@
                                 <TapGestureRecognizer Command="{Binding SelectCategoryFilterCommand}"
                                                       CommandParameter="Fun" />
                             </Border.GestureRecognizers>
-                            <Label Text="🎮 Fun" FontSize="13"
+                            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+
+                                <Label Style="{StaticResource PhosphorIcon}"
+                                   Text="{x:Static ph:PhosphorIcons.Fun}"
+                                   FontSize="14"
+                                   TextColor="{DynamicResource TextPrimary}"  />
+
+                                <Label Text="Fun" FontSize="12"
                                    TextColor="{DynamicResource TextPrimary}" />
+                            </HorizontalStackLayout>
                         </Border>
                         <Border Style="{StaticResource HoverButton}"
                                 BackgroundColor="{DynamicResource PageBackground}"
@@ -1007,8 +1054,18 @@
                                 <TapGestureRecognizer Command="{Binding SelectCategoryFilterCommand}"
                                                       CommandParameter="Other" />
                             </Border.GestureRecognizers>
-                            <Label Text="✦ Other" FontSize="13"
+                            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+
+                                <Label Style="{StaticResource PhosphorIcon}"
+                                   Text="{x:Static ph:PhosphorIcons.Default}"
+                                   FontSize="14"
+                                   TextColor="{DynamicResource TextPrimary}"  />
+
+                                <Label Text="Other"
+                                   FontSize="12"
+                                   VerticalOptions="Center"
                                    TextColor="{DynamicResource TextPrimary}" />
+                            </HorizontalStackLayout>
                         </Border>
                         <Border Style="{StaticResource HoverButton}"
                                 BackgroundColor="{DynamicResource PageBackground}"
@@ -1019,8 +1076,18 @@
                                 <TapGestureRecognizer Command="{Binding SelectCategoryFilterCommand}"
                                                       CommandParameter="Grocery" />
                             </Border.GestureRecognizers>
-                            <Label Text="🛒 Grocery" FontSize="13"
+                            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+
+                                <Label Style="{StaticResource PhosphorIcon}"
+                                   Text="{x:Static ph:PhosphorIcons.Grocery}"
+                                   FontSize="14"
+                                   TextColor="{DynamicResource TextPrimary}"  />
+
+                                <Label Text="Grocery"
+                                   FontSize="12"
+                                   VerticalOptions="Center"
                                    TextColor="{DynamicResource TextPrimary}" />
+                            </HorizontalStackLayout>
                         </Border>
                     </FlexLayout>
 

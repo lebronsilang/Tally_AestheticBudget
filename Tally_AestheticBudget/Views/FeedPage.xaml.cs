@@ -1,5 +1,6 @@
 using Microsoft.Maui.Controls;
 using System.Collections.ObjectModel;
+using Tally_AestheticBudget.Helpers;
 using Tally_AestheticBudget.Models;
 using Tally_AestheticBudget.Services;
 using Tally_AestheticBudget.ViewModels;
@@ -492,14 +493,16 @@ public partial class FeedPage : ContentPage
                 VerticalOptions = LayoutOptions.Start,
                 Margin = new Thickness(0, 8, 8, 0),
             };
-            var editBtnLabel = new Image
+            var editBtnLabel = new Label
             {
-                Source = "icon_edit.png",
-                WidthRequest = 14,
-                HeightRequest = 14,
+                Text = PhosphorIcons.Edit,
+                FontFamily = "PhosphorIcons",
+                FontSize = 14,
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center,
+                TextColor = (Application.Current?.Resources["OnAccentColor"] as Color) ?? Colors.White
             };
+
             editBtn.Content = editBtnLabel;
 
             var editTap = new TapGestureRecognizer();

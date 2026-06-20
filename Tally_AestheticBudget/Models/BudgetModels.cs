@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Tally_AestheticBudget.Helpers;
 
 namespace Tally_AestheticBudget.Models;
 
@@ -41,6 +42,23 @@ public partial class BudgetCategoryItem : ObservableObject
         _ => "Other"
     };
 
+    /// <summary>
+    /// Phosphor glyph for this category (replaces the old PNG-based CategoryIcon).
+    /// Bind to a Label with FontFamily="PhosphorIcons".
+    /// </summary>
+    public string CategoryGlyph => IsUnallocated ? PhosphorIcons.Default : Category switch
+    {
+        ExpenseCategory.Transport => PhosphorIcons.Transport,
+        ExpenseCategory.Food => PhosphorIcons.Food,
+        ExpenseCategory.Shopping => PhosphorIcons.Shopping,
+        ExpenseCategory.Health => PhosphorIcons.Health,
+        ExpenseCategory.Fun => PhosphorIcons.Fun,
+        ExpenseCategory.Grocery => PhosphorIcons.Grocery,
+        _ => PhosphorIcons.Default
+    };
+
+    // DEPRECATED — retained only so any stray binding keeps compiling.
+    // Remove once every XAML site has migrated to CategoryGlyph.
     public string CategoryIcon => IsUnallocated ? "icon_default.png" : Category switch
     {
         ExpenseCategory.Transport => "icon_transport.png",
@@ -52,7 +70,6 @@ public partial class BudgetCategoryItem : ObservableObject
         _ => "icon_default.png"
     };
 
-    // AFTER
     // Set by BudgetService when building this item — avoids hardcoding ₱
     public string CurrencySymbol { get; set; } = "₱";
 
@@ -76,8 +93,6 @@ public partial class BudgetCategoryItem : ObservableObject
 
     // True when spending exceeds the limit then bar turns red
     public bool IsOverLimit => Limit > 0 && Spent > Limit;
-
-
 
     // ── Inline edit state ─────────────────────────────────────────────────────
     // These control the inline edit row visibility

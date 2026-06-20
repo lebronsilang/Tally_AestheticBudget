@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:Tally_AestheticBudget.ViewModels"
     xmlns:models="clr-namespace:Tally_AestheticBudget.Models"
+    xmlns:ph="clr-namespace:Tally_AestheticBudget.Helpers"
     x:DataType="vm:GroceryViewModel"
     Shell.NavBarIsVisible="True"
     BackgroundColor="{DynamicResource PageBackground}">
@@ -126,10 +127,10 @@
                 IsVisible="{Binding DisplayedItems.Count, Converter={StaticResource ZeroToBool}}"
                 HorizontalOptions="Center" VerticalOptions="Center"
                 Spacing="10" Padding="40">
-                <Image Source="icon_grocery.png"
-                   WidthRequest="48"
-                   HeightRequest="48"
-                   HorizontalOptions="Center" />
+                <Label Style="{StaticResource PhosphorIcon}"
+                   Text="{x:Static ph:PhosphorIcons.Grocery}"
+                   FontSize="20"
+                   TextColor="{DynamicResource AccentColor}" />
                 <Label Text="Your grocery list is empty."
                        FontSize="15" HorizontalOptions="Center"
                        TextColor="{DynamicResource TextSecondary}" />

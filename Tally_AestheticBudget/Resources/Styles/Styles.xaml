@@ -49,6 +49,14 @@
         </Setter>
     </Style>
 
+    <Style x:Key="PhosphorIcon" TargetType="Label">
+        <Setter Property="FontFamily"            Value="PhosphorIcons" />
+        <Setter Property="HorizontalOptions"     Value="Center" />
+        <Setter Property="VerticalOptions"       Value="Center" />
+        <Setter Property="HorizontalTextAlignment" Value="Center" />
+        <Setter Property="VerticalTextAlignment"   Value="Center" />
+    </Style>
+
     <Style TargetType="Border">
         <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray500}}" />
         <Setter Property="StrokeShape" Value="Rectangle"/>
