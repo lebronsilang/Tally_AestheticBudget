@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Tally_AestheticBudget.Controls;
 using Tally_AestheticBudget.Models;
 using Tally_AestheticBudget.Services;
 
@@ -44,8 +45,24 @@ public partial class FeedViewModel : ObservableObject
         {
             IsDirty = true;
             OnPropertyChanged(nameof(ExpensePanelOnLeft));
+            OnPropertyChanged(nameof(ShowFeedBar));
+            OnPropertyChanged(nameof(FeedBarSticky));
         };
     }
+
+    // ── Bar chart ─────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// The IDrawable instance owned by this ViewModel.  Code-behind binds both
+    /// the inline and sticky GraphicsViews to this and subscribes to Invalidated.
+    /// </summary>
+    public BarDrawable BarDrawable { get; } = new();
+
+    /// <summary>Whether to show the bar chart above the feed.</summary>
+    public bool ShowFeedBar => _settings.ShowFeedBar;
+
+    /// <summary>Whether the bar chart should stick to the top when scrolling.</summary>
+    public bool FeedBarSticky => _settings.FeedBarSticky;
 
     // ── Feed items ────────────────────────────────────────────────────────────
 
@@ -103,8 +120,6 @@ public partial class FeedViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(SelectedMonthLabel))]
     private int _pickerYear;
 
-    public List<int> YearList { get; } = Enumerable.Range(DateTime.Now.Year - 5, 6).Reverse().ToList();
-
     private int _selectedPickerMonth;
 
     [ObservableProperty] private bool _isMonthPickerVisible;
@@ -116,40 +131,19 @@ public partial class FeedViewModel : ObservableObject
             : new DateTime(PickerYear, _selectedPickerMonth, 1).ToString("MMM yyyy"))
         : "This Month";
 
-    private void BuildMonthOptions()
-    {
-        if (MonthOptions.Count == 0)
-        {
-            for (int m = 1; m <= 12; m++)
-                MonthOptions.Add(new MonthOption
-                {
-                    Month = m,
-                    ShortName = new DateTime(2000, m, 1).ToString("MMM")
-                });
-        }
-        foreach (var item in MonthOptions)
-            item.IsSelected = item.Month == _selectedPickerMonth && _activeFilter == FilterMode.Month;
-    }
-
-    // ── Category picker ───────────────────────────────────────────────────────
-
-    private ExpenseCategory _selectedCategory = ExpenseCategory.Food;
-    [ObservableProperty] private bool _isCategoryPickerVisible;
-
     // ── Day picker ────────────────────────────────────────────────────────────
+
     [ObservableProperty] private bool _isDayPickerVisible;
     [ObservableProperty] private DateTime _pickerDay = DateTime.Today;
-
     public string SelectedDayLabel => _activeFilter == FilterMode.Day
         ? (_pickerDay.Date == DateTime.Today ? "Today" : _pickerDay.ToString("MMM d"))
         : "Today";
 
     // ── Week picker ───────────────────────────────────────────────────────────
+
     [ObservableProperty] private bool _isWeekPickerVisible;
     [ObservableProperty] private ObservableCollection<WeekOption> _weekOptions = [];
-
     private DateTime _pickerWeekMonday = GetMondayOfCurrentWeek();
-
     public string SelectedWeekLabel => _activeFilter == FilterMode.Week
         ? (_pickerWeekMonday == GetMondayOfCurrentWeek()
             ? "This Week"
@@ -157,6 +151,7 @@ public partial class FeedViewModel : ObservableObject
         : "This Week";
 
     // ── Year picker ───────────────────────────────────────────────────────────
+
     [ObservableProperty] private bool _isYearPickerVisible;
 
     private int _pickerFilterYear = DateTime.Now.Year;
@@ -286,30 +281,6 @@ public partial class FeedViewModel : ObservableObject
         IsEditModalVisible = false;
     }
 
-    // ── Add modal open/close ──────────────────────────────────────────────────
-
-    [RelayCommand]
-    private void OpenAddModal()
-    {
-        NewTitle = string.Empty;
-        NewAmountText = string.Empty;
-        NewNote = string.Empty;
-        NewSelectedDate = DateTime.Today;
-        NewPhotoPath = null;
-        NewSelectedCategory = ExpenseCategory.Food;
-        OnPropertyChanged(nameof(NewHasPhoto));
-        IsAddModalVisible = true;
-    }
-
-    [RelayCommand] private void DismissAddModal() => IsAddModalVisible = false;
-
-    [RelayCommand]
-    private async Task GoToAddExpenseAsync()
-    {
-        OpenAddModal();
-        await Task.CompletedTask;
-    }
-
     // ── Edit modal ────────────────────────────────────────────────────────────
 
     [ObservableProperty][NotifyPropertyChangedFor(nameof(IsExpensePanelOpen))] private bool _isEditModalVisible;
@@ -329,6 +300,8 @@ public partial class FeedViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(EditIsOtherSelected))]
     private ExpenseCategory _editSelectedCategory = ExpenseCategory.Food;
 
+    private ExpenseCategory _selectedCategory = ExpenseCategory.Food;
+
     public bool EditIsFoodSelected => EditSelectedCategory == ExpenseCategory.Food;
     public bool EditIsTransportSelected => EditSelectedCategory == ExpenseCategory.Transport;
     public bool EditIsShoppingSelected => EditSelectedCategory == ExpenseCategory.Shopping;
@@ -337,6 +310,33 @@ public partial class FeedViewModel : ObservableObject
     public bool EditIsOtherSelected => EditSelectedCategory == ExpenseCategory.Other;
     public bool EditHasPhoto => !string.IsNullOrEmpty(EditPhotoPath);
 
+    // ── Category picker (filter) ──────────────────────────────────────────────
+
+    [ObservableProperty] private bool _isCategoryPickerVisible;
+
+    // ── Add/edit panel visibility ─────────────────────────────────────────────
+
+    [RelayCommand]
+    private void OpenAddModal()
+    {
+        NewTitle = string.Empty;
+        NewAmountText = string.Empty;
+        NewNote = string.Empty;
+        NewSelectedDate = DateTime.Today;
+        NewPhotoPath = null;
+        OnPropertyChanged(nameof(NewHasPhoto));
+        NewSelectedCategory = ExpenseCategory.Food;
+        IsAddModalVisible = true;
+    }
+
+    [RelayCommand] private void DismissAddModal() => IsAddModalVisible = false;
+
+    [RelayCommand]
+    private async Task GoToAddExpenseAsync()
+    {
+        OpenAddModal();
+        await Task.CompletedTask;
+    }
     [RelayCommand] private void DismissEditModal() => IsEditModalVisible = false;
 
     [RelayCommand]
@@ -476,7 +476,6 @@ public partial class FeedViewModel : ObservableObject
     [RelayCommand]
     private void ShowDayPicker()
     {
-        // Default to current value so DatePicker opens on right date
         IsDayPickerVisible = true;
     }
 
@@ -506,7 +505,6 @@ public partial class FeedViewModel : ObservableObject
     [RelayCommand]
     private void ShowWeekPicker()
     {
-        // Build last 8 weeks of Mondays
         WeekOptions.Clear();
         var thisMonday = GetMondayOfCurrentWeek();
         for (int i = 0; i < 8; i++)
@@ -678,7 +676,7 @@ public partial class FeedViewModel : ObservableObject
         if (SelectedItem is null) return;
 
         bool confirmed = await Shell.Current.DisplayAlertAsync(
-            "Delete All", "Delete this entire grocery run?", "Delete All", "Cancel");
+            "Delete Group", "Remove all grocery items from this trip?", "Delete", "Cancel");
         if (!confirmed) return;
 
         await _expenseService.DeleteGroceryGroupAsync(SelectedItem.Id);
@@ -715,10 +713,8 @@ public partial class FeedViewModel : ObservableObject
 
     private async Task ApplyContextualThemeAsync()
     {
-        // Only apply contextual themes when filtering by Month
         if (_activeFilter != FilterMode.Month)
         {
-            // Revert to global theme for non-month filters
             _themeService.RevertToGlobal();
             return;
         }
@@ -774,9 +770,16 @@ public partial class FeedViewModel : ObservableObject
             _pendingItems = itemList;
             UpdateLabels();
 
-            // Only distribute if we already have a real column count from OnSizeAllocated
+            // Build bar chart data — MaxValue must be set before Points to avoid
+            // a stale first render (Points setter fires Invalidated immediately).
+            var pts = BuildBarPoints();
+            BarDrawable.MaxValue = pts.Count > 0 ? pts.Max(p => p.Value) : 0;
+            BarDrawable.Points = pts;
+
+            // Only distribute into masonry columns if we have a real column count
             if (CurrentColumnCount > 0)
                 DistributeIntoColumns(_pendingItems, CurrentColumnCount);
+
             await ApplyContextualThemeAsync();
         }
         catch (Exception ex)
@@ -785,8 +788,6 @@ public partial class FeedViewModel : ObservableObject
             await Shell.Current.DisplayAlertAsync("Error",
                 "Could not load expenses. Please try again.", "OK");
         }
-
-
         finally
         {
             IsLoading = false;
@@ -803,15 +804,8 @@ public partial class FeedViewModel : ObservableObject
             _themeService.RevertToGlobal();
     }
 
-    // Fired by the IThemeService.ThemeChanged event (only while this page is the active,
-    // subscribed page). For global theme switches made on the Themes page — where THIS
-    // page is unsubscribed — RefreshThemeBoundBindings is instead re-run on appear.
     private void OnThemeChanged() => RefreshThemeBoundBindings();
 
-    /// <summary>
-    /// Forces every converter that depends on App.CurrentAccent to re-evaluate by raising
-    /// PropertyChanged on each bound property. Safe to call repeatedly and on empty lists.
-    /// </summary>
     private void RefreshThemeBoundBindings()
     {
         // Filter chips
@@ -823,9 +817,6 @@ public partial class FeedViewModel : ObservableObject
         OnPropertyChanged(nameof(IsFilterCategory));
 
         // Drawer category chips (Add form)
-        // These bools drive BoolToChipBg/Border/Text converters whose output depends on
-        // App.CurrentAccent. The underlying _newSelectedCategory value hasn't changed,
-        // so the source-generator won't fire automatically — we must re-notify manually.
         OnPropertyChanged(nameof(NewIsFoodSelected));
         OnPropertyChanged(nameof(NewIsTransportSelected));
         OnPropertyChanged(nameof(NewIsShoppingSelected));
@@ -839,7 +830,7 @@ public partial class FeedViewModel : ObservableObject
         OnPropertyChanged(nameof(EditIsHealthSelected));
         OnPropertyChanged(nameof(EditIsFunSelected));
 
-        // Month / week picker overlay cells (BoolToChipBg/Border/Text bound to IsSelected)
+        // Month / week picker overlay cells
         foreach (var m in MonthOptions) m.RaiseThemeBindings();
         foreach (var w in WeekOptions) w.RaiseThemeBindings();
     }
@@ -851,7 +842,7 @@ public partial class FeedViewModel : ObservableObject
         FilterMode.Month => SelectedMonthLabel,
         FilterMode.Year => SelectedYearLabel,
         FilterMode.Category => SelectedCategoryLabel,
-        _ => string.Empty          // empty = ShowBrand() in AppShell
+        _ => string.Empty      // empty = ShowBrand() in AppShell
     };
 
     // Public — FeedPage.xaml.cs calls this on resize
@@ -862,7 +853,6 @@ public partial class FeedViewModel : ObservableObject
 
         if (isResize)
         {
-            // Full rebuild — column count changed
             _columns = new List<ObservableCollection<FeedCardItem>>();
             for (int i = 0; i < columnCount; i++)
                 _columns.Add(new ObservableCollection<FeedCardItem>());
@@ -870,7 +860,6 @@ public partial class FeedViewModel : ObservableObject
         }
         else
         {
-            // Soft refresh — reuse existing collections, just clear them
             foreach (var col in _columns)
                 col.Clear();
         }
@@ -909,6 +898,85 @@ public partial class FeedViewModel : ObservableObject
             _ => DateTime.Now.ToString("MMMM yyyy")
         };
         _header.ShowFilter(FilterHeaderLabel);
+    }
+
+    private void BuildMonthOptions()
+    {
+        if (MonthOptions.Count == 0)
+            for (int m = 1; m <= 12; m++)
+                MonthOptions.Add(new MonthOption
+                {
+                    Month = m,
+                    ShortName = new DateTime(2000, m, 1).ToString("MMM")
+                });
+        foreach (var item in MonthOptions)
+            item.IsSelected = item.Month == _selectedPickerMonth
+                           && _activeFilter == FilterMode.Month;
+    }
+
+    // ── Bar data builder ──────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Groups FeedItems into BarDataPoints appropriate for the active filter:
+    ///   Week     → one bar per day in the current week window
+    ///   Month    → one bar per week-of-month ("Wk 1"…"Wk 5")
+    ///   Year     → one bar per month that has any spending
+    ///   Day      → one bar per category (shows category breakdown for the day)
+    ///   All/Cat  → one bar per calendar month (rolling up to the last 18 months)
+    /// </summary>
+    private List<BarDataPoint> BuildBarPoints()
+    {
+        var items = FeedItems.ToList();
+        if (items.Count == 0) return [];
+
+        switch (_activeFilter)
+        {
+            case FilterMode.Week:
+                return items
+                    .GroupBy(x => x.Date.Date)
+                    .OrderBy(g => g.Key)
+                    .Select(g => new BarDataPoint(g.Key.ToString("ddd"), g.Sum(x => x.Amount)))
+                    .ToList();
+
+            case FilterMode.Month:
+                return items
+                    .GroupBy(x => (x.Date.Day - 1) / 7)   // 0-based week-of-month
+                    .OrderBy(g => g.Key)
+                    .Select(g => new BarDataPoint($"Wk {g.Key + 1}", g.Sum(x => x.Amount)))
+                    .ToList();
+
+            case FilterMode.Year:
+                // Show every month even if zero so the x-axis is stable
+                return Enumerable.Range(1, 12)
+                    .Select(m =>
+                    {
+                        var total = items
+                            .Where(x => x.Date.Month == m)
+                            .Sum(x => x.Amount);
+                        return new BarDataPoint(new DateTime(2000, m, 1).ToString("MMM"), total);
+                    })
+                    .Where(p => p.Value > 0)
+                    .ToList();
+
+            case FilterMode.Day:
+                // Breakdown by category within the single day
+                return items
+                    .GroupBy(x => x.CategoryLabel)
+                    .OrderByDescending(g => g.Sum(x => x.Amount))
+                    .Select(g => new BarDataPoint(g.Key, g.Sum(x => x.Amount)))
+                    .ToList();
+
+            default: // All, Category
+                // Group by calendar month; cap at 18 bars so the chart stays readable
+                return items
+                    .GroupBy(x => new { x.Date.Year, x.Date.Month })
+                    .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
+                    .TakeLast(18)
+                    .Select(g => new BarDataPoint(
+                        new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMM yy"),
+                        g.Sum(x => x.Amount)))
+                    .ToList();
+        }
     }
 
     private static DateTime GetMondayOfCurrentWeek()

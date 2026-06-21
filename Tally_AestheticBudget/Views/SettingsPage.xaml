@@ -552,7 +552,117 @@
 
                         </VerticalStackLayout>
                     </Border>
+                    <Label Text="CHARTS" FontSize="11" FontAttributes="Bold"
+                           CharacterSpacing="0.6" TextColor="{DynamicResource TextSecondary}"
+                           Margin="4,4,0,0" />
 
+                    <Border BackgroundColor="{DynamicResource CardBackground}"
+                            Stroke="{DynamicResource CardBorder}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 20"
+                            Padding="0">
+                        <VerticalStackLayout Spacing="0">
+
+                            <!-- Budget Donut -->
+                            <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,14"
+                                  ColumnSpacing="14">
+                                <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                        WidthRequest="36" HeightRequest="36">
+                                    <Label Style="{StaticResource SettingsRowIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.ChartBar}" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                    <Label Text="Budget Donut" FontSize="14" FontAttributes="Bold"
+                                           TextColor="{DynamicResource TextPrimary}" />
+                                    <Label Text="Show a ring chart beside the budget category list"
+                                           FontSize="12" TextColor="{DynamicResource TextSecondary}" />
+                                </VerticalStackLayout>
+                                <Border Grid.Column="2"
+                                        BackgroundColor="{Binding ShowBudgetDonut, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding ShowBudgetDonut, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
+                                        WidthRequest="48" HeightRequest="28" VerticalOptions="Center">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ToggleShowBudgetDonutCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 980"
+                                            WidthRequest="20" HeightRequest="20"
+                                            HorizontalOptions="{Binding ShowBudgetDonut, Converter={StaticResource BoolToToggleAlign}}"
+                                            VerticalOptions="Center" Margin="4,0" />
+                                </Border>
+                            </Grid>
+
+                            <BoxView HeightRequest="0.5" Color="{DynamicResource CardBorder}"
+                                     Margin="20,0" />
+
+                            <!-- Feed Bar Chart -->
+                            <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,14"
+                                  ColumnSpacing="14">
+                                <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                        WidthRequest="36" HeightRequest="36">
+                                    <Label Style="{StaticResource SettingsRowIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.ChartBar}" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                    <Label Text="Feed Bar Chart" FontSize="14" FontAttributes="Bold"
+                                           TextColor="{DynamicResource TextPrimary}" />
+                                    <Label Text="Show spending bar chart above the expense feed"
+                                           FontSize="12" TextColor="{DynamicResource TextSecondary}" />
+                                </VerticalStackLayout>
+                                <Border Grid.Column="2"
+                                        BackgroundColor="{Binding ShowFeedBar, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding ShowFeedBar, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
+                                        WidthRequest="48" HeightRequest="28" VerticalOptions="Center">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ToggleShowFeedBarCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 980"
+                                            WidthRequest="20" HeightRequest="20"
+                                            HorizontalOptions="{Binding ShowFeedBar, Converter={StaticResource BoolToToggleAlign}}"
+                                            VerticalOptions="Center" Margin="4,0" />
+                                </Border>
+                            </Grid>
+
+                            <BoxView HeightRequest="0.5" Color="{DynamicResource CardBorder}"
+                                     Margin="20,0" />
+
+                            <!-- Sticky Bar Chart -->
+                            <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,14"
+                                  ColumnSpacing="14">
+                                <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                        WidthRequest="36" HeightRequest="36">
+                                    <Label Style="{StaticResource SettingsRowIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.PushPin}" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                    <Label Text="Sticky Bar Chart" FontSize="14" FontAttributes="Bold"
+                                           TextColor="{DynamicResource TextPrimary}" />
+                                    <Label Text="Pin the bar chart to the top when you scroll down"
+                                           FontSize="12" TextColor="{DynamicResource TextSecondary}" />
+                                </VerticalStackLayout>
+                                <Border Grid.Column="2"
+                                        BackgroundColor="{Binding FeedBarSticky, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding FeedBarSticky, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
+                                        WidthRequest="48" HeightRequest="28" VerticalOptions="Center">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ToggleFeedBarStickyCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 980"
+                                            WidthRequest="20" HeightRequest="20"
+                                            HorizontalOptions="{Binding FeedBarSticky, Converter={StaticResource BoolToToggleAlign}}"
+                                            VerticalOptions="Center" Margin="4,0" />
+                                </Border>
+                            </Grid>
+
+                        </VerticalStackLayout>
+                    </Border>
                     <!-- ── Clear Data section ─────────────────────────────── -->
                     <Label Text="DATA" FontSize="11" FontAttributes="Bold"
                            CharacterSpacing="0.6" TextColor="{DynamicResource TextSecondary}"

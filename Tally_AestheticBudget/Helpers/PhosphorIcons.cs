@@ -51,4 +51,7 @@ public static class PhosphorIcons
     public const string Hourglass = "\uE2BE";       // "hourglass-medium" (Cooling-off)
     public const string Eye = "\uE228";             // "eye"              (Stale Reminder)
     public const string Keyboard = "\uE300";        // "keyboard"         (Item 4 — Shortcuts section)
+    public const string ChartBar = "\uE154"; // "chart-bar"  
+    public const string PushPin = "\uE3D6"; // "push-pin" 
+
 }

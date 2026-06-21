@@ -25,6 +25,12 @@ public interface ISettingsService
     bool WishlistListView { get; set; }
     bool ListViewShowsPhoto { get; set; }
     bool ExpensePanelOnLeft { get; set; }
+
+    // Chart toggles
+    bool ShowBudgetDonut { get; set; }  // key: "show_budget_donut",  default: true
+    bool ShowFeedBar { get; set; }   // key: "show_feed_bar",      default: true
+    bool FeedBarSticky { get; set; }   // key: "feed_bar_sticky",    default: false
+
 }
 
 public class SettingsService : ISettingsService
@@ -42,6 +48,11 @@ public class SettingsService : ISettingsService
     private const string KeyFeedListView = "feed_list_view";
     private const string KeyWishlistListView = "wishlist_list_view";
     private const string KeyListViewShowsPhoto = "list_view_shows_photo";
+
+    private const string KeyShowBudgetDonut = "show_budget_donut";
+    private const string KeyShowFeedBar = "show_feed_bar";
+    private const string KeyFeedBarSticky = "feed_bar_sticky";
+
 
     public string CurrencySymbol => Preferences.Get(KeySymbol, "₱");
     public string CurrencyCode => Preferences.Get(KeyCode, "PHP");
@@ -115,5 +126,24 @@ public class SettingsService : ISettingsService
         get => Preferences.Get("expense_panel_on_left", false);
         set => Preferences.Set("expense_panel_on_left", value);
     }
+
+    public bool ShowBudgetDonut
+    {
+        get => Preferences.Get(KeyShowBudgetDonut, true);
+        set => Preferences.Set(KeyShowBudgetDonut, value);
+    }
+
+    public bool ShowFeedBar
+    {
+        get => Preferences.Get(KeyShowFeedBar, false);
+        set => Preferences.Set(KeyShowFeedBar, value);
+    }
+
+    public bool FeedBarSticky
+    {
+        get => Preferences.Get(KeyFeedBarSticky, false);
+        set => Preferences.Set(KeyFeedBarSticky, value);
+    }
+
 
 }

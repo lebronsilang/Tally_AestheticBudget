@@ -52,6 +52,10 @@ public partial class SettingsViewModel : ObservableObject
         _wishlistListView = settings.WishlistListView;
         _listViewShowsPhoto = settings.ListViewShowsPhoto;
         _expensePanelOnLeft = settings.ExpensePanelOnLeft;
+        _showBudgetDonut = settings.ShowBudgetDonut;
+        _showFeedBar = settings.ShowFeedBar;
+        _feedBarSticky = settings.FeedBarSticky;
+
 
 
         FilteredCurrencies = new ObservableCollection<CurrencyOption>(
@@ -226,6 +230,21 @@ public partial class SettingsViewModel : ObservableObject
     private bool _listViewShowsPhoto;
     partial void OnListViewShowsPhotoChanged(bool value) { _settings.ListViewShowsPhoto = value; _dataChanged.NotifySettingsChanged(); }
 
+    // ── Chart toggles ─────────────────────────────────────────────────────────
+
+    [ObservableProperty]
+    private bool _showBudgetDonut;
+    partial void OnShowBudgetDonutChanged(bool value) { _settings.ShowBudgetDonut = value; _dataChanged.NotifySettingsChanged(); }
+
+    [ObservableProperty]
+    private bool _showFeedBar;
+    partial void OnShowFeedBarChanged(bool value) { _settings.ShowFeedBar = value; _dataChanged.NotifySettingsChanged(); }
+
+    [ObservableProperty]
+    private bool _feedBarSticky;
+    partial void OnFeedBarStickyChanged(bool value) { _settings.FeedBarSticky = value; _dataChanged.NotifySettingsChanged(); }
+
+
 
     // ── Toggle commands — flip the bool properties ────────────────────────────
 
@@ -258,6 +277,18 @@ public partial class SettingsViewModel : ObservableObject
 
     [RelayCommand]
     private void ToggleExpensePanelOnLeft() => ExpensePanelOnLeft = !ExpensePanelOnLeft;
+
+    [RelayCommand]
+    private void ToggleShowBudgetDonut() => ShowBudgetDonut = !ShowBudgetDonut;
+
+    [RelayCommand]
+    private void ToggleShowFeedBar() => ShowFeedBar = !ShowFeedBar;
+
+    [RelayCommand]
+    private void ToggleFeedBarSticky() => FeedBarSticky = !FeedBarSticky;
+
+
+
 
     // ── Clear data ────────────────────────────────────────────────────────────
 

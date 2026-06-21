@@ -40,7 +40,8 @@
 
                     <!-- Main scrollable content -->
                     <ScrollView
-            x:Name="MasonryScrollView">
+                        x:Name="MasonryScrollView"
+                        Scrolled="MasonryScrollView_Scrolled">
 
                         <VerticalStackLayout Spacing="0">
 
@@ -233,6 +234,13 @@
                                     </ScrollView>
                                 </VerticalStackLayout>
                             </Border>
+                            
+                            <!-- ── Spending bar chart ───────────────────── -->
+                            <GraphicsView x:Name="BarViewInline"
+                                           Drawable="{Binding BarDrawable}"
+                                           IsVisible="{Binding ShowFeedBar}"
+                                           HeightRequest="180"
+                                           Margin="16,0,16,8" />
 
                             <!-- ── Masonry grid ───────────────────────────────────────── -->
                             <Grid
@@ -307,7 +315,26 @@
 
                         </VerticalStackLayout>
                     </ScrollView>
-
+                    
+                    <!-- Sticky bar — promoted from inline when scrollY exceeds
+                          the bar's natural top. InputTransparent keeps scroll
+                          events flowing through to the ScrollView beneath. -->
+                    <AbsoluteLayout x:Name="StickyBarOverlay"
+                                     IsVisible="False"
+                                     HorizontalOptions="Fill"
+                                     VerticalOptions="Start"
+                                     InputTransparent="True">
+                        <Border AbsoluteLayout.LayoutFlags="WidthProportional"
+                                 AbsoluteLayout.LayoutBounds="0,0,1.0,188"
+                                 BackgroundColor="{DynamicResource CardBackground}"
+                                 StrokeThickness="0"
+                                 Padding="16,4">
+                            <GraphicsView x:Name="BarViewSticky"
+                                           Drawable="{Binding BarDrawable}"
+                                           HeightRequest="180" />
+                        </Border>
+                    </AbsoluteLayout>
+                    
                     <!-- ── Add Expense modal ─────────────────────────────────────────── -->
                 </Grid>
             </controls:DrawerHost.BodyContent>

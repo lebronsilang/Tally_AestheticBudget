@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using Tally_AestheticBudget.Controls;
 using Tally_AestheticBudget.Models;
 using Tally_AestheticBudget.Services;
 using static Tally_AestheticBudget.Models.BudgetCategoryItem;
@@ -36,18 +37,47 @@ public partial class BudgetViewModel : ObservableObject
         // BudgetChanged also fires when expenses/grocery change, so this one
         // subscription covers spent-total staleness too.
         _dataChanged.BudgetChanged += () => _isDirty = true;
+
+        // SettingsChanged: notify XAML that ShowBudgetDonut may have flipped so the
+        // IsVisible bindings on the list / donut layouts update immediately.
+        _dataChanged.SettingsChanged += () => OnPropertyChanged(nameof(ShowBudgetDonut));
     }
 
     public string LimitPlaceholder => $"New limit ({_settings.CurrencySymbol})";
     public string TotalPlaceholder => $"Monthly budget ({_settings.CurrencySymbol})";
 
-    // ── Collection + period subtitle ────────────────────────────────────────────
+    // ── Donut chart ───────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// The IDrawable instance owned by this ViewModel.  Code-behind binds
+    /// GraphicsView.Drawable to this and subscribes to its Invalidated event.
+    /// </summary>
+    public DonutDrawable DonutDrawable { get; } = new();
+
+    /// <summary>
+    /// Whether the budget-donut layout should be active.
+    /// Reads directly from ISettingsService so a toggle in Settings is reflected
+    /// immediately when SettingsChanged fires and raises this property.
+    /// </summary>
+    public bool ShowBudgetDonut => _settings.ShowBudgetDonut;
+
+    /// <summary>
+    /// Maps the current BudgetItems into DonutSegment records, excluding categories
+    /// with zero spending so the ring only shows meaningful slices.
+    /// </summary>
+    private List<DonutSegment> BuildDonutSegments() =>
+        BudgetItems
+            .Where(x => x.Spent > 0)
+            .Select(x => new DonutSegment(x.DisplayName, x.Spent, x.Limit))
+            .ToList();
+
+    // ── Collection + period subtitle ─────────────────────────────────────────────
 
     [ObservableProperty] private ObservableCollection<BudgetCategoryItem> _budgetItems = [];
     [ObservableProperty] private bool _isLoading;
     [ObservableProperty] private string _periodLabel = string.Empty;
 
-    // ── Total pill ──────────────────────────────────────────────────────────────
+    // ── Total pill ───────────────────────────────────────────────────────────────
 
     [ObservableProperty] private bool _hasTotal;
     [ObservableProperty] private bool _isOverTotal;
@@ -57,7 +87,7 @@ public partial class BudgetViewModel : ObservableObject
     [ObservableProperty] private string _totalSpentLabel = string.Empty;
     [ObservableProperty] private string _totalRemainingLabel = string.Empty;
 
-    // ── Filter state ────────────────────────────────────────────────────────────
+    // ── Filter state ─────────────────────────────────────────────────────────────
 
     private BudgetFilterMode _activeFilter = BudgetFilterMode.Month;
     public bool IsFilterDay => _activeFilter == BudgetFilterMode.Day;
@@ -74,14 +104,14 @@ public partial class BudgetViewModel : ObservableObject
         OnPropertyChanged(nameof(IsFilterYear));
     }
 
-    // ── Day picker ──────────────────────────────────────────────────────────────
+    // ── Day picker ───────────────────────────────────────────────────────────────
     [ObservableProperty] private bool _isDayPickerVisible;
     [ObservableProperty] private DateTime _pickerDay = DateTime.Today;
     public string SelectedDayLabel => _activeFilter == BudgetFilterMode.Day
         ? (_pickerDay.Date == DateTime.Today ? "Today" : _pickerDay.ToString("MMM d"))
         : "Today";
 
-    // ── Week picker ─────────────────────────────────────────────────────────────
+    // ── Week picker ──────────────────────────────────────────────────────────────
     [ObservableProperty] private bool _isWeekPickerVisible;
     [ObservableProperty] private ObservableCollection<WeekOption> _weekOptions = [];
     private DateTime _pickerWeekMonday = GetMondayOfCurrentWeek();
@@ -89,7 +119,7 @@ public partial class BudgetViewModel : ObservableObject
         ? (_pickerWeekMonday == GetMondayOfCurrentWeek() ? "This Week" : $"Wk of {_pickerWeekMonday:MMM d}")
         : "This Week";
 
-    // ── Month picker ────────────────────────────────────────────────────────────
+    // ── Month picker ─────────────────────────────────────────────────────────────
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedMonthLabel))]
     private int _pickerYear;
@@ -102,7 +132,7 @@ public partial class BudgetViewModel : ObservableObject
             : new DateTime(PickerYear, _selectedMonth, 1).ToString("MMM yyyy"))
         : "This Month";
 
-    // ── Year picker ─────────────────────────────────────────────────────────────
+    // ── Year picker ──────────────────────────────────────────────────────────────
     [ObservableProperty] private bool _isYearPickerVisible;
     private int _pickerFilterYear;
     public List<int> YearList { get; } = Enumerable.Range(DateTime.Now.Year - 5, 6).Reverse().ToList();
@@ -126,7 +156,7 @@ public partial class BudgetViewModel : ObservableObject
         _activeFilter == BudgetFilterMode.Year ? _pickerFilterYear : PickerYear,
         _selectedMonth);
 
-    // ── Lifecycle ─────────────────────────────────────────────────────────────
+    // ── Lifecycle ────────────────────────────────────────────────────────────────
 
     public async Task OnPageAppearingAsync()
     {
@@ -163,8 +193,6 @@ public partial class BudgetViewModel : ObservableObject
         OnPropertyChanged(nameof(IsFilterYear));
 
         // Total-budget progress bar — bound to BoolToProgressColor via IsOverTotal.
-        // App.CurrentAccent has changed but IsOverTotal hasn't, so the converter won't
-        // re-fire without this explicit notification.
         OnPropertyChanged(nameof(IsOverTotal));
 
         // Category-level progress bars handled via RefreshThemeBindings() → IsOverLimit
@@ -175,7 +203,7 @@ public partial class BudgetViewModel : ObservableObject
         foreach (var w in WeekOptions) w.RaiseThemeBindings();
     }
 
-    // ── Filter commands ─────────────────────────────────────────────────────────
+    // ── Filter commands ──────────────────────────────────────────────────────────
 
     [RelayCommand]
     private async Task FilterDayAsync()
@@ -290,7 +318,7 @@ public partial class BudgetViewModel : ObservableObject
             item.IsSelected = item.Month == _selectedMonth && _activeFilter == BudgetFilterMode.Month;
     }
 
-    // ── Total editor (Month view only) ──────────────────────────────────────────
+    // ── Total editor (Month view only) ───────────────────────────────────────────
 
     [ObservableProperty] private bool _isTotalEditVisible;
     [ObservableProperty] private string _editTotalText = string.Empty;
@@ -322,7 +350,7 @@ public partial class BudgetViewModel : ObservableObject
         await LoadBudgetAsync();
     }
 
-    // ── Category limit editing (Month view only) ────────────────────────────────
+    // ── Category limit editing (Month view only) ─────────────────────────────────
 
     [RelayCommand]
     private void StartEdit(BudgetCategoryItem item)
@@ -355,13 +383,13 @@ public partial class BudgetViewModel : ObservableObject
                     "Enter a valid number, or switch on \u201CNo spending limit.\u201D", "OK");
                 return;
             }
-            newLimit = v; // 0 is allowed = an intentional \u20B10 cap
+            newLimit = v; // 0 is allowed = an intentional ₱0 cap
         }
 
         await _budgetService.SetLimitAsync(PickerYear, _selectedMonth, item.Category, newLimit);
         item.IsEditing = false;
         _dataChanged.NotifyBudgetChanged();
-        await LoadBudgetAsync();   // re-derive total remaining + unallocated residual
+        await LoadBudgetAsync();
     }
 
     [RelayCommand]
@@ -372,7 +400,7 @@ public partial class BudgetViewModel : ObservableObject
         item.EditIsUnlimited = false;
     }
 
-    // ── Load ──────────────────────────────────────────────────────────────────
+    // ── Load ─────────────────────────────────────────────────────────────────────
 
     private async Task LoadBudgetAsync()
     {
@@ -382,6 +410,11 @@ public partial class BudgetViewModel : ObservableObject
             var overview = await _budgetService.GetOverviewAsync(CurrentPeriod);
             BudgetItems = new ObservableCollection<BudgetCategoryItem>(overview.Items);
             ApplyOverview(overview);
+
+            // Update donut chart data — must come after BudgetItems is set.
+            DonutDrawable.CurrencySymbol = overview.CurrencySymbol;
+            DonutDrawable.Segments = BuildDonutSegments();
+
             _header.ShowFilter(FilterHeaderLabel);
             await ApplyContextualThemeAsync();
         }

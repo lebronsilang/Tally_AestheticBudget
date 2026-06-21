@@ -1,4 +1,5 @@
 using Microsoft.Maui.Controls;
+using Microsoft.Maui.Graphics;
 using System.Collections.ObjectModel;
 using Tally_AestheticBudget.Helpers;
 using Tally_AestheticBudget.Models;
@@ -10,36 +11,183 @@ namespace Tally_AestheticBudget.Views;
 public partial class FeedPage : ContentPage
 {
     private readonly FeedViewModel _viewModel;
+    private readonly ISettingsService _settings;
+    private readonly IThemeService _themeService;
+
+    // ── Masonry layout state ──────────────────────────────────────────────────
     private int _lastColumnCount = 0;
     private bool _gridPopulated = false;
-    private readonly ISettingsService _settings;
     private double _lastWidth = 0;
+    private double _calculatedColumnWidth = 0;
 
-    public FeedPage(FeedViewModel viewModel, ISettingsService settings)
+    // ── Sticky bar state ──────────────────────────────────────────────────────
+    /// <summary>
+    /// Y-coordinate (in scroll content space) of the inline bar's top edge.
+    /// -1 = not yet captured; reset to -1 whenever the filter changes.
+    /// </summary>
+    private double _barNaturalTop = -1;
+    private bool _barStickyPromoted = false;
+
+    public FeedPage(FeedViewModel viewModel, ISettingsService settings, IThemeService themeService)
     {
         InitializeComponent();
         _viewModel = viewModel;
         _settings = settings;
+        _themeService = themeService;
         BindingContext = viewModel;
 
+        // When the filter changes, the bar chart re-renders and the header
+        // height may differ — reset the captured natural-top so it is
+        // remeasured on the next scroll event.
         _viewModel.FilterChanged += () =>
         {
-            MainThread.BeginInvokeOnMainThread(ClearMasonryGrid);
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                _barNaturalTop = -1;
+                ClearMasonryGrid();
+            });
         };
 
         _viewModel.ColumnsRebuilt += () =>
         {
             MainThread.BeginInvokeOnMainThread(RebuildMasonryGrid);
         };
+
+        // When bar data changes, repaint both the inline and sticky views.
+        _viewModel.BarDrawable.Invalidated += OnBarDataChanged;
     }
+
+    // ── Page lifecycle ────────────────────────────────────────────────────────
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+
+        // Subscribe before awaiting to avoid missing ThemeChanged during load.
+        _themeService.ThemeChanged += OnThemeChanged;
+
+        // Sync bar colors with the currently active theme.
+        ApplyBarTheme();
+
         await _viewModel.OnPageAppearingAsync();
     }
 
-    private double _calculatedColumnWidth = 0;
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+
+        _themeService.ThemeChanged -= OnThemeChanged;
+
+        // If the sticky overlay is active, clean up state so it doesn't persist
+        // when the page reappears.
+        if (_barStickyPromoted)
+            DemoteBarToInline();
+
+        if (BindingContext is FeedViewModel vm)
+            vm.OnPageDisappearing();
+    }
+
+    // ── Bar chart — theme and invalidation ───────────────────────────────────
+
+    private void OnBarDataChanged()
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            BarViewInline?.Invalidate();
+            if (_barStickyPromoted) BarViewSticky?.Invalidate();
+        });
+    }
+
+    private void OnThemeChanged()
+    {
+        ApplyBarTheme();
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            BarViewInline?.Invalidate();
+            if (_barStickyPromoted) BarViewSticky?.Invalidate();
+        });
+    }
+
+    /// <summary>
+    /// Reads the six live color tokens and pushes them into BarDrawable.
+    /// Call after ThemeChanged fires, and once on appear to initialise.
+    /// </summary>
+    private void ApplyBarTheme()
+    {
+        if (Application.Current?.Resources is not ResourceDictionary res) return;
+
+        _viewModel.BarDrawable.ApplyTheme(
+            GetColor(res, "AccentColor"),
+            GetColor(res, "AccentColorAlpha"),
+            GetColor(res, "TextPrimary"),
+            GetColor(res, "TextSecondary"),
+            GetColor(res, "CardBackground"),
+            GetColor(res, "CardBorder"));
+    }
+
+    private static Color GetColor(ResourceDictionary res, string key)
+    {
+        if (res.TryGetValue(key, out var val) && val is Color c) return c;
+        return Colors.Gray;
+    }
+
+    // ── Sticky scroll logic ───────────────────────────────────────────────────
+
+    /// <summary>
+    /// Wired to MasonryScrollView.Scrolled (added in XAML via Insertion 1).
+    /// Promotes the bar chart to the sticky overlay when the user scrolls past
+    /// its natural position; demotes it when they scroll back.
+    ///
+    /// The natural-top is captured on the first scroll event after each filter
+    /// change, because it can shift depending on header content height.
+    /// </summary>
+    private void MasonryScrollView_Scrolled(object sender, ScrolledEventArgs e)
+    {
+        // Only run sticky logic when both toggles are on.
+        if (!_viewModel.ShowFeedBar || !_viewModel.FeedBarSticky) return;
+
+        double scrollY = e.ScrollY;
+
+        // Capture the bar's natural Y position (relative to scroll content) the
+        // first time we receive a scroll event after a filter change.
+        if (_barNaturalTop < 0 && BarViewInline is not null)
+        {
+            _barNaturalTop = BarViewInline.Y;
+            // Guard against pre-layout Y = 0.
+            if (_barNaturalTop <= 0) return;
+        }
+
+        if (scrollY > _barNaturalTop && !_barStickyPromoted)
+            PromoteBarToOverlay();
+        else if (scrollY <= _barNaturalTop && _barStickyPromoted)
+            DemoteBarToInline();
+    }
+
+    /// <summary>Hides the inline bar (opacity → 0 keeps the layout slot) and shows the overlay.</summary>
+    private void PromoteBarToOverlay()
+    {
+        _barStickyPromoted = true;
+        if (BarViewInline is not null) BarViewInline.Opacity = 0;
+        if (StickyBarOverlay is not null)
+        {
+            StickyBarOverlay.IsVisible = true;
+            BarViewSticky?.Invalidate();
+        }
+    }
+
+    /// <summary>Restores the inline bar and hides the overlay.</summary>
+    private void DemoteBarToInline()
+    {
+        _barStickyPromoted = false;
+        if (StickyBarOverlay is not null) StickyBarOverlay.IsVisible = false;
+        if (BarViewInline is not null)
+        {
+            BarViewInline.Opacity = 1;
+            BarViewInline.Invalidate();
+        }
+    }
+
+    // ── Masonry grid ──────────────────────────────────────────────────────────
 
     private void MasonryGrid_SizeChanged(object sender, EventArgs e)
     {
@@ -60,8 +208,6 @@ public partial class FeedPage : ContentPage
         _viewModel.DistributeIntoColumns(columnCount: newColumnCount);
     }
 
-
-
     private static int GetColumnCount(double pageWidth) => pageWidth switch
     {
         < 600 => 2,
@@ -70,13 +216,12 @@ public partial class FeedPage : ContentPage
         _ => 5
     };
 
-
     private void ClearMasonryGrid()
     {
         MasonryGrid.ColumnDefinitions.Clear();
         MasonryGrid.Children.Clear();
         _gridPopulated = false;
-        _lastColumnCount = 0; // forces full rebuild on next ColumnsRebuilt
+        _lastColumnCount = 0;
     }
 
     private void RebuildMasonryGrid()
@@ -87,7 +232,6 @@ public partial class FeedPage : ContentPage
         MasonryGrid.ColumnDefinitions.Clear();
         MasonryGrid.Children.Clear();
 
-        // Build stacks WITHOUT binding items yet
         for (int i = 0; i < columns.Count; i++)
         {
             MasonryGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
@@ -105,7 +249,7 @@ public partial class FeedPage : ContentPage
         }
 
         // Let the grid do one real layout pass so stacks have correct widths,
-        // THEN bind the items so images measure against real constrained width
+        // THEN bind the items so images measure against real constrained width.
         Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(16), () =>
         {
             for (int i = 0; i < columns.Count; i++)
@@ -117,13 +261,6 @@ public partial class FeedPage : ContentPage
         });
     }
 
-    protected override void OnDisappearing()
-    {
-        base.OnDisappearing();
-        if (BindingContext is ViewModels.FeedViewModel vm)
-            vm.OnPageDisappearing();
-    }
-
     private static void DisconnectHandlers(IView view)
     {
         if (view is Element element)
@@ -132,6 +269,9 @@ public partial class FeedPage : ContentPage
                 child.Handler?.DisconnectHandler();
         }
     }
+
+    // ── Card template (unchanged from original) ───────────────────────────────
+
     private DataTemplate BuildCardTemplate()
     {
         return new DataTemplate(() =>
@@ -165,18 +305,13 @@ public partial class FeedPage : ContentPage
             tap.SetBinding(TapGestureRecognizer.CommandParameterProperty, new Binding("."));
             card.GestureRecognizers.Add(tap);
 
-            var root = new Grid
-            {
-                IsClippedToBounds = true // Grids have this, Borders don't!
-            };
+            var root = new Grid { IsClippedToBounds = true };
             var pointer = new PointerGestureRecognizer();
             card.GestureRecognizers.Add(pointer);
 
-
-
+            // ── PHOTO CARD ────────────────────────────────────────────────
             var photo = new Controls.AspectLockedImage();
             photo.SetBinding(Image.SourceProperty, "PhotoPath");
-
 
             var photoContainer = new Grid
             {
@@ -184,7 +319,6 @@ public partial class FeedPage : ContentPage
                 HorizontalOptions = LayoutOptions.Fill,
             };
             photoContainer.SetBinding(Grid.IsVisibleProperty, "HasPhoto");
-
 
             photo.Clip = new Microsoft.Maui.Controls.Shapes.RoundRectangleGeometry
             {
@@ -204,9 +338,9 @@ public partial class FeedPage : ContentPage
                 EndPoint = new Point(0, 1),
                 GradientStops =
                 [
-                    new GradientStop { Color = Colors.Transparent,         Offset = 0.0f },
-                    new GradientStop { Color = Color.FromArgb("#40000000"), Offset = 0.45f },
-                    new GradientStop { Color = Color.FromArgb("#CC000000"), Offset = 1.0f },
+                    new GradientStop { Color = Colors.Transparent,          Offset = 0.0f },
+                    new GradientStop { Color = Color.FromArgb("#40000000"),  Offset = 0.45f },
+                    new GradientStop { Color = Color.FromArgb("#CC000000"),  Offset = 1.0f },
                 ]
             };
             gradient.Clip = new Microsoft.Maui.Controls.Shapes.RoundRectangleGeometry
@@ -216,7 +350,7 @@ public partial class FeedPage : ContentPage
             };
             photoContainer.Children.Add(gradient);
 
-            // Overlay: Category · Date to Title to Amount to Note
+            // Overlay text: Category · Date → Title → Amount → Note
             var overlayText = new VerticalStackLayout
             {
                 Spacing = 2,
@@ -224,7 +358,6 @@ public partial class FeedPage : ContentPage
                 Padding = new Thickness(14, 0, 14, 14),
             };
 
-            // Row 1: Category · Date
             var overlayCatDateRow = new HorizontalStackLayout { Spacing = 5 };
             var overlayCatLabel = new Label
             {
@@ -244,11 +377,7 @@ public partial class FeedPage : ContentPage
                 VerticalOptions = LayoutOptions.Center,
             };
 
-            var overlayDateInline = new Label
-            {
-                FontSize = 11,
-                TextColor = Color.FromArgb("#99ffffff"),
-            };
+            var overlayDateInline = new Label { FontSize = 11, TextColor = Color.FromArgb("#99ffffff") };
             overlayDateInline.SetBinding(Label.TextProperty,
                 new Binding("Date", converter: new Converters.DateToDisplayConverter()));
 
@@ -259,7 +388,6 @@ public partial class FeedPage : ContentPage
             overlayCatDateRow.Children.Add(overlayDateInline);
             overlayText.Children.Add(overlayCatDateRow);
 
-            // Grocery item count badge
             var overlayBadge = new Border
             {
                 StrokeThickness = 0,
@@ -277,7 +405,6 @@ public partial class FeedPage : ContentPage
             overlayBadge.Content = overlayBadgeLabel;
             overlayText.Children.Add(overlayBadge);
 
-            // Row 2: Title
             var overlayTitle = new Label
             {
                 FontSize = 17,
@@ -290,18 +417,11 @@ public partial class FeedPage : ContentPage
             overlayTitle.SetBinding(Label.IsVisibleProperty, "HasTitle");
             overlayText.Children.Add(overlayTitle);
 
-            // Row 3: Amount
-            var overlayAmount = new Label
-            {
-                FontSize = 15,
-                FontAttributes = FontAttributes.Bold,
-                TextColor = Colors.White,
-            };
+            var overlayAmount = new Label { FontSize = 15, FontAttributes = FontAttributes.Bold, TextColor = Colors.White };
             overlayAmount.SetBinding(Label.TextProperty, "AmountFormatted");
             overlayAmount.SetBinding(Label.IsVisibleProperty, "ShowPrice");
             overlayText.Children.Add(overlayAmount);
 
-            // Row 4: Note
             var overlayNote = new Label
             {
                 FontSize = 12,
@@ -329,7 +449,6 @@ public partial class FeedPage : ContentPage
                 new Binding("HasPhoto", converter: new Converters.InverseBoolConverter()));
 
             // ── GROCERY VARIANT ───────────────────────────────────────────
-            // Category · Date to item count to Amount to (no note)
             var groceryCard = new VerticalStackLayout
             {
                 Spacing = 3,
@@ -337,7 +456,6 @@ public partial class FeedPage : ContentPage
             };
             groceryCard.SetBinding(VisualElement.IsVisibleProperty, "IsGroceryGroup");
 
-            // Row 1: Category · Date
             var groceryCatDateRow = new HorizontalStackLayout { Spacing = 5 };
             var groceryCatLabel = new Label
             {
@@ -349,12 +467,7 @@ public partial class FeedPage : ContentPage
             };
             groceryCatLabel.SetDynamicResource(Label.TextColorProperty, "AccentColor");
 
-            var grocerySep = new Label
-            {
-                Text = "·",
-                FontSize = 11,
-                VerticalOptions = LayoutOptions.Center,
-            };
+            var grocerySep = new Label { Text = "·", FontSize = 11, VerticalOptions = LayoutOptions.Center };
             grocerySep.SetDynamicResource(Label.TextColorProperty, "TextSecondary");
 
             var groceryDateInline = new Label { FontSize = 11 };
@@ -369,23 +482,12 @@ public partial class FeedPage : ContentPage
             groceryCatDateRow.Children.Add(groceryDateInline);
             groceryCard.Children.Add(groceryCatDateRow);
 
-            // Row 2: Item count (acts as title equivalent for grocery)
-            var groceryCount = new Label
-            {
-                FontSize = 15,
-                FontAttributes = FontAttributes.Bold,
-                Margin = new Thickness(0, 3, 0, 0),
-            };
+            var groceryCount = new Label { FontSize = 15, FontAttributes = FontAttributes.Bold, Margin = new Thickness(0, 3, 0, 0) };
             groceryCount.SetDynamicResource(Label.TextColorProperty, "TextPrimary");
             groceryCount.SetBinding(Label.TextProperty, "GroceryItemCountLabel");
             groceryCard.Children.Add(groceryCount);
 
-            // Row 3: Amount
-            var groceryAmount = new Label
-            {
-                FontSize = 13,
-                FontAttributes = FontAttributes.Bold,
-            };
+            var groceryAmount = new Label { FontSize = 13, FontAttributes = FontAttributes.Bold };
             groceryAmount.SetDynamicResource(Label.TextColorProperty, "TextPrimary");
             groceryAmount.SetBinding(Label.TextProperty, "AmountFormatted");
             groceryAmount.SetBinding(Label.IsVisibleProperty, "ShowPrice");
@@ -395,18 +497,12 @@ public partial class FeedPage : ContentPage
             plainCard.Children.Add(groceryCard);
 
             // ── REGULAR EXPENSE VARIANT ───────────────────────────────────
-            // Category then Date to Title to Amount to Note
             var regularCard = new VerticalStackLayout { Spacing = 0 };
             regularCard.SetBinding(VisualElement.IsVisibleProperty,
                 new Binding("IsGroceryGroup", converter: new Converters.InverseBoolConverter()));
 
-            var content = new VerticalStackLayout
-            {
-                Spacing = 3,
-                Padding = new Thickness(14, 16, 14, 14),
-            };
+            var content = new VerticalStackLayout { Spacing = 3, Padding = new Thickness(14, 16, 14, 14) };
 
-            // Row 1: Category · Date
             var plainCatDateRow = new HorizontalStackLayout { Spacing = 5 };
             var plainCatLabel = new Label
             {
@@ -418,12 +514,7 @@ public partial class FeedPage : ContentPage
             plainCatLabel.SetBinding(Label.TextProperty, "CategoryLabel");
             plainCatLabel.SetDynamicResource(Label.TextColorProperty, "AccentColor");
 
-            var plainSep = new Label
-            {
-                Text = "·",
-                FontSize = 11,
-                VerticalOptions = LayoutOptions.Center,
-            };
+            var plainSep = new Label { Text = "·", FontSize = 11, VerticalOptions = LayoutOptions.Center };
             plainSep.SetDynamicResource(Label.TextColorProperty, "TextSecondary");
 
             var plainDateInline = new Label { FontSize = 11 };
@@ -438,7 +529,6 @@ public partial class FeedPage : ContentPage
             plainCatDateRow.Children.Add(plainDateInline);
             content.Children.Add(plainCatDateRow);
 
-            // Row 2: Title
             var title = new Label
             {
                 FontSize = 15,
@@ -451,24 +541,13 @@ public partial class FeedPage : ContentPage
             title.SetDynamicResource(Label.TextColorProperty, "TextPrimary");
             content.Children.Add(title);
 
-            // Row 3: Amount
-            var amount = new Label
-            {
-                FontSize = 13,
-                FontAttributes = FontAttributes.Bold,
-            };
+            var amount = new Label { FontSize = 13, FontAttributes = FontAttributes.Bold };
             amount.SetBinding(Label.TextProperty, "AmountFormatted");
             amount.SetBinding(Label.IsVisibleProperty, "ShowPrice");
             amount.SetDynamicResource(Label.TextColorProperty, "TextPrimary");
             content.Children.Add(amount);
 
-            // Row 4: Note
-            var note = new Label
-            {
-                FontSize = 11,
-                LineBreakMode = LineBreakMode.WordWrap,
-                MaxLines = 2,
-            };
+            var note = new Label { FontSize = 11, LineBreakMode = LineBreakMode.WordWrap, MaxLines = 2 };
             note.SetBinding(Label.TextProperty, "Note");
             note.SetBinding(Label.IsVisibleProperty, "ShowNote");
             note.SetDynamicResource(Label.TextColorProperty, "TextSecondary");
@@ -502,7 +581,6 @@ public partial class FeedPage : ContentPage
                 VerticalOptions = LayoutOptions.Center,
                 TextColor = (Application.Current?.Resources["OnAccentColor"] as Color) ?? Colors.White
             };
-
             editBtn.Content = editBtnLabel;
 
             var editTap = new TapGestureRecognizer();
@@ -530,7 +608,6 @@ public partial class FeedPage : ContentPage
             {
                 _ = card.ScaleTo(1.0, 160, Easing.CubicOut);
                 _ = editBtn.FadeTo(0, 150, Easing.CubicOut);
-                _ = card.ScaleTo(1.0, 160, Easing.CubicOut);
                 card.Shadow = new Shadow
                 {
                     Brush = new SolidColorBrush(Color.FromArgb("#14000000")),
