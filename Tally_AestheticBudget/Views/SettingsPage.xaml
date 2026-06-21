@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:Tally_AestheticBudget.ViewModels"
     xmlns:models="clr-namespace:Tally_AestheticBudget.Models"
+    xmlns:ph="clr-namespace:Tally_AestheticBudget.Helpers"
     x:DataType="vm:SettingsViewModel"
     Shell.NavBarIsVisible="True"
     BackgroundColor="{DynamicResource PageBackground}">
@@ -45,9 +46,8 @@
                                 <Border BackgroundColor="{DynamicResource AccentColorAlpha}"
                                         StrokeThickness="0" StrokeShape="RoundRectangle 10"
                                         WidthRequest="36" HeightRequest="36">
-                                    <Label Text="💱" FontSize="16"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center" />
+                                    <Label Style="{StaticResource SettingsRowIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.Coins}" />
                                 </Border>
                                 <VerticalStackLayout Spacing="2" VerticalOptions="Center">
                                     <Label Text="Display Currency" FontSize="14"
@@ -93,8 +93,9 @@
                                     StrokeThickness="0.8" StrokeShape="RoundRectangle 12"
                                     Padding="12,0">
                                 <Grid ColumnDefinitions="Auto,*">
-                                    <Label Grid.Column="0" Text="🔍" FontSize="13"
-                                           VerticalOptions="Center" Margin="0,0,6,0"
+                                    <Label Grid.Column="0" Style="{StaticResource SettingsRowIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.MagnifyingGlass}"
+                                           FontSize="14" Margin="0,0,6,0"
                                            TextColor="{DynamicResource TextSecondary}" />
                                     <Entry Grid.Column="1"
                                            Text="{Binding CurrencySearch}"
@@ -142,8 +143,10 @@
                                                            TextColor="{DynamicResource AccentColor}"
                                                            VerticalOptions="Center"
                                                            Margin="0,0,10,0" />
-                                                    <Label Grid.Column="3" Text="✓"
-                                                           FontSize="14" FontAttributes="Bold"
+                                                    <Label Grid.Column="3"
+                                                           FontFamily="PhosphorIcons"
+                                                           Text="{x:Static ph:PhosphorIcons.Confirm}"
+                                                           FontSize="13"
                                                            TextColor="{DynamicResource AccentColor}"
                                                            IsVisible="{Binding IsSelected}"
                                                            VerticalOptions="Center" />
@@ -173,9 +176,8 @@
                                 <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
                                         StrokeThickness="0" StrokeShape="RoundRectangle 10"
                                         WidthRequest="36" HeightRequest="36">
-                                    <Label Text="📝" FontSize="16"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center" />
+                                    <Label Style="{StaticResource SettingsRowIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.Note}" />
                                 </Border>
                                 <VerticalStackLayout Grid.Column="1" Spacing="2"
                                                      VerticalOptions="Center">
@@ -211,9 +213,8 @@
                                 <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
                                         StrokeThickness="0" StrokeShape="RoundRectangle 10"
                                         WidthRequest="36" HeightRequest="36">
-                                    <Label Text="💰" FontSize="16"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center" />
+                                    <Label Style="{StaticResource SettingsRowIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.Wallet}" />
                                 </Border>
                                 <VerticalStackLayout Grid.Column="1" Spacing="2"
                                                      VerticalOptions="Center">
@@ -249,9 +250,8 @@
                                 <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
                                         StrokeThickness="0" StrokeShape="RoundRectangle 10"
                                         WidthRequest="36" HeightRequest="36">
-                                    <Label Text="🗓" FontSize="16"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center" />
+                                    <Label Style="{StaticResource SettingsRowIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.Calendar}" />
                                 </Border>
                                 <VerticalStackLayout Grid.Column="1" Spacing="2"
                                                      VerticalOptions="Center">
@@ -295,8 +295,8 @@
                             <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
                                     StrokeThickness="0" StrokeShape="RoundRectangle 10"
                                     WidthRequest="36" HeightRequest="36">
-                                <Label Text="🧮" FontSize="16"
-                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                                <Label Style="{StaticResource SettingsRowIcon}"
+                                       Text="{x:Static ph:PhosphorIcons.Calculator}" />
                             </Border>
                             <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
                                 <Label Text="Allot Remaining" FontSize="14" FontAttributes="Bold"
@@ -337,9 +337,8 @@
                                 <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
                                         StrokeThickness="0" StrokeShape="RoundRectangle 10"
                                         WidthRequest="36" HeightRequest="36">
-                                    <Label Text="⏳" FontSize="16"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center" />
+                                    <Label Style="{StaticResource SettingsRowIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.Hourglass}" />
                                 </Border>
                                 <VerticalStackLayout Grid.Column="1" Spacing="2"
                                                      VerticalOptions="Center">
@@ -375,9 +374,8 @@
                                 <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
                                         StrokeThickness="0" StrokeShape="RoundRectangle 10"
                                         WidthRequest="36" HeightRequest="36">
-                                    <Label Text="👀" FontSize="16"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center" />
+                                    <Label Style="{StaticResource SettingsRowIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.Eye}" />
                                 </Border>
                                 <VerticalStackLayout Grid.Column="1" Spacing="2"
                                                      VerticalOptions="Center">
@@ -424,8 +422,8 @@
                                 <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
                                     StrokeThickness="0" StrokeShape="RoundRectangle 10"
                                     WidthRequest="36" HeightRequest="36">
-                                    <Label Text="🧱" FontSize="16"
-                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                                    <Label Style="{StaticResource SettingsRowIcon}"
+                                       Text="{x:Static ph:PhosphorIcons.Receipt}" />
                                 </Border>
                                 <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
                                     <Label Text="Feed: List View" FontSize="14" FontAttributes="Bold"
@@ -457,8 +455,8 @@
                                 <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
                                     StrokeThickness="0" StrokeShape="RoundRectangle 10"
                                     WidthRequest="36" HeightRequest="36">
-                                    <Label Text="📖" FontSize="16"
-                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                                    <Label Style="{StaticResource SettingsRowIcon}"
+                                       Text="{x:Static ph:PhosphorIcons.Heart}" />
                                 </Border>
                                 <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
                                     <Label Text="Wishlist: List View" FontSize="14" FontAttributes="Bold"
@@ -483,7 +481,7 @@
                             </Grid>
 
                             <Grid>
-                                
+
                             </Grid>
 
                             <BoxView HeightRequest="0.5" Color="{DynamicResource CardBorder}"
@@ -494,13 +492,13 @@
                                 <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
                                     StrokeThickness="0" StrokeShape="RoundRectangle 10"
                                     WidthRequest="36" HeightRequest="36">
-                                    <Label Text="🖼" FontSize="16"
-                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                                    <Label Style="{StaticResource SettingsRowIcon}"
+                                       Text="{x:Static ph:PhosphorIcons.Image}" />
                                 </Border>
                                 <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
                                     <Label Text="Show Photos in List" FontSize="14" FontAttributes="Bold"
                                        TextColor="{DynamicResource TextPrimary}" />
-                                    <Label Text="Off shows a 📷 marker instead of a thumbnail" FontSize="12"
+                                    <Label Text="Off shows a camera marker instead of a thumbnail" FontSize="12"
                                        TextColor="{DynamicResource TextSecondary}" />
                                 </VerticalStackLayout>
                                 <Border Grid.Column="2"
@@ -527,8 +525,8 @@
                                 <Border Grid.Column="0" BackgroundColor="{DynamicResource AccentColorAlpha}"
                                     StrokeThickness="0" StrokeShape="RoundRectangle 10"
                                     WidthRequest="36" HeightRequest="36">
-                                    <Label Text="👉" FontSize="16"
-                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                                    <Label Style="{StaticResource SettingsRowIcon}"
+                                       Text="{x:Static ph:PhosphorIcons.Edit}" />
                                 </Border>
                                 <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
                                     <Label Text="Add/Edit Items" FontSize="14" FontAttributes="Bold"
@@ -572,8 +570,8 @@
                                 <Border Grid.Column="0" BackgroundColor="#1Aff3b30"
                     StrokeThickness="0" StrokeShape="RoundRectangle 10"
                     WidthRequest="36" HeightRequest="36">
-                                    <Label Text="🗑" FontSize="16"
-                       HorizontalOptions="Center" VerticalOptions="Center" />
+                                    <Label Style="{StaticResource SettingsRowIcon}"
+                       Text="{x:Static ph:PhosphorIcons.Delete}" TextColor="#ff3b30" />
                                 </Border>
                                 <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
                                     <Label Text="Clear Data" FontSize="14"

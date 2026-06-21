@@ -208,8 +208,10 @@
                                     <VerticalStackLayout Spacing="10">
 
                                         <Grid ColumnDefinitions="Auto,*,Auto">
-                                            <Image Grid.Column="0" Source="{Binding CategoryIcon}"
-                                                   WidthRequest="24" HeightRequest="24"
+                                            <Label Grid.Column="0"
+                                                   Style="{StaticResource CategoryIcon}"
+                                                   Text="{Binding CategoryGlyph}"
+                                                   TextColor="{DynamicResource AccentColor}"
                                                    VerticalOptions="Center" Margin="0,0,10,0" />
                                             <VerticalStackLayout Grid.Column="1" Spacing="2"
                                                                  VerticalOptions="Center">

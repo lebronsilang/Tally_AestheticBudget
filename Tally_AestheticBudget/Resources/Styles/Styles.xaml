@@ -28,7 +28,8 @@
     </Style>
 
     <!-- Hoverable button border — brightens/scales on pointer over -->
-    <Style x:Key="HoverButton" TargetType="Border">        <Setter Property="StrokeThickness" Value="0" />
+    <Style x:Key="HoverButton" TargetType="Border">
+        <Setter Property="StrokeThickness" Value="0" />
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
@@ -55,6 +56,24 @@
         <Setter Property="VerticalOptions"       Value="Center" />
         <Setter Property="HorizontalTextAlignment" Value="Center" />
         <Setter Property="VerticalTextAlignment"   Value="Center" />
+    </Style>
+
+    <!-- Category icon glyph — 24 dp slot, accent-tinted by default.
+         Use Text="{Binding CategoryGlyph}" and override TextColor inline when
+         the chip selection state should flip it (via BoolToIconColor converter).
+         Derive from PhosphorIcon so font/alignment are inherited automatically. -->
+    <Style x:Key="CategoryIcon" TargetType="Label" BasedOn="{StaticResource PhosphorIcon}">
+        <Setter Property="FontSize"  Value="18" />
+        <Setter Property="TextColor" Value="{DynamicResource AccentColor}" />
+    </Style>
+
+    <!-- Settings page leading icon: Phosphor glyph centered in the 36×36 accent chip.
+         Default tint = AccentColor (reads on the AccentColorAlpha chip background).
+         Override TextColor inline for destructive rows (Clear Data → #ff3b30) or the
+         inline search field (→ TextSecondary). DynamicResource keeps it theme-aware. -->
+    <Style x:Key="SettingsRowIcon" TargetType="Label" BasedOn="{StaticResource PhosphorIcon}">
+        <Setter Property="FontSize"  Value="18" />
+        <Setter Property="TextColor" Value="{DynamicResource AccentColor}" />
     </Style>
 
     <Style TargetType="Border">

@@ -383,8 +383,14 @@ public class BoolToToggleAlignConverter : IValueConverter
         => throw new NotImplementedException();
 }
 
-// Category glyph colour: accent when idle, OnAccent when the pill is selected
-// (so the icon stays visible once the pill background turns accent).
+/// <summary>
+/// Category-icon glyph tint converter.
+/// false (unselected chip) → AccentColor   (glyph on the neutral chip background)
+/// true  (selected chip)   → OnAccentColor (glyph on the filled accent chip background)
+/// Reads live from the resource dictionary via ThemeColors.Get so theme switches are
+/// reflected without needing a full re-notify cycle on the bound bool.
+/// Registered in App.xaml as BoolToIconColor.
+/// </summary>
 public class BoolToIconColorConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)

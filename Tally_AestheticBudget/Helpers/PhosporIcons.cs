@@ -43,4 +43,12 @@ public static class PhosphorIcons
     public const string Calendar = "\uE10A"; // calendar-blank
     public const string CaretDown = "\uE136"; // caret-down
     public const string CaretRight = "\uE13A"; // caret-right
+
+
+    public const string Coins = "\uE190";           // "coins"            (Display Currency)
+    public const string MagnifyingGlass = "\uE320"; // "magnifying-glass" (currency search)
+    public const string Calculator = "\uE108";      // "calculator"       (Allot Remaining)
+    public const string Hourglass = "\uE2BE";       // "hourglass-medium" (Cooling-off)
+    public const string Eye = "\uE228";             // "eye"              (Stale Reminder)
+    public const string Keyboard = "\uE300";        // "keyboard"         (Item 4 — Shortcuts section)
 }
