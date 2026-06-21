@@ -169,6 +169,10 @@ public partial class BudgetViewModel : ObservableObject
 
         // Category-level progress bars handled via RefreshThemeBindings() → IsOverLimit
         foreach (var item in BudgetItems) item.RefreshThemeBindings();
+
+        // Month / week picker overlay cells (BoolToChipBg/Border/Text bound to IsSelected)
+        foreach (var m in MonthOptions) m.RaiseThemeBindings();
+        foreach (var w in WeekOptions) w.RaiseThemeBindings();
     }
 
     // ── Filter commands ─────────────────────────────────────────────────────────

@@ -19,12 +19,43 @@
                         StrokeThickness="1" StrokeShape="RoundRectangle 20"
                         Padding="20,18,20,16"
                         Margin="16,16,16,0">
-                    <VerticalStackLayout Spacing="2">
-                        <Label Text="Themes" FontFamily="DisplayFont"
-                               FontSize="28" TextColor="{DynamicResource TextPrimary}" />
-                        <Label Text="Pick a vibe for your app"
-                               FontSize="13" TextColor="{DynamicResource TextSecondary}" />
-                    </VerticalStackLayout>
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="Center">
+                            <Label Text="Themes" FontFamily="DisplayFont"
+                                   FontSize="28" TextColor="{DynamicResource TextPrimary}" />
+                            <Label Text="Pick a vibe for your app"
+                                   FontSize="13" TextColor="{DynamicResource TextSecondary}" />
+                        </VerticalStackLayout>
+
+                        <!-- Light / Dark mode toggle -->
+                        <Border Grid.Column="1" VerticalOptions="Center"
+                                BackgroundColor="{DynamicResource PageBackground}"
+                                StrokeThickness="0" StrokeShape="RoundRectangle 980"
+                                Padding="3">
+                            <HorizontalStackLayout Spacing="0">
+                                <Border BackgroundColor="{Binding IsLightSelected, Converter={StaticResource BoolToChipBg}}"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 980"
+                                        Padding="16,8">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding SetLightModeCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="Light" FontSize="13"
+                                           FontAttributes="{Binding IsLightSelected, Converter={StaticResource BoolToFontAttr}}"
+                                           TextColor="{Binding IsLightSelected, Converter={StaticResource BoolToChipText}}" />
+                                </Border>
+                                <Border BackgroundColor="{Binding IsDarkSelected, Converter={StaticResource BoolToChipBg}}"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 980"
+                                        Padding="16,8">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding SetDarkModeCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="Dark" FontSize="13"
+                                           FontAttributes="{Binding IsDarkSelected, Converter={StaticResource BoolToFontAttr}}"
+                                           TextColor="{Binding IsDarkSelected, Converter={StaticResource BoolToChipText}}" />
+                                </Border>
+                            </HorizontalStackLayout>
+                        </Border>
+                    </Grid>
                 </Border>
 
                 <VerticalStackLayout Padding="16,16,16,48" Spacing="12">

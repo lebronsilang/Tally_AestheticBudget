@@ -85,16 +85,28 @@ public class GroceryLineItem
     public string PriceFormatted => $"{CurrencySymbol}{Price * Quantity:N2}";
 }
 
-public class MonthOption
+public partial class MonthOption : ObservableObject
 {
     public int Month { get; set; }
     public string ShortName { get; set; } = string.Empty;
-    public bool IsSelected { get; set; }
+
+    [ObservableProperty]
+    private bool _isSelected;
+
+    /// <summary>Forces the IsSelected-bound BoolToChip* converters (the picker cell's
+    /// background/border/text) to re-run after a theme switch. The value is unchanged, so
+    /// the generator won't notify on its own — this raises PropertyChanged unconditionally.</summary>
+    public void RaiseThemeBindings() => OnPropertyChanged(nameof(IsSelected));
 }
 
-public class WeekOption
+public partial class WeekOption : ObservableObject
 {
     public DateTime Monday { get; set; }
     public string Label { get; set; } = string.Empty;
-    public bool IsSelected { get; set; }
+
+    [ObservableProperty]
+    private bool _isSelected;
+
+    /// <summary>See MonthOption.RaiseThemeBindings — same purpose for the week picker cells.</summary>
+    public void RaiseThemeBindings() => OnPropertyChanged(nameof(IsSelected));
 }

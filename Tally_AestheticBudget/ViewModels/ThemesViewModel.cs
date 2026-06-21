@@ -16,12 +16,14 @@ public partial class ThemesViewModel : ObservableObject
         _themeService = themeService;
 
         var activeId = _themeService.GetActiveThemeId();
+        _isDarkMode = _themeService.IsDarkMode;
 
         ThemeCards = new ObservableCollection<ThemeCardItem>(
             AppThemes.All.Select(t => new ThemeCardItem
             {
                 Theme = t,
-                IsActive = t.Id == activeId
+                IsActive = t.Id == activeId,
+                IsDarkMode = _isDarkMode
             })
         );
 
@@ -44,6 +46,42 @@ public partial class ThemesViewModel : ObservableObject
         ThemePickerOptions = new ObservableCollection<ThemePickerOption>(pickerList);
 
         _monthlyYear = DateTime.Now.Year;
+    }
+
+    // ── Light / Dark mode ──────────────────────────────────────────────────────
+
+    private bool _isDarkMode;
+    public bool IsDarkMode
+    {
+        get => _isDarkMode;
+        private set
+        {
+            if (SetProperty(ref _isDarkMode, value))
+            {
+                OnPropertyChanged(nameof(IsLightSelected));
+                OnPropertyChanged(nameof(IsDarkSelected));
+            }
+        }
+    }
+
+    // Segment-highlight bindings (drive BoolToChipBg/Text on the header toggle).
+    public bool IsLightSelected => !IsDarkMode;
+    public bool IsDarkSelected => IsDarkMode;
+
+    [RelayCommand] private void SetLightMode() => ApplyMode(false);
+    [RelayCommand] private void SetDarkMode() => ApplyMode(true);
+
+    private void ApplyMode(bool dark)
+    {
+        if (IsDarkMode == dark) return;
+        IsDarkMode = dark;
+
+        // Repaint every preview swatch to the new variant.
+        foreach (var card in ThemeCards) card.IsDarkMode = dark;
+
+        // Persist + re-apply the active theme in the new mode (fires ThemeChanged →
+        // RefreshActiveCards, which also re-runs the segment converters).
+        _themeService.SetThemeMode(dark);
     }
 
     // ── Theme-change subscription (lifecycle-scoped, not constructor) ──────────
@@ -88,6 +126,11 @@ public partial class ThemesViewModel : ObservableObject
             card.IsActive = card.Id == activeId;  // updates value (notifies only if changed)
             card.RaiseActiveChanged();            // force border converter to re-run regardless
         }
+
+        // The Light/Dark header segment uses BoolToChipBg/Text (accent-dependent) bound to
+        // IsLightSelected/IsDarkSelected — force those converters to re-run on theme change.
+        OnPropertyChanged(nameof(IsLightSelected));
+        OnPropertyChanged(nameof(IsDarkSelected));
     }
 
     // ── Theme cards ───────────────────────────────────────────────────────────
@@ -232,8 +275,9 @@ public partial class ThemesViewModel : ObservableObject
             {
                 var theme = AppThemes.All.FirstOrDefault(t => t.Id == themeId);
                 themeName = theme?.DisplayName ?? themeId;
-                previewFrom = theme?.PreviewFrom ?? "Transparent";
-                previewTo = theme?.PreviewTo ?? "Transparent";
+                var pal = theme?.Palette(IsDarkMode);
+                previewFrom = pal?.PreviewFrom ?? "Transparent";
+                previewTo = pal?.PreviewTo ?? "Transparent";
             }
 
             MonthlyItems.Add(new MonthlyThemeItem
@@ -299,8 +343,9 @@ public partial class ThemesViewModel : ObservableObject
         {
             var theme = AppThemes.All.FirstOrDefault(t => t.Id == option.ThemeId);
             EditingMonth.AssignedThemeName = theme?.DisplayName ?? option.ThemeId;
-            EditingMonth.PreviewFrom = theme?.PreviewFrom ?? "Transparent";
-            EditingMonth.PreviewTo = theme?.PreviewTo ?? "Transparent";
+            var pal = theme?.Palette(IsDarkMode);
+            EditingMonth.PreviewFrom = pal?.PreviewFrom ?? "Transparent";
+            EditingMonth.PreviewTo = pal?.PreviewTo ?? "Transparent";
         }
 
         IsMonthPickerVisible = false;

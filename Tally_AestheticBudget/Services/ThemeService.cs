@@ -10,6 +10,10 @@ public interface IThemeService
     (string bg, string accent, string card, string text) GetCustomColors();
     void ApplyOnStartup();
 
+    // Light / Dark mode (applies to the active preset; custom palette is mode-independent)
+    bool IsDarkMode { get; }
+    void SetThemeMode(bool dark);
+
     // Per-month themes
     Task<List<MonthlyThemeEntity>> GetMonthlyThemesAsync(int year);
     Task SetMonthlyThemeAsync(int year, int month, string? themeId);
@@ -27,6 +31,7 @@ public class ThemeService : IThemeService
     private readonly DatabaseService _db;
 
     private const string KeyThemeId = "active_theme";
+    private const string KeyThemeMode = "theme_mode";   // "light" | "dark"
     private const string KeyCustomBg = "custom_bg";
     private const string KeyCustomAccent = "custom_accent";
     private const string KeyCustomCard = "custom_card";
@@ -40,20 +45,27 @@ public class ThemeService : IThemeService
     public string GetActiveThemeId() =>
         Preferences.Get(KeyThemeId, "default");
 
+    // ── Light / Dark mode ──────────────────────────────────────────────────────
+
+    public bool IsDarkMode =>
+        Preferences.Get(KeyThemeMode, "light") == "dark";
+
+    /// <summary>
+    /// Persists the chosen mode and re-applies the active global theme (preset or custom)
+    /// so the change takes effect immediately. Custom palettes are mode-independent, but we
+    /// still re-apply + fire ThemeChanged so the Themes-grid swatches refresh.
+    /// </summary>
+    public void SetThemeMode(bool dark)
+    {
+        Preferences.Set(KeyThemeMode, dark ? "dark" : "light");
+        RevertToGlobal();   // re-applies active theme in the new mode and fires ThemeChanged
+    }
+
     public void ApplyTheme(string themeId)
     {
         Preferences.Set(KeyThemeId, themeId);
-        var theme = AppThemes.GetById(themeId);
-        ApplyColorsToResources(
-            theme.Background,
-            theme.Accent,
-            theme.Card,
-            theme.TextPrimary,
-            theme.TextSecondary,
-            theme.Border,
-            theme.OnAccent);
-
-        ApplyTabBarColors(theme.Accent, theme.Card, theme.TextSecondary);
+        var p = AppThemes.GetById(themeId).Palette(IsDarkMode);
+        ApplyPalette(p);
         ThemeChanged?.Invoke();
     }
 
@@ -97,11 +109,7 @@ public class ThemeService : IThemeService
         }
         else
         {
-            var theme = AppThemes.GetById(id);
-            ApplyColorsToResources(
-                theme.Background, theme.Accent, theme.Card,
-                theme.TextPrimary, theme.TextSecondary, theme.Border,
-                theme.OnAccent);
+            ApplyPalette(AppThemes.GetById(id).Palette(IsDarkMode));
         }
     }
 
@@ -113,16 +121,7 @@ public class ThemeService : IThemeService
             var monthlyId = await GetMonthlyThemeIdAsync(now.Year, now.Month);
             if (string.IsNullOrEmpty(monthlyId)) return;
 
-            var theme = AppThemes.GetById(monthlyId);
-            ApplyColorsToResources(
-                theme.Background,
-                theme.Accent,
-                theme.Card,
-                theme.TextPrimary,
-                theme.TextSecondary,
-                theme.Border,
-                theme.OnAccent);
-            ApplyTabBarColors(theme.Accent, theme.Card, theme.TextSecondary);
+            ApplyPalette(AppThemes.GetById(monthlyId).Palette(IsDarkMode));
         }
         catch
         {
@@ -180,20 +179,17 @@ public class ThemeService : IThemeService
     /// <summary>
     /// Applies a theme visually WITHOUT saving to Preferences.
     /// Used when Feed/Budget is viewing a month with an assigned theme.
+    /// Honors the active Light/Dark mode.
     /// </summary>
     public void ApplyMonthlyPreview(string themeId)
     {
-        var theme = AppThemes.GetById(themeId);
-        ApplyColorsToResources(
-            theme.Background, theme.Accent, theme.Card,
-            theme.TextPrimary, theme.TextSecondary, theme.Border,
-            theme.OnAccent);
-        ApplyTabBarColors(theme.Accent, theme.Card, theme.TextSecondary);
+        ApplyPalette(AppThemes.GetById(themeId).Palette(IsDarkMode));
         ThemeChanged?.Invoke();
     }
 
     /// <summary>
     /// Restores the global theme (from Preferences) without any monthly override.
+    /// Honors the active Light/Dark mode.
     /// </summary>
     public void RevertToGlobal()
     {
@@ -206,17 +202,21 @@ public class ThemeService : IThemeService
         }
         else
         {
-            var theme = AppThemes.GetById(id);
-            ApplyColorsToResources(
-                theme.Background, theme.Accent, theme.Card,
-                theme.TextPrimary, theme.TextSecondary, theme.Border,
-                theme.OnAccent);
-            ApplyTabBarColors(theme.Accent, theme.Card, theme.TextSecondary);
+            ApplyPalette(AppThemes.GetById(id).Palette(IsDarkMode));
         }
         ThemeChanged?.Invoke();
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
+
+    /// <summary>Single funnel for applying a resolved ThemePalette (resources + tab bar).</summary>
+    private static void ApplyPalette(ThemePalette p)
+    {
+        ApplyColorsToResources(
+            p.Background, p.Accent, p.Card,
+            p.TextPrimary, p.TextSecondary, p.Border, p.OnAccent);
+        ApplyTabBarColors(p.Accent, p.Card, p.TextSecondary);
+    }
 
     private static void ApplyColorsToResources(
         string bg, string accent, string card,

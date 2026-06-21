@@ -838,6 +838,10 @@ public partial class FeedViewModel : ObservableObject
         OnPropertyChanged(nameof(EditIsShoppingSelected));
         OnPropertyChanged(nameof(EditIsHealthSelected));
         OnPropertyChanged(nameof(EditIsFunSelected));
+
+        // Month / week picker overlay cells (BoolToChipBg/Border/Text bound to IsSelected)
+        foreach (var m in MonthOptions) m.RaiseThemeBindings();
+        foreach (var w in WeekOptions) w.RaiseThemeBindings();
     }
 
     public string FilterHeaderLabel => _activeFilter switch
