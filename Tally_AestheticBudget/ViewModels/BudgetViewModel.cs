@@ -135,6 +135,8 @@ public partial class BudgetViewModel : ObservableObject
             _themeSubscribed = true;
             _themeService.ThemeChanged += OnThemeChanged;
         }
+        // Clear any accent remnants left by a theme switch made on the Themes page.
+        RefreshThemeBoundBindings();
         _header.ShowFilter(FilterHeaderLabel);
         if (!_isDirty) return;
         _isDirty = false;
@@ -148,12 +150,24 @@ public partial class BudgetViewModel : ObservableObject
         _themeService.RevertToGlobal();
     }
 
-    private void OnThemeChanged()
+    private void OnThemeChanged() => RefreshThemeBoundBindings();
+
+    /// <summary>Forces accent-dependent converters to re-evaluate. Called from the
+    /// ThemeChanged event and on every appearance (covers theme switches made elsewhere).</summary>
+    private void RefreshThemeBoundBindings()
     {
+        // Filter chips
         OnPropertyChanged(nameof(IsFilterDay));
         OnPropertyChanged(nameof(IsFilterWeek));
         OnPropertyChanged(nameof(IsFilterMonth));
         OnPropertyChanged(nameof(IsFilterYear));
+
+        // Total-budget progress bar — bound to BoolToProgressColor via IsOverTotal.
+        // App.CurrentAccent has changed but IsOverTotal hasn't, so the converter won't
+        // re-fire without this explicit notification.
+        OnPropertyChanged(nameof(IsOverTotal));
+
+        // Category-level progress bars handled via RefreshThemeBindings() → IsOverLimit
         foreach (var item in BudgetItems) item.RefreshThemeBindings();
     }
 

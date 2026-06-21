@@ -178,7 +178,7 @@ public partial class FeedViewModel : ObservableObject
 
     // ── Add modal ─────────────────────────────────────────────────────────────
 
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsExpensePanelOpen))] private bool _isAddModalVisible;
+    [ObservableProperty][NotifyPropertyChangedFor(nameof(IsExpensePanelOpen))] private bool _isAddModalVisible;
     [ObservableProperty] private string _newTitle = string.Empty;
     [ObservableProperty] private string _newAmountText = string.Empty;
     [ObservableProperty] private string _newNote = string.Empty;
@@ -442,6 +442,10 @@ public partial class FeedViewModel : ObservableObject
             _themeSubscribed = true;
             _themeService.ThemeChanged += OnThemeChanged;
         }
+        // A global theme switch happens on the Themes page while this page is unsubscribed,
+        // so OnThemeChanged never fired for us. Re-run the refresh on every appearance to
+        // clear any accent remnants left on filter/category chips.
+        RefreshThemeBoundBindings();
         IsListView = _settings.FeedListView;
         _header.ShowFilter(FilterHeaderLabel);
         if (!IsDirty) return;
@@ -799,14 +803,41 @@ public partial class FeedViewModel : ObservableObject
             _themeService.RevertToGlobal();
     }
 
-    private void OnThemeChanged()
+    // Fired by the IThemeService.ThemeChanged event (only while this page is the active,
+    // subscribed page). For global theme switches made on the Themes page — where THIS
+    // page is unsubscribed — RefreshThemeBoundBindings is instead re-run on appear.
+    private void OnThemeChanged() => RefreshThemeBoundBindings();
+
+    /// <summary>
+    /// Forces every converter that depends on App.CurrentAccent to re-evaluate by raising
+    /// PropertyChanged on each bound property. Safe to call repeatedly and on empty lists.
+    /// </summary>
+    private void RefreshThemeBoundBindings()
     {
+        // Filter chips
         OnPropertyChanged(nameof(IsFilterAll));
         OnPropertyChanged(nameof(IsFilterDay));
         OnPropertyChanged(nameof(IsFilterWeek));
         OnPropertyChanged(nameof(IsFilterMonth));
         OnPropertyChanged(nameof(IsFilterYear));
         OnPropertyChanged(nameof(IsFilterCategory));
+
+        // Drawer category chips (Add form)
+        // These bools drive BoolToChipBg/Border/Text converters whose output depends on
+        // App.CurrentAccent. The underlying _newSelectedCategory value hasn't changed,
+        // so the source-generator won't fire automatically — we must re-notify manually.
+        OnPropertyChanged(nameof(NewIsFoodSelected));
+        OnPropertyChanged(nameof(NewIsTransportSelected));
+        OnPropertyChanged(nameof(NewIsShoppingSelected));
+        OnPropertyChanged(nameof(NewIsHealthSelected));
+        OnPropertyChanged(nameof(NewIsFunSelected));
+
+        // Drawer category chips (Edit form)
+        OnPropertyChanged(nameof(EditIsFoodSelected));
+        OnPropertyChanged(nameof(EditIsTransportSelected));
+        OnPropertyChanged(nameof(EditIsShoppingSelected));
+        OnPropertyChanged(nameof(EditIsHealthSelected));
+        OnPropertyChanged(nameof(EditIsFunSelected));
     }
 
     public string FilterHeaderLabel => _activeFilter switch

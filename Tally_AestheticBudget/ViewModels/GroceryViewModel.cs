@@ -173,6 +173,8 @@ public partial class GroceryViewModel : ObservableObject
             _themeSubscribed = true;
             _themeService.ThemeChanged += OnThemeChanged;
         }
+        // Clear any accent remnants left by a theme switch made on the Themes page.
+        RefreshThemeBoundBindings();
         _header.ShowFilter(FilterHeaderLabel);
         if (!IsDirty) return;
         IsDirty = false;
@@ -185,11 +187,25 @@ public partial class GroceryViewModel : ObservableObject
         _themeSubscribed = false;
     }
 
-    private void OnThemeChanged()
+    private void OnThemeChanged() => RefreshThemeBoundBindings();
+
+    /// <summary>Forces accent-dependent converters to re-evaluate. Called from the
+    /// ThemeChanged event and on every appearance (covers theme switches made elsewhere).</summary>
+    private void RefreshThemeBoundBindings()
     {
+        // Filter chips
         OnPropertyChanged(nameof(IsFilterAll));
         OnPropertyChanged(nameof(IsFilterPending));
         OnPropertyChanged(nameof(IsFilterChecked));
+
+        // Checked-item checkbox circles (BoolToChipBg/Border bound to IsChecked) — each
+        // GroceryItem.RefreshThemeBindings re-notifies IsChecked so the converter picks
+        // up the new App.CurrentAccent.
+        foreach (var item in _allItems)
+            item.RefreshThemeBindings();
+
+        // Grocery budget progress bar (BoolToProgressColor bound to IsOverBudget)
+        BudgetStatus.RefreshThemeBindings();
     }
 
     private async Task LoadAsync()

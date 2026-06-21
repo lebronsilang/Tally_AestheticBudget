@@ -46,6 +46,50 @@ public partial class ThemesViewModel : ObservableObject
         _monthlyYear = DateTime.Now.Year;
     }
 
+    // ── Theme-change subscription (lifecycle-scoped, not constructor) ──────────
+    // ThemesViewModel is registered AddTransient, so subscribing in the constructor
+    // would leak an instance per navigation. Instead we subscribe on appear and
+    // unsubscribe on disappear, matching every other page's pattern.
+
+    private bool _themeSubscribed;
+
+    public void OnPageAppearing()
+    {
+        if (!_themeSubscribed)
+        {
+            _themeSubscribed = true;
+            _themeService.ThemeChanged += RefreshActiveCards;
+        }
+        // Returning from Feed/Budget can leave a stale accent on the card borders if a
+        // monthly-preview was reverted while we were away — refresh on every appearance.
+        RefreshActiveCards();
+    }
+
+    public void OnPageDisappearing()
+    {
+        _themeService.ThemeChanged -= RefreshActiveCards;
+        _themeSubscribed = false;
+    }
+
+    // ── Active-card refresh ───────────────────────────────────────────────────
+
+    /// <summary>
+    /// Re-evaluates which card is active and FORCES a PropertyChanged on IsActive for
+    /// every card — not only the ones whose value flipped. The CommunityToolkit
+    /// [ObservableProperty] setter suppresses notification when the value is unchanged,
+    /// which would leave the inactive cards' BoolToChipBorder converter holding a stale
+    /// App.CurrentAccent. RaiseActiveChanged re-runs the converter unconditionally.
+    /// </summary>
+    private void RefreshActiveCards()
+    {
+        var activeId = _themeService.GetActiveThemeId();
+        foreach (var card in ThemeCards)
+        {
+            card.IsActive = card.Id == activeId;  // updates value (notifies only if changed)
+            card.RaiseActiveChanged();            // force border converter to re-run regardless
+        }
+    }
+
     // ── Theme cards ───────────────────────────────────────────────────────────
 
     public ObservableCollection<ThemeCardItem> ThemeCards { get; }

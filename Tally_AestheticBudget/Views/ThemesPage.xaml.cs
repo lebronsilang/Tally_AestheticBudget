@@ -14,7 +14,17 @@ public partial class ThemesPage : ContentPage
     {
         base.OnAppearing();
         if (BindingContext is ViewModels.ThemesViewModel vm)
+        {
+            vm.OnPageAppearing();
             await vm.LoadMonthlyThemesCommand.ExecuteAsync(null);
+        }
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        if (BindingContext is ViewModels.ThemesViewModel vm)
+            vm.OnPageDisappearing();
     }
 
     private async void OnThemeCardPointerEntered(object sender, PointerEventArgs e)

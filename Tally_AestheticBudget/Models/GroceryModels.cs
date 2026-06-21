@@ -33,6 +33,13 @@ public partial class GroceryItem : ObservableObject
     public string TotalFormatted => $"{CurrencySymbol}{Price * Quantity:N2}";
 
     public string QuantityLabel => Quantity > 1 ? $"qty: {Quantity}" : string.Empty;
+
+    /// <summary>
+    /// Forces re-invocation of converters whose output depends on App.CurrentAccent
+    /// but whose bound property value hasn't changed (so the source generator won't
+    /// fire automatically). Called from GroceryViewModel.OnThemeChanged.
+    /// </summary>
+    public void RefreshThemeBindings() => OnPropertyChanged(nameof(IsChecked));
 }
 
 /// <summary>

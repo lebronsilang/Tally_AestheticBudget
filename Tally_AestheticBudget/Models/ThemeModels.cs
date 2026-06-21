@@ -127,6 +127,13 @@ public partial class ThemeCardItem : CommunityToolkit.Mvvm.ComponentModel.Observ
     public string PreviewFrom => Theme.PreviewFrom;
     public string PreviewTo => Theme.PreviewTo;
 
+    /// <summary>
+    /// Forces the IsActive-bound BoolToChipBorder converter to re-run even when IsActive's
+    /// value is unchanged. Needed because [ObservableProperty] suppresses notification on
+    /// no-op assignment, which would otherwise leave a stale accent on the card border
+    /// after a theme switch.
+    /// </summary>
+    public void RaiseActiveChanged() => OnPropertyChanged(nameof(IsActive));
 }
 
 /// Wraps one month row for the per-month theme UI.

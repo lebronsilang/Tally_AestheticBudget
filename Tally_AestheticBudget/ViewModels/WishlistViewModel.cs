@@ -439,6 +439,8 @@ public partial class WishlistViewModel : ObservableObject
             _themeSubscribed = true;
             _themeService.ThemeChanged += OnThemeChanged;
         }
+        // Clear any accent remnants left by a theme switch made on the Themes page.
+        RefreshThemeBoundBindings();
         IsListView = _settings.WishlistListView;
         _header.ShowFilter(FilterHeaderLabel);
         if (!IsDirty) return;
@@ -452,14 +454,28 @@ public partial class WishlistViewModel : ObservableObject
         _themeSubscribed = false;
     }
 
-    private void OnThemeChanged()
+    private void OnThemeChanged() => RefreshThemeBoundBindings();
+
+    /// <summary>Forces accent-dependent converters to re-evaluate. Called from the
+    /// ThemeChanged event and on every appearance (covers theme switches made elsewhere).</summary>
+    private void RefreshThemeBoundBindings()
     {
+        // Filter chips
         OnPropertyChanged(nameof(IsFilterAll));
         OnPropertyChanged(nameof(IsFilterPlanned));
         OnPropertyChanged(nameof(IsFilterBought));
         OnPropertyChanged(nameof(IsFilterWant));
         OnPropertyChanged(nameof(IsFilterNeed));
         OnPropertyChanged(nameof(IsFilterSomeday));
+
+        // Drawer category chips (Add form) — same pattern as FeedViewModel:
+        // the underlying NewCategory hasn't changed, so manual re-notify is required.
+        OnPropertyChanged(nameof(IsNewFoodSelected));
+        OnPropertyChanged(nameof(IsNewShoppingSelected));
+        OnPropertyChanged(nameof(IsNewHealthSelected));
+        OnPropertyChanged(nameof(IsNewFunSelected));
+        OnPropertyChanged(nameof(IsNewOtherSelected));
+
         foreach (var item in DisplayedItems)
             item.RefreshThemeBindings();
     }
