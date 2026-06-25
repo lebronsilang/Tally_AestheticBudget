@@ -21,11 +21,9 @@ public static class MauiProgram
                 fonts.AddFont("DMSans-Regular.ttf", "BodyFont");
                 fonts.AddFont("DMSerifDisplay-Regular.ttf", "DisplayFont");
                 fonts.AddFont("Phosphor.ttf", "PhosphorIcons");
-
             });
 
-
-        //Services
+        // ── Services ──────────────────────────────────────────────────────────
         // AddSingleton = one instance for the whole app lifetime (good for DB)
         // AddTransient = a fresh instance every time it's requested (good for ViewModels)
 
@@ -38,9 +36,9 @@ public static class MauiProgram
         builder.Services.AddSingleton<IGroceryService, GroceryService>();
         builder.Services.AddSingleton<IWishService, WishService>();
         builder.Services.AddSingleton<IThemeService, ThemeService>();
+        builder.Services.AddSingleton<IUnsplashService, UnsplashService>();
 
-
-        //ViewModels
+        // ── ViewModels ────────────────────────────────────────────────────────
         builder.Services.AddTransient<FeedViewModel>();
         builder.Services.AddTransient<AddExpenseViewModel>();
         builder.Services.AddTransient<BudgetViewModel>();
@@ -49,7 +47,7 @@ public static class MauiProgram
         builder.Services.AddTransient<ThemesViewModel>();
         builder.Services.AddTransient<SettingsViewModel>();
 
-        //Pages
+        // ── Pages ─────────────────────────────────────────────────────────────
         builder.Services.AddTransient<FeedPage>();
         builder.Services.AddTransient<AddExpensePage>();
         builder.Services.AddTransient<BudgetPage>();
@@ -59,16 +57,17 @@ public static class MauiProgram
         builder.Services.AddTransient<SettingsPage>();
 
 
-    #if DEBUG
-            builder.Logging.AddDebug();
-    #endif
+#if DEBUG
+        builder.Logging.AddDebug();
+#endif
 
-    #if WINDOWS
-            ConfigureBorderlessInputs();
-    #endif
-            return builder.Build();
+#if WINDOWS
+        ConfigureBorderlessInputs();
+#endif
+        return builder.Build();
     }
-    #if WINDOWS
+
+#if WINDOWS
     static void ConfigureBorderlessInputs()
     {
         static void StripTextBox(Microsoft.UI.Xaml.Controls.TextBox tb)
@@ -76,7 +75,6 @@ public static class MauiProgram
             var zero = new Microsoft.UI.Xaml.Thickness(0);
             var clear = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
             tb.BorderThickness = zero;
-            // override theme resources so focus/hover/disabled states don't re-add it
             tb.Resources["TextControlBorderThemeThickness"] = zero;
             tb.Resources["TextControlBorderThemeThicknessFocused"] = zero;
             tb.Resources["TextControlBackground"] = clear;

@@ -20,14 +20,6 @@ public partial class FeedPage : ContentPage
     private double _lastWidth = 0;
     private double _calculatedColumnWidth = 0;
 
-    // ── Sticky bar state ──────────────────────────────────────────────────────
-    /// <summary>
-    /// Y-coordinate (in scroll content space) of the inline bar's top edge.
-    /// -1 = not yet captured; reset to -1 whenever the filter changes.
-    /// </summary>
-    private double _barNaturalTop = -1;
-    private bool _barStickyPromoted = false;
-
     public FeedPage(FeedViewModel viewModel, ISettingsService settings, IThemeService themeService)
     {
         InitializeComponent();
@@ -36,16 +28,10 @@ public partial class FeedPage : ContentPage
         _themeService = themeService;
         BindingContext = viewModel;
 
-        // When the filter changes, the bar chart re-renders and the header
-        // height may differ — reset the captured natural-top so it is
-        // remeasured on the next scroll event.
+        // When the filter changes, reset grid state so it is rebuilt correctly.
         _viewModel.FilterChanged += () =>
         {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                _barNaturalTop = -1;
-                ClearMasonryGrid();
-            });
+            MainThread.BeginInvokeOnMainThread(ClearMasonryGrid);
         };
 
         _viewModel.ColumnsRebuilt += () =>
@@ -53,7 +39,7 @@ public partial class FeedPage : ContentPage
             MainThread.BeginInvokeOnMainThread(RebuildMasonryGrid);
         };
 
-        // When bar data changes, repaint both the inline and sticky views.
+        // When bar data changes, repaint the inline chart.
         _viewModel.BarDrawable.Invalidated += OnBarDataChanged;
     }
 
@@ -78,11 +64,6 @@ public partial class FeedPage : ContentPage
 
         _themeService.ThemeChanged -= OnThemeChanged;
 
-        // If the sticky overlay is active, clean up state so it doesn't persist
-        // when the page reappears.
-        if (_barStickyPromoted)
-            DemoteBarToInline();
-
         if (BindingContext is FeedViewModel vm)
             vm.OnPageDisappearing();
     }
@@ -91,21 +72,13 @@ public partial class FeedPage : ContentPage
 
     private void OnBarDataChanged()
     {
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            BarViewInline?.Invalidate();
-            if (_barStickyPromoted) BarViewSticky?.Invalidate();
-        });
+        MainThread.BeginInvokeOnMainThread(() => BarViewInline?.Invalidate());
     }
 
     private void OnThemeChanged()
     {
         ApplyBarTheme();
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            BarViewInline?.Invalidate();
-            if (_barStickyPromoted) BarViewSticky?.Invalidate();
-        });
+        MainThread.BeginInvokeOnMainThread(() => BarViewInline?.Invalidate());
     }
 
     /// <summary>
@@ -129,62 +102,6 @@ public partial class FeedPage : ContentPage
     {
         if (res.TryGetValue(key, out var val) && val is Color c) return c;
         return Colors.Gray;
-    }
-
-    // ── Sticky scroll logic ───────────────────────────────────────────────────
-
-    /// <summary>
-    /// Wired to MasonryScrollView.Scrolled (added in XAML via Insertion 1).
-    /// Promotes the bar chart to the sticky overlay when the user scrolls past
-    /// its natural position; demotes it when they scroll back.
-    ///
-    /// The natural-top is captured on the first scroll event after each filter
-    /// change, because it can shift depending on header content height.
-    /// </summary>
-    private void MasonryScrollView_Scrolled(object sender, ScrolledEventArgs e)
-    {
-        // Only run sticky logic when both toggles are on.
-        if (!_viewModel.ShowFeedBar || !_viewModel.FeedBarSticky) return;
-
-        double scrollY = e.ScrollY;
-
-        // Capture the bar's natural Y position (relative to scroll content) the
-        // first time we receive a scroll event after a filter change.
-        if (_barNaturalTop < 0 && BarViewInline is not null)
-        {
-            _barNaturalTop = BarViewInline.Y;
-            // Guard against pre-layout Y = 0.
-            if (_barNaturalTop <= 0) return;
-        }
-
-        if (scrollY > _barNaturalTop && !_barStickyPromoted)
-            PromoteBarToOverlay();
-        else if (scrollY <= _barNaturalTop && _barStickyPromoted)
-            DemoteBarToInline();
-    }
-
-    /// <summary>Hides the inline bar (opacity → 0 keeps the layout slot) and shows the overlay.</summary>
-    private void PromoteBarToOverlay()
-    {
-        _barStickyPromoted = true;
-        if (BarViewInline is not null) BarViewInline.Opacity = 0;
-        if (StickyBarOverlay is not null)
-        {
-            StickyBarOverlay.IsVisible = true;
-            BarViewSticky?.Invalidate();
-        }
-    }
-
-    /// <summary>Restores the inline bar and hides the overlay.</summary>
-    private void DemoteBarToInline()
-    {
-        _barStickyPromoted = false;
-        if (StickyBarOverlay is not null) StickyBarOverlay.IsVisible = false;
-        if (BarViewInline is not null)
-        {
-            BarViewInline.Opacity = 1;
-            BarViewInline.Invalidate();
-        }
     }
 
     // ── Masonry grid ──────────────────────────────────────────────────────────
@@ -270,7 +187,7 @@ public partial class FeedPage : ContentPage
         }
     }
 
-    // ── Card template (unchanged from original) ───────────────────────────────
+    // ── Card template ─────────────────────────────────────────────────────────
 
     private DataTemplate BuildCardTemplate()
     {
@@ -338,9 +255,9 @@ public partial class FeedPage : ContentPage
                 EndPoint = new Point(0, 1),
                 GradientStops =
                 [
-                    new GradientStop { Color = Colors.Transparent,          Offset = 0.0f },
-                    new GradientStop { Color = Color.FromArgb("#40000000"),  Offset = 0.45f },
-                    new GradientStop { Color = Color.FromArgb("#CC000000"),  Offset = 1.0f },
+                    new GradientStop { Color = Colors.Transparent,         Offset = 0.0f },
+                    new GradientStop { Color = Color.FromArgb("#40000000"), Offset = 0.45f },
+                    new GradientStop { Color = Color.FromArgb("#CC000000"), Offset = 1.0f },
                 ]
             };
             gradient.Clip = new Microsoft.Maui.Controls.Shapes.RoundRectangleGeometry
@@ -350,7 +267,6 @@ public partial class FeedPage : ContentPage
             };
             photoContainer.Children.Add(gradient);
 
-            // Overlay text: Category · Date → Title → Amount → Note
             var overlayText = new VerticalStackLayout
             {
                 Spacing = 2,

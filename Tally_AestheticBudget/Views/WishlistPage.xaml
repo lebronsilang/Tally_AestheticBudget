@@ -508,22 +508,196 @@
                             <VerticalStackLayout Spacing="5">
                                 <Label Text="Photo (optional)" FontSize="11" FontAttributes="Bold"
                                    TextColor="{DynamicResource TextPrimary}" />
-                                <Border IsVisible="{Binding NewHasPhoto, Converter={StaticResource InverseBool}}"
-                                    BackgroundColor="{DynamicResource PageBackground}"
-                                    Stroke="{DynamicResource CardBorder}"
-                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 10"
-                                    HeightRequest="72">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding PickWishPhotoCommand}" />
-                                    </Border.GestureRecognizers>
-                                    <VerticalStackLayout HorizontalOptions="Center"
-                                                     VerticalOptions="Center" Spacing="3">
-                                        <Label Text="🖼️" FontSize="20" HorizontalOptions="Center" />
-                                        <Label Text="Tap to add photo" FontSize="11"
-                                           TextColor="{DynamicResource TextSecondary}"
-                                           HorizontalOptions="Center" />
+
+                                <!-- Picker area — collapses once a photo is chosen -->
+                                <VerticalStackLayout IsVisible="{Binding NewHasPhoto, Converter={StaticResource InverseBool}}"
+                                                 Spacing="8">
+
+                                    <!-- ── 2×2 source grid ── -->
+                                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto"
+                                      ColumnSpacing="8" RowSpacing="8">
+
+                                        <!-- From Files -->
+                                        <Border Grid.Row="0" Grid.Column="0"
+                                            BackgroundColor="{DynamicResource PageBackground}"
+                                            Stroke="{DynamicResource CardBorder}"
+                                            StrokeThickness="0.8" StrokeShape="RoundRectangle 10"
+                                            Padding="0,14" Style="{StaticResource HoverButton}">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding PickWishPhotoCommand}" />
+                                            </Border.GestureRecognizers>
+                                            <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                                <Label Style="{StaticResource PhosphorIcon}"
+                                                   Text="{x:Static ph:PhosphorIcons.FolderOpen}"
+                                                   FontSize="18" HorizontalOptions="Center"
+                                                   TextColor="{DynamicResource AccentColor}" />
+                                                <Label Text="From Files" FontSize="11"
+                                                   HorizontalOptions="Center"
+                                                   TextColor="{DynamicResource TextSecondary}" />
+                                            </VerticalStackLayout>
+                                        </Border>
+
+                                        <!-- Unsplash -->
+                                        <Border Grid.Row="0" Grid.Column="1"
+                                            BackgroundColor="{DynamicResource PageBackground}"
+                                            Stroke="{DynamicResource CardBorder}"
+                                            StrokeThickness="0.8" StrokeShape="RoundRectangle 10"
+                                            Padding="0,14" Style="{StaticResource HoverButton}">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding ToggleUnsplashPanelCommand}" />
+                                            </Border.GestureRecognizers>
+                                            <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                                <Label Style="{StaticResource PhosphorIcon}"
+                                                   Text="{x:Static ph:PhosphorIcons.Globe}"
+                                                   FontSize="18" HorizontalOptions="Center"
+                                                   TextColor="{DynamicResource AccentColor}" />
+                                                <Label Text="Unsplash" FontSize="11"
+                                                   HorizontalOptions="Center"
+                                                   TextColor="{DynamicResource TextSecondary}" />
+                                            </VerticalStackLayout>
+                                        </Border>
+
+                                        <!-- Paste Image -->
+                                        <Border Grid.Row="1" Grid.Column="0"
+                                            BackgroundColor="{DynamicResource PageBackground}"
+                                            Stroke="{DynamicResource CardBorder}"
+                                            StrokeThickness="0.8" StrokeShape="RoundRectangle 10"
+                                            Padding="0,14" Style="{StaticResource HoverButton}">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding PasteWishImageCommand}" />
+                                            </Border.GestureRecognizers>
+                                            <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                                <Label Style="{StaticResource PhosphorIcon}"
+                                                   Text="{x:Static ph:PhosphorIcons.ClipboardText}"
+                                                   FontSize="18" HorizontalOptions="Center"
+                                                   TextColor="{DynamicResource AccentColor}" />
+                                                <Label Text="Paste Image" FontSize="11"
+                                                   HorizontalOptions="Center"
+                                                   TextColor="{DynamicResource TextSecondary}" />
+                                            </VerticalStackLayout>
+                                        </Border>
+
+                                        <!-- Paste URL -->
+                                        <Border Grid.Row="1" Grid.Column="1"
+                                            BackgroundColor="{DynamicResource PageBackground}"
+                                            Stroke="{DynamicResource CardBorder}"
+                                            StrokeThickness="0.8" StrokeShape="RoundRectangle 10"
+                                            Padding="0,14" Style="{StaticResource HoverButton}">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding TogglePasteUrlRowCommand}" />
+                                            </Border.GestureRecognizers>
+                                            <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                                <Label Style="{StaticResource PhosphorIcon}"
+                                                   Text="{x:Static ph:PhosphorIcons.Link}"
+                                                   FontSize="18" HorizontalOptions="Center"
+                                                   TextColor="{DynamicResource AccentColor}" />
+                                                <Label Text="Paste URL" FontSize="11"
+                                                   HorizontalOptions="Center"
+                                                   TextColor="{DynamicResource TextSecondary}" />
+                                            </VerticalStackLayout>
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- ── Unsplash in-drawer panel (Wish) ── -->
+                                    <VerticalStackLayout IsVisible="{Binding IsUnsplashPanelOpen}"
+                                                     Spacing="8">
+                                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                            <Border Grid.Column="0"
+                                                BackgroundColor="{DynamicResource PageBackground}"
+                                                Stroke="{DynamicResource CardBorder}"
+                                                StrokeThickness="0.8" StrokeShape="RoundRectangle 10"
+                                                Padding="12,0">
+                                                <Entry Text="{Binding UnsplashQuery}"
+                                                   Placeholder="Search Unsplash…"
+                                                   PlaceholderColor="#C0C0C5" FontSize="13"
+                                                   TextColor="{DynamicResource TextPrimary}"
+                                                   BackgroundColor="Transparent" HeightRequest="40"
+                                                   ReturnCommand="{Binding SearchUnsplashCommand}" />
+                                            </Border>
+                                            <Border Grid.Column="1"
+                                                BackgroundColor="{DynamicResource AccentColor}"
+                                                StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                                Padding="14,0" Style="{StaticResource HoverButton}">
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding SearchUnsplashCommand}" />
+                                                </Border.GestureRecognizers>
+                                                <Label Text="Search" FontSize="13" FontAttributes="Bold"
+                                                   TextColor="{DynamicResource OnAccentColor}"
+                                                   VerticalOptions="Center" />
+                                            </Border>
+                                        </Grid>
+                                        <ActivityIndicator IsRunning="{Binding IsUnsplashLoading}"
+                                                       IsVisible="{Binding IsUnsplashLoading}"
+                                                       Color="{DynamicResource AccentColor}"
+                                                       HorizontalOptions="Center" />
+                                        <FlexLayout Wrap="Wrap" Direction="Row" JustifyContent="Start"
+                                                BindableLayout.ItemsSource="{Binding UnsplashResults}">
+                                            <BindableLayout.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border WidthRequest="106" HeightRequest="80"
+                                                        Margin="0,0,4,4"
+                                                        StrokeThickness="0" StrokeShape="RoundRectangle 8"
+                                                        Style="{StaticResource HoverButton}">
+                                                        <Border.GestureRecognizers>
+                                                            <TapGestureRecognizer
+                                                            Command="{Binding BindingContext.SelectUnsplashPhotoCommand,
+                                                                      Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                            CommandParameter="{Binding .}" />
+                                                        </Border.GestureRecognizers>
+                                                        <Image Source="{Binding ThumbUrl}" Aspect="AspectFill">
+                                                            <Image.Clip>
+                                                                <RoundRectangleGeometry Rect="0,0,106,80"
+                                                                                    CornerRadius="8" />
+                                                            </Image.Clip>
+                                                        </Image>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </BindableLayout.ItemTemplate>
+                                        </FlexLayout>
+                                        <Border IsVisible="{Binding HasMoreUnsplashPages}"
+                                            BackgroundColor="{DynamicResource PageBackground}"
+                                            Stroke="{DynamicResource AccentColor}"
+                                            StrokeThickness="0.8" StrokeShape="RoundRectangle 10"
+                                            Padding="0,10" Style="{StaticResource HoverButton}">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding LoadMoreUnsplashCommand}" />
+                                            </Border.GestureRecognizers>
+                                            <Label Text="Load more" FontSize="12"
+                                               TextColor="{DynamicResource AccentColor}"
+                                               HorizontalOptions="Center" />
+                                        </Border>
                                     </VerticalStackLayout>
-                                </Border>
+
+                                    <!-- ── Paste URL row (Wish) ── -->
+                                    <Grid IsVisible="{Binding IsPasteUrlRowOpen}"
+                                      ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                        <Border Grid.Column="0"
+                                            BackgroundColor="{DynamicResource PageBackground}"
+                                            Stroke="{DynamicResource CardBorder}"
+                                            StrokeThickness="0.8" StrokeShape="RoundRectangle 10"
+                                            Padding="12,0">
+                                            <Entry Text="{Binding PasteUrlText}"
+                                               Placeholder="Paste image URL…"
+                                               PlaceholderColor="#C0C0C5" FontSize="13"
+                                               TextColor="{DynamicResource TextPrimary}"
+                                               BackgroundColor="Transparent" HeightRequest="40" />
+                                        </Border>
+                                        <Border Grid.Column="1"
+                                            BackgroundColor="{DynamicResource AccentColor}"
+                                            StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                            Padding="14,0" Style="{StaticResource HoverButton}">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding PasteWishUrlCommand}" />
+                                            </Border.GestureRecognizers>
+                                            <Label Text="Download" FontSize="13" FontAttributes="Bold"
+                                               TextColor="{DynamicResource OnAccentColor}"
+                                               VerticalOptions="Center" />
+                                        </Border>
+                                    </Grid>
+
+                                </VerticalStackLayout>
+
+                                <!-- ── Preview strip (unchanged) ── -->
                                 <VerticalStackLayout IsVisible="{Binding NewHasPhoto}" Spacing="0">
                                     <Border BackgroundColor="{DynamicResource PageBackground}"
                                         Stroke="{DynamicResource CardBorder}"

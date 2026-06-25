@@ -15,6 +15,7 @@ public partial class FeedViewModel : ObservableObject
     private readonly DataChangedService _dataChanged;
     private readonly IThemeService _themeService;
     private readonly HeaderState _header;
+    private readonly IUnsplashService _unsplash;
     private bool _themeSubscribed;
 
     public int CurrentColumnCount { get; set; } = 2;
@@ -28,14 +29,20 @@ public partial class FeedViewModel : ObservableObject
     }
     public bool IsMasonryView => !IsListView;
 
-    public FeedViewModel(IExpenseService expenseService, ISettingsService settings,
-        DataChangedService dataChanged, IThemeService themeService, HeaderState header)
+    public FeedViewModel(
+        IExpenseService expenseService,
+        ISettingsService settings,
+        DataChangedService dataChanged,
+        IThemeService themeService,
+        HeaderState header,
+        IUnsplashService unsplash)
     {
         _expenseService = expenseService;
         _settings = settings;
         _dataChanged = dataChanged;
         _themeService = themeService;
         _header = header;
+        _unsplash = unsplash;
         PickerYear = DateTime.Now.Year;
         _selectedPickerMonth = DateTime.Now.Month;
         BuildMonthOptions();
@@ -46,23 +53,19 @@ public partial class FeedViewModel : ObservableObject
             IsDirty = true;
             OnPropertyChanged(nameof(ExpensePanelOnLeft));
             OnPropertyChanged(nameof(ShowFeedBar));
-            OnPropertyChanged(nameof(FeedBarSticky));
         };
     }
 
     // ── Bar chart ─────────────────────────────────────────────────────────────
 
     /// <summary>
-    /// The IDrawable instance owned by this ViewModel.  Code-behind binds both
-    /// the inline and sticky GraphicsViews to this and subscribes to Invalidated.
+    /// The IDrawable instance owned by this ViewModel. Code-behind binds the
+    /// GraphicsView to this and subscribes to Invalidated.
     /// </summary>
     public BarDrawable BarDrawable { get; } = new();
 
     /// <summary>Whether to show the bar chart above the feed.</summary>
     public bool ShowFeedBar => _settings.ShowFeedBar;
-
-    /// <summary>Whether the bar chart should stick to the top when scrolling.</summary>
-    public bool FeedBarSticky => _settings.FeedBarSticky;
 
     // ── Feed items ────────────────────────────────────────────────────────────
 
@@ -88,8 +91,6 @@ public partial class FeedViewModel : ObservableObject
 
     public string ThisYearLabel => $"This Year ({DateTime.Now.Year})";
 
-    // HasNoEntries → empty state overlay
-    // HasEntries  → scroll view (header + masonry) — always visible so chips/add stay usable
     public bool HasNoEntries => !IsLoading && FeedItems.Count == 0;
     public bool HasEntries => true;
 
@@ -120,6 +121,8 @@ public partial class FeedViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(SelectedMonthLabel))]
     private int _pickerYear;
 
+    public List<int> YearList { get; } = Enumerable.Range(DateTime.Now.Year - 5, 6).Reverse().ToList();
+
     private int _selectedPickerMonth;
 
     [ObservableProperty] private bool _isMonthPickerVisible;
@@ -135,6 +138,7 @@ public partial class FeedViewModel : ObservableObject
 
     [ObservableProperty] private bool _isDayPickerVisible;
     [ObservableProperty] private DateTime _pickerDay = DateTime.Today;
+
     public string SelectedDayLabel => _activeFilter == FilterMode.Day
         ? (_pickerDay.Date == DateTime.Today ? "Today" : _pickerDay.ToString("MMM d"))
         : "Today";
@@ -144,6 +148,7 @@ public partial class FeedViewModel : ObservableObject
     [ObservableProperty] private bool _isWeekPickerVisible;
     [ObservableProperty] private ObservableCollection<WeekOption> _weekOptions = [];
     private DateTime _pickerWeekMonday = GetMondayOfCurrentWeek();
+
     public string SelectedWeekLabel => _activeFilter == FilterMode.Week
         ? (_pickerWeekMonday == GetMondayOfCurrentWeek()
             ? "This Week"
@@ -153,7 +158,6 @@ public partial class FeedViewModel : ObservableObject
     // ── Year picker ───────────────────────────────────────────────────────────
 
     [ObservableProperty] private bool _isYearPickerVisible;
-
     private int _pickerFilterYear = DateTime.Now.Year;
 
     public string SelectedYearLabel => _activeFilter == FilterMode.Year
@@ -271,7 +275,6 @@ public partial class FeedViewModel : ObservableObject
     }
 
     public bool IsExpensePanelOpen => IsAddModalVisible || IsEditModalVisible;
-
     public bool ExpensePanelOnLeft => _settings.ExpensePanelOnLeft;
 
     [RelayCommand]
@@ -279,6 +282,31 @@ public partial class FeedViewModel : ObservableObject
     {
         IsAddModalVisible = false;
         IsEditModalVisible = false;
+    }
+
+    // ── Add modal open/close ──────────────────────────────────────────────────
+
+    [RelayCommand]
+    private void OpenAddModal()
+    {
+        NewTitle = string.Empty;
+        NewAmountText = string.Empty;
+        NewNote = string.Empty;
+        NewSelectedDate = DateTime.Today;
+        NewPhotoPath = null;
+        OnPropertyChanged(nameof(NewHasPhoto));
+        NewSelectedCategory = ExpenseCategory.Food;
+        ResetPhotoSourceState(isAdd: true);
+        IsAddModalVisible = true;
+    }
+
+    [RelayCommand] private void DismissAddModal() => IsAddModalVisible = false;
+
+    [RelayCommand]
+    private async Task GoToAddExpenseAsync()
+    {
+        OpenAddModal();
+        await Task.CompletedTask;
     }
 
     // ── Edit modal ────────────────────────────────────────────────────────────
@@ -314,29 +342,6 @@ public partial class FeedViewModel : ObservableObject
 
     [ObservableProperty] private bool _isCategoryPickerVisible;
 
-    // ── Add/edit panel visibility ─────────────────────────────────────────────
-
-    [RelayCommand]
-    private void OpenAddModal()
-    {
-        NewTitle = string.Empty;
-        NewAmountText = string.Empty;
-        NewNote = string.Empty;
-        NewSelectedDate = DateTime.Today;
-        NewPhotoPath = null;
-        OnPropertyChanged(nameof(NewHasPhoto));
-        NewSelectedCategory = ExpenseCategory.Food;
-        IsAddModalVisible = true;
-    }
-
-    [RelayCommand] private void DismissAddModal() => IsAddModalVisible = false;
-
-    [RelayCommand]
-    private async Task GoToAddExpenseAsync()
-    {
-        OpenAddModal();
-        await Task.CompletedTask;
-    }
     [RelayCommand] private void DismissEditModal() => IsEditModalVisible = false;
 
     [RelayCommand]
@@ -429,9 +434,276 @@ public partial class FeedViewModel : ObservableObject
             ? cat : ExpenseCategory.Other;
         OnPropertyChanged(nameof(EditHasPhoto));
 
+        ResetPhotoSourceState(isAdd: false);
         IsDetailVisible = false;
         IsEditModalVisible = true;
     }
+
+    // ── Photo source: Unsplash (shared for Add & Edit) ────────────────────────
+
+    [ObservableProperty] private bool _isUnsplashPanelOpen;
+    [ObservableProperty] private string _unsplashQuery = string.Empty;
+    [ObservableProperty] private ObservableCollection<UnsplashPhoto> _unsplashResults = [];
+    [ObservableProperty] private bool _isUnsplashLoading;
+    [ObservableProperty] private bool _hasMoreUnsplashPages;
+    private int _unsplashPage = 1;
+
+    [RelayCommand]
+    private void ToggleUnsplashPanel()
+    {
+        IsUnsplashPanelOpen = !IsUnsplashPanelOpen;
+        if (!IsUnsplashPanelOpen)
+        {
+            UnsplashQuery = string.Empty;
+            UnsplashResults.Clear();
+            HasMoreUnsplashPages = false;
+            _unsplashPage = 1;
+        }
+    }
+
+    [RelayCommand]
+    private async Task SearchUnsplashAsync()
+    {
+        if (string.IsNullOrWhiteSpace(UnsplashQuery)) return;
+        _unsplashPage = 1;
+        IsUnsplashLoading = true;
+        try
+        {
+            var result = await _unsplash.SearchAsync(UnsplashQuery.Trim(), _unsplashPage);
+            UnsplashResults = new ObservableCollection<UnsplashPhoto>(result.Photos);
+            HasMoreUnsplashPages = _unsplashPage < result.TotalPages;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Unsplash search failed: {ex.Message}");
+            await Shell.Current.DisplayAlertAsync("Search Failed",
+                "Could not search Unsplash. Check your connection and try again.", "OK");
+        }
+        finally { IsUnsplashLoading = false; }
+    }
+
+    [RelayCommand]
+    private async Task LoadMoreUnsplashAsync()
+    {
+        if (string.IsNullOrWhiteSpace(UnsplashQuery)) return;
+        _unsplashPage++;
+        IsUnsplashLoading = true;
+        try
+        {
+            var result = await _unsplash.SearchAsync(UnsplashQuery.Trim(), _unsplashPage);
+            foreach (var photo in result.Photos)
+                UnsplashResults.Add(photo);
+            HasMoreUnsplashPages = _unsplashPage < result.TotalPages;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Unsplash load more failed: {ex.Message}");
+            _unsplashPage--;
+        }
+        finally { IsUnsplashLoading = false; }
+    }
+
+    [RelayCommand]
+    private async Task SelectUnsplashPhotoAsync(UnsplashPhoto photo)
+    {
+        IsUnsplashLoading = true;
+        try
+        {
+            var localPath = await _unsplash.DownloadAndSaveAsync(photo);
+            if (localPath is null) return;
+
+            if (IsAddModalVisible)
+            {
+                NewPhotoPath = localPath;
+                OnPropertyChanged(nameof(NewHasPhoto));
+            }
+            else if (IsEditModalVisible)
+            {
+                EditPhotoPath = localPath;
+                OnPropertyChanged(nameof(EditHasPhoto));
+            }
+
+            IsUnsplashPanelOpen = false;
+            UnsplashResults.Clear();
+            UnsplashQuery = string.Empty;
+            _unsplashPage = 1;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Unsplash download failed: {ex.Message}");
+            await Shell.Current.DisplayAlertAsync("Download Failed",
+                "Could not download the image. Please try again.", "OK");
+        }
+        finally { IsUnsplashLoading = false; }
+    }
+
+    // ── Photo source: Paste Image from clipboard ──────────────────────────────
+
+    [RelayCommand]
+    private async Task PasteImageAsync()
+    {
+#if WINDOWS
+        try
+        {
+            var dataPackageView = Windows.ApplicationModel.DataTransfer.Clipboard.GetContent();
+            if (dataPackageView.Contains(Windows.ApplicationModel.DataTransfer.StandardDataFormats.Bitmap))
+            {
+                var streamRef = await dataPackageView.GetBitmapAsync();
+                using var ras = await streamRef.OpenReadAsync();
+                var safeName = $"{Guid.NewGuid():N}.png";
+                var localPath = Path.Combine(FileSystem.AppDataDirectory, safeName);
+                using var fileStream = File.Create(localPath);
+                await ras.AsStreamForRead().CopyToAsync(fileStream);
+                NewPhotoPath = localPath;
+                OnPropertyChanged(nameof(NewHasPhoto));
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Clipboard paste (Add) failed: {ex.Message}");
+        }
+#endif
+        await Shell.Current.DisplayAlertAsync("No Image Found",
+            "No image found in clipboard.", "OK");
+    }
+
+    [RelayCommand]
+    private async Task PasteEditImageAsync()
+    {
+#if WINDOWS
+        try
+        {
+            var dataPackageView = Windows.ApplicationModel.DataTransfer.Clipboard.GetContent();
+            if (dataPackageView.Contains(Windows.ApplicationModel.DataTransfer.StandardDataFormats.Bitmap))
+            {
+                var streamRef = await dataPackageView.GetBitmapAsync();
+                using var ras = await streamRef.OpenReadAsync();
+                var safeName = $"{Guid.NewGuid():N}.png";
+                var localPath = Path.Combine(FileSystem.AppDataDirectory, safeName);
+                using var fileStream = File.Create(localPath);
+                await ras.AsStreamForRead().CopyToAsync(fileStream);
+                EditPhotoPath = localPath;
+                OnPropertyChanged(nameof(EditHasPhoto));
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Clipboard paste (Edit) failed: {ex.Message}");
+        }
+#endif
+        await Shell.Current.DisplayAlertAsync("No Image Found",
+            "No image found in clipboard.", "OK");
+    }
+
+    // ── Photo source: Paste URL (Add) ─────────────────────────────────────────
+
+    [ObservableProperty] private bool _isPasteUrlRowOpen;
+    [ObservableProperty] private string _pasteUrlText = string.Empty;
+
+    [RelayCommand]
+    private void TogglePasteUrlRow()
+    {
+        IsPasteUrlRowOpen = !IsPasteUrlRowOpen;
+        if (!IsPasteUrlRowOpen) PasteUrlText = string.Empty;
+    }
+
+    [RelayCommand]
+    private async Task PasteUrlAsync()
+    {
+        if (!Uri.TryCreate(PasteUrlText?.Trim(), UriKind.Absolute, out var uri)
+            || (uri.Scheme != "http" && uri.Scheme != "https"))
+        {
+            await Shell.Current.DisplayAlertAsync("Invalid URL",
+                "Please enter a valid http or https image URL.", "OK");
+            return;
+        }
+        try
+        {
+            var client = new System.Net.Http.HttpClient();
+            var bytes = await client.GetByteArrayAsync(uri);
+            var ext = Path.GetExtension(uri.LocalPath);
+            if (string.IsNullOrEmpty(ext)) ext = ".jpg";
+            var localPath = Path.Combine(FileSystem.AppDataDirectory, $"{Guid.NewGuid():N}{ext}");
+            await File.WriteAllBytesAsync(localPath, bytes);
+            NewPhotoPath = localPath;
+            OnPropertyChanged(nameof(NewHasPhoto));
+            IsPasteUrlRowOpen = false;
+            PasteUrlText = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlertAsync("Download Failed",
+                $"Could not download image: {ex.Message}", "OK");
+        }
+    }
+
+    // ── Photo source: Paste URL (Edit) ────────────────────────────────────────
+
+    [ObservableProperty] private bool _isEditPasteUrlRowOpen;
+    [ObservableProperty] private string _editPasteUrlText = string.Empty;
+
+    [RelayCommand]
+    private void ToggleEditPasteUrlRow()
+    {
+        IsEditPasteUrlRowOpen = !IsEditPasteUrlRowOpen;
+        if (!IsEditPasteUrlRowOpen) EditPasteUrlText = string.Empty;
+    }
+
+    [RelayCommand]
+    private async Task PasteEditUrlAsync()
+    {
+        if (!Uri.TryCreate(EditPasteUrlText?.Trim(), UriKind.Absolute, out var uri)
+            || (uri.Scheme != "http" && uri.Scheme != "https"))
+        {
+            await Shell.Current.DisplayAlertAsync("Invalid URL",
+                "Please enter a valid http or https image URL.", "OK");
+            return;
+        }
+        try
+        {
+            var client = new System.Net.Http.HttpClient();
+            var bytes = await client.GetByteArrayAsync(uri);
+            var ext = Path.GetExtension(uri.LocalPath);
+            if (string.IsNullOrEmpty(ext)) ext = ".jpg";
+            var localPath = Path.Combine(FileSystem.AppDataDirectory, $"{Guid.NewGuid():N}{ext}");
+            await File.WriteAllBytesAsync(localPath, bytes);
+            EditPhotoPath = localPath;
+            OnPropertyChanged(nameof(EditHasPhoto));
+            IsEditPasteUrlRowOpen = false;
+            EditPasteUrlText = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlertAsync("Download Failed",
+                $"Could not download image: {ex.Message}", "OK");
+        }
+    }
+
+    // ── Photo source state reset ──────────────────────────────────────────────
+
+    private void ResetPhotoSourceState(bool isAdd)
+    {
+        IsUnsplashPanelOpen = false;
+        UnsplashQuery = string.Empty;
+        UnsplashResults.Clear();
+        HasMoreUnsplashPages = false;
+        _unsplashPage = 1;
+
+        if (isAdd)
+        {
+            IsPasteUrlRowOpen = false;
+            PasteUrlText = string.Empty;
+        }
+        else
+        {
+            IsEditPasteUrlRowOpen = false;
+            EditPasteUrlText = string.Empty;
+        }
+    }
+
+    // ── Lifecycle ─────────────────────────────────────────────────────────────
 
     public bool IsDirty { get; set; } = true;
 
@@ -442,9 +714,6 @@ public partial class FeedViewModel : ObservableObject
             _themeSubscribed = true;
             _themeService.ThemeChanged += OnThemeChanged;
         }
-        // A global theme switch happens on the Themes page while this page is unsubscribed,
-        // so OnThemeChanged never fired for us. Re-run the refresh on every appearance to
-        // clear any accent remnants left on filter/category chips.
         RefreshThemeBoundBindings();
         IsListView = _settings.FeedListView;
         _header.ShowFilter(FilterHeaderLabel);
@@ -474,10 +743,7 @@ public partial class FeedViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void ShowDayPicker()
-    {
-        IsDayPickerVisible = true;
-    }
+    private void ShowDayPicker() => IsDayPickerVisible = true;
 
     [RelayCommand]
     private void DismissDayPicker() => IsDayPickerVisible = false;
@@ -753,7 +1019,6 @@ public partial class FeedViewModel : ObservableObject
 
             var itemList = items.ToList();
 
-            // Inject current settings into each card item
             var showNotes = _settings.ShowNotes;
             var showPrice = _settings.ShowPrice;
             var showDate = _settings.ShowDate;
@@ -776,7 +1041,6 @@ public partial class FeedViewModel : ObservableObject
             BarDrawable.MaxValue = pts.Count > 0 ? pts.Max(p => p.Value) : 0;
             BarDrawable.Points = pts;
 
-            // Only distribute into masonry columns if we have a real column count
             if (CurrentColumnCount > 0)
                 DistributeIntoColumns(_pendingItems, CurrentColumnCount);
 
@@ -808,7 +1072,6 @@ public partial class FeedViewModel : ObservableObject
 
     private void RefreshThemeBoundBindings()
     {
-        // Filter chips
         OnPropertyChanged(nameof(IsFilterAll));
         OnPropertyChanged(nameof(IsFilterDay));
         OnPropertyChanged(nameof(IsFilterWeek));
@@ -816,21 +1079,18 @@ public partial class FeedViewModel : ObservableObject
         OnPropertyChanged(nameof(IsFilterYear));
         OnPropertyChanged(nameof(IsFilterCategory));
 
-        // Drawer category chips (Add form)
         OnPropertyChanged(nameof(NewIsFoodSelected));
         OnPropertyChanged(nameof(NewIsTransportSelected));
         OnPropertyChanged(nameof(NewIsShoppingSelected));
         OnPropertyChanged(nameof(NewIsHealthSelected));
         OnPropertyChanged(nameof(NewIsFunSelected));
 
-        // Drawer category chips (Edit form)
         OnPropertyChanged(nameof(EditIsFoodSelected));
         OnPropertyChanged(nameof(EditIsTransportSelected));
         OnPropertyChanged(nameof(EditIsShoppingSelected));
         OnPropertyChanged(nameof(EditIsHealthSelected));
         OnPropertyChanged(nameof(EditIsFunSelected));
 
-        // Month / week picker overlay cells
         foreach (var m in MonthOptions) m.RaiseThemeBindings();
         foreach (var w in WeekOptions) w.RaiseThemeBindings();
     }
@@ -842,10 +1102,9 @@ public partial class FeedViewModel : ObservableObject
         FilterMode.Month => SelectedMonthLabel,
         FilterMode.Year => SelectedYearLabel,
         FilterMode.Category => SelectedCategoryLabel,
-        _ => string.Empty      // empty = ShowBrand() in AppShell
+        _ => string.Empty
     };
 
-    // Public — FeedPage.xaml.cs calls this on resize
     public void DistributeIntoColumns(IList<FeedCardItem>? itemList = null, int columnCount = 2)
     {
         var list = itemList ?? FeedItems.ToList();
@@ -916,14 +1175,6 @@ public partial class FeedViewModel : ObservableObject
 
     // ── Bar data builder ──────────────────────────────────────────────────────
 
-    /// <summary>
-    /// Groups FeedItems into BarDataPoints appropriate for the active filter:
-    ///   Week     → one bar per day in the current week window
-    ///   Month    → one bar per week-of-month ("Wk 1"…"Wk 5")
-    ///   Year     → one bar per month that has any spending
-    ///   Day      → one bar per category (shows category breakdown for the day)
-    ///   All/Cat  → one bar per calendar month (rolling up to the last 18 months)
-    /// </summary>
     private List<BarDataPoint> BuildBarPoints()
     {
         var items = FeedItems.ToList();
@@ -940,13 +1191,12 @@ public partial class FeedViewModel : ObservableObject
 
             case FilterMode.Month:
                 return items
-                    .GroupBy(x => (x.Date.Day - 1) / 7)   // 0-based week-of-month
+                    .GroupBy(x => (x.Date.Day - 1) / 7)
                     .OrderBy(g => g.Key)
                     .Select(g => new BarDataPoint($"Wk {g.Key + 1}", g.Sum(x => x.Amount)))
                     .ToList();
 
             case FilterMode.Year:
-                // Show every month even if zero so the x-axis is stable
                 return Enumerable.Range(1, 12)
                     .Select(m =>
                     {
@@ -959,15 +1209,13 @@ public partial class FeedViewModel : ObservableObject
                     .ToList();
 
             case FilterMode.Day:
-                // Breakdown by category within the single day
                 return items
                     .GroupBy(x => x.CategoryLabel)
                     .OrderByDescending(g => g.Sum(x => x.Amount))
                     .Select(g => new BarDataPoint(g.Key, g.Sum(x => x.Amount)))
                     .ToList();
 
-            default: // All, Category
-                // Group by calendar month; cap at 18 bars so the chart stays readable
+            default:
                 return items
                     .GroupBy(x => new { x.Date.Year, x.Date.Month })
                     .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)

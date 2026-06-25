@@ -44,14 +44,18 @@ public static class PhosphorIcons
     public const string CaretDown = "\uE136"; // caret-down
     public const string CaretRight = "\uE13A"; // caret-right
 
-
     public const string Coins = "\uE190";           // "coins"            (Display Currency)
     public const string MagnifyingGlass = "\uE320"; // "magnifying-glass" (currency search)
     public const string Calculator = "\uE108";      // "calculator"       (Allot Remaining)
     public const string Hourglass = "\uE2BE";       // "hourglass-medium" (Cooling-off)
     public const string Eye = "\uE228";             // "eye"              (Stale Reminder)
     public const string Keyboard = "\uE300";        // "keyboard"         (Item 4 — Shortcuts section)
-    public const string ChartBar = "\uE154"; // "chart-bar"  
-    public const string PushPin = "\uE3D6"; // "push-pin" 
+    public const string ChartBar = "\uE154"; // "chart-bar"   ⚠ verify codepoint
+    public const string PushPin = "\uE3D6"; // "push-pin"    ⚠ verify codepoint
 
+    // ── Photo source chooser (Item 2) ─────────────────────────────────────────
+    public const string FolderOpen = "\uE256 "; // "folder-open"    ⚠ verify codepoint
+    public const string Globe = "\uE27A"; // "globe"          ⚠ verify codepoint
+    public const string ClipboardText = "\uE196"; // "clipboard-text" ⚠ verify codepoint
+    public const string Link = "\uE2E6"; // "link"           ⚠ verify codepoint
 }

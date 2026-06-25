@@ -15,6 +15,7 @@ public partial class WishlistViewModel : ObservableObject
     private readonly DataChangedService _dataChanged;
     private readonly IThemeService _themeService;
     private readonly HeaderState _header;
+    private readonly IUnsplashService _unsplash;
     private bool _themeSubscribed;
 
     private List<WishCardItem> _allItems = [];
@@ -22,12 +23,13 @@ public partial class WishlistViewModel : ObservableObject
     public int CurrentColumnCount { get; set; } = 2;
 
     public WishlistViewModel(
-            IWishService wishService,
-            IBudgetService budgetService,
-            ISettingsService settings,
-            DataChangedService dataChanged,
-            IThemeService themeService,
-            HeaderState header)
+        IWishService wishService,
+        IBudgetService budgetService,
+        ISettingsService settings,
+        DataChangedService dataChanged,
+        IThemeService themeService,
+        HeaderState header,
+        IUnsplashService unsplash)
     {
         _wishService = wishService;
         _budgetService = budgetService;
@@ -35,6 +37,7 @@ public partial class WishlistViewModel : ObservableObject
         _dataChanged = dataChanged;
         _themeService = themeService;
         _header = header;
+        _unsplash = unsplash;
 
         _dataChanged.WishlistChanged += () => IsDirty = true;
         _dataChanged.SettingsChanged += () =>
@@ -76,7 +79,6 @@ public partial class WishlistViewModel : ObservableObject
     public event Action? DataLoaded;
     public event Action? FilterChanged;
 
-    // Change Columns type to match Feed's pattern
     private List<ObservableCollection<WishCardItem>> _columns = [];
     public IReadOnlyList<ObservableCollection<WishCardItem>> Columns => _columns;
 
@@ -87,10 +89,8 @@ public partial class WishlistViewModel : ObservableObject
         if (isResize)
         {
             _columns.Clear();
-
             for (int i = 0; i < columnCount; i++)
                 _columns.Add(new ObservableCollection<WishCardItem>());
-
             OnPropertyChanged(nameof(Columns));
         }
         else
@@ -104,17 +104,14 @@ public partial class WishlistViewModel : ObservableObject
         foreach (var item in DisplayedItems)
         {
             int col = 0;
-
             for (int i = 1; i < columnCount; i++)
                 if (heights[i] < heights[col]) col = i;
 
             _columns[col].Add(item);
 
             double h = item.HasPhoto ? 240 : 100;
-
             if (!string.IsNullOrEmpty(item.Name)) h += 20;
             if (!string.IsNullOrEmpty(item.Caption)) h += 16;
-
             heights[col] += h + 10;
         }
 
@@ -216,6 +213,7 @@ public partial class WishlistViewModel : ObservableObject
         NewCategory = ExpenseCategory.Shopping;
         OnPropertyChanged(nameof(NewHasPhoto));
         OnPropertyChanged(nameof(PriceLabelText));
+        ResetPhotoSourceState();
         IsAddModalVisible = true;
     }
 
@@ -278,7 +276,6 @@ public partial class WishlistViewModel : ObservableObject
 
         decimal.TryParse(NewPrice, NumberStyles.Number, CultureInfo.InvariantCulture, out var price);
 
-        // Validate TargetMonth format: must be "YYYY-MM" or empty.
         string? targetMonth = null;
         if (!string.IsNullOrWhiteSpace(NewTargetMonth))
         {
@@ -313,10 +310,183 @@ public partial class WishlistViewModel : ObservableObject
             CreatedAt = DateTime.Now
         });
 
-
         IsAddModalVisible = false;
         IsDirty = true;
         await LoadAsync();
+    }
+
+    // ── Photo source: Unsplash ────────────────────────────────────────────────
+
+    [ObservableProperty] private bool _isUnsplashPanelOpen;
+    [ObservableProperty] private string _unsplashQuery = string.Empty;
+    [ObservableProperty] private ObservableCollection<UnsplashPhoto> _unsplashResults = [];
+    [ObservableProperty] private bool _isUnsplashLoading;
+    [ObservableProperty] private bool _hasMoreUnsplashPages;
+    private int _unsplashPage = 1;
+
+    [RelayCommand]
+    private void ToggleUnsplashPanel()
+    {
+        IsUnsplashPanelOpen = !IsUnsplashPanelOpen;
+        if (!IsUnsplashPanelOpen)
+        {
+            UnsplashQuery = string.Empty;
+            UnsplashResults.Clear();
+            HasMoreUnsplashPages = false;
+            _unsplashPage = 1;
+        }
+    }
+
+    [RelayCommand]
+    private async Task SearchUnsplashAsync()
+    {
+        if (string.IsNullOrWhiteSpace(UnsplashQuery)) return;
+        _unsplashPage = 1;
+        IsUnsplashLoading = true;
+        try
+        {
+            var result = await _unsplash.SearchAsync(UnsplashQuery.Trim(), _unsplashPage);
+            UnsplashResults = new ObservableCollection<UnsplashPhoto>(result.Photos);
+            HasMoreUnsplashPages = _unsplashPage < result.TotalPages;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Unsplash search failed: {ex.Message}");
+            await Shell.Current.DisplayAlertAsync("Search Failed",
+                "Could not search Unsplash. Check your connection and try again.", "OK");
+        }
+        finally { IsUnsplashLoading = false; }
+    }
+
+    [RelayCommand]
+    private async Task LoadMoreUnsplashAsync()
+    {
+        if (string.IsNullOrWhiteSpace(UnsplashQuery)) return;
+        _unsplashPage++;
+        IsUnsplashLoading = true;
+        try
+        {
+            var result = await _unsplash.SearchAsync(UnsplashQuery.Trim(), _unsplashPage);
+            foreach (var photo in result.Photos)
+                UnsplashResults.Add(photo);
+            HasMoreUnsplashPages = _unsplashPage < result.TotalPages;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Unsplash load more failed: {ex.Message}");
+        }
+        finally { IsUnsplashLoading = false; }
+    }
+
+    [RelayCommand]
+    private async Task SelectUnsplashPhotoAsync(UnsplashPhoto photo)
+    {
+        IsUnsplashLoading = true;
+        try
+        {
+            var localPath = await _unsplash.DownloadAndSaveAsync(photo);
+            if (localPath is null) return;
+            NewPhotoPath = localPath;
+            OnPropertyChanged(nameof(NewHasPhoto));
+            IsUnsplashPanelOpen = false;
+            UnsplashResults.Clear();
+            UnsplashQuery = string.Empty;
+            _unsplashPage = 1;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Unsplash download failed: {ex.Message}");
+            await Shell.Current.DisplayAlertAsync("Download Failed",
+                "Could not download the image. Please try again.", "OK");
+        }
+        finally { IsUnsplashLoading = false; }
+    }
+
+    // ── Photo source: Paste Image from clipboard ──────────────────────────────
+
+    [RelayCommand]
+    private async Task PasteWishImageAsync()
+    {
+#if WINDOWS
+        try
+        {
+            var dataPackageView = Windows.ApplicationModel.DataTransfer.Clipboard.GetContent();
+            if (dataPackageView.Contains(Windows.ApplicationModel.DataTransfer.StandardDataFormats.Bitmap))
+            {
+                var streamRef = await dataPackageView.GetBitmapAsync();
+                using var ras = await streamRef.OpenReadAsync();
+                var safeName = $"{Guid.NewGuid():N}.png";
+                var localPath = Path.Combine(FileSystem.AppDataDirectory, safeName);
+                using var fileStream = File.Create(localPath);
+                await ras.AsStreamForRead().CopyToAsync(fileStream);
+                NewPhotoPath = localPath;
+                OnPropertyChanged(nameof(NewHasPhoto));
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Clipboard paste (Wish) failed: {ex.Message}");
+        }
+#endif
+        await Shell.Current.DisplayAlertAsync("No Image Found",
+            "No image found in clipboard.", "OK");
+    }
+
+    // ── Photo source: Paste URL ───────────────────────────────────────────────
+
+    [ObservableProperty] private bool _isPasteUrlRowOpen;
+    [ObservableProperty] private string _pasteUrlText = string.Empty;
+
+    [RelayCommand]
+    private void TogglePasteUrlRow()
+    {
+        IsPasteUrlRowOpen = !IsPasteUrlRowOpen;
+        if (!IsPasteUrlRowOpen) PasteUrlText = string.Empty;
+    }
+
+    [RelayCommand]
+    private async Task PasteWishUrlAsync()
+    {
+        if (!Uri.TryCreate(PasteUrlText?.Trim(), UriKind.Absolute, out var uri)
+            || (uri.Scheme != "http" && uri.Scheme != "https"))
+        {
+            await Shell.Current.DisplayAlertAsync("Invalid URL",
+                "Please enter a valid http or https image URL.", "OK");
+            return;
+        }
+
+        try
+        {
+            var client = new System.Net.Http.HttpClient();
+            var bytes = await client.GetByteArrayAsync(uri);
+            var ext = Path.GetExtension(uri.LocalPath);
+            if (string.IsNullOrEmpty(ext)) ext = ".jpg";
+            var localPath = Path.Combine(FileSystem.AppDataDirectory, $"{Guid.NewGuid():N}{ext}");
+            await File.WriteAllBytesAsync(localPath, bytes);
+            NewPhotoPath = localPath;
+            OnPropertyChanged(nameof(NewHasPhoto));
+            IsPasteUrlRowOpen = false;
+            PasteUrlText = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlertAsync("Download Failed",
+                $"Could not download image: {ex.Message}", "OK");
+        }
+    }
+
+    // ── Photo source state reset ──────────────────────────────────────────────
+
+    private void ResetPhotoSourceState()
+    {
+        IsUnsplashPanelOpen = false;
+        UnsplashQuery = string.Empty;
+        UnsplashResults.Clear();
+        HasMoreUnsplashPages = false;
+        _unsplashPage = 1;
+        IsPasteUrlRowOpen = false;
+        PasteUrlText = string.Empty;
     }
 
     // ── Detail commands ───────────────────────────────────────────────────────
@@ -439,7 +609,6 @@ public partial class WishlistViewModel : ObservableObject
             _themeSubscribed = true;
             _themeService.ThemeChanged += OnThemeChanged;
         }
-        // Clear any accent remnants left by a theme switch made on the Themes page.
         RefreshThemeBoundBindings();
         IsListView = _settings.WishlistListView;
         _header.ShowFilter(FilterHeaderLabel);
@@ -456,11 +625,8 @@ public partial class WishlistViewModel : ObservableObject
 
     private void OnThemeChanged() => RefreshThemeBoundBindings();
 
-    /// <summary>Forces accent-dependent converters to re-evaluate. Called from the
-    /// ThemeChanged event and on every appearance (covers theme switches made elsewhere).</summary>
     private void RefreshThemeBoundBindings()
     {
-        // Filter chips
         OnPropertyChanged(nameof(IsFilterAll));
         OnPropertyChanged(nameof(IsFilterPlanned));
         OnPropertyChanged(nameof(IsFilterBought));
@@ -468,8 +634,6 @@ public partial class WishlistViewModel : ObservableObject
         OnPropertyChanged(nameof(IsFilterNeed));
         OnPropertyChanged(nameof(IsFilterSomeday));
 
-        // Drawer category chips (Add form) — same pattern as FeedViewModel:
-        // the underlying NewCategory hasn't changed, so manual re-notify is required.
         OnPropertyChanged(nameof(IsNewFoodSelected));
         OnPropertyChanged(nameof(IsNewShoppingSelected));
         OnPropertyChanged(nameof(IsNewHealthSelected));
@@ -489,7 +653,6 @@ public partial class WishlistViewModel : ObservableObject
             var items = await _wishService.GetWishItemsAsync();
             _allItems = items.ToList();
 
-            // Inject current settings into each card item
             var showCooling = _settings.ShowCoolingOff;
             var showStale = _settings.ShowStaleReminder;
             var listShowPhoto = _settings.ListViewShowsPhoto;
@@ -530,7 +693,6 @@ public partial class WishlistViewModel : ObservableObject
         OnPropertyChanged(nameof(ShowMasonryArea));
         OnPropertyChanged(nameof(ShowListArea));
 
-        // rebuild masonry columns automatically
         if (CurrentColumnCount > 0)
             DistributeIntoColumns(CurrentColumnCount);
 
