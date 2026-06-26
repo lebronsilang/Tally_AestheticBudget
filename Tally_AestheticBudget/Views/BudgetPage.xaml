@@ -258,7 +258,8 @@
                                                 <Switch IsToggled="{Binding EditIsUnlimited}"
                                                         OnColor="{DynamicResource AccentColor}"
                                                         ThumbColor="{DynamicResource CardBackground}"
-                                                        VerticalOptions="Center" />
+                                                        VerticalOptions="Center" 
+                                                        MinimumHeightRequest="32"/>
                                             </HorizontalStackLayout>
                                             <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
                                                 <Border Grid.Column="0"
@@ -283,7 +284,7 @@
                                                             CommandParameter="{Binding .}" />
                                                     </Border.GestureRecognizers>
                                                     <Label Text="Save" FontSize="13" FontAttributes="Bold"
-                                                           TextColor="{DynamicResource OnAccentColor}" />
+                                                           TextColor="{DynamicResource OnAccentColor}" HorizontalOptions="Center" VerticalOptions="Center"/>
                                                 </Border>
                                                 <Border Grid.Column="2"
                                                         Style="{StaticResource HoverButton}"
@@ -295,7 +296,7 @@
                                                             CommandParameter="{Binding .}" />
                                                     </Border.GestureRecognizers>
                                                     <Label Text="Cancel" FontSize="13"
-                                                           TextColor="{DynamicResource TextSecondary}" />
+                                                           TextColor="{DynamicResource TextSecondary}" HorizontalOptions="Center" VerticalOptions="Center"/>
                                                 </Border>
                                             </Grid>
                                         </VerticalStackLayout>
@@ -378,14 +379,15 @@
                                                     <Switch IsToggled="{Binding EditIsUnlimited}"
                                                             OnColor="{DynamicResource AccentColor}"
                                                             ThumbColor="{DynamicResource CardBackground}"
-                                                            VerticalOptions="Center" />
+                                                            MinimumHeightRequest="32" VerticalOptions="Center"/>
                                                 </HorizontalStackLayout>
                                                 <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
                                                     <Border Grid.Column="0"
                                                             BackgroundColor="{DynamicResource PageBackground}"
                                                             Stroke="{DynamicResource CardBorder}"
                                                             StrokeThickness="0.8" StrokeShape="RoundRectangle 12"
-                                                            Padding="12,0">
+                                                            Padding="12,0"
+                                                            >
                                                         <Entry Text="{Binding EditLimitText}"
                                                                IsEnabled="{Binding EditIsUnlimited, Converter={StaticResource InverseBool}}"
                                                                Placeholder="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=LimitPlaceholder}"
@@ -403,7 +405,7 @@
                                                                 CommandParameter="{Binding .}" />
                                                         </Border.GestureRecognizers>
                                                         <Label Text="Save" FontSize="13" FontAttributes="Bold"
-                                                               TextColor="{DynamicResource OnAccentColor}" />
+                                                               TextColor="{DynamicResource OnAccentColor}" HorizontalOptions="Center" VerticalOptions="Center"/>
                                                     </Border>
                                                     <Border Grid.Column="2"
                                                             Style="{StaticResource HoverButton}"
@@ -415,7 +417,7 @@
                                                                 CommandParameter="{Binding .}" />
                                                         </Border.GestureRecognizers>
                                                         <Label Text="Cancel" FontSize="13"
-                                                               TextColor="{DynamicResource TextSecondary}" />
+                                                               TextColor="{DynamicResource TextSecondary}" HorizontalOptions="Center" VerticalOptions="Center"/>
                                                     </Border>
                                                 </Grid>
                                             </VerticalStackLayout>

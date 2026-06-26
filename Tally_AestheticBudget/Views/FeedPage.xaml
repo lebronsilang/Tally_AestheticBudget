@@ -1311,158 +1311,147 @@
                            TextColor="{DynamicResource TextPrimary}" />
 
                     <FlexLayout Wrap="Wrap" Direction="Row" JustifyContent="Start" AlignItems="Center">
+
+                        <!-- Food -->
                         <Border Style="{StaticResource HoverButton}"
-                                BackgroundColor="{DynamicResource PageBackground}"
-                                Stroke="{DynamicResource CardBorder}"
-                                StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
-                                Padding="14,8" Margin="0,0,8,8">
+            BackgroundColor="{DynamicResource PageBackground}"
+            Stroke="{DynamicResource CardBorder}"
+            StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+            Padding="14,8" Margin="0,0,8,8">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectCategoryFilterCommand}"
-                                                      CommandParameter="Food" />
+                                  CommandParameter="Food" />
                             </Border.GestureRecognizers>
                             <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-
                                 <Label Style="{StaticResource PhosphorIcon}"
-                                   Text="{x:Static ph:PhosphorIcons.Food}"
-                                   FontSize="14"
-                                   TextColor="{Binding NewIsFoodSelected, Converter={StaticResource BoolToIconColor}}"  />
-
-                                <Label Text="Food"
-                                   FontSize="12"
-                                   VerticalOptions="Center"
-                                   TextColor="{DynamicResource TextPrimary}" />
+                   Text="{x:Static ph:PhosphorIcons.Food}"
+                   FontSize="14"
+                   TextColor="{DynamicResource AccentColor}" />
+                                <Label Text="Food" FontSize="12" VerticalOptions="Center"
+                   TextColor="{DynamicResource TextPrimary}" />
                             </HorizontalStackLayout>
                         </Border>
+
+                        <!-- Transport -->
                         <Border Style="{StaticResource HoverButton}"
-                                BackgroundColor="{DynamicResource PageBackground}"
-                                Stroke="{DynamicResource CardBorder}"
-                                StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
-                                Padding="14,8" Margin="0,0,8,8">
+            BackgroundColor="{DynamicResource PageBackground}"
+            Stroke="{DynamicResource CardBorder}"
+            StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+            Padding="14,8" Margin="0,0,8,8">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectCategoryFilterCommand}"
-                                                      CommandParameter="Transport" />
+                                  CommandParameter="Transport" />
                             </Border.GestureRecognizers>
                             <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-
                                 <Label Style="{StaticResource PhosphorIcon}"
-                                   Text="{x:Static ph:PhosphorIcons.Transport}"
-                                   FontSize="14"
-                                   TextColor="{Binding NewIsTransportSelected, Converter={StaticResource BoolToIconColor}}"  />
-
-                                <Label Text="Transport"
-                                   FontSize="12"
-                                   VerticalOptions="Center"
-                                   TextColor="{DynamicResource TextPrimary}" />
+                   Text="{x:Static ph:PhosphorIcons.Transport}"
+                   FontSize="14"
+                   TextColor="{DynamicResource AccentColor}" />
+                                <Label Text="Transport" FontSize="12" VerticalOptions="Center"
+                   TextColor="{DynamicResource TextPrimary}" />
                             </HorizontalStackLayout>
                         </Border>
+
+                        <!-- Shopping -->
                         <Border Style="{StaticResource HoverButton}"
-                                BackgroundColor="{DynamicResource PageBackground}"
-                                Stroke="{DynamicResource CardBorder}"
-                                StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
-                                Padding="14,8" Margin="0,0,8,8">
+            BackgroundColor="{DynamicResource PageBackground}"
+            Stroke="{DynamicResource CardBorder}"
+            StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+            Padding="14,8" Margin="0,0,8,8">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectCategoryFilterCommand}"
-                                                      CommandParameter="Shopping" />
+                                  CommandParameter="Shopping" />
                             </Border.GestureRecognizers>
                             <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-
                                 <Label Style="{StaticResource PhosphorIcon}"
-                                   Text="{x:Static ph:PhosphorIcons.Shopping}"
-                                   FontSize="14"
-                                   TextColor="{Binding NewIsShoppingSelected, Converter={StaticResource BoolToIconColor}}"  />
-
-                                <Label Text="Shopping"
-                                   FontSize="12"
-                                   VerticalOptions="Center"
-                                   TextColor="{DynamicResource TextPrimary}" />
+                   Text="{x:Static ph:PhosphorIcons.Shopping}"
+                   FontSize="14"
+                   TextColor="{DynamicResource AccentColor}" />
+                                <Label Text="Shopping" FontSize="12" VerticalOptions="Center"
+                   TextColor="{DynamicResource TextPrimary}" />
                             </HorizontalStackLayout>
                         </Border>
+
+                        <!-- Health -->
                         <Border Style="{StaticResource HoverButton}"
-                                BackgroundColor="{DynamicResource PageBackground}"
-                                Stroke="{DynamicResource CardBorder}"
-                                StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
-                                Padding="14,8" Margin="0,0,8,8">
+            BackgroundColor="{DynamicResource PageBackground}"
+            Stroke="{DynamicResource CardBorder}"
+            StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+            Padding="14,8" Margin="0,0,8,8">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectCategoryFilterCommand}"
-                                                      CommandParameter="Health" />
+                                  CommandParameter="Health" />
                             </Border.GestureRecognizers>
                             <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-
                                 <Label Style="{StaticResource PhosphorIcon}"
-                                   Text="{x:Static ph:PhosphorIcons.Health}"
-                                   FontSize="14"
-                                   TextColor="{Binding NewIsHealthSelected, Converter={StaticResource BoolToIconColor}}"  />
-
-                                <Label Text="Health"
-                                   FontSize="12"
-                                   VerticalOptions="Center"
-                                   TextColor="{DynamicResource TextPrimary}" />
+                   Text="{x:Static ph:PhosphorIcons.Health}"
+                   FontSize="14"
+                   TextColor="{DynamicResource AccentColor}" />
+                                <Label Text="Health" FontSize="12" VerticalOptions="Center"
+                   TextColor="{DynamicResource TextPrimary}" />
                             </HorizontalStackLayout>
                         </Border>
+
+                        <!-- Fun -->
                         <Border Style="{StaticResource HoverButton}"
-                                BackgroundColor="{DynamicResource PageBackground}"
-                                Stroke="{DynamicResource CardBorder}"
-                                StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
-                                Padding="14,8" Margin="0,0,8,8">
+            BackgroundColor="{DynamicResource PageBackground}"
+            Stroke="{DynamicResource CardBorder}"
+            StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+            Padding="14,8" Margin="0,0,8,8">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectCategoryFilterCommand}"
-                                                      CommandParameter="Fun" />
+                                  CommandParameter="Fun" />
                             </Border.GestureRecognizers>
                             <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-
                                 <Label Style="{StaticResource PhosphorIcon}"
-                                   Text="{x:Static ph:PhosphorIcons.Fun}"
-                                   FontSize="14"
-                                   TextColor="{Binding NewIsFunSelected, Converter={StaticResource BoolToIconColor}}"  />
-
-                                <Label Text="Fun" FontSize="12"
-                                   TextColor="{DynamicResource TextPrimary}" />
+                   Text="{x:Static ph:PhosphorIcons.Fun}"
+                   FontSize="14"
+                   TextColor="{DynamicResource AccentColor}" />
+                                <Label Text="Fun" FontSize="12" VerticalOptions="Center"
+                   TextColor="{DynamicResource TextPrimary}" />
                             </HorizontalStackLayout>
                         </Border>
+
+                        <!-- Other -->
                         <Border Style="{StaticResource HoverButton}"
-                                BackgroundColor="{DynamicResource PageBackground}"
-                                Stroke="{DynamicResource CardBorder}"
-                                StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
-                                Padding="14,8" Margin="0,0,8,8">
+            BackgroundColor="{DynamicResource PageBackground}"
+            Stroke="{DynamicResource CardBorder}"
+            StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+            Padding="14,8" Margin="0,0,8,8">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectCategoryFilterCommand}"
-                                                      CommandParameter="Other" />
+                                  CommandParameter="Other" />
                             </Border.GestureRecognizers>
                             <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-
                                 <Label Style="{StaticResource PhosphorIcon}"
-                                   Text="{x:Static ph:PhosphorIcons.Default}"
-                                   FontSize="14"
-                                   TextColor="{Binding NewIsOtherSelected, Converter={StaticResource BoolToIconColor}}"  />
-
-                                <Label Text="Other"
-                                   FontSize="12"
-                                   VerticalOptions="Center"
-                                   TextColor="{DynamicResource TextPrimary}" />
+                   Text="{x:Static ph:PhosphorIcons.Default}"
+                   FontSize="14"
+                   TextColor="{DynamicResource AccentColor}" />
+                                <Label Text="Other" FontSize="12" VerticalOptions="Center"
+                   TextColor="{DynamicResource TextPrimary}" />
                             </HorizontalStackLayout>
                         </Border>
+
+                        <!-- Grocery -->
                         <Border Style="{StaticResource HoverButton}"
-                                BackgroundColor="{DynamicResource PageBackground}"
-                                Stroke="{DynamicResource CardBorder}"
-                                StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
-                                Padding="14,8" Margin="0,0,8,8">
+            BackgroundColor="{DynamicResource PageBackground}"
+            Stroke="{DynamicResource CardBorder}"
+            StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+            Padding="14,8" Margin="0,0,8,8">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectCategoryFilterCommand}"
-                                                      CommandParameter="Grocery" />
+                                  CommandParameter="Grocery" />
                             </Border.GestureRecognizers>
                             <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-
                                 <Label Style="{StaticResource PhosphorIcon}"
-                                   Text="{x:Static ph:PhosphorIcons.Grocery}"
-                                   FontSize="14"
-                                   TextColor="{Binding NewIsGrocerySelected, Converter={StaticResource BoolToIconColor}}"  />
-
-                                <Label Text="Grocery"
-                                   FontSize="12"
-                                   VerticalOptions="Center"
-                                   TextColor="{DynamicResource TextPrimary}" />
+                   Text="{x:Static ph:PhosphorIcons.Grocery}"
+                   FontSize="14"
+                   TextColor="{DynamicResource AccentColor}" />
+                                <Label Text="Grocery" FontSize="12" VerticalOptions="Center"
+                   TextColor="{DynamicResource TextPrimary}" />
                             </HorizontalStackLayout>
                         </Border>
+
                     </FlexLayout>
 
                 </VerticalStackLayout>
