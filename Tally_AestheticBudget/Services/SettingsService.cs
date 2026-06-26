@@ -27,9 +27,8 @@ public interface ISettingsService
     bool ExpensePanelOnLeft { get; set; }
 
     // Chart toggles
-    bool ShowBudgetDonut { get; set; }  // key: "show_budget_donut",  default: true
-    bool ShowFeedBar { get; set; }   // key: "show_feed_bar",      default: true
-    bool FeedBarSticky { get; set; }   // key: "feed_bar_sticky",    default: false
+    bool ShowBudgetDonut { get; set; }  // key: "show_budget_donut"
+    bool ShowFeedBar { get; set; }   // key: "show_feed_bar"
 
 }
 
@@ -51,7 +50,6 @@ public class SettingsService : ISettingsService
 
     private const string KeyShowBudgetDonut = "show_budget_donut";
     private const string KeyShowFeedBar = "show_feed_bar";
-    private const string KeyFeedBarSticky = "feed_bar_sticky";
 
 
     public string CurrencySymbol => Preferences.Get(KeySymbol, "₱");
@@ -138,12 +136,4 @@ public class SettingsService : ISettingsService
         get => Preferences.Get(KeyShowFeedBar, false);
         set => Preferences.Set(KeyShowFeedBar, value);
     }
-
-    public bool FeedBarSticky
-    {
-        get => Preferences.Get(KeyFeedBarSticky, false);
-        set => Preferences.Set(KeyFeedBarSticky, value);
-    }
-
-
 }

@@ -54,7 +54,6 @@ public partial class SettingsViewModel : ObservableObject
         _expensePanelOnLeft = settings.ExpensePanelOnLeft;
         _showBudgetDonut = settings.ShowBudgetDonut;
         _showFeedBar = settings.ShowFeedBar;
-        _feedBarSticky = settings.FeedBarSticky;
 
 
 
@@ -240,12 +239,6 @@ public partial class SettingsViewModel : ObservableObject
     private bool _showFeedBar;
     partial void OnShowFeedBarChanged(bool value) { _settings.ShowFeedBar = value; _dataChanged.NotifySettingsChanged(); }
 
-    [ObservableProperty]
-    private bool _feedBarSticky;
-    partial void OnFeedBarStickyChanged(bool value) { _settings.FeedBarSticky = value; _dataChanged.NotifySettingsChanged(); }
-
-
-
     // ── Toggle commands — flip the bool properties ────────────────────────────
 
     [RelayCommand]
@@ -284,8 +277,6 @@ public partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     private void ToggleShowFeedBar() => ShowFeedBar = !ShowFeedBar;
 
-    [RelayCommand]
-    private void ToggleFeedBarSticky() => FeedBarSticky = !FeedBarSticky;
 
 
 
