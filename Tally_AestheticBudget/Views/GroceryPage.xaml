@@ -150,7 +150,7 @@
                        TextColor="{DynamicResource TextSecondary}" />
                         </VerticalStackLayout>
 
-                        <CollectionView ItemsSource="{Binding DisplayedItems}" SelectionMode="None">
+                        <CollectionView ItemsSource="{Binding DisplayedItems}" SelectionMode="None" Margin="16,0,16,0">
                             <CollectionView.Header>
                                 <BoxView HeightRequest="12" Color="Transparent" />
                             </CollectionView.Header>
@@ -162,7 +162,7 @@
                                     <Border BackgroundColor="{DynamicResource CardBackground}"
                                 Stroke="{DynamicResource CardBorder}"
                                 StrokeThickness="0.5" StrokeShape="RoundRectangle 14"
-                                Padding="14,14" Margin="16,0,16,10"
+                                            Padding="20,14" Margin="0,0,0,10"
                                 Opacity="{Binding IsChecked, Converter={StaticResource BoolToOpacity}}">
                                         <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="12">
 

@@ -90,7 +90,7 @@
                                     <ScrollView Orientation="Horizontal"
                                     HorizontalScrollBarVisibility="Never"
                                     Margin="0,12,0,0">
-                                        <HorizontalStackLayout Spacing="8">
+                                        <HorizontalStackLayout Spacing="8" Padding="0,0,16,0">
 
                                             <!-- ALL -->
                                             <Border Style="{StaticResource HoverButton}"
