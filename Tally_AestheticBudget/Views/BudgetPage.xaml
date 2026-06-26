@@ -308,17 +308,21 @@
                 </VerticalStackLayout>
             </ScrollView>
 
-            <!-- ── Row 1, Layout B: two-column donut + list (donut ON) ───── -->
-            <Grid Grid.Row="1" ColumnDefinitions="300,*"
-                  IsVisible="{Binding ShowBudgetDonut}">
+            <!-- ── Row 1, Layout B: two-column donut + list (donut ON, wide window) ── -->
+            <Grid Grid.Row="1" ColumnDefinitions="2*,3*"
+                  IsVisible="{Binding ShowWideDonut}">
 
                 <!-- Col 0: Donut ring chart (fixed, non-scrolling) -->
-                <GraphicsView Grid.Column="0"
-                              x:Name="DonutView"
-                              Drawable="{Binding DonutDrawable}"
-                              HeightRequest="340"
-                              VerticalOptions="Start"
-                              Margin="16,16,8,16" />
+                <Border Grid.Column="0"
+                        BackgroundColor="{DynamicResource CardBackground}"
+                        Stroke="{DynamicResource CardBorder}"
+                        StrokeThickness="1" StrokeShape="RoundRectangle 20"
+                        Margin="16,16,8,16" Padding="12">
+                    <GraphicsView x:Name="DonutView"
+                                  Drawable="{Binding DonutDrawable}"
+                                  HeightRequest="400"
+                                  VerticalOptions="Start" />
+                </Border>
 
                 <!-- Col 1: Category list (scrolling) -->
                 <ScrollView Grid.Column="1">
@@ -430,9 +434,133 @@
                 </ScrollView>
 
             </Grid>
+        
 
-        </Grid>
-        <!-- end main layout Grid -->
+        <!-- ── Row 1, Layout C: stacked donut above list (donut ON, narrow window) ── -->
+        <ScrollView Grid.Row="1" IsVisible="{Binding ShowNarrowDonut}">
+            <VerticalStackLayout Padding="0,0,0,40" Spacing="12">
+
+                <!-- Donut card, full page width -->
+                <Border BackgroundColor="{DynamicResource CardBackground}"
+                            Stroke="{DynamicResource CardBorder}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 20"
+                            Margin="16,16,16,0" Padding="12">
+                    <GraphicsView x:Name="DonutViewNarrow"
+                                      Drawable="{Binding DonutDrawable}"
+                                      HeightRequest="300" />
+                </Border>
+
+                <!-- Category list -->
+                <CollectionView ItemsSource="{Binding BudgetItems}" SelectionMode="None"
+                                    Margin="16,0,16,0">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="7" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:BudgetCategoryItem">
+                            <Border BackgroundColor="{DynamicResource CardBackground}"
+                                        Stroke="{DynamicResource CardBorder}"
+                                        StrokeThickness="0.5" StrokeShape="RoundRectangle 18"
+                                        Padding="18,16" Margin="0,0,0,16">
+                                <VerticalStackLayout Spacing="10">
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                        <Label Grid.Column="0"
+                                                   Style="{StaticResource CategoryIcon}"
+                                                   Text="{Binding CategoryGlyph}"
+                                                   TextColor="{DynamicResource AccentColor}"
+                                                   VerticalOptions="Center" Margin="0,0,10,0" />
+                                        <VerticalStackLayout Grid.Column="1" Spacing="2"
+                                                                 VerticalOptions="Center">
+                                            <Label Text="{Binding DisplayName}" FontSize="15"
+                                                       FontAttributes="Bold"
+                                                       TextColor="{DynamicResource TextPrimary}" />
+                                            <Label Text="{Binding StatusLabel}" FontSize="12"
+                                                       TextColor="{DynamicResource TextSecondary}" />
+                                        </VerticalStackLayout>
+                                        <Border Grid.Column="2"
+                                                    IsVisible="{Binding ShowEditButton}"
+                                                    Style="{StaticResource HoverButton}"
+                                                    BackgroundColor="Transparent" Padding="8,4">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=StartEditCommand}"
+                                                        CommandParameter="{Binding .}" />
+                                            </Border.GestureRecognizers>
+                                            <Label Style="{StaticResource PhosphorIcon}"
+                                                       Text="{x:Static ph:PhosphorIcons.Edit}"
+                                                       FontSize="16"
+                                                       TextColor="{DynamicResource AccentColor}" />
+                                        </Border>
+                                    </Grid>
+                                    <Grid HeightRequest="8" IsVisible="{Binding HasLimit}">
+                                        <Border BackgroundColor="{DynamicResource AccentColorAlpha}"
+                                                    StrokeThickness="0" StrokeShape="RoundRectangle 980"
+                                                    HeightRequest="8" />
+                                        <Border BackgroundColor="{Binding IsOverLimit, Converter={StaticResource BoolToProgressColor}}"
+                                                    StrokeThickness="0" StrokeShape="RoundRectangle 980"
+                                                    HeightRequest="8" HorizontalOptions="Start"
+                                                    WidthRequest="{Binding ProgressPercent, Converter={StaticResource PercentToWidth}}" />
+                                    </Grid>
+                                    <VerticalStackLayout IsVisible="{Binding IsEditing}" Spacing="8">
+                                        <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                                            <Label Text="No spending limit" FontSize="13"
+                                                       TextColor="{DynamicResource TextSecondary}" VerticalOptions="Center" />
+                                            <Switch IsToggled="{Binding EditIsUnlimited}"
+                                                        OnColor="{DynamicResource AccentColor}"
+                                                        ThumbColor="{DynamicResource CardBackground}"
+                                                        VerticalOptions="Center"
+                                                        MinimumHeightRequest="32"/>
+                                        </HorizontalStackLayout>
+                                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                                            <Border Grid.Column="0"
+                                                        BackgroundColor="{DynamicResource PageBackground}"
+                                                        Stroke="{DynamicResource CardBorder}"
+                                                        StrokeThickness="0.8" StrokeShape="RoundRectangle 12"
+                                                        Padding="12,0">
+                                                <Entry Text="{Binding EditLimitText}"
+                                                           IsEnabled="{Binding EditIsUnlimited, Converter={StaticResource InverseBool}}"
+                                                           Placeholder="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=LimitPlaceholder}"
+                                                           PlaceholderColor="#C0C0C5" Keyboard="Numeric"
+                                                           FontSize="14" TextColor="{DynamicResource TextPrimary}"
+                                                           BackgroundColor="Transparent" HeightRequest="40" />
+                                            </Border>
+                                            <Border Grid.Column="1"
+                                                        Style="{StaticResource HoverButton}"
+                                                        BackgroundColor="{DynamicResource AccentColor}"
+                                                        StrokeShape="RoundRectangle 12" Padding="14,10">
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer
+                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=SaveLimitCommand}"
+                                                            CommandParameter="{Binding .}" />
+                                                </Border.GestureRecognizers>
+                                                <Label Text="Save" FontSize="13" FontAttributes="Bold"
+                                                           TextColor="{DynamicResource OnAccentColor}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                            </Border>
+                                            <Border Grid.Column="2"
+                                                        Style="{StaticResource HoverButton}"
+                                                        BackgroundColor="{DynamicResource PageBackground}"
+                                                        StrokeShape="RoundRectangle 12" Padding="14,10">
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer
+                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=CancelEditCommand}"
+                                                            CommandParameter="{Binding .}" />
+                                                </Border.GestureRecognizers>
+                                                <Label Text="Cancel" FontSize="13"
+                                                           TextColor="{DynamicResource TextSecondary}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                            </Border>
+                                        </Grid>
+                                    </VerticalStackLayout>
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+    </Grid>
+    <!-- end main layout Grid -->
 
         <!-- ── Total editor overlay ───────────────────────────────────────────── -->
         <Grid IsVisible="{Binding IsTotalEditVisible}">

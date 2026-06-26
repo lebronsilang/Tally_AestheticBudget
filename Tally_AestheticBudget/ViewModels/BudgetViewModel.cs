@@ -40,7 +40,12 @@ public partial class BudgetViewModel : ObservableObject
 
         // SettingsChanged: notify XAML that ShowBudgetDonut may have flipped so the
         // IsVisible bindings on the list / donut layouts update immediately.
-        _dataChanged.SettingsChanged += () => OnPropertyChanged(nameof(ShowBudgetDonut));
+        _dataChanged.SettingsChanged += () =>
+        {
+            OnPropertyChanged(nameof(ShowBudgetDonut));
+            OnPropertyChanged(nameof(ShowWideDonut));
+            OnPropertyChanged(nameof(ShowNarrowDonut));
+        };
     }
 
     public string LimitPlaceholder => $"New limit ({_settings.CurrencySymbol})";
@@ -60,6 +65,32 @@ public partial class BudgetViewModel : ObservableObject
     /// immediately when SettingsChanged fires and raises this property.
     /// </summary>
     public bool ShowBudgetDonut => _settings.ShowBudgetDonut;
+
+    /// <summary>
+    /// Set by BudgetPage.OnSizeAllocated when the window is narrower than the
+    /// side-by-side threshold. Switches the donut to a stacked (above-list) layout.
+    /// </summary>
+    public bool IsNarrowBudgetLayout
+    {
+        get => _isNarrowBudgetLayout;
+        set
+        {
+            if (_isNarrowBudgetLayout == value) return;
+            _isNarrowBudgetLayout = value;
+            OnPropertyChanged(nameof(IsNarrowBudgetLayout));
+            OnPropertyChanged(nameof(ShowWideDonut));
+            OnPropertyChanged(nameof(ShowNarrowDonut));
+        }
+    }
+    private bool _isNarrowBudgetLayout;
+
+    /// <summary>True when the donut should render in the wide side-by-side column.</summary>
+    public bool ShowWideDonut => ShowBudgetDonut && !IsNarrowBudgetLayout;
+    /// <summary>True when the donut should render stacked above the category list.</summary>
+    public bool ShowNarrowDonut => ShowBudgetDonut && IsNarrowBudgetLayout;
+
+    /// <summary>
+    /// Maps the current BudgetItems into DonutSegment records, excluding categories
 
     /// <summary>
     /// Maps the current BudgetItems into DonutSegment records, excluding categories

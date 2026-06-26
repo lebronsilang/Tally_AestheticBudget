@@ -97,7 +97,7 @@ namespace Tally_AestheticBudget.Controls
             if (w <= 0 || h <= 0) return;
 
             // Layout: top portion for ring, bottom portion for legend
-            float legendH = Math.Min(80f, h * 0.28f);
+            float legendH = Math.Max(100f, h * 0.30f);
             float ringAreaH = h - legendH;
 
             float cx = w / 2f;
@@ -215,7 +215,7 @@ namespace Tally_AestheticBudget.Controls
             int rows = (int)Math.Ceiling(count / (double)cols);
             float rowH = legendH / Math.Max(rows, 1);
             float colW = w / cols;
-            float dotSz = 7f;
+            float dotSz = 9f;
 
             for (int i = 0; i < count; i++)
             {
@@ -231,10 +231,10 @@ namespace Tally_AestheticBudget.Controls
 
                 // Category label
                 canvas.FontColor = TextSecondary;
-                canvas.FontSize = 8.5f;
+                canvas.FontSize = 10f;
                 canvas.DrawString(segs[i].Category,
-                    lx + dotSz + 5f, ly - 1f,
-                    colW - dotSz - 22f, rowH,
+                    lx + dotSz + 5f, ly,
+                    colW - dotSz - 22f, dotSz + 4f,
                     HorizontalAlignment.Left, VerticalAlignment.Center);
             }
         }

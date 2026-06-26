@@ -233,13 +233,17 @@
                                     </ScrollView>
                                 </VerticalStackLayout>
                             </Border>
-                            
+
                             <!-- ── Spending bar chart ───────────────────── -->
-                            <GraphicsView x:Name="BarViewInline"
-                                           Drawable="{Binding BarDrawable}"
-                                           IsVisible="{Binding ShowFeedBar}"
-                                           HeightRequest="300"
-                                           Margin="16,0,16,8" />
+                            <Border IsVisible="{Binding ShowFeedBar}"
+                                    BackgroundColor="{DynamicResource CardBackground}"
+                                    Stroke="{DynamicResource CardBorder}"
+                                    StrokeThickness="1" StrokeShape="RoundRectangle 20"
+                                    Margin="16,0,16,8" Padding="12,8">
+                                <GraphicsView x:Name="BarViewInline"
+                                              Drawable="{Binding BarDrawable}"
+                                              HeightRequest="284" />
+                            </Border>
 
                             <!-- ── Masonry grid ───────────────────────────────────────── -->
                             <Grid

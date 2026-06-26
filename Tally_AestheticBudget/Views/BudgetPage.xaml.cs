@@ -42,18 +42,38 @@ public partial class BudgetPage : ContentPage
 
     // ── Donut invalidation ────────────────────────────────────────────────────
 
+    // ── Responsive layout ─────────────────────────────────────────────────────
+
+    protected override void OnSizeAllocated(double width, double height)
+    {
+        base.OnSizeAllocated(width, height);
+        // Below 700 dp the side-by-side donut column becomes too cramped;
+        // switch to the stacked (donut-above-list) layout instead.
+        _viewModel.IsNarrowBudgetLayout = width < 700;
+    }
+
+    // ── Donut invalidation ────────────────────────────────────────────────────
+
     private void OnDonutDataChanged()
     {
         // Invalidated is fired from the ViewModel thread (could be a thread-pool thread
         // after an await); always marshal back to the UI thread before calling Invalidate.
-        MainThread.BeginInvokeOnMainThread(() => DonutView?.Invalidate());
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            DonutView?.Invalidate();
+            DonutViewNarrow?.Invalidate();
+        });
     }
 
     private void OnThemeChanged()
     {
-        // Theme colors changed — update the drawable and re-render.
+        // Theme colors changed — update the drawable and re-render both views.
         ApplyDonutTheme();
-        MainThread.BeginInvokeOnMainThread(() => DonutView?.Invalidate());
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            DonutView?.Invalidate();
+            DonutViewNarrow?.Invalidate();
+        });
     }
 
     /// <summary>
