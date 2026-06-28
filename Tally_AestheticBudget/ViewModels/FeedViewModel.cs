@@ -121,7 +121,7 @@ public partial class FeedViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(SelectedMonthLabel))]
     private int _pickerYear;
 
-    public List<int> YearList { get; } = Enumerable.Range(DateTime.Now.Year - 5, 6).Reverse().ToList();
+    [ObservableProperty] private List<int> _yearList = [DateTime.Now.Year];
 
     private int _selectedPickerMonth;
 
@@ -504,8 +504,10 @@ public partial class FeedViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private async Task SelectUnsplashPhotoAsync(UnsplashPhoto photo)
+    private async Task SelectUnsplashPhotoAsync(UnsplashPhoto? photo)
     {
+        if (photo is null) return;
+
         IsUnsplashLoading = true;
         try
         {
@@ -717,6 +719,7 @@ public partial class FeedViewModel : ObservableObject
         RefreshThemeBoundBindings();
         IsListView = _settings.FeedListView;
         _header.ShowFilter(FilterHeaderLabel);
+        YearList = await _expenseService.GetDistinctExpenseYearsAsync();
         if (!IsDirty) return;
         IsDirty = false;
         await LoadFeedAsync();

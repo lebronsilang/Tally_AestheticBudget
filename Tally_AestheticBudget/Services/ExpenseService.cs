@@ -17,6 +17,7 @@ public interface IExpenseService
     Task DeleteGroceryGroupAsync(int groupId);
     Task DeleteGroceryLineItemAsync(int lineItemId);
     Task DeleteAllAsync();
+    Task<List<int>> GetDistinctExpenseYearsAsync();
 }
 
 public class ExpenseService : IExpenseService
@@ -271,4 +272,25 @@ public class ExpenseService : IExpenseService
 
     private static ExpenseCategory ParseCategory(string raw) =>
         Enum.TryParse<ExpenseCategory>(raw, true, out var cat) ? cat : ExpenseCategory.Other;
+
+    public async Task<List<int>> GetDistinctExpenseYearsAsync()
+    {
+        var db = await _db.GetConnectionAsync();
+        var expenseYears = await db.QueryAsync<YearRow>(
+            "SELECT DISTINCT CAST(strftime('%Y', Date) AS INTEGER) AS Y FROM expenses");
+        var groupYears = await db.QueryAsync<YearRow>(
+            "SELECT DISTINCT CAST(strftime('%Y', Date) AS INTEGER) AS Y FROM grocery_groups");
+
+        return expenseYears.Select(r => r.Y)
+            .Concat(groupYears.Select(r => r.Y))
+            .Append(DateTime.Now.Year)
+            .Distinct()
+            .OrderByDescending(y => y)
+            .ToList();
+    }
+
+    private class YearRow
+    {
+        public int Y { get; set; }
+    }
 }

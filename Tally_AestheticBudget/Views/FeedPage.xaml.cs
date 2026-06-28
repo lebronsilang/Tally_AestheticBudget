@@ -19,6 +19,7 @@ public partial class FeedPage : ContentPage
     private bool _gridPopulated = false;
     private double _lastWidth = 0;
     private double _calculatedColumnWidth = 0;
+    private int _masonryRebuildGen = 0;
 
     public FeedPage(FeedViewModel viewModel, ISettingsService settings, IThemeService themeService)
     {
@@ -146,6 +147,11 @@ public partial class FeedPage : ContentPage
         var columns = _viewModel.Columns;
         if (columns.Count == 0) return;
 
+        // Tag this rebuild so a stale delayed callback below (from a rebuild that
+        // got superseded before its 16ms timer fired) can detect it's outdated and
+        // bail instead of indexing into a grid that's since been cleared/resized.
+        var gen = ++_masonryRebuildGen;
+
         MasonryGrid.ColumnDefinitions.Clear();
         MasonryGrid.Children.Clear();
 
@@ -169,7 +175,10 @@ public partial class FeedPage : ContentPage
         // THEN bind the items so images measure against real constrained width.
         Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(16), () =>
         {
-            for (int i = 0; i < columns.Count; i++)
+            if (gen != _masonryRebuildGen) return;
+
+            var count = Math.Min(columns.Count, MasonryGrid.Children.Count);
+            for (int i = 0; i < count; i++)
             {
                 if (MasonryGrid.Children[i] is VerticalStackLayout stack)
                     BindableLayout.SetItemsSource(stack, columns[i]);

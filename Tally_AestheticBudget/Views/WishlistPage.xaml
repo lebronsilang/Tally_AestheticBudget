@@ -11,7 +11,15 @@
     Shell.NavBarIsVisible="True"
     BackgroundColor="{DynamicResource PageBackground}">
 
-    <Grid RowDefinitions="Auto,*">
+    <!-- ── Outer drawer: item detail panel ─────────────────────────────────── -->
+    <controls:DrawerHost
+        IsOpen="{Binding IsDetailVisible}"
+        OpenFromLeft="False"
+        DrawerWidth="420"
+        CloseCommand="{Binding DismissDetailCommand}">
+
+        <controls:DrawerHost.BodyContent>
+            <Grid RowDefinitions="Auto,*">
 
         <controls:DrawerHost
             Grid.RowSpan="2"
@@ -642,7 +650,8 @@
                                                             <TapGestureRecognizer
                                                             Command="{Binding BindingContext.SelectUnsplashPhotoCommand,
                                                                       Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-                                                            CommandParameter="{Binding .}" />
+                                                            CommandParameter="{Binding BindingContext,
+                                                                      Source={RelativeSource AncestorType={x:Type Border}}}" />
                                                         </Border.GestureRecognizers>
                                                         <Image Source="{Binding ThumbUrl}" Aspect="AspectFill">
                                                             <Image.Clip>
@@ -746,17 +755,15 @@
 
         </controls:DrawerHost>
 
-        <Grid Grid.RowSpan="2" IsVisible="{Binding IsDetailVisible}">
-            <Grid.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding DismissDetailCommand}" />
-            </Grid.GestureRecognizers>
-            <controls:BlurOverlay />
+            </Grid>
+        </controls:DrawerHost.BodyContent>
+
+        <!-- ── Detail panel content ──────────────────────────────────────── -->
+        <controls:DrawerHost.DrawerContent>
             <Border BackgroundColor="{DynamicResource CardBackground}"
-                    Style="{StaticResource ModalCard}"
-                    StrokeShape="RoundRectangle 16"
-                    HorizontalOptions="Center" VerticalOptions="Center"
-                    MaximumWidthRequest="360" Margin="20,0">
-                <ScrollView MaximumHeightRequest="560">
+                    StrokeThickness="0"
+                    HorizontalOptions="Fill" VerticalOptions="Fill">
+                <ScrollView>
                     <VerticalStackLayout Spacing="0">
 
                         <Image Source="{Binding SelectedItem.PhotoPath}"
@@ -847,7 +854,7 @@
                                         <HorizontalStackLayout Spacing="4" HorizontalOptions="Center" VerticalOptions="Center">
 
                                             <Label Style="{StaticResource PhosphorIcon}"
-                                               Text="{x:Static ph:PhosphorIcons.Image}"
+                                               Text="{x:Static ph:PhosphorIcons.ThumbsUp}"
                                                FontSize="20"
                                                TextColor="{DynamicResource AccentColor}" />
 
@@ -869,7 +876,7 @@
                                         <HorizontalStackLayout Spacing="4" HorizontalOptions="Center" VerticalOptions="Center">
 
                                             <Label Style="{StaticResource PhosphorIcon}"
-                                               Text="{x:Static ph:PhosphorIcons.Image}"
+                                               Text="{x:Static ph:PhosphorIcons.ThumbsDown}"
                                                FontSize="20"
                                                TextColor="{DynamicResource AccentColor}" />
 
@@ -895,7 +902,7 @@
                                 <HorizontalStackLayout Spacing="6" HorizontalOptions="Center" VerticalOptions="Center">
 
                                     <Label Style="{StaticResource PhosphorIcon}"
-                                               Text="{x:Static ph:PhosphorIcons.Image}"
+                                               Text="{x:Static ph:PhosphorIcons.Receipt}"
                                                FontSize="20"
                                                TextColor="{DynamicResource AccentColor}" />
 
@@ -936,7 +943,6 @@
                     </VerticalStackLayout>
                 </ScrollView>
             </Border>
-        </Grid>
-
-    </Grid>
+        </controls:DrawerHost.DrawerContent>
+    </controls:DrawerHost>
 </ContentPage>

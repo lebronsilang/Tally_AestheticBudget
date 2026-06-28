@@ -379,8 +379,10 @@ public partial class WishlistViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private async Task SelectUnsplashPhotoAsync(UnsplashPhoto photo)
+    private async Task SelectUnsplashPhotoAsync(UnsplashPhoto? photo)
     {
+        if (photo is null) return;
+
         IsUnsplashLoading = true;
         try
         {

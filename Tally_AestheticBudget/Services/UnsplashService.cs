@@ -24,7 +24,7 @@ public interface IUnsplashService
     /// with a Guid filename, and returns the absolute local path.
     /// Returns null on failure.
     /// </summary>
-    Task<string?> DownloadAndSaveAsync(UnsplashPhoto photo);
+    Task<string?> DownloadAndSaveAsync(UnsplashPhoto? photo);
 }
 
 
@@ -60,8 +60,10 @@ public class UnsplashService : IUnsplashService
         return new UnsplashResult(photos, response.TotalPages);
     }
 
-    public async Task<string?> DownloadAndSaveAsync(UnsplashPhoto photo)
+    public async Task<string?> DownloadAndSaveAsync(UnsplashPhoto? photo)
     {
+        if (photo is null) return null;
+
         // Required by Unsplash API guidelines: fire the tracking endpoint first.
         // Failure is non-fatal — the download proceeds regardless.
         try { await _http.GetAsync($"photos/{photo.Id}/download"); }
