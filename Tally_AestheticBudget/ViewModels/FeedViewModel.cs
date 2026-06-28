@@ -289,6 +289,8 @@ public partial class FeedViewModel : ObservableObject
     [RelayCommand]
     private void OpenAddModal()
     {
+        IsDetailVisible = false;
+        IsEditModalVisible = false;
         NewTitle = string.Empty;
         NewAmountText = string.Empty;
         NewNote = string.Empty;
@@ -913,6 +915,8 @@ public partial class FeedViewModel : ObservableObject
     [RelayCommand]
     private void OpenDetail(FeedCardItem item)
     {
+        IsAddModalVisible = false;
+        IsEditModalVisible = false;
         SelectedItem = item;
         IsDetailVisible = true;
     }
