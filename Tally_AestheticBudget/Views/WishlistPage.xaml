@@ -252,7 +252,7 @@
                                    VerticalOptions="Center" />
 
                                     <Label Style="{StaticResource PhosphorIcon}"
-                                   Text="{x:Static ph:PhosphorIcons.Image}"
+                                   Text="{x:Static ph:PhosphorIcons.Sparkle}"
                                    FontSize="20"
                                    TextColor="{DynamicResource AccentColor}" />
 
@@ -314,7 +314,7 @@
                                         <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
                                             <Label Style="{StaticResource PhosphorIcon}"
-                                           Text="{x:Static ph:PhosphorIcons.Image}"
+                                           Text="{x:Static ph:PhosphorIcons.Heart}"
                                            FontSize="20"
                                            TextColor="{Binding IsWantSelected, Converter={StaticResource BoolToIconColor}}"  />
 
@@ -335,7 +335,7 @@
                                         <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
                                             <Label Style="{StaticResource PhosphorIcon}"
-                                           Text="{x:Static ph:PhosphorIcons.Image}"
+                                           Text="{x:Static ph:PhosphorIcons.WarningCircle}"
                                            FontSize="20"
                                            TextColor="{Binding IsNeedSelected, Converter={StaticResource BoolToIconColor}}" />
 
@@ -356,7 +356,7 @@
                                         <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
                                             <Label Style="{StaticResource PhosphorIcon}"
-                                           Text="{x:Static ph:PhosphorIcons.Image}"
+                                           Text="{x:Static ph:PhosphorIcons.Hourglass}"
                                            FontSize="20"
                                            TextColor="{Binding IsSomedaySelected, Converter={StaticResource BoolToIconColor}}" />
 
