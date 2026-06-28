@@ -209,35 +209,55 @@ public partial class WishlistPage : ContentPage
             };
             gradient.Clip = new Microsoft.Maui.Controls.Shapes.RoundRectangleGeometry { Rect = new Rect(0, 0, 1000, 2000), CornerRadius = new CornerRadius(18) };
             photoContainer.Children.Add(gradient);
-            var overlayText = new VerticalStackLayout { Spacing = 3, VerticalOptions = LayoutOptions.End, Padding = new Thickness(14, 0, 14, 14) };
-            var overlayCatRow = new HorizontalStackLayout { Spacing = 5 };
-            var overlayEmoji = new Label { FontSize = 11 };
-            overlayEmoji.SetBinding(Label.TextProperty, "PriorityEmoji");
-            overlayCatRow.Children.Add(overlayEmoji);
-            var overlayCatLabel = new Label { FontSize = 10, FontAttributes = FontAttributes.Bold, CharacterSpacing = 0.5, TextTransform = TextTransform.Uppercase, TextColor = Color.FromArgb("#CCffffff") };
+            // Hierarchy mirrors FeedPage's masonry card overlay (category · date,
+            // then title, then amount) so Wishlist and Feed cards read consistently —
+            // the Bought/Regret status rows are wishlist-specific and stay underneath.
+            var overlayText = new VerticalStackLayout { Spacing = 2, VerticalOptions = LayoutOptions.End, Padding = new Thickness(14, 0, 14, 14) };
+
+            var overlayCatDateRow = new HorizontalStackLayout { Spacing = 5 };
+            var overlayCatLabel = new Label { FontSize = 11, FontAttributes = FontAttributes.Bold, CharacterSpacing = 0.5, TextTransform = TextTransform.Uppercase, TextColor = Color.FromArgb("#CCffffff") };
             overlayCatLabel.SetBinding(Label.TextProperty, "CategoryLabel");
-            overlayCatRow.Children.Add(overlayCatLabel);
-            overlayText.Children.Add(overlayCatRow);
-            var overlayName = new Label { FontSize = 13, FontAttributes = FontAttributes.Bold, TextColor = Colors.White, LineBreakMode = LineBreakMode.WordWrap };
+            overlayCatDateRow.Children.Add(overlayCatLabel);
+            var overlaySep = new Label { Text = "·", FontSize = 11, TextColor = Color.FromArgb("#99ffffff"), VerticalOptions = LayoutOptions.Center };
+            var overlayDateInline = new Label { FontSize = 11, TextColor = Color.FromArgb("#99ffffff") };
+            overlayDateInline.SetBinding(Label.TextProperty, "TargetMonthFormatted");
+            overlaySep.SetBinding(Label.IsVisibleProperty, new Binding("TargetMonthFormatted", converter: new StringToBoolConverter()));
+            overlayDateInline.SetBinding(Label.IsVisibleProperty, new Binding("TargetMonthFormatted", converter: new StringToBoolConverter()));
+            overlayCatDateRow.Children.Add(overlaySep);
+            overlayCatDateRow.Children.Add(overlayDateInline);
+            overlayText.Children.Add(overlayCatDateRow);
+
+            var overlayName = new Label { FontSize = 17, FontAttributes = FontAttributes.Bold, TextColor = Colors.White, LineBreakMode = LineBreakMode.WordWrap, Margin = new Thickness(0, 4, 0, 0) };
             overlayName.SetBinding(Label.TextProperty, "Name");
             overlayText.Children.Add(overlayName);
-            var overlayPrice = new Label { FontSize = 17, FontAttributes = FontAttributes.Bold, TextColor = Colors.White };
+            var overlayPrice = new Label { FontSize = 15, FontAttributes = FontAttributes.Bold, TextColor = Colors.White };
             overlayPrice.SetBinding(Label.TextProperty, "PriceFormatted");
             overlayText.Children.Add(overlayPrice);
+
+            var overlayBoughtRow = new HorizontalStackLayout { Spacing = 4, Margin = new Thickness(0, 2, 0, 0) };
+            var overlayBoughtIcon = new Label { FontFamily = "PhosphorIcons", FontSize = 11, TextColor = Color.FromArgb("#34c759") };
+            overlayBoughtIcon.SetBinding(Label.TextProperty, "StatusIcon");
+            overlayBoughtRow.Children.Add(overlayBoughtIcon);
             var overlayBought = new Label { FontSize = 11, FontAttributes = FontAttributes.Bold, TextColor = Color.FromArgb("#34c759") };
             overlayBought.SetBinding(Label.TextProperty, "StatusLabel");
-            overlayBought.SetBinding(Label.IsVisibleProperty, "IsBought");
-            overlayText.Children.Add(overlayBought);
+            overlayBoughtRow.Children.Add(overlayBought);
+            overlayBoughtRow.SetBinding(HorizontalStackLayout.IsVisibleProperty, "IsBought");
+            overlayText.Children.Add(overlayBoughtRow);
+
+            var overlayRegretRow = new HorizontalStackLayout { Spacing = 4 };
+            var overlayRegretIcon = new Label { FontFamily = "PhosphorIcons", FontSize = 11 };
+            overlayRegretIcon.SetBinding(Label.TextProperty, "RegretIcon");
+            overlayRegretIcon.SetBinding(Label.TextColorProperty,
+                new Binding("IsWorthIt", converter: new BoolToAffordTextConverter()));
+            overlayRegretRow.Children.Add(overlayRegretIcon);
             var overlayRegret = new Label { FontSize = 11, FontAttributes = FontAttributes.Bold };
             overlayRegret.SetBinding(Label.TextProperty, "RegretLabel");
-            overlayRegret.SetBinding(Label.IsVisibleProperty, "HasRegretRating");
             overlayRegret.SetBinding(Label.TextColorProperty,
                 new Binding("IsWorthIt", converter: new BoolToAffordTextConverter()));
-            overlayText.Children.Add(overlayRegret);
-            var overlayTarget = new Label { FontSize = 11, TextColor = Color.FromArgb("#99ffffff") };
-            overlayTarget.SetBinding(Label.TextProperty, "TargetMonthFormatted");
-            overlayTarget.SetBinding(Label.IsVisibleProperty, new Binding("TargetMonthFormatted", converter: new StringToBoolConverter()));
-            overlayText.Children.Add(overlayTarget);
+            overlayRegretRow.Children.Add(overlayRegret);
+            overlayRegretRow.SetBinding(HorizontalStackLayout.IsVisibleProperty, "HasRegretRating");
+            overlayText.Children.Add(overlayRegretRow);
+
             photoContainer.Children.Add(overlayText);
             root.Children.Add(photoContainer);
 

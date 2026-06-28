@@ -27,6 +27,8 @@ public static class PhosphorIcons
     public const string Cancel = "\uE4F6"; // x
     public const string ThumbsUp = "\uE182"; // reuse check glyph \u2014 "worth it" approval
     public const string ThumbsDown = "\uE4F6"; // reuse x glyph \u2014 "regret" rejection
+    public const string WorthIt = "\uE436"; // thumbs-up \u2014 wish card "Worth it" badge
+    public const string Regret = "\uE43E"; // thumbs-down \u2014 wish card "Regret" badge
     public const string Note = "\uE34C"; // note-pencil
 
     // ── Media / capture 

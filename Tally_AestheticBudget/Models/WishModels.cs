@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Tally_AestheticBudget.Helpers;
 
 namespace Tally_AestheticBudget.Models;
 
@@ -25,6 +26,7 @@ public partial class WishCardItem : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(StatusLabel))]
+    [NotifyPropertyChangedFor(nameof(StatusIcon))]
     [NotifyPropertyChangedFor(nameof(IsBought))]
     [NotifyPropertyChangedFor(nameof(ShowCoolingBanner))]
     [NotifyPropertyChangedFor(nameof(ShowStaleBanner))]
@@ -34,6 +36,7 @@ public partial class WishCardItem : ObservableObject
     [NotifyPropertyChangedFor(nameof(HasRegretRating))]
     [NotifyPropertyChangedFor(nameof(IsWorthIt))]
     [NotifyPropertyChangedFor(nameof(RegretLabel))]
+    [NotifyPropertyChangedFor(nameof(RegretIcon))]
     private string? _regretRating;
 
     [ObservableProperty]
@@ -62,7 +65,9 @@ public partial class WishCardItem : ObservableObject
         _ => "💖"
     };
 
-    public string StatusLabel => Status == WishStatus.Bought ? "✓ Bought" : "Planned";
+    public string StatusLabel => Status == WishStatus.Bought ? "Bought" : "Planned";
+
+    public string StatusIcon => Status == WishStatus.Bought ? PhosphorIcons.CheckCircle : PhosphorIcons.Calendar;
 
     public string CategoryLabel => Category switch
     {
@@ -72,6 +77,16 @@ public partial class WishCardItem : ObservableObject
         ExpenseCategory.Health => "Health",
         ExpenseCategory.Fun => "Fun",
         _ => "Other"
+    };
+
+    public string CategoryIcon => Category switch
+    {
+        ExpenseCategory.Food => PhosphorIcons.Food,
+        ExpenseCategory.Transport => PhosphorIcons.Transport,
+        ExpenseCategory.Shopping => PhosphorIcons.Shopping,
+        ExpenseCategory.Health => PhosphorIcons.Health,
+        ExpenseCategory.Fun => PhosphorIcons.Fun,
+        _ => PhosphorIcons.Default
     };
 
     public string TargetMonthFormatted
@@ -116,7 +131,8 @@ public partial class WishCardItem : ObservableObject
 
     public bool HasRegretRating => !string.IsNullOrEmpty(RegretRating);
     public bool IsWorthIt => RegretRating == "Worth";
-    public string RegretLabel => RegretRating == "Worth" ? "😌 Worth it" : "😭 Regret";
+    public string RegretLabel => RegretRating == "Worth" ? "Worth it" : "Regret";
+    public string RegretIcon => RegretRating == "Worth" ? PhosphorIcons.WorthIt : PhosphorIcons.Regret;
 
     /// <summary>Re-raises accent-dependent bindings after a theme change.</summary>
     public void RefreshThemeBindings()
