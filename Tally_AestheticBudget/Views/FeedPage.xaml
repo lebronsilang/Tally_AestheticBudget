@@ -1635,67 +1635,87 @@
             <Border BackgroundColor="{DynamicResource CardBackground}"
                     StrokeThickness="0"
                     HorizontalOptions="Fill" VerticalOptions="Fill">
+                <Grid>
                 <ScrollView>
                     <VerticalStackLayout Spacing="0">
 
-                        <Image Source="{Binding SelectedItem.PhotoPath}"
-                               IsVisible="{Binding SelectedItem.HasPhoto}"
-                               Aspect="AspectFill" HeightRequest="180">
-                            <Image.Clip>
-                                <RoundRectangleGeometry Rect="0,0,2000,180"
-                                                        CornerRadius="16,16,0,0" />
-                            </Image.Clip>
-                        </Image>
+                        <!-- Full-bleed photo with gradient overlay — category · date, title, amount
+                             directly on the photo, matching the Wishlist detail panel's hierarchy -->
+                        <Grid IsVisible="{Binding SelectedItem.HasPhoto}">
+                            <Image Source="{Binding SelectedItem.PhotoPath}"
+                                   Aspect="AspectFill" HeightRequest="280">
+                                <Image.Clip>
+                                    <RoundRectangleGeometry Rect="0,0,2000,280"
+                                                            CornerRadius="16,16,0,0" />
+                                </Image.Clip>
+                            </Image>
 
-                        <VerticalStackLayout Padding="18,14,18,18" Spacing="0">
+                            <BoxView HeightRequest="280" InputTransparent="True">
+                                <BoxView.Clip>
+                                    <RoundRectangleGeometry Rect="0,0,2000,280"
+                                                            CornerRadius="16,16,0,0" />
+                                </BoxView.Clip>
+                                <BoxView.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="Transparent" Offset="0.0" />
+                                        <GradientStop Color="#40000000" Offset="0.45" />
+                                        <GradientStop Color="#CC000000" Offset="1.0" />
+                                    </LinearGradientBrush>
+                                </BoxView.Background>
+                            </BoxView>
 
-                            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" Margin="0,0,0,8">
-                                <Label Grid.Column="0"
-                                       Text="{Binding SelectedItem.CategoryLabel}"
+                            <VerticalStackLayout Spacing="2" VerticalOptions="End"
+                                                  Padding="18,0,18,16">
+                                <HorizontalStackLayout Spacing="5">
+                                    <Label Text="{Binding SelectedItem.CategoryLabel}"
+                                           FontSize="11" FontAttributes="Bold"
+                                           CharacterSpacing="0.5" TextTransform="Uppercase"
+                                           TextColor="#CCFFFFFF" />
+                                    <Label Text="·" FontSize="11" TextColor="#99FFFFFF" />
+                                    <Label Text="{Binding SelectedItem.DateFormatted}"
+                                           FontSize="11" TextColor="#99FFFFFF" />
+                                </HorizontalStackLayout>
+
+                                <Label Text="{Binding SelectedItem.Title}"
+                                       IsVisible="{Binding SelectedItem.HasTitle}"
+                                       FontSize="17" FontAttributes="Bold"
+                                       TextColor="#FFFFFF" Margin="0,4,0,0" />
+                                <Label Text="{Binding SelectedItem.AmountFormatted}"
+                                       FontSize="20" FontAttributes="Bold"
+                                       TextColor="#FFFFFF" />
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <!-- No-photo fallback: same info, plain layout, no overlay -->
+                        <VerticalStackLayout Padding="18,18,18,0" Spacing="2"
+                                             IsVisible="{Binding SelectedItem.HasPhoto, Converter={StaticResource InverseBool}}">
+                            <HorizontalStackLayout Spacing="5">
+                                <Label Text="{Binding SelectedItem.CategoryLabel}"
                                        FontSize="11" FontAttributes="Bold"
-                                       CharacterSpacing="0.8" TextTransform="Uppercase"
-                                       TextColor="{DynamicResource AccentColor}"
-                                       VerticalOptions="Center" />
-                                <Border Grid.Column="1"
-                                        IsVisible="{Binding SelectedItem.IsGroceryGroup, Converter={StaticResource InverseBool}}"
-                                        Style="{StaticResource HoverButton}"
-                                        BackgroundColor="{DynamicResource AccentColorAlpha}"
-                                        StrokeShape="RoundRectangle 980" Padding="12,6"
-                                        VerticalOptions="Center">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding GoToEditExpenseCommand}"
-                                                              CommandParameter="{Binding SelectedItem}" />
-                                    </Border.GestureRecognizers>
-                                    <Label Text="Edit" FontSize="12"
-                                           TextColor="{DynamicResource AccentColor}" />
-                                </Border>
-                                <Border Grid.Column="2"
-                                        Style="{StaticResource HoverButton}"
-                                        BackgroundColor="#1Aff3b30"
-                                        StrokeShape="RoundRectangle 980" Padding="12,6"
-                                        VerticalOptions="Center">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding DeleteSelectedCommand}" />
-                                    </Border.GestureRecognizers>
-                                    <Label Text="Delete" FontSize="12" TextColor="#ff3b30" />
-                                </Border>
-                            </Grid>
+                                       CharacterSpacing="0.5" TextTransform="Uppercase"
+                                       TextColor="{DynamicResource AccentColor}" />
+                                <Label Text="·" FontSize="11" TextColor="{DynamicResource TextSecondary}" />
+                                <Label Text="{Binding SelectedItem.DateFormatted}"
+                                       FontSize="11" TextColor="{DynamicResource TextSecondary}" />
+                            </HorizontalStackLayout>
 
+                            <Label Text="{Binding SelectedItem.Title}"
+                                   IsVisible="{Binding SelectedItem.HasTitle}"
+                                   FontSize="18" FontAttributes="Bold"
+                                   TextColor="{DynamicResource TextPrimary}" Margin="0,4,0,0" />
                             <Label Text="{Binding SelectedItem.AmountFormatted}"
-                                   FontSize="26" FontAttributes="Bold"
-                                   TextColor="{DynamicResource TextPrimary}"
-                                   Margin="0,0,0,10" />
+                                   FontSize="22" FontAttributes="Bold"
+                                   TextColor="{DynamicResource TextPrimary}" />
+                        </VerticalStackLayout>
 
-                            <BoxView HeightRequest="0.5" Color="{DynamicResource CardBorder}"
-                                     Margin="0,0,0,10" />
+                        <VerticalStackLayout Padding="18,14,18,18" Spacing="10">
 
                             <Border IsVisible="{Binding SelectedItem.HasRegretRating}"
                                     BackgroundColor="{Binding SelectedItem.IsWorthIt, Converter={StaticResource BoolToAffordBg}}"
                                     Stroke="{Binding SelectedItem.IsWorthIt, Converter={StaticResource BoolToAffordText}}"
                                     StrokeThickness="1"
                                     StrokeShape="RoundRectangle 12"
-                                    Padding="12,10"
-                                    Margin="0,0,0,12">
+                                    Padding="12,10">
                                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
                                     <Label Grid.Column="0"
                                            Text="{x:Static ph:PhosphorIcons.Heart}"
@@ -1718,6 +1738,8 @@
                                            VerticalOptions="Center" />
                                 </Grid>
                             </Border>
+
+                            <BoxView HeightRequest="0.5" Color="{DynamicResource CardBorder}" />
 
                             <VerticalStackLayout Spacing="10">
 
@@ -1753,8 +1775,26 @@
 
                             </VerticalStackLayout>
 
+                            <BoxView HeightRequest="0.5" Color="{DynamicResource CardBorder}" />
+
+                            <Grid ColumnDefinitions="*,Auto"
+                                  IsVisible="{Binding SelectedItem.IsGroceryGroup, Converter={StaticResource InverseBool}}">
+                                <Label Grid.Column="0" Text="Edit" FontSize="13"
+                                       TextColor="{DynamicResource AccentColor}">
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding GoToEditExpenseCommand}"
+                                                              CommandParameter="{Binding SelectedItem}" />
+                                    </Label.GestureRecognizers>
+                                </Label>
+                                <Label Grid.Column="1" Text="Delete" FontSize="13" TextColor="#ff3b30">
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding DeleteSelectedCommand}" />
+                                    </Label.GestureRecognizers>
+                                </Label>
+                            </Grid>
+
                             <VerticalStackLayout IsVisible="{Binding SelectedItem.IsGroceryGroup}"
-                                                 Margin="0,10,0,0">
+                                                 Margin="0,0,0,0">
                                 <BoxView HeightRequest="0.5" Color="{DynamicResource CardBorder}"
                                          Margin="0,0,0,10" />
                                 <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,8">
@@ -1800,6 +1840,20 @@
                         </VerticalStackLayout>
                     </VerticalStackLayout>
                 </ScrollView>
+
+                <!-- Floating close button, mirrors the Wishlist detail panel's close button -->
+                <Border BackgroundColor="#33000000" StrokeThickness="0"
+                        StrokeShape="RoundRectangle 980"
+                        WidthRequest="30" HeightRequest="30"
+                        HorizontalOptions="End" VerticalOptions="Start"
+                        Margin="0,14,14,0">
+                    <Label Text="✕" FontSize="14" TextColor="#FFFFFF"
+                           HorizontalOptions="Center" VerticalOptions="Center" />
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding DismissDetailCommand}" />
+                    </Border.GestureRecognizers>
+                </Border>
+                </Grid>
             </Border>
         </controls:DrawerHost.DrawerContent>
     </controls:DrawerHost>
