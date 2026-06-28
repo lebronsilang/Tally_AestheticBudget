@@ -387,7 +387,7 @@ public partial class FeedPage : ContentPage
             var groceryCatDateRow = new HorizontalStackLayout { Spacing = 5 };
             var groceryCatLabel = new Label
             {
-                Text = "🛒 Grocery",
+                Text = "Grocery",
                 FontSize = 11,
                 FontAttributes = FontAttributes.Bold,
                 CharacterSpacing = 0.5,
