@@ -72,6 +72,23 @@ public partial class WishlistPage : ContentPage
         _viewModel.DistributeIntoColumns(newColumnCount);
     }
 
+    // Tap/press feedback for the detail-panel action buttons (Status, Worth It,
+    // Move to Expenses, Unpin/Remove). These are Border+TapGestureRecognizer
+    // "buttons", which don't get an automatic Pressed visual state the way a
+    // real Button does, so we drive a quick scale animation manually — mirrors
+    // the PointerEntered/PointerExited hover pattern already used on masonry cards.
+    private void DetailButton_PointerPressed(object? sender, PointerEventArgs e)
+    {
+        if (sender is Element { Parent: VisualElement ve })
+            _ = ve.ScaleTo(0.96, 70, Easing.CubicOut);
+    }
+
+    private void DetailButton_PointerReleased(object? sender, PointerEventArgs e)
+    {
+        if (sender is Element { Parent: VisualElement ve })
+            _ = ve.ScaleTo(1.0, 90, Easing.CubicOut);
+    }
+
     private static int GetColumnCount(double w) => w switch
     {
         < 600 => 2,

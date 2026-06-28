@@ -330,6 +330,55 @@ public class BoolToPinIconConverter : IValueConverter
         => throw new NotImplementedException();
 }
 
+// Worth it / Regret toggle — RegretRating is "Worth", "Regret", or null/empty (not yet rated).
+// ConverterParameter is the button's own rating ("Worth" or "Regret"); the button lights up
+// only when RegretRating matches it, and falls back to a neutral/grayed look otherwise —
+// so picking one visibly de-emphasizes the other instead of both staying colored at once.
+public class RegretRatingToBgConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        bool active = string.Equals(value as string, parameter as string, StringComparison.Ordinal);
+        if (!active) return ThemeColors.Get("PageBackground", "#f5f5f7");
+        return parameter as string == "Worth"
+            ? Color.FromArgb("#1F34c759")
+            : Color.FromArgb("#1Fff3b30");
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+public class RegretRatingToStrokeConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        bool active = string.Equals(value as string, parameter as string, StringComparison.Ordinal);
+        if (!active) return ThemeColors.Get("CardBorder", "#E8E8ED");
+        return parameter as string == "Worth"
+            ? Color.FromArgb("#34c759")
+            : Color.FromArgb("#ff3b30");
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+public class RegretRatingToTextConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        bool active = string.Equals(value as string, parameter as string, StringComparison.Ordinal);
+        if (!active) return ThemeColors.Get("TextSecondary", "#6e6e73");
+        return parameter as string == "Worth"
+            ? Color.FromArgb("#1a7a40")
+            : Color.FromArgb("#c0392b");
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
 // Checks if the current ExpenseCategory matches a given category name parameter
 public class CategoryMatchConverter : IValueConverter
 {

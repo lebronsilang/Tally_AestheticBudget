@@ -214,6 +214,11 @@ public partial class WishlistViewModel : ObservableObject
         OnPropertyChanged(nameof(NewHasPhoto));
         OnPropertyChanged(nameof(PriceLabelText));
         ResetPhotoSourceState();
+
+        // Only one drawer panel should ever be open at a time — opening
+        // Add Wish while an item's detail panel is showing should close it.
+        IsDetailVisible = false;
+
         IsAddModalVisible = true;
     }
 
@@ -496,6 +501,10 @@ public partial class WishlistViewModel : ObservableObject
     [RelayCommand]
     private async Task OpenDetailAsync(WishCardItem item)
     {
+        // Only one drawer panel should ever be open at a time — opening an
+        // item's detail while Add Wish is showing should close that instead.
+        IsAddModalVisible = false;
+
         SelectedItem = item;
         ShowAffordResult = false;
         AffordResult = null;
@@ -515,6 +524,14 @@ public partial class WishlistViewModel : ObservableObject
         SelectedItem.Status = status;
         var match = _allItems.FirstOrDefault(i => i.Id == SelectedItem.Id);
         if (match is not null) match.Status = status;
+
+        // Mirror WishService: a rating only makes sense while the item is Bought.
+        if (status != WishStatus.Bought)
+        {
+            SelectedItem.RegretRating = null;
+            if (match is not null) match.RegretRating = null;
+        }
+
         UpdateStats();
     }
 

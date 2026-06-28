@@ -763,20 +763,62 @@
             <Border BackgroundColor="{DynamicResource CardBackground}"
                     StrokeThickness="0"
                     HorizontalOptions="Fill" VerticalOptions="Fill">
+                <Grid>
                 <ScrollView>
                     <VerticalStackLayout Spacing="0">
 
-                        <Image Source="{Binding SelectedItem.PhotoPath}"
-                               IsVisible="{Binding SelectedItem.HasPhoto}"
-                               Aspect="AspectFill" HeightRequest="180">
-                            <Image.Clip>
-                                <RoundRectangleGeometry Rect="0,0,1000,180"
-                                                        CornerRadius="16,16,0,0" />
-                            </Image.Clip>
-                        </Image>
+                        <Grid IsVisible="{Binding SelectedItem.HasPhoto}">
+                            <Image Source="{Binding SelectedItem.PhotoPath}"
+                                   Aspect="AspectFill" HeightRequest="300">
+                                <Image.Clip>
+                                    <RoundRectangleGeometry Rect="0,0,1000,300"
+                                                            CornerRadius="16,16,0,0" />
+                                </Image.Clip>
+                            </Image>
 
-                        <VerticalStackLayout Padding="18,14,18,18" Spacing="6">
+                            <BoxView HeightRequest="300" InputTransparent="True">
+                                <BoxView.Clip>
+                                    <RoundRectangleGeometry Rect="0,0,1000,300"
+                                                            CornerRadius="16,16,0,0" />
+                                </BoxView.Clip>
+                                <BoxView.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="Transparent" Offset="0.0" />
+                                        <GradientStop Color="#40000000" Offset="0.45" />
+                                        <GradientStop Color="#CC000000" Offset="1.0" />
+                                    </LinearGradientBrush>
+                                </BoxView.Background>
+                            </BoxView>
 
+                            <VerticalStackLayout Spacing="3" VerticalOptions="End"
+                                                  Padding="18,0,18,16">
+                                <HorizontalStackLayout Spacing="6">
+                                    <Label Text="{Binding SelectedItem.PriorityLabel}"
+                                           FontSize="11" FontAttributes="Bold"
+                                           TextColor="#FFFFFF" />
+                                    <Label Text="·" FontSize="11"
+                                           TextColor="#CCFFFFFF" />
+                                    <Label Text="{Binding SelectedItem.CategoryLabel}"
+                                           FontSize="11" FontAttributes="Bold"
+                                           TextColor="#CCFFFFFF"
+                                           TextTransform="Uppercase" CharacterSpacing="0.4" />
+                                </HorizontalStackLayout>
+
+                                <Label Text="{Binding SelectedItem.Name}"
+                                       FontSize="19" FontAttributes="Bold"
+                                       TextColor="#FFFFFF" />
+                                <Label Text="{Binding SelectedItem.PriceFormatted}"
+                                       FontSize="17" FontAttributes="Bold"
+                                       TextColor="#FFFFFF" />
+                                <Label Text="{Binding SelectedItem.TargetMonthFormatted}"
+                                       IsVisible="{Binding SelectedItem.TargetMonthFormatted, Converter={StaticResource StringToBool}}"
+                                       FontSize="12" TextColor="#CCFFFFFF" />
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <!-- No-photo fallback: same info, plain layout, no overlay -->
+                        <VerticalStackLayout Padding="18,18,18,0" Spacing="6"
+                                             IsVisible="{Binding SelectedItem.HasPhoto, Converter={StaticResource InverseBool}}">
                             <HorizontalStackLayout Spacing="6">
                                 <Label Text="{Binding SelectedItem.PriorityLabel}"
                                        FontSize="11" FontAttributes="Bold"
@@ -795,11 +837,15 @@
                             <Label Text="{Binding SelectedItem.PriceFormatted}"
                                    FontSize="16" FontAttributes="Bold"
                                    TextColor="{DynamicResource AccentColor}" />
-                            <Label Text="{Binding SelectedItem.Caption}"
-                                   IsVisible="{Binding SelectedItem.HasCaption}"
-                                   FontSize="12" TextColor="{DynamicResource TextSecondary}" />
                             <Label Text="{Binding SelectedItem.TargetMonthFormatted}"
                                    IsVisible="{Binding SelectedItem.TargetMonthFormatted, Converter={StaticResource StringToBool}}"
+                                   FontSize="12" TextColor="{DynamicResource TextSecondary}" />
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Padding="18,14,18,18" Spacing="6">
+
+                            <Label Text="{Binding SelectedItem.Caption}"
+                                   IsVisible="{Binding SelectedItem.HasCaption}"
                                    FontSize="12" TextColor="{DynamicResource TextSecondary}" />
 
                             <Border IsVisible="{Binding ShowAffordResult}"
@@ -813,30 +859,38 @@
                             <BoxView HeightRequest="0.5" Color="{DynamicResource CardBorder}"
                                      Margin="0,8,0,8" />
 
-                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
-                                <Border Grid.Column="0" Style="{StaticResource HoverButton}"
-                                        BackgroundColor="{Binding SelectedItem.Status, Converter={StaticResource StatusToPlannedBg}}"
-                                        Stroke="{DynamicResource CardBorder}" StrokeThickness="0.8"
-                                        StrokeShape="RoundRectangle 10" Padding="0,9">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding ToggleStatusCommand}"
-                                                              CommandParameter="Planned" />
-                                    </Border.GestureRecognizers>
-                                    <Label Text="Planned" FontSize="12" HorizontalOptions="Center"
-                                           TextColor="{Binding SelectedItem.Status, Converter={StaticResource StatusToPlannedText}}" />
-                                </Border>
-                                <Border Grid.Column="1" Style="{StaticResource HoverButton}"
-                                        BackgroundColor="{Binding SelectedItem.Status, Converter={StaticResource StatusToBoughtBg}}"
-                                        Stroke="{DynamicResource CardBorder}" StrokeThickness="0.8"
-                                        StrokeShape="RoundRectangle 10" Padding="0,9">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding ToggleStatusCommand}"
-                                                              CommandParameter="Bought" />
-                                    </Border.GestureRecognizers>
-                                    <Label Text="✓ Bought" FontSize="12" HorizontalOptions="Center"
-                                           TextColor="{Binding SelectedItem.Status, Converter={StaticResource StatusToBoughtText}}" />
-                                </Border>
-                            </Grid>
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Status" FontSize="11"
+                                       TextColor="{DynamicResource TextSecondary}" />
+                                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                    <Border Grid.Column="0" Style="{StaticResource HoverButton}"
+                                            BackgroundColor="{Binding SelectedItem.Status, Converter={StaticResource StatusToPlannedBg}}"
+                                            Stroke="{DynamicResource CardBorder}" StrokeThickness="0.8"
+                                            StrokeShape="RoundRectangle 10" Padding="0,9">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding ToggleStatusCommand}"
+                                                                  CommandParameter="Planned" />
+                                            <PointerGestureRecognizer PointerPressed="DetailButton_PointerPressed"
+                                                                      PointerReleased="DetailButton_PointerReleased" />
+                                        </Border.GestureRecognizers>
+                                        <Label Text="Planned" FontSize="12" HorizontalOptions="Center"
+                                               TextColor="{Binding SelectedItem.Status, Converter={StaticResource StatusToPlannedText}}" />
+                                    </Border>
+                                    <Border Grid.Column="1" Style="{StaticResource HoverButton}"
+                                            BackgroundColor="{Binding SelectedItem.Status, Converter={StaticResource StatusToBoughtBg}}"
+                                            Stroke="{DynamicResource CardBorder}" StrokeThickness="0.8"
+                                            StrokeShape="RoundRectangle 10" Padding="0,9">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding ToggleStatusCommand}"
+                                                                  CommandParameter="Bought" />
+                                            <PointerGestureRecognizer PointerPressed="DetailButton_PointerPressed"
+                                                                      PointerReleased="DetailButton_PointerReleased" />
+                                        </Border.GestureRecognizers>
+                                        <Label Text="✓ Bought" FontSize="12" HorizontalOptions="Center"
+                                               TextColor="{Binding SelectedItem.Status, Converter={StaticResource StatusToBoughtText}}" />
+                                    </Border>
+                                </Grid>
+                            </VerticalStackLayout>
 
                             <VerticalStackLayout IsVisible="{Binding SelectedItem.IsBought}"
                                                  Spacing="6" Margin="0,6,0,0">
@@ -844,46 +898,52 @@
                                        TextColor="{DynamicResource TextSecondary}" />
                                 <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
                                     <Border Grid.Column="0" Style="{StaticResource HoverButton}"
-                                            BackgroundColor="#1F34c759" Stroke="#34c759"
+                                            BackgroundColor="{Binding SelectedItem.RegretRating, Converter={StaticResource RegretRatingToBg}, ConverterParameter=Worth}"
+                                            Stroke="{Binding SelectedItem.RegretRating, Converter={StaticResource RegretRatingToStroke}, ConverterParameter=Worth}"
                                             StrokeThickness="0.8" StrokeShape="RoundRectangle 10"
                                             Padding="0,8">
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding SetRegretCommand}"
                                                                   CommandParameter="Worth" />
+                                            <PointerGestureRecognizer PointerPressed="DetailButton_PointerPressed"
+                                                                      PointerReleased="DetailButton_PointerReleased" />
                                         </Border.GestureRecognizers>
                                         <HorizontalStackLayout Spacing="4" HorizontalOptions="Center" VerticalOptions="Center">
 
                                             <Label Style="{StaticResource PhosphorIcon}"
                                                Text="{x:Static ph:PhosphorIcons.ThumbsUp}"
                                                FontSize="20"
-                                               TextColor="{DynamicResource AccentColor}" />
+                                               TextColor="{Binding SelectedItem.RegretRating, Converter={StaticResource RegretRatingToText}, ConverterParameter=Worth}" />
 
                                             <Label Text="Worth it"
                                                FontSize="12"
                                                VerticalOptions="Center"
-                                               TextColor="#1a7a40" />
+                                               TextColor="{Binding SelectedItem.RegretRating, Converter={StaticResource RegretRatingToText}, ConverterParameter=Worth}" />
 
                                         </HorizontalStackLayout>
                                     </Border>
                                     <Border Grid.Column="1" Style="{StaticResource HoverButton}"
-                                            BackgroundColor="#1Fff3b30" Stroke="#ff3b30"
+                                            BackgroundColor="{Binding SelectedItem.RegretRating, Converter={StaticResource RegretRatingToBg}, ConverterParameter=Regret}"
+                                            Stroke="{Binding SelectedItem.RegretRating, Converter={StaticResource RegretRatingToStroke}, ConverterParameter=Regret}"
                                             StrokeThickness="0.8" StrokeShape="RoundRectangle 10"
                                             Padding="0,8">
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding SetRegretCommand}"
                                                                   CommandParameter="Regret" />
+                                            <PointerGestureRecognizer PointerPressed="DetailButton_PointerPressed"
+                                                                      PointerReleased="DetailButton_PointerReleased" />
                                         </Border.GestureRecognizers>
                                         <HorizontalStackLayout Spacing="4" HorizontalOptions="Center" VerticalOptions="Center">
 
                                             <Label Style="{StaticResource PhosphorIcon}"
                                                Text="{x:Static ph:PhosphorIcons.ThumbsDown}"
                                                FontSize="20"
-                                               TextColor="{DynamicResource AccentColor}" />
+                                               TextColor="{Binding SelectedItem.RegretRating, Converter={StaticResource RegretRatingToText}, ConverterParameter=Regret}" />
 
                                             <Label Text="Regret"
                                                FontSize="12"
                                                VerticalOptions="Center"
-                                               TextColor="#c0392b" />
+                                               TextColor="{Binding SelectedItem.RegretRating, Converter={StaticResource RegretRatingToText}, ConverterParameter=Regret}" />
 
                                         </HorizontalStackLayout>
                                     </Border>
@@ -892,65 +952,98 @@
 
                             <Border IsVisible="{Binding SelectedItem.IsBought}"
                                     Style="{StaticResource HoverButton}"
-                                    BackgroundColor="{DynamicResource AccentColorAlpha}"
-                                    Stroke="{DynamicResource AccentColor}"
-                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 10"
-                                    Padding="0,9" Margin="0,6,0,0">
+                                    BackgroundColor="{DynamicResource AccentColor}"
+                                    StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                    Padding="0,11" Margin="0,8,0,0">
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding ConvertToExpenseCommand}" />
+                                    <PointerGestureRecognizer PointerPressed="DetailButton_PointerPressed"
+                                                              PointerReleased="DetailButton_PointerReleased" />
                                 </Border.GestureRecognizers>
                                 <HorizontalStackLayout Spacing="6" HorizontalOptions="Center" VerticalOptions="Center">
 
                                     <Label Style="{StaticResource PhosphorIcon}"
                                                Text="{x:Static ph:PhosphorIcons.Receipt}"
-                                               FontSize="20"
-                                               TextColor="{DynamicResource AccentColor}" />
+                                               FontSize="18"
+                                               TextColor="{DynamicResource OnAccentColor}" />
 
                                     <Label Text="Move to Expenses"
-                                       FontSize="12"
+                                       FontSize="13"
                                        FontAttributes="Bold"
-                                       TextColor="{DynamicResource AccentColor}"
+                                       TextColor="{DynamicResource OnAccentColor}"
                                        VerticalOptions="Center" />
 
                                 </HorizontalStackLayout>
                             </Border>
 
-                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8" Margin="0,6,0,0">
+                            <BoxView HeightRequest="0.5" Color="{DynamicResource CardBorder}"
+                                     Margin="0,10,0,4" />
+
+                            <Grid ColumnDefinitions="*,*">
                                 <Border Grid.Column="0" Style="{StaticResource HoverButton}"
-                                        BackgroundColor="{DynamicResource PageBackground}"
-                                        StrokeThickness="0" StrokeShape="RoundRectangle 10"
-                                        Padding="0,9">
+                                        BackgroundColor="Transparent"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 8"
+                                        Padding="8,6" HorizontalOptions="Start">
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding PinItemCommand}" />
+                                        <PointerGestureRecognizer PointerPressed="DetailButton_PointerPressed"
+                                                                  PointerReleased="DetailButton_PointerReleased" />
                                     </Border.GestureRecognizers>
-                                    <HorizontalStackLayout Spacing="4" HorizontalOptions="Center" VerticalOptions="Center">
+                                    <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
 
                                         <Label Style="{StaticResource PhosphorIcon}"
                                                Text="{Binding SelectedItem.IsPinned, Converter={StaticResource BoolToPinIcon}}"
-                                               FontSize="16"
-                                               TextColor="{DynamicResource TextPrimary}" />
+                                               FontSize="14"
+                                               TextColor="{DynamicResource TextSecondary}" />
 
                                         <Label Text="{Binding SelectedItem.IsPinned, Converter={StaticResource BoolToPinLabel}}"
                                                FontSize="12" VerticalOptions="Center"
-                                               TextColor="{DynamicResource TextPrimary}" />
+                                               TextColor="{DynamicResource TextSecondary}" />
 
                                     </HorizontalStackLayout>
                                 </Border>
                                 <Border Grid.Column="1" Style="{StaticResource HoverButton}"
-                                        BackgroundColor="#1Fff3b30"
-                                        StrokeThickness="0" StrokeShape="RoundRectangle 10"
-                                        Padding="0,9">
+                                        BackgroundColor="Transparent"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 8"
+                                        Padding="8,6" HorizontalOptions="End">
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding DeleteWishItemCommand}" />
+                                        <PointerGestureRecognizer PointerPressed="DetailButton_PointerPressed"
+                                                                  PointerReleased="DetailButton_PointerReleased" />
                                     </Border.GestureRecognizers>
-                                    <Label Text="Remove" FontSize="12"
-                                           HorizontalOptions="Center" TextColor="#ff3b30" />
+                                    <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+
+                                        <Label Style="{StaticResource PhosphorIcon}"
+                                               Text="{x:Static ph:PhosphorIcons.Delete}"
+                                               FontSize="14"
+                                               TextColor="#c0392b" />
+
+                                        <Label Text="Remove" FontSize="12"
+                                               TextColor="#c0392b" />
+
+                                    </HorizontalStackLayout>
                                 </Border>
                             </Grid>
 
                         </VerticalStackLayout>
                     </VerticalStackLayout>
                 </ScrollView>
+
+                <Border BackgroundColor="#33000000"
+                        StrokeThickness="0" StrokeShape="RoundRectangle 980"
+                        WidthRequest="30" HeightRequest="30"
+                        HorizontalOptions="End" VerticalOptions="Start"
+                        Margin="0,14,14,0">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding DismissDetailCommand}" />
+                        <PointerGestureRecognizer PointerPressed="DetailButton_PointerPressed"
+                                                  PointerReleased="DetailButton_PointerReleased" />
+                    </Border.GestureRecognizers>
+                    <Label Text="✕" FontSize="13" FontAttributes="Bold"
+                           TextColor="#FFFFFF"
+                           HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
+                </Grid>
             </Border>
         </controls:DrawerHost.DrawerContent>
     </controls:DrawerHost>

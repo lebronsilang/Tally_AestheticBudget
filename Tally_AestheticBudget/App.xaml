@@ -52,6 +52,9 @@
             <converters:StatusToBoughtTextConverter   x:Key="StatusToBoughtText" />
             <converters:BoolToPinLabelConverter       x:Key="BoolToPinLabel" />
             <converters:BoolToPinIconConverter        x:Key="BoolToPinIcon" />
+            <converters:RegretRatingToBgConverter     x:Key="RegretRatingToBg" />
+            <converters:RegretRatingToStrokeConverter x:Key="RegretRatingToStroke" />
+            <converters:RegretRatingToTextConverter   x:Key="RegretRatingToText" />
             <converters:ThemeActiveBorderConverter    x:Key="ThemeActiveBorder" />
             <converters:BoolToToggleAlignConverter x:Key="BoolToToggleAlign" />
             <converters:BoolToIconColorConverter x:Key="BoolToIconColor" />

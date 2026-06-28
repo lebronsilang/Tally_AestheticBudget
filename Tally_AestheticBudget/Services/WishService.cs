@@ -68,6 +68,13 @@ public class WishService : IWishService
         if (item is null) return;
 
         item.Status = status.ToString();
+
+        // Worth it / Regret only makes sense for a bought item — moving status away
+        // from Bought (e.g. back to Planned) should clear any leftover rating instead
+        // of letting a stale "Regret"/"Worth it" badge keep showing on the card.
+        if (status != WishStatus.Bought)
+            item.RegretRating = null;
+
         item.UpdatedAt = DateTime.Now;
         await db.UpdateAsync(item);
     }
