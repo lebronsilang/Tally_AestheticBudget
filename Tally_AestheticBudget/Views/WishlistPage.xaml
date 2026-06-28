@@ -923,9 +923,18 @@
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding PinItemCommand}" />
                                     </Border.GestureRecognizers>
-                                    <Label Text="{Binding SelectedItem.IsPinned, Converter={StaticResource BoolToPinLabel}}"
-                                           FontSize="12" HorizontalOptions="Center"
-                                           TextColor="{DynamicResource TextPrimary}" />
+                                    <HorizontalStackLayout Spacing="4" HorizontalOptions="Center" VerticalOptions="Center">
+
+                                        <Label Style="{StaticResource PhosphorIcon}"
+                                               Text="{Binding SelectedItem.IsPinned, Converter={StaticResource BoolToPinIcon}}"
+                                               FontSize="16"
+                                               TextColor="{DynamicResource TextPrimary}" />
+
+                                        <Label Text="{Binding SelectedItem.IsPinned, Converter={StaticResource BoolToPinLabel}}"
+                                               FontSize="12" VerticalOptions="Center"
+                                               TextColor="{DynamicResource TextPrimary}" />
+
+                                    </HorizontalStackLayout>
                                 </Border>
                                 <Border Grid.Column="1" Style="{StaticResource HoverButton}"
                                         BackgroundColor="#1Fff3b30"

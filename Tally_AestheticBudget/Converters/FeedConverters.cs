@@ -313,7 +313,18 @@ public class StatusToBoughtTextConverter : IValueConverter
 public class BoolToPinLabelConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-        => value is true ? "📌 Unpin" : "📌 Pin";
+        => value is true ? "Unpin" : "Pin";
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+public class BoolToPinIconConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => value is true
+            ? Tally_AestheticBudget.Helpers.PhosphorIcons.PushPinSlash
+            : Tally_AestheticBudget.Helpers.PhosphorIcons.PushPin;
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotImplementedException();

@@ -53,7 +53,8 @@ public static class PhosphorIcons
     public const string Eye = "\uE228";             // "eye"              (Stale Reminder)
     public const string Keyboard = "\uE300";        // "keyboard"         (Item 4 — Shortcuts section)
     public const string ChartBar = "\uE154"; // "chart-bar"   
-    public const string PushPin = "\uE3D6"; // "push-pin"    
+    public const string PushPin = "\uE3E2"; // "push-pin"
+    public const string PushPinSlash = "\uE3E4"; // "push-pin-slash" (unpin state)
 
     // ── Photo source chooser 
     public const string FolderOpen = "\uE256 "; // "folder-open"    

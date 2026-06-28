@@ -51,6 +51,7 @@
             <converters:StatusToBoughtBgConverter     x:Key="StatusToBoughtBg" />
             <converters:StatusToBoughtTextConverter   x:Key="StatusToBoughtText" />
             <converters:BoolToPinLabelConverter       x:Key="BoolToPinLabel" />
+            <converters:BoolToPinIconConverter        x:Key="BoolToPinIcon" />
             <converters:ThemeActiveBorderConverter    x:Key="ThemeActiveBorder" />
             <converters:BoolToToggleAlignConverter x:Key="BoolToToggleAlign" />
             <converters:BoolToIconColorConverter x:Key="BoolToIconColor" />

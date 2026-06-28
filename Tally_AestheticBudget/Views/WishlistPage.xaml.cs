@@ -292,7 +292,25 @@ public partial class WishlistPage : ContentPage
             pinnedBadge.StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = new CornerRadius(980) };
             pinnedBadge.SetDynamicResource(Border.BackgroundColorProperty, "AccentColor");
             pinnedBadge.SetBinding(Border.IsVisibleProperty, "IsPinned");
-            pinnedBadge.Content = new Label { Text = "📌 Pinned", FontSize = 11, FontAttributes = FontAttributes.Bold, TextColor = Colors.White };
+            var pinnedBadgeContent = new HorizontalStackLayout { Spacing = 3, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center };
+            pinnedBadgeContent.Children.Add(new Label
+            {
+                Text = Tally_AestheticBudget.Helpers.PhosphorIcons.PushPin,
+                FontFamily = "PhosphorIcons",
+                FontSize = 11,
+                TextColor = Colors.White,
+                VerticalOptions = LayoutOptions.Center,
+                VerticalTextAlignment = TextAlignment.Center,
+            });
+            pinnedBadgeContent.Children.Add(new Label
+            {
+                Text = "Pinned",
+                FontSize = 11,
+                FontAttributes = FontAttributes.Bold,
+                TextColor = Colors.White,
+                VerticalOptions = LayoutOptions.Center,
+            });
+            pinnedBadge.Content = pinnedBadgeContent;
             root.Children.Add(pinnedBadge);
 
             card.Content = root;
