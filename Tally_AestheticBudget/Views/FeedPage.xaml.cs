@@ -1,6 +1,7 @@
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
 using System.Collections.ObjectModel;
+using Tally_AestheticBudget.Converters;
 using Tally_AestheticBudget.Helpers;
 using Tally_AestheticBudget.Models;
 using Tally_AestheticBudget.Services;
@@ -358,6 +359,8 @@ public partial class FeedPage : ContentPage
             overlayNote.SetBinding(Label.IsVisibleProperty, "ShowNote");
             overlayText.Children.Add(overlayNote);
 
+            // Worth it / Regret now shown in the detail panel instead of the card face.
+
             photoContainer.Children.Add(overlayText);
             root.Children.Add(photoContainer);
 
@@ -477,6 +480,8 @@ public partial class FeedPage : ContentPage
             note.SetBinding(Label.IsVisibleProperty, "ShowNote");
             note.SetDynamicResource(Label.TextColorProperty, "TextSecondary");
             content.Children.Add(note);
+
+            // Worth it / Regret now shown in the detail panel instead of the card face.
 
             regularCard.Children.Add(content);
             Grid.SetRow(regularCard, 0);

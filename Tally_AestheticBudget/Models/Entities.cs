@@ -31,6 +31,10 @@ public class ExpenseEntity
     // Null = standalone expense.
     // Non-null = this row is a line item inside a grocery group with this Id.
     public int? GroceryGroupId { get; set; }
+
+    // Carried over from the Wishlist's "Worth it" / "Regret" rating when an item
+    // is moved to Expenses — null for expenses that never came from a wish.
+    public string? RegretRating { get; set; }
 }
 
 /// <summary>

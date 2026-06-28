@@ -132,7 +132,10 @@ public class WishService : IWishService
             // The photo file is shared — the expense takes ownership; the wish row
             // is deleted below but we deliberately do NOT delete the file here.
             PhotoPath = item.PhotoPath,
-            Date = DateTime.Now
+            Date = DateTime.Now,
+            // Carry the Worth it/Regret rating over so it's still visible on the
+            // Feed card — otherwise the rating just disappears once converted.
+            RegretRating = item.RegretRating
         };
 
         await db.RunInTransactionAsync(tran =>

@@ -1689,6 +1689,36 @@
                             <BoxView HeightRequest="0.5" Color="{DynamicResource CardBorder}"
                                      Margin="0,0,0,10" />
 
+                            <Border IsVisible="{Binding SelectedItem.HasRegretRating}"
+                                    BackgroundColor="{Binding SelectedItem.IsWorthIt, Converter={StaticResource BoolToAffordBg}}"
+                                    Stroke="{Binding SelectedItem.IsWorthIt, Converter={StaticResource BoolToAffordText}}"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 12"
+                                    Padding="12,10"
+                                    Margin="0,0,0,12">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                                    <Label Grid.Column="0"
+                                           Text="{x:Static ph:PhosphorIcons.Heart}"
+                                           FontFamily="PhosphorIcons" FontSize="17"
+                                           TextColor="{Binding SelectedItem.IsWorthIt, Converter={StaticResource BoolToAffordText}}"
+                                           VerticalOptions="Center" />
+                                    <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                                        <Label Text="BOUGHT FROM YOUR WISHLIST"
+                                               FontSize="9.5" FontAttributes="Bold" CharacterSpacing="0.6"
+                                               TextColor="{Binding SelectedItem.IsWorthIt, Converter={StaticResource BoolToAffordText}}"
+                                               Opacity="0.8" />
+                                        <Label Text="{Binding SelectedItem.RegretLabel}"
+                                               FontSize="14.5" FontAttributes="Bold"
+                                               TextColor="{Binding SelectedItem.IsWorthIt, Converter={StaticResource BoolToAffordText}}" />
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="2"
+                                           Text="{Binding SelectedItem.RegretIcon}"
+                                           FontFamily="PhosphorIcons" FontSize="22"
+                                           TextColor="{Binding SelectedItem.IsWorthIt, Converter={StaticResource BoolToAffordText}}"
+                                           VerticalOptions="Center" />
+                                </Grid>
+                            </Border>
+
                             <VerticalStackLayout Spacing="10">
 
                                 <VerticalStackLayout IsVisible="{Binding SelectedItem.HasTitle}" Spacing="3">

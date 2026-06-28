@@ -141,7 +141,8 @@ public class ExpenseService : IExpenseService
                 Title = e.Title,
                 Note = e.Note,
                 Date = e.Date,
-                PhotoPath = e.PhotoPath
+                PhotoPath = e.PhotoPath,
+                RegretRating = e.RegretRating
             });
         }
 

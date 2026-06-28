@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Tally_AestheticBudget.Helpers;
 
 namespace Tally_AestheticBudget.Models;
 
@@ -31,9 +32,17 @@ public partial class FeedCardItem : ObservableObject
     public DateTime Date { get; set; }
     public string? PhotoPath { get; set; }
 
+    // Carried over from the Wishlist's "Worth it" / "Regret" rating when this
+    // expense originated from a converted wish item — null otherwise.
+    public string? RegretRating { get; set; }
+
     public bool HasPhoto => !string.IsNullOrEmpty(PhotoPath);
     public bool HasTitle => !string.IsNullOrEmpty(Title);
     public bool HasNote => !string.IsNullOrEmpty(Note);
+    public bool HasRegretRating => !string.IsNullOrEmpty(RegretRating);
+    public bool IsWorthIt => RegretRating == "Worth";
+    public string RegretLabel => RegretRating == "Worth" ? "Worth it" : "Regret";
+    public string RegretIcon => RegretRating == "Worth" ? PhosphorIcons.WorthIt : PhosphorIcons.Regret;
 
     // Settings-driven visibility set by FeedViewModel during load
     public bool SettingShowNotes { get; set; } = true;
