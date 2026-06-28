@@ -8,6 +8,7 @@
     xmlns:models="clr-namespace:Tally_AestheticBudget.Models"
     xmlns:controls="clr-namespace:Tally_AestheticBudget.Controls"
     xmlns:ph="clr-namespace:Tally_AestheticBudget.Helpers"
+    xmlns:behaviors="clr-namespace:Tally_AestheticBudget.Behaviors"
     x:DataType="vm:BudgetViewModel"
     Shell.NavBarIsVisible="True"
     BackgroundColor="{DynamicResource PageBackground}">
@@ -57,6 +58,9 @@
                                 BackgroundColor="{DynamicResource AccentColor}"
                                 StrokeShape="RoundRectangle 980"
                                 Padding="14,8" VerticalOptions="Center">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding ShowTotalEditorCommand}" />
                             </Border.GestureRecognizers>
@@ -99,12 +103,18 @@
                                     <Label Text="{Binding SelectedDayLabel}" FontSize="14"
                                            FontAttributes="{Binding IsFilterDay, Converter={StaticResource BoolToFontAttr}}"
                                            TextColor="{Binding IsFilterDay, Converter={StaticResource BoolToChipText}}">
+                                        <Label.Behaviors>
+                                            <behaviors:PressScaleBehavior />
+                                        </Label.Behaviors>
                                         <Label.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding FilterDayCommand}" />
                                         </Label.GestureRecognizers>
                                     </Label>
                                     <Border BackgroundColor="Transparent" StrokeThickness="0"
                                             Padding="6,0,6,0" VerticalOptions="Center">
+                                        <Border.Behaviors>
+                                            <behaviors:PressScaleBehavior />
+                                        </Border.Behaviors>
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding ShowDayPickerCommand}" />
                                         </Border.GestureRecognizers>
@@ -125,12 +135,18 @@
                                     <Label Text="{Binding SelectedWeekLabel}" FontSize="14"
                                            FontAttributes="{Binding IsFilterWeek, Converter={StaticResource BoolToFontAttr}}"
                                            TextColor="{Binding IsFilterWeek, Converter={StaticResource BoolToChipText}}">
+                                        <Label.Behaviors>
+                                            <behaviors:PressScaleBehavior />
+                                        </Label.Behaviors>
                                         <Label.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding FilterWeekCommand}" />
                                         </Label.GestureRecognizers>
                                     </Label>
                                     <Border BackgroundColor="Transparent" StrokeThickness="0"
                                             Padding="6,0,6,0" VerticalOptions="Center">
+                                        <Border.Behaviors>
+                                            <behaviors:PressScaleBehavior />
+                                        </Border.Behaviors>
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding ShowWeekPickerCommand}" />
                                         </Border.GestureRecognizers>
@@ -151,12 +167,18 @@
                                     <Label Text="{Binding SelectedMonthLabel}" FontSize="14"
                                            FontAttributes="{Binding IsFilterMonth, Converter={StaticResource BoolToFontAttr}}"
                                            TextColor="{Binding IsFilterMonth, Converter={StaticResource BoolToChipText}}">
+                                        <Label.Behaviors>
+                                            <behaviors:PressScaleBehavior />
+                                        </Label.Behaviors>
                                         <Label.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding FilterMonthCommand}" />
                                         </Label.GestureRecognizers>
                                     </Label>
                                     <Border BackgroundColor="Transparent" StrokeThickness="0"
                                             Padding="6,0,6,0" VerticalOptions="Center">
+                                        <Border.Behaviors>
+                                            <behaviors:PressScaleBehavior />
+                                        </Border.Behaviors>
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding ShowMonthPickerCommand}" />
                                         </Border.GestureRecognizers>
@@ -177,12 +199,18 @@
                                     <Label Text="{Binding SelectedYearLabel}" FontSize="14"
                                            FontAttributes="{Binding IsFilterYear, Converter={StaticResource BoolToFontAttr}}"
                                            TextColor="{Binding IsFilterYear, Converter={StaticResource BoolToChipText}}">
+                                        <Label.Behaviors>
+                                            <behaviors:PressScaleBehavior />
+                                        </Label.Behaviors>
                                         <Label.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding FilterYearCommand}" />
                                         </Label.GestureRecognizers>
                                     </Label>
                                     <Border BackgroundColor="Transparent" StrokeThickness="0"
                                             Padding="6,0,6,0" VerticalOptions="Center">
+                                        <Border.Behaviors>
+                                            <behaviors:PressScaleBehavior />
+                                        </Border.Behaviors>
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding ShowYearPickerCommand}" />
                                         </Border.GestureRecognizers>
@@ -231,6 +259,9 @@
                                                     IsVisible="{Binding ShowEditButton}"
                                                     Style="{StaticResource HoverButton}"
                                                     BackgroundColor="Transparent" Padding="8,4">
+                                                <Border.Behaviors>
+                                                    <behaviors:PressScaleBehavior />
+                                                </Border.Behaviors>
                                                 <Border.GestureRecognizers>
                                                     <TapGestureRecognizer
                                                         Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=StartEditCommand}"
@@ -258,7 +289,7 @@
                                                 <Switch IsToggled="{Binding EditIsUnlimited}"
                                                         OnColor="{DynamicResource AccentColor}"
                                                         ThumbColor="{DynamicResource CardBackground}"
-                                                        VerticalOptions="Center" 
+                                                        VerticalOptions="Center"
                                                         MinimumHeightRequest="32"/>
                                             </HorizontalStackLayout>
                                             <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
@@ -278,6 +309,9 @@
                                                         Style="{StaticResource HoverButton}"
                                                         BackgroundColor="{DynamicResource AccentColor}"
                                                         StrokeShape="RoundRectangle 12" Padding="14,10">
+                                                    <Border.Behaviors>
+                                                        <behaviors:PressScaleBehavior />
+                                                    </Border.Behaviors>
                                                     <Border.GestureRecognizers>
                                                         <TapGestureRecognizer
                                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=SaveLimitCommand}"
@@ -290,6 +324,9 @@
                                                         Style="{StaticResource HoverButton}"
                                                         BackgroundColor="{DynamicResource PageBackground}"
                                                         StrokeShape="RoundRectangle 12" Padding="14,10">
+                                                    <Border.Behaviors>
+                                                        <behaviors:PressScaleBehavior />
+                                                    </Border.Behaviors>
                                                     <Border.GestureRecognizers>
                                                         <TapGestureRecognizer
                                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=CancelEditCommand}"
@@ -356,6 +393,9 @@
                                                         IsVisible="{Binding ShowEditButton}"
                                                         Style="{StaticResource HoverButton}"
                                                         BackgroundColor="Transparent" Padding="8,4">
+                                                    <Border.Behaviors>
+                                                        <behaviors:PressScaleBehavior />
+                                                    </Border.Behaviors>
                                                     <Border.GestureRecognizers>
                                                         <TapGestureRecognizer
                                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=StartEditCommand}"
@@ -403,6 +443,9 @@
                                                             Style="{StaticResource HoverButton}"
                                                             BackgroundColor="{DynamicResource AccentColor}"
                                                             StrokeShape="RoundRectangle 12" Padding="14,10">
+                                                        <Border.Behaviors>
+                                                            <behaviors:PressScaleBehavior />
+                                                        </Border.Behaviors>
                                                         <Border.GestureRecognizers>
                                                             <TapGestureRecognizer
                                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=SaveLimitCommand}"
@@ -415,6 +458,9 @@
                                                             Style="{StaticResource HoverButton}"
                                                             BackgroundColor="{DynamicResource PageBackground}"
                                                             StrokeShape="RoundRectangle 12" Padding="14,10">
+                                                        <Border.Behaviors>
+                                                            <behaviors:PressScaleBehavior />
+                                                        </Border.Behaviors>
                                                         <Border.GestureRecognizers>
                                                             <TapGestureRecognizer
                                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=CancelEditCommand}"
@@ -481,6 +527,9 @@
                                                     IsVisible="{Binding ShowEditButton}"
                                                     Style="{StaticResource HoverButton}"
                                                     BackgroundColor="Transparent" Padding="8,4">
+                                            <Border.Behaviors>
+                                                <behaviors:PressScaleBehavior />
+                                            </Border.Behaviors>
                                             <Border.GestureRecognizers>
                                                 <TapGestureRecognizer
                                                         Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=StartEditCommand}"
@@ -528,6 +577,9 @@
                                                         Style="{StaticResource HoverButton}"
                                                         BackgroundColor="{DynamicResource AccentColor}"
                                                         StrokeShape="RoundRectangle 12" Padding="14,10">
+                                                <Border.Behaviors>
+                                                    <behaviors:PressScaleBehavior />
+                                                </Border.Behaviors>
                                                 <Border.GestureRecognizers>
                                                     <TapGestureRecognizer
                                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=SaveLimitCommand}"
@@ -540,6 +592,9 @@
                                                         Style="{StaticResource HoverButton}"
                                                         BackgroundColor="{DynamicResource PageBackground}"
                                                         StrokeShape="RoundRectangle 12" Padding="14,10">
+                                                <Border.Behaviors>
+                                                    <behaviors:PressScaleBehavior />
+                                                </Border.Behaviors>
                                                 <Border.GestureRecognizers>
                                                     <TapGestureRecognizer
                                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=CancelEditCommand}"
@@ -629,6 +684,9 @@
                     </Border>
                     <Border BackgroundColor="{DynamicResource AccentColor}"
                             StrokeThickness="0" StrokeShape="RoundRectangle 980" Padding="0,13">
+                        <Border.Behaviors>
+                            <behaviors:PressScaleBehavior />
+                        </Border.Behaviors>
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding ConfirmDayPickerCommand}" />
                         </Border.GestureRecognizers>
@@ -667,6 +725,9 @@
                                         Stroke="{Binding IsSelected, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 12" StrokeThickness="0.8"
                                         Padding="14,11" Margin="0,0,0,6">
+                                    <Border.Behaviors>
+                                        <behaviors:PressScaleBehavior />
+                                    </Border.Behaviors>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=SelectWeekCommand}"
@@ -703,6 +764,9 @@
                         <Border Grid.Column="0" BackgroundColor="{DynamicResource PageBackground}"
                                 StrokeThickness="0" StrokeShape="RoundRectangle 980"
                                 WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding PreviousYearCommand}" />
                             </Border.GestureRecognizers>
@@ -716,6 +780,9 @@
                         <Border Grid.Column="2" BackgroundColor="{DynamicResource PageBackground}"
                                 StrokeThickness="0" StrokeShape="RoundRectangle 980"
                                 WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding NextYearCommand}" />
                             </Border.GestureRecognizers>
@@ -734,6 +801,9 @@
                                         Stroke="{Binding IsSelected, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 12" StrokeThickness="0.8"
                                         Padding="0,10" HeightRequest="44">
+                                    <Border.Behaviors>
+                                        <behaviors:PressScaleBehavior />
+                                    </Border.Behaviors>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=SelectMonthCommand}"
@@ -782,6 +852,9 @@
                                         Stroke="{DynamicResource CardBorder}"
                                         StrokeShape="RoundRectangle 12" StrokeThickness="0.8"
                                         Padding="0,12" HeightRequest="48">
+                                    <Border.Behaviors>
+                                        <behaviors:PressScaleBehavior />
+                                    </Border.Behaviors>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=SelectYearCommand}"

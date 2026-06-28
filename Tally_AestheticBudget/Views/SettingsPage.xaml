@@ -6,6 +6,7 @@
     xmlns:vm="clr-namespace:Tally_AestheticBudget.ViewModels"
     xmlns:models="clr-namespace:Tally_AestheticBudget.Models"
     xmlns:ph="clr-namespace:Tally_AestheticBudget.Helpers"
+    xmlns:behaviors="clr-namespace:Tally_AestheticBudget.Behaviors"
     x:DataType="vm:SettingsViewModel"
     Shell.NavBarIsVisible="True"
     BackgroundColor="{DynamicResource PageBackground}">
@@ -118,6 +119,9 @@
                                             <Border BackgroundColor="Transparent"
                                                     StrokeThickness="0"
                                                     Padding="14,10">
+                                                <Border.Behaviors>
+                                                    <behaviors:PressScaleBehavior />
+                                                </Border.Behaviors>
                                                 <Border.GestureRecognizers>
                                                     <TapGestureRecognizer
                                                         Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SettingsViewModel}}, Path=SelectCurrencyCommand}"
@@ -194,6 +198,9 @@
                                         StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
                                         WidthRequest="48" HeightRequest="28"
                                         VerticalOptions="Center">
+                                    <Border.Behaviors>
+                                        <behaviors:PressScaleBehavior />
+                                    </Border.Behaviors>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleShowNotesCommand}" />
                                     </Border.GestureRecognizers>
@@ -231,6 +238,9 @@
                                         StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
                                         WidthRequest="48" HeightRequest="28"
                                         VerticalOptions="Center">
+                                    <Border.Behaviors>
+                                        <behaviors:PressScaleBehavior />
+                                    </Border.Behaviors>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleShowPriceCommand}" />
                                     </Border.GestureRecognizers>
@@ -268,6 +278,9 @@
                                         StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
                                         WidthRequest="48" HeightRequest="28"
                                         VerticalOptions="Center">
+                                    <Border.Behaviors>
+                                        <behaviors:PressScaleBehavior />
+                                    </Border.Behaviors>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleShowDateCommand}" />
                                     </Border.GestureRecognizers>
@@ -309,6 +322,9 @@
                                     Stroke="{Binding AllotRemaining, Converter={StaticResource BoolToChipBorder}}"
                                     StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
                                     WidthRequest="48" HeightRequest="28" VerticalOptions="Center">
+                                <Border.Behaviors>
+                                    <behaviors:PressScaleBehavior />
+                                </Border.Behaviors>
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding ToggleAllotRemainingCommand}" />
                                 </Border.GestureRecognizers>
@@ -355,6 +371,9 @@
                                         StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
                                         WidthRequest="48" HeightRequest="28"
                                         VerticalOptions="Center">
+                                    <Border.Behaviors>
+                                        <behaviors:PressScaleBehavior />
+                                    </Border.Behaviors>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleShowCoolingOffCommand}" />
                                     </Border.GestureRecognizers>
@@ -392,6 +411,9 @@
                                         StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
                                         WidthRequest="48" HeightRequest="28"
                                         VerticalOptions="Center">
+                                    <Border.Behaviors>
+                                        <behaviors:PressScaleBehavior />
+                                    </Border.Behaviors>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleShowStaleReminderCommand}" />
                                     </Border.GestureRecognizers>
@@ -436,6 +458,9 @@
                                     Stroke="{Binding FeedListView, Converter={StaticResource BoolToChipBorder}}"
                                     StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
                                     WidthRequest="48" HeightRequest="28" VerticalOptions="Center">
+                                    <Border.Behaviors>
+                                        <behaviors:PressScaleBehavior />
+                                    </Border.Behaviors>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleFeedListViewCommand}" />
                                     </Border.GestureRecognizers>
@@ -469,6 +494,9 @@
                                     Stroke="{Binding WishlistListView, Converter={StaticResource BoolToChipBorder}}"
                                     StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
                                     WidthRequest="48" HeightRequest="28" VerticalOptions="Center">
+                                    <Border.Behaviors>
+                                        <behaviors:PressScaleBehavior />
+                                    </Border.Behaviors>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleWishlistListViewCommand}" />
                                     </Border.GestureRecognizers>
@@ -506,6 +534,9 @@
                                     Stroke="{Binding ListViewShowsPhoto, Converter={StaticResource BoolToChipBorder}}"
                                     StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
                                     WidthRequest="48" HeightRequest="28" VerticalOptions="Center">
+                                    <Border.Behaviors>
+                                        <behaviors:PressScaleBehavior />
+                                    </Border.Behaviors>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleListViewShowsPhotoCommand}" />
                                     </Border.GestureRecognizers>
@@ -539,6 +570,9 @@
                                     Stroke="{Binding ExpensePanelOnLeft, Converter={StaticResource BoolToChipBorder}}"
                                     StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
                                     WidthRequest="48" HeightRequest="28" VerticalOptions="Center">
+                                    <Border.Behaviors>
+                                        <behaviors:PressScaleBehavior />
+                                    </Border.Behaviors>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleExpensePanelOnLeftCommand}" />
                                     </Border.GestureRecognizers>
@@ -582,6 +616,9 @@
                                         Stroke="{Binding ShowBudgetDonut, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
                                         WidthRequest="48" HeightRequest="28" VerticalOptions="Center">
+                                    <Border.Behaviors>
+                                        <behaviors:PressScaleBehavior />
+                                    </Border.Behaviors>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleShowBudgetDonutCommand}" />
                                     </Border.GestureRecognizers>
@@ -616,6 +653,9 @@
                                         Stroke="{Binding ShowFeedBar, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeThickness="1.5" StrokeShape="RoundRectangle 980"
                                         WidthRequest="48" HeightRequest="28" VerticalOptions="Center">
+                                    <Border.Behaviors>
+                                        <behaviors:PressScaleBehavior />
+                                    </Border.Behaviors>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleShowFeedBarCommand}" />
                                     </Border.GestureRecognizers>
@@ -635,6 +675,9 @@
                            Margin="4,4,0,0" />
 
                     <ContentView>
+                        <ContentView.Behaviors>
+                            <behaviors:PressScaleBehavior />
+                        </ContentView.Behaviors>
                         <ContentView.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding OpenClearDataCommand}" />
                         </ContentView.GestureRecognizers>
@@ -694,6 +737,9 @@
 
                     <Border BackgroundColor="#1Aff3b30" StrokeThickness="0"
                             StrokeShape="RoundRectangle 12" Padding="16,12">
+                        <Border.Behaviors>
+                            <behaviors:PressScaleBehavior />
+                        </Border.Behaviors>
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding ClearExpensesCommand}" />
                         </Border.GestureRecognizers>
@@ -707,6 +753,9 @@
 
                     <Border BackgroundColor="#1Aff3b30" StrokeThickness="0"
                             StrokeShape="RoundRectangle 12" Padding="16,12">
+                        <Border.Behaviors>
+                            <behaviors:PressScaleBehavior />
+                        </Border.Behaviors>
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding ClearGroceriesCommand}" />
                         </Border.GestureRecognizers>
@@ -720,6 +769,9 @@
 
                     <Border BackgroundColor="#1Aff3b30" StrokeThickness="0"
                             StrokeShape="RoundRectangle 12" Padding="16,12">
+                        <Border.Behaviors>
+                            <behaviors:PressScaleBehavior />
+                        </Border.Behaviors>
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding ClearWishlistCommand}" />
                         </Border.GestureRecognizers>
@@ -733,6 +785,9 @@
 
                     <Border BackgroundColor="#ff3b30" StrokeThickness="0"
                             StrokeShape="RoundRectangle 12" Padding="16,12">
+                        <Border.Behaviors>
+                            <behaviors:PressScaleBehavior />
+                        </Border.Behaviors>
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding ClearAllCommand}" />
                         </Border.GestureRecognizers>
@@ -744,6 +799,9 @@
                     <Border BackgroundColor="{DynamicResource PageBackground}"
                             StrokeThickness="0" StrokeShape="RoundRectangle 12"
                             Padding="16,12">
+                        <Border.Behaviors>
+                            <behaviors:PressScaleBehavior />
+                        </Border.Behaviors>
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding DismissClearDataCommand}" />
                         </Border.GestureRecognizers>

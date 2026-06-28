@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:Tally_AestheticBudget.Views"
+    xmlns:behaviors="clr-namespace:Tally_AestheticBudget.Behaviors"
     Shell.TabBarIsVisible="False"
     Shell.NavBarIsVisible="True"
     Shell.BackgroundColor="{DynamicResource CardBackground}">
@@ -32,6 +33,9 @@
                 <Border x:Name="TabFeed"
                         BackgroundColor="Transparent" StrokeThickness="0"
                         StrokeShape="RoundRectangle 980" Padding="14,6">
+                    <Border.Behaviors>
+                        <behaviors:PressScaleBehavior />
+                    </Border.Behaviors>
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="FeedPage" />
                     </Border.GestureRecognizers>
@@ -49,6 +53,9 @@
                 <Border x:Name="TabBudget"
                         BackgroundColor="Transparent" StrokeThickness="0"
                         StrokeShape="RoundRectangle 980" Padding="14,6">
+                    <Border.Behaviors>
+                        <behaviors:PressScaleBehavior />
+                    </Border.Behaviors>
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="BudgetPage" />
                     </Border.GestureRecognizers>
@@ -66,6 +73,9 @@
                 <Border x:Name="TabWishlist"
                         BackgroundColor="Transparent" StrokeThickness="0"
                         StrokeShape="RoundRectangle 980" Padding="14,6">
+                    <Border.Behaviors>
+                        <behaviors:PressScaleBehavior />
+                    </Border.Behaviors>
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="WishlistPage" />
                     </Border.GestureRecognizers>
@@ -83,6 +93,9 @@
                 <Border x:Name="TabGrocery"
                         BackgroundColor="Transparent" StrokeThickness="0"
                         StrokeShape="RoundRectangle 980" Padding="14,6">
+                    <Border.Behaviors>
+                        <behaviors:PressScaleBehavior />
+                    </Border.Behaviors>
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="GroceryPage" />
                     </Border.GestureRecognizers>
@@ -100,6 +113,9 @@
                 <Border x:Name="TabThemes"
                         BackgroundColor="Transparent" StrokeThickness="0"
                         StrokeShape="RoundRectangle 980" Padding="14,6">
+                    <Border.Behaviors>
+                        <behaviors:PressScaleBehavior />
+                    </Border.Behaviors>
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="ThemesPage" />
                     </Border.GestureRecognizers>
@@ -117,6 +133,9 @@
                 <Border x:Name="TabSettings"
                         BackgroundColor="Transparent" StrokeThickness="0"
                         StrokeShape="RoundRectangle 980" Padding="14,6">
+                    <Border.Behaviors>
+                        <behaviors:PressScaleBehavior />
+                    </Border.Behaviors>
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnTabTapped" CommandParameter="SettingsPage" />
                     </Border.GestureRecognizers>

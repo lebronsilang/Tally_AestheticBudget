@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:Tally_AestheticBudget.ViewModels"
     xmlns:models="clr-namespace:Tally_AestheticBudget.Models"
+    xmlns:behaviors="clr-namespace:Tally_AestheticBudget.Behaviors"
     x:DataType="vm:ThemesViewModel"
     Shell.NavBarIsVisible="True"
     BackgroundColor="{DynamicResource PageBackground}">
@@ -36,6 +37,9 @@
                                 <Border BackgroundColor="{Binding IsLightSelected, Converter={StaticResource BoolToChipBg}}"
                                         StrokeThickness="0" StrokeShape="RoundRectangle 980"
                                         Padding="16,8">
+                                    <Border.Behaviors>
+                                        <behaviors:PressScaleBehavior />
+                                    </Border.Behaviors>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding SetLightModeCommand}" />
                                     </Border.GestureRecognizers>
@@ -46,6 +50,9 @@
                                 <Border BackgroundColor="{Binding IsDarkSelected, Converter={StaticResource BoolToChipBg}}"
                                         StrokeThickness="0" StrokeShape="RoundRectangle 980"
                                         Padding="16,8">
+                                    <Border.Behaviors>
+                                        <behaviors:PressScaleBehavior />
+                                    </Border.Behaviors>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding SetDarkModeCommand}" />
                                     </Border.GestureRecognizers>
@@ -85,6 +92,9 @@
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate x:DataType="models:ThemeCardItem">
                                         <ContentView>
+                                            <ContentView.Behaviors>
+                                                <behaviors:PressScaleBehavior />
+                                            </ContentView.Behaviors>
                                             <ContentView.GestureRecognizers>
                                                 <TapGestureRecognizer
                                                     Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ThemesViewModel}}, Path=ApplyThemeCommand}"
@@ -178,6 +188,9 @@
                                             <Shadow Brush="#40000000" Offset="0,4"
                                                     Radius="8" Opacity="0.15" />
                                         </Border.Shadow>
+                                        <Border.Behaviors>
+                                            <behaviors:PressScaleBehavior />
+                                        </Border.Behaviors>
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding OpenColorPickerCommand}" CommandParameter="bg" />
                                             <PointerGestureRecognizer
@@ -202,6 +215,9 @@
                                             <Shadow Brush="#40000000" Offset="0,4"
                                                     Radius="8" Opacity="0.15" />
                                         </Border.Shadow>
+                                        <Border.Behaviors>
+                                            <behaviors:PressScaleBehavior />
+                                        </Border.Behaviors>
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding OpenColorPickerCommand}" CommandParameter="accent" />
                                             <PointerGestureRecognizer
@@ -226,6 +242,9 @@
                                             <Shadow Brush="#40000000" Offset="0,4"
                                                     Radius="8" Opacity="0.15" />
                                         </Border.Shadow>
+                                        <Border.Behaviors>
+                                            <behaviors:PressScaleBehavior />
+                                        </Border.Behaviors>
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding OpenColorPickerCommand}" CommandParameter="card" />
                                             <PointerGestureRecognizer
@@ -250,6 +269,9 @@
                                             <Shadow Brush="#40000000" Offset="0,4"
                                                     Radius="8" Opacity="0.15" />
                                         </Border.Shadow>
+                                        <Border.Behaviors>
+                                            <behaviors:PressScaleBehavior />
+                                        </Border.Behaviors>
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding OpenColorPickerCommand}" CommandParameter="text" />
                                             <PointerGestureRecognizer
@@ -269,6 +291,9 @@
                                 StrokeShape="RoundRectangle 980"
                                 Padding="36,14"
                                 HorizontalOptions="Center">
+                                <Border.Behaviors>
+                                    <behaviors:PressScaleBehavior />
+                                </Border.Behaviors>
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding ApplyCustomThemeCommand}" />
                                 </Border.GestureRecognizers>
@@ -300,6 +325,9 @@
                                         BackgroundColor="{DynamicResource PageBackground}"
                                         StrokeThickness="0" StrokeShape="RoundRectangle 10"
                                         Padding="12,6">
+                                    <Border.Behaviors>
+                                        <behaviors:PressScaleBehavior />
+                                    </Border.Behaviors>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding PreviousMonthlyYearCommand}" />
                                     </Border.GestureRecognizers>
@@ -315,6 +343,9 @@
                                         BackgroundColor="{DynamicResource PageBackground}"
                                         StrokeThickness="0" StrokeShape="RoundRectangle 10"
                                         Padding="12,6">
+                                    <Border.Behaviors>
+                                        <behaviors:PressScaleBehavior />
+                                    </Border.Behaviors>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding NextMonthlyYearCommand}" />
                                     </Border.GestureRecognizers>
@@ -345,6 +376,9 @@
                                                 StrokeShape="RoundRectangle 14"
                                                 HeightRequest="160"
                                                 Padding="0">
+                                            <Border.Behaviors>
+                                                <behaviors:PressScaleBehavior />
+                                            </Border.Behaviors>
                                             <Border.GestureRecognizers>
                                                 <TapGestureRecognizer
                                                     Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ThemesViewModel}}, Path=OpenMonthThemePickerCommand}"
@@ -460,6 +494,9 @@
                                 BackgroundColor="{DynamicResource PageBackground}"
                                 StrokeThickness="0" StrokeShape="RoundRectangle 980"
                                 WidthRequest="28" HeightRequest="28">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding DismissColorPickerCommand}" />
                             </Border.GestureRecognizers>
@@ -486,6 +523,9 @@
                                     StrokeThickness="0" StrokeShape="RoundRectangle 10"
                                     WidthRequest="72" HeightRequest="36"
                                     VerticalOptions="Center" Margin="0,0,5,0">
+                                <Border.Behaviors>
+                                    <behaviors:PressScaleBehavior />
+                                </Border.Behaviors>
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding ApplyHexInputCommand}" />
                                 </Border.GestureRecognizers>
@@ -501,36 +541,57 @@
 
                     <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
                         <Border BackgroundColor="#ffffff" StrokeThickness="0.5" Stroke="{DynamicResource CardBorder}" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#ffffff"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#f5f5f7" StrokeThickness="0.5" Stroke="{DynamicResource CardBorder}" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#f5f5f7"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#fff0f5" StrokeThickness="0.5" Stroke="{DynamicResource CardBorder}" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#fff0f5"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#f2ede8" StrokeThickness="0.5" Stroke="{DynamicResource CardBorder}" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#f2ede8"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#eef4fb" StrokeThickness="0.5" Stroke="{DynamicResource CardBorder}" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#eef4fb"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#edf4ee" StrokeThickness="0.5" Stroke="{DynamicResource CardBorder}" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#edf4ee"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#0f0f14" StrokeThickness="0.5" Stroke="{DynamicResource CardBorder}" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#0f0f14"/>
                             </Border.GestureRecognizers>
@@ -538,36 +599,57 @@
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
                         <Border BackgroundColor="#ff6b6b" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#ff6b6b"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#e8739a" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#e8739a"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#ff3b30" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#ff3b30"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#ff2d55" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#ff2d55"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#c0392b" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#c0392b"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#fd79a8" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#fd79a8"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#e84393" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#e84393"/>
                             </Border.GestureRecognizers>
@@ -575,36 +657,57 @@
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
                         <Border BackgroundColor="#a78bfa" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#a78bfa"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#9b59b6" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#9b59b6"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#6c5ce7" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#6c5ce7"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#3a8fc4" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#3a8fc4"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#0984e3" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#0984e3"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#12cbc4" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#12cbc4"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#006266" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#006266"/>
                             </Border.GestureRecognizers>
@@ -612,36 +715,57 @@
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
                         <Border BackgroundColor="#4a9e5c" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#4a9e5c"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#00b894" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#00b894"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#55efc4" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#55efc4"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#a0714f" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#a0714f"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#e67e22" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#e67e22"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#fdcb6e" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#fdcb6e"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#f9ca24" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#f9ca24"/>
                             </Border.GestureRecognizers>
@@ -649,36 +773,57 @@
                     </HorizontalStackLayout>
                     <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
                         <Border BackgroundColor="#1d1d1f" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#1d1d1f"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#2c1f14" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#2c1f14"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#0d2a40" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#0d2a40"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#1a2e1c" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#1a2e1c"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#2d3436" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#2d3436"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#636e72" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#636e72"/>
                             </Border.GestureRecognizers>
                         </Border>
                         <Border BackgroundColor="#b2bec3" StrokeThickness="0" StrokeShape="RoundRectangle 8" WidthRequest="36" HeightRequest="36">
+                            <Border.Behaviors>
+                                <behaviors:PressScaleBehavior />
+                            </Border.Behaviors>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectColorCommand}" CommandParameter="#b2bec3"/>
                             </Border.GestureRecognizers>
@@ -725,6 +870,9 @@
                             <DataTemplate x:DataType="vm:ThemePickerOption">
                                 <Border BackgroundColor="Transparent"
                                         StrokeThickness="0" Padding="10,9">
+                                    <Border.Behaviors>
+                                        <behaviors:PressScaleBehavior />
+                                    </Border.Behaviors>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ThemesViewModel}}, Path=SelectMonthThemeCommand}"
