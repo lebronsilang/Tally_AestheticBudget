@@ -9,13 +9,16 @@
     Shell.BackgroundColor="{DynamicResource CardBackground}">
 
     <Shell.TitleView>
-        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="0"
+        <Grid ColumnDefinitions="160,*,160" ColumnSpacing="0"
               BackgroundColor="{DynamicResource CardBackground}"
               Padding="16,0">
 
-            <!-- Brand / filter header -->
-            <HorizontalStackLayout x:Name="HeaderInfo" Grid.Column="0" Spacing="4" VerticalOptions="Center">
+            <!-- Brand / filter header — fixed-width column so its text length never
+                 shifts the centered nav tabs in the middle column -->
+            <HorizontalStackLayout x:Name="HeaderInfo" Grid.Column="0" Spacing="4"
+                                   HorizontalOptions="Start" VerticalOptions="Center">
                 <Label Text="{Binding Text}" FontFamily="DisplayFont" FontSize="18"
+                       LineBreakMode="NoWrap"
                        TextColor="{DynamicResource AccentColor}" VerticalOptions="Center" />
                 <Label Text="✦" FontSize="14" IsVisible="{Binding ShowBrandMark}"
                        TextColor="{DynamicResource AccentColor}" VerticalOptions="Center" />
@@ -129,7 +132,7 @@
 
             </HorizontalStackLayout>
 
-            <BoxView Grid.Column="2" WidthRequest="80" BackgroundColor="Transparent" />
+            <BoxView Grid.Column="2" BackgroundColor="Transparent" />
 
         </Grid>
     </Shell.TitleView>

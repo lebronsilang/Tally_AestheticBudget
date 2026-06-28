@@ -790,56 +790,52 @@
                                 </BoxView.Background>
                             </BoxView>
 
-                            <VerticalStackLayout Spacing="3" VerticalOptions="End"
+                            <VerticalStackLayout Spacing="2" VerticalOptions="End"
                                                   Padding="18,0,18,16">
-                                <HorizontalStackLayout Spacing="6">
-                                    <Label Text="{Binding SelectedItem.PriorityLabel}"
-                                           FontSize="11" FontAttributes="Bold"
-                                           TextColor="#FFFFFF" />
-                                    <Label Text="·" FontSize="11"
-                                           TextColor="#CCFFFFFF" />
+                                <HorizontalStackLayout Spacing="5">
                                     <Label Text="{Binding SelectedItem.CategoryLabel}"
                                            FontSize="11" FontAttributes="Bold"
-                                           TextColor="#CCFFFFFF"
-                                           TextTransform="Uppercase" CharacterSpacing="0.4" />
+                                           CharacterSpacing="0.5" TextTransform="Uppercase"
+                                           TextColor="#CCFFFFFF" />
+                                    <Label Text="·" FontSize="11"
+                                           TextColor="#99FFFFFF"
+                                           IsVisible="{Binding SelectedItem.TargetMonthFormatted, Converter={StaticResource StringToBool}}" />
+                                    <Label Text="{Binding SelectedItem.TargetMonthFormatted}"
+                                           FontSize="11" TextColor="#99FFFFFF"
+                                           IsVisible="{Binding SelectedItem.TargetMonthFormatted, Converter={StaticResource StringToBool}}" />
                                 </HorizontalStackLayout>
 
                                 <Label Text="{Binding SelectedItem.Name}"
-                                       FontSize="19" FontAttributes="Bold"
-                                       TextColor="#FFFFFF" />
-                                <Label Text="{Binding SelectedItem.PriceFormatted}"
                                        FontSize="17" FontAttributes="Bold"
+                                       TextColor="#FFFFFF" Margin="0,4,0,0" />
+                                <Label Text="{Binding SelectedItem.PriceFormatted}"
+                                       FontSize="15" FontAttributes="Bold"
                                        TextColor="#FFFFFF" />
-                                <Label Text="{Binding SelectedItem.TargetMonthFormatted}"
-                                       IsVisible="{Binding SelectedItem.TargetMonthFormatted, Converter={StaticResource StringToBool}}"
-                                       FontSize="12" TextColor="#CCFFFFFF" />
                             </VerticalStackLayout>
                         </Grid>
 
                         <!-- No-photo fallback: same info, plain layout, no overlay -->
                         <VerticalStackLayout Padding="18,18,18,0" Spacing="6"
                                              IsVisible="{Binding SelectedItem.HasPhoto, Converter={StaticResource InverseBool}}">
-                            <HorizontalStackLayout Spacing="6">
-                                <Label Text="{Binding SelectedItem.PriorityLabel}"
-                                       FontSize="11" FontAttributes="Bold"
-                                       TextColor="{DynamicResource AccentColor}" />
-                                <Label Text="·" FontSize="11"
-                                       TextColor="{DynamicResource TextSecondary}" />
+                            <HorizontalStackLayout Spacing="5">
                                 <Label Text="{Binding SelectedItem.CategoryLabel}"
                                        FontSize="11" FontAttributes="Bold"
+                                       CharacterSpacing="0.5" TextTransform="Uppercase"
+                                       TextColor="{DynamicResource TextSecondary}" />
+                                <Label Text="·" FontSize="11"
                                        TextColor="{DynamicResource TextSecondary}"
-                                       TextTransform="Uppercase" CharacterSpacing="0.4" />
+                                       IsVisible="{Binding SelectedItem.TargetMonthFormatted, Converter={StaticResource StringToBool}}" />
+                                <Label Text="{Binding SelectedItem.TargetMonthFormatted}"
+                                       FontSize="11" TextColor="{DynamicResource TextSecondary}"
+                                       IsVisible="{Binding SelectedItem.TargetMonthFormatted, Converter={StaticResource StringToBool}}" />
                             </HorizontalStackLayout>
 
                             <Label Text="{Binding SelectedItem.Name}"
                                    FontSize="18" FontAttributes="Bold"
-                                   TextColor="{DynamicResource TextPrimary}" />
+                                   TextColor="{DynamicResource TextPrimary}" Margin="0,4,0,0" />
                             <Label Text="{Binding SelectedItem.PriceFormatted}"
                                    FontSize="16" FontAttributes="Bold"
                                    TextColor="{DynamicResource AccentColor}" />
-                            <Label Text="{Binding SelectedItem.TargetMonthFormatted}"
-                                   IsVisible="{Binding SelectedItem.TargetMonthFormatted, Converter={StaticResource StringToBool}}"
-                                   FontSize="12" TextColor="{DynamicResource TextSecondary}" />
                         </VerticalStackLayout>
 
                         <VerticalStackLayout Padding="18,14,18,18" Spacing="6">
