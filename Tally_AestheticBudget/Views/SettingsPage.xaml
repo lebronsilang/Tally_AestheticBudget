@@ -204,7 +204,7 @@
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleShowNotesCommand}" />
                                     </Border.GestureRecognizers>
-                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                    <Border BackgroundColor="{DynamicResource OnAccentColor}" StrokeThickness="0"
                                             StrokeShape="RoundRectangle 980"
                                             WidthRequest="20" HeightRequest="20"
                                             HorizontalOptions="{Binding ShowNotes, Converter={StaticResource BoolToToggleAlign}}"
@@ -244,7 +244,7 @@
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleShowPriceCommand}" />
                                     </Border.GestureRecognizers>
-                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                    <Border BackgroundColor="{DynamicResource OnAccentColor}" StrokeThickness="0"
                                             StrokeShape="RoundRectangle 980"
                                             WidthRequest="20" HeightRequest="20"
                                             HorizontalOptions="{Binding ShowPrice, Converter={StaticResource BoolToToggleAlign}}"
@@ -284,7 +284,7 @@
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleShowDateCommand}" />
                                     </Border.GestureRecognizers>
-                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                    <Border BackgroundColor="{DynamicResource OnAccentColor}" StrokeThickness="0"
                                             StrokeShape="RoundRectangle 980"
                                             WidthRequest="20" HeightRequest="20"
                                             HorizontalOptions="{Binding ShowDate, Converter={StaticResource BoolToToggleAlign}}"
@@ -328,7 +328,7 @@
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding ToggleAllotRemainingCommand}" />
                                 </Border.GestureRecognizers>
-                                <Border BackgroundColor="White" StrokeThickness="0"
+                                <Border BackgroundColor="{DynamicResource OnAccentColor}" StrokeThickness="0"
                                         StrokeShape="RoundRectangle 980"
                                         WidthRequest="20" HeightRequest="20"
                                         HorizontalOptions="{Binding AllotRemaining, Converter={StaticResource BoolToToggleAlign}}"
@@ -377,7 +377,7 @@
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleShowCoolingOffCommand}" />
                                     </Border.GestureRecognizers>
-                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                    <Border BackgroundColor="{DynamicResource OnAccentColor}" StrokeThickness="0"
                                             StrokeShape="RoundRectangle 980"
                                             WidthRequest="20" HeightRequest="20"
                                             HorizontalOptions="{Binding ShowCoolingOff, Converter={StaticResource BoolToToggleAlign}}"
@@ -417,7 +417,7 @@
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleShowStaleReminderCommand}" />
                                     </Border.GestureRecognizers>
-                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                    <Border BackgroundColor="{DynamicResource OnAccentColor}" StrokeThickness="0"
                                             StrokeShape="RoundRectangle 980"
                                             WidthRequest="20" HeightRequest="20"
                                             HorizontalOptions="{Binding ShowStaleReminder, Converter={StaticResource BoolToToggleAlign}}"
@@ -464,7 +464,7 @@
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleFeedListViewCommand}" />
                                     </Border.GestureRecognizers>
-                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                    <Border BackgroundColor="{DynamicResource OnAccentColor}" StrokeThickness="0"
                                         StrokeShape="RoundRectangle 980"
                                         WidthRequest="20" HeightRequest="20"
                                         HorizontalOptions="{Binding FeedListView, Converter={StaticResource BoolToToggleAlign}}"
@@ -500,7 +500,7 @@
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleWishlistListViewCommand}" />
                                     </Border.GestureRecognizers>
-                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                    <Border BackgroundColor="{DynamicResource OnAccentColor}" StrokeThickness="0"
                                         StrokeShape="RoundRectangle 980"
                                         WidthRequest="20" HeightRequest="20"
                                         HorizontalOptions="{Binding WishlistListView, Converter={StaticResource BoolToToggleAlign}}"
@@ -536,7 +536,7 @@
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleListViewShowsPhotoCommand}" />
                                     </Border.GestureRecognizers>
-                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                    <Border BackgroundColor="{DynamicResource OnAccentColor}" StrokeThickness="0"
                                         StrokeShape="RoundRectangle 980"
                                         WidthRequest="20" HeightRequest="20"
                                         HorizontalOptions="{Binding ListViewShowsPhoto, Converter={StaticResource BoolToToggleAlign}}"
@@ -572,7 +572,7 @@
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleExpensePanelOnLeftCommand}" />
                                     </Border.GestureRecognizers>
-                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                    <Border BackgroundColor="{DynamicResource OnAccentColor}" StrokeThickness="0"
                                         StrokeShape="RoundRectangle 980"
                                         WidthRequest="20" HeightRequest="20"
                                         HorizontalOptions="{Binding ExpensePanelOnLeft, Converter={StaticResource BoolToToggleAlign}}"
@@ -618,7 +618,7 @@
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleShowBudgetDonutCommand}" />
                                     </Border.GestureRecognizers>
-                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                    <Border BackgroundColor="{DynamicResource OnAccentColor}" StrokeThickness="0"
                                             StrokeShape="RoundRectangle 980"
                                             WidthRequest="20" HeightRequest="20"
                                             HorizontalOptions="{Binding ShowBudgetDonut, Converter={StaticResource BoolToToggleAlign}}"
@@ -655,7 +655,7 @@
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleShowFeedBarCommand}" />
                                     </Border.GestureRecognizers>
-                                    <Border BackgroundColor="White" StrokeThickness="0"
+                                    <Border BackgroundColor="{DynamicResource OnAccentColor}" StrokeThickness="0"
                                             StrokeShape="RoundRectangle 980"
                                             WidthRequest="20" HeightRequest="20"
                                             HorizontalOptions="{Binding ShowFeedBar, Converter={StaticResource BoolToToggleAlign}}"
