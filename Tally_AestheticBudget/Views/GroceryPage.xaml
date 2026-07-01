@@ -110,7 +110,7 @@
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding FilterAllCommand}" />
                                         </Border.GestureRecognizers>
-                                        <Label Text="All" FontSize="13"
+                                        <Label Text="All" FontSize="14"
                                FontAttributes="{Binding IsFilterAll, Converter={StaticResource BoolToFontAttr}}"
                                TextColor="{Binding IsFilterAll, Converter={StaticResource BoolToChipText}}" />
                                     </Border>

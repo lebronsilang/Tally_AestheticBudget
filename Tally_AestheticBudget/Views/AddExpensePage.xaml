@@ -41,18 +41,18 @@
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding CancelCommand}" />
                             </Border.GestureRecognizers>
-                            <Label Text="✕" FontSize="12" TextColor="{DynamicResource TextSecondary}"
+                            <Label Text="✕" FontSize="13" TextColor="{DynamicResource TextSecondary}"
                                    HorizontalOptions="Center" VerticalOptions="Center" />
                         </Border>
                     </Grid>
 
                     <!-- Title -->
-                    <VerticalStackLayout Spacing="5">
+                    <VerticalStackLayout Spacing="8">
                         <Label Text="Title" FontSize="11" FontAttributes="Bold"
                                TextColor="{DynamicResource TextPrimary}" />
                         <Border BackgroundColor="{DynamicResource PageBackground}"
                                 Stroke="{DynamicResource CardBorder}"
-                                StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,0">
+                                StrokeThickness="0.8" StrokeShape="RoundRectangle 12" Padding="12,0">
                             <Entry Text="{Binding Title}" Placeholder="e.g. Lunch with friends"
                                    PlaceholderColor="{DynamicResource TextSecondary}" FontSize="13"
                                    TextColor="{DynamicResource TextPrimary}"
@@ -61,12 +61,12 @@
                     </VerticalStackLayout>
 
                     <!-- Amount -->
-                    <VerticalStackLayout Spacing="5">
+                    <VerticalStackLayout Spacing="8">
                         <Label Text="{Binding AmountLabel}" FontSize="11" FontAttributes="Bold"
                                TextColor="{DynamicResource TextPrimary}" />
                         <Border BackgroundColor="{DynamicResource PageBackground}"
                                 Stroke="{DynamicResource CardBorder}"
-                                StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,0">
+                                StrokeThickness="0.8" StrokeShape="RoundRectangle 12" Padding="12,0">
                             <Entry Text="{Binding AmountText}" Placeholder="0.00"
                                    PlaceholderColor="{DynamicResource TextSecondary}" Keyboard="Numeric" FontSize="13"
                                    TextColor="{DynamicResource TextPrimary}"
@@ -75,7 +75,7 @@
                     </VerticalStackLayout>
 
                     <!-- Category -->
-                    <VerticalStackLayout Spacing="5">
+                    <VerticalStackLayout Spacing="8">
                         <Label Text="Category" FontSize="11" FontAttributes="Bold"
                                TextColor="{DynamicResource TextPrimary}" />
                         <FlexLayout Wrap="Wrap" Direction="Row" JustifyContent="Start" AlignItems="Center">
@@ -89,7 +89,7 @@
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding SelectCategoryCommand}" CommandParameter="Food" />
                                 </Border.GestureRecognizers>
-                                <Label Text="🍜 Food" FontSize="12"
+                                <Label Text="🍜 Food" FontSize="13"
                                        TextColor="{Binding IsFoodSelected, Converter={StaticResource BoolToChipText}}" />
                             </Border>
                             <Border BackgroundColor="{Binding IsTransportSelected, Converter={StaticResource BoolToChipBg}}"
@@ -102,7 +102,7 @@
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding SelectCategoryCommand}" CommandParameter="Transport" />
                                 </Border.GestureRecognizers>
-                                <Label Text="🚌 Transport" FontSize="12"
+                                <Label Text="🚌 Transport" FontSize="13"
                                        TextColor="{Binding IsTransportSelected, Converter={StaticResource BoolToChipText}}" />
                             </Border>
                             <Border BackgroundColor="{Binding IsShoppingSelected, Converter={StaticResource BoolToChipBg}}"
@@ -115,7 +115,7 @@
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding SelectCategoryCommand}" CommandParameter="Shopping" />
                                 </Border.GestureRecognizers>
-                                <Label Text="🛍️ Shopping" FontSize="12"
+                                <Label Text="🛍️ Shopping" FontSize="13"
                                        TextColor="{Binding IsShoppingSelected, Converter={StaticResource BoolToChipText}}" />
                             </Border>
                             <Border BackgroundColor="{Binding IsHealthSelected, Converter={StaticResource BoolToChipBg}}"
@@ -128,7 +128,7 @@
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding SelectCategoryCommand}" CommandParameter="Health" />
                                 </Border.GestureRecognizers>
-                                <Label Text="💊 Health" FontSize="12"
+                                <Label Text="💊 Health" FontSize="13"
                                        TextColor="{Binding IsHealthSelected, Converter={StaticResource BoolToChipText}}" />
                             </Border>
                             <Border BackgroundColor="{Binding IsFunSelected, Converter={StaticResource BoolToChipBg}}"
@@ -141,7 +141,7 @@
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding SelectCategoryCommand}" CommandParameter="Fun" />
                                 </Border.GestureRecognizers>
-                                <Label Text="🎬 Fun" FontSize="12"
+                                <Label Text="🎬 Fun" FontSize="13"
                                        TextColor="{Binding IsFunSelected, Converter={StaticResource BoolToChipText}}" />
                             </Border>
                             <Border BackgroundColor="{Binding IsOtherSelected, Converter={StaticResource BoolToChipBg}}"
@@ -154,19 +154,19 @@
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding SelectCategoryCommand}" CommandParameter="Other" />
                                 </Border.GestureRecognizers>
-                                <Label Text="✨ Other" FontSize="12"
+                                <Label Text="✨ Other" FontSize="13"
                                        TextColor="{Binding IsOtherSelected, Converter={StaticResource BoolToChipText}}" />
                             </Border>
                         </FlexLayout>
                     </VerticalStackLayout>
 
                     <!-- Note -->
-                    <VerticalStackLayout Spacing="5">
+                    <VerticalStackLayout Spacing="8">
                         <Label Text="Note (optional)" FontSize="11" FontAttributes="Bold"
                                TextColor="{DynamicResource TextPrimary}" />
                         <Border BackgroundColor="{DynamicResource PageBackground}"
                                 Stroke="{DynamicResource CardBorder}"
-                                StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,0">
+                                StrokeThickness="0.8" StrokeShape="RoundRectangle 12" Padding="12,0">
                             <Entry Text="{Binding Note}" Placeholder="Any extra details..."
                                    PlaceholderColor="{DynamicResource TextSecondary}" FontSize="13"
                                    TextColor="{DynamicResource TextPrimary}"
@@ -175,12 +175,12 @@
                     </VerticalStackLayout>
 
                     <!-- Date -->
-                    <VerticalStackLayout Spacing="5">
+                    <VerticalStackLayout Spacing="8">
                         <Label Text="Date" FontSize="11" FontAttributes="Bold"
                                TextColor="{DynamicResource TextPrimary}" />
                         <Border BackgroundColor="{DynamicResource PageBackground}"
                                 Stroke="{DynamicResource CardBorder}"
-                                StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,4">
+                                StrokeThickness="0.8" StrokeShape="RoundRectangle 12" Padding="12,4">
                             <DatePicker Date="{Binding SelectedDate}" Format="MMMM dd, yyyy"
                                         FontSize="13" TextColor="{DynamicResource TextPrimary}"
                                         BackgroundColor="Transparent" />
@@ -188,13 +188,13 @@
                     </VerticalStackLayout>
 
                     <!-- Photo -->
-                    <VerticalStackLayout Spacing="5">
+                    <VerticalStackLayout Spacing="8">
                         <Label Text="Photo (optional)" FontSize="11" FontAttributes="Bold"
                                TextColor="{DynamicResource TextPrimary}" />
                         <Border IsVisible="{Binding HasPhoto, Converter={StaticResource InverseBool}}"
                                 BackgroundColor="{DynamicResource PageBackground}"
                                 Stroke="{DynamicResource CardBorder}"
-                                StrokeThickness="0.8" StrokeShape="RoundRectangle 10" HeightRequest="72">
+                                StrokeThickness="0.8" StrokeShape="RoundRectangle 12" HeightRequest="72">
                             <Border.Behaviors>
                                 <behaviors:PressScaleBehavior />
                             </Border.Behaviors>
@@ -210,7 +210,7 @@
                         <VerticalStackLayout IsVisible="{Binding HasPhoto}" Spacing="0">
                             <Border BackgroundColor="{DynamicResource PageBackground}"
                                     Stroke="{DynamicResource CardBorder}"
-                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="0">
+                                    StrokeThickness="0.8" StrokeShape="RoundRectangle 12" Padding="0">
                                 <Grid RowDefinitions="Auto,Auto">
                                     <Image Grid.Row="0" Source="{Binding PhotoPath}"
                                            Aspect="AspectFill" HeightRequest="110">
@@ -226,7 +226,7 @@
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding RemovePhotoCommand}" />
                                         </Border.GestureRecognizers>
-                                        <Label Text="✕ Remove photo" FontSize="12"
+                                        <Label Text="✕ Remove photo" FontSize="13"
                                                TextColor="#ff3b30" HorizontalOptions="Center" />
                                     </Border>
                                 </Grid>
