@@ -15,8 +15,6 @@ public partial class AppShell : Shell
         _header = header;
         HeaderInfo.BindingContext = header;
 
-        Routing.RegisterRoute(nameof(AddExpensePage), typeof(AddExpensePage));
-
         _tabs = new()
         {
             ["FeedPage"] = (TabFeed, TabFeedIcon, TabFeedLabel),

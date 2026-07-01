@@ -49,7 +49,6 @@ public static class MauiProgram
 
         // ── Pages ─────────────────────────────────────────────────────────────
         builder.Services.AddTransient<FeedPage>();
-        builder.Services.AddTransient<AddExpensePage>();
         builder.Services.AddTransient<BudgetPage>();
         builder.Services.AddTransient<GroceryPage>();
         builder.Services.AddTransient<WishlistPage>();
