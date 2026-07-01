@@ -840,9 +840,9 @@
                                              HorizontalItemSpacing="8" VerticalItemSpacing="8" />
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="x:Int32">
-                                <Border BackgroundColor="{DynamicResource PageBackground}"
-                                        Stroke="{DynamicResource CardBorder}"
+                            <DataTemplate x:DataType="models:YearOption">
+                                <Border BackgroundColor="{Binding IsSelected, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding IsSelected, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 12" StrokeThickness="0.8"
                                         Padding="0,12" HeightRequest="48">
                                     <Border.Behaviors>
@@ -851,11 +851,11 @@
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BudgetViewModel}}, Path=SelectYearCommand}"
-                                            CommandParameter="{Binding .}" />
+                                            CommandParameter="{Binding Year}" />
                                     </Border.GestureRecognizers>
-                                    <Label Text="{Binding .}" FontSize="14"
+                                    <Label Text="{Binding Year}" FontSize="14"
                                            HorizontalOptions="Center" VerticalOptions="Center"
-                                           TextColor="{DynamicResource TextPrimary}" />
+                                           TextColor="{Binding IsSelected, Converter={StaticResource BoolToChipText}}" />
                                 </Border>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>

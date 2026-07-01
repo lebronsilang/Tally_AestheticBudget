@@ -119,3 +119,14 @@ public partial class WeekOption : ObservableObject
     /// <summary>See MonthOption.RaiseThemeBindings — same purpose for the week picker cells.</summary>
     public void RaiseThemeBindings() => OnPropertyChanged(nameof(IsSelected));
 }
+
+public partial class YearOption : ObservableObject
+{
+    public int Year { get; set; }
+
+    [ObservableProperty]
+    private bool _isSelected;
+
+    /// <summary>See MonthOption.RaiseThemeBindings — same purpose for the year picker cells.</summary>
+    public void RaiseThemeBindings() => OnPropertyChanged(nameof(IsSelected));
+}

@@ -12,6 +12,7 @@ namespace Tally_AestheticBudget.ViewModels;
 public partial class BudgetViewModel : ObservableObject
 {
     private readonly IBudgetService _budgetService;
+    private readonly IExpenseService _expenseService;
     private readonly ISettingsService _settings;
     private readonly DataChangedService _dataChanged;
     private readonly IThemeService _themeService;
@@ -20,10 +21,12 @@ public partial class BudgetViewModel : ObservableObject
     private bool _isDirty = true;
     private decimal _lastTotalLimit;   // captured each load for the editor prefill
 
-    public BudgetViewModel(IBudgetService budgetService, ISettingsService settings,
-        DataChangedService dataChanged, IThemeService themeService, HeaderState header)
+    public BudgetViewModel(IBudgetService budgetService, IExpenseService expenseService,
+        ISettingsService settings, DataChangedService dataChanged,
+        IThemeService themeService, HeaderState header)
     {
         _budgetService = budgetService;
+        _expenseService = expenseService;
         _settings = settings;
         _dataChanged = dataChanged;
         _themeService = themeService;
@@ -166,7 +169,7 @@ public partial class BudgetViewModel : ObservableObject
     // ── Year picker ──────────────────────────────────────────────────────────────
     [ObservableProperty] private bool _isYearPickerVisible;
     private int _pickerFilterYear;
-    public List<int> YearList { get; } = Enumerable.Range(DateTime.Now.Year - 5, 6).Reverse().ToList();
+    [ObservableProperty] private List<YearOption> _yearList = [];
     public string SelectedYearLabel => _activeFilter == BudgetFilterMode.Year
         ? (_pickerFilterYear == DateTime.Now.Year ? $"This Year ({DateTime.Now.Year})" : _pickerFilterYear.ToString())
         : $"This Year ({DateTime.Now.Year})";
@@ -199,6 +202,12 @@ public partial class BudgetViewModel : ObservableObject
         // Clear any accent remnants left by a theme switch made on the Themes page.
         RefreshThemeBoundBindings();
         _header.ShowFilter(FilterHeaderLabel);
+        var years = await _expenseService.GetDistinctExpenseYearsAsync();
+        YearList = years.Select(y => new YearOption
+        {
+            Year = y,
+            IsSelected = y == _pickerFilterYear && _activeFilter == BudgetFilterMode.Year
+        }).ToList();
         if (!_isDirty) return;
         _isDirty = false;
         await LoadBudgetAsync();
@@ -334,6 +343,7 @@ public partial class BudgetViewModel : ObservableObject
     private async Task SelectYearAsync(int year)
     {
         _pickerFilterYear = year;
+        foreach (var opt in YearList) opt.IsSelected = opt.Year == year;
         IsYearPickerVisible = false;
         SetFilter(BudgetFilterMode.Year);
         OnPropertyChanged(nameof(SelectedYearLabel));

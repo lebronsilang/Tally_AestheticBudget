@@ -121,7 +121,7 @@ public partial class FeedViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(SelectedMonthLabel))]
     private int _pickerYear;
 
-    [ObservableProperty] private List<int> _yearList = [DateTime.Now.Year];
+    [ObservableProperty] private List<YearOption> _yearList = [];
 
     private int _selectedPickerMonth;
 
@@ -721,7 +721,12 @@ public partial class FeedViewModel : ObservableObject
         RefreshThemeBoundBindings();
         IsListView = _settings.FeedListView;
         _header.ShowFilter(FilterHeaderLabel);
-        YearList = await _expenseService.GetDistinctExpenseYearsAsync();
+        var years = await _expenseService.GetDistinctExpenseYearsAsync();
+        YearList = years.Select(y => new YearOption
+        {
+            Year = y,
+            IsSelected = y == _pickerFilterYear && _activeFilter == FilterMode.Year
+        }).ToList();
         if (!IsDirty) return;
         IsDirty = false;
         await LoadFeedAsync();
@@ -860,6 +865,7 @@ public partial class FeedViewModel : ObservableObject
     private async Task SelectYearAsync(int year)
     {
         _pickerFilterYear = year;
+        foreach (var opt in YearList) opt.IsSelected = opt.Year == year;
         IsYearPickerVisible = false;
         SetFilter(FilterMode.Year);
         OnPropertyChanged(nameof(SelectedYearLabel));

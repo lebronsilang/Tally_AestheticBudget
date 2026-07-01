@@ -278,13 +278,18 @@ public class ExpenseService : IExpenseService
     {
         var db = await _db.GetConnectionAsync();
         var expenseYears = await db.QueryAsync<YearRow>(
-            "SELECT DISTINCT CAST(strftime('%Y', Date) AS INTEGER) AS Y FROM expenses");
+            "SELECT DISTINCT CAST(strftime('%Y', Date) AS INTEGER) AS Y FROM expenses WHERE Date IS NOT NULL");
         var groupYears = await db.QueryAsync<YearRow>(
-            "SELECT DISTINCT CAST(strftime('%Y', Date) AS INTEGER) AS Y FROM grocery_groups");
+            "SELECT DISTINCT CAST(strftime('%Y', Date) AS INTEGER) AS Y FROM grocery_groups WHERE Date IS NOT NULL");
+
+        // Always show at least the last 6 years; if there is older data, include those too.
+        var currentYear = DateTime.Now.Year;
+        var defaultYears = Enumerable.Range(currentYear - 5, 6);
 
         return expenseYears.Select(r => r.Y)
             .Concat(groupYears.Select(r => r.Y))
-            .Append(DateTime.Now.Year)
+            .Concat(defaultYears)
+            .Where(y => y > 0)           // guard against null dates stored as 0
             .Distinct()
             .OrderByDescending(y => y)
             .ToList();
