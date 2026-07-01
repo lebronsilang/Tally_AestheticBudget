@@ -93,36 +93,21 @@
                                 Margin="0,14,0,0">
                         <HorizontalStackLayout Spacing="8">
 
-                            <!-- TODAY -->
+                            <!-- TODAY — one tap -->
                             <Border Style="{StaticResource HoverButton}"
                                     BackgroundColor="{Binding IsFilterDay, Converter={StaticResource BoolToChipBg}}"
                                     Stroke="{Binding IsFilterDay, Converter={StaticResource BoolToChipBorder}}"
                                     StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
-                                    Padding="12,7,6,7">
-                                <HorizontalStackLayout Spacing="0">
-                                    <Label Text="{Binding SelectedDayLabel}" FontSize="14"
-                                           FontAttributes="{Binding IsFilterDay, Converter={StaticResource BoolToFontAttr}}"
-                                           TextColor="{Binding IsFilterDay, Converter={StaticResource BoolToChipText}}">
-                                        <Label.Behaviors>
-                                            <behaviors:PressScaleBehavior />
-                                        </Label.Behaviors>
-                                        <Label.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding FilterDayCommand}" />
-                                        </Label.GestureRecognizers>
-                                    </Label>
-                                    <Border BackgroundColor="Transparent" StrokeThickness="0"
-                                            Padding="6,0,6,0" VerticalOptions="Center">
-                                        <Border.Behaviors>
-                                            <behaviors:PressScaleBehavior />
-                                        </Border.Behaviors>
-                                        <Border.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding ShowDayPickerCommand}" />
-                                        </Border.GestureRecognizers>
-                                        <Label Text="{x:Static ph:PhosphorIcons.CaretDown}" FontFamily="PhosphorIcons" FontSize="11"
-                                               TextColor="{Binding IsFilterDay, Converter={StaticResource BoolToChipText}}"
-                                               VerticalOptions="Center" />
-                                    </Border>
-                                </HorizontalStackLayout>
+                                    Padding="12,7">
+                                <Border.Behaviors>
+                                    <behaviors:PressScaleBehavior />
+                                </Border.Behaviors>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding FilterDayCommand}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="Today" FontSize="14"
+                                       FontAttributes="{Binding IsFilterDay, Converter={StaticResource BoolToFontAttr}}"
+                                       TextColor="{Binding IsFilterDay, Converter={StaticResource BoolToChipText}}" />
                             </Border>
 
                             <!-- THIS WEEK -->
@@ -645,45 +630,6 @@
                             <TapGestureRecognizer Command="{Binding SaveTotalCommand}" />
                         </Border.GestureRecognizers>
                         <Label Text="Save" FontSize="14" FontAttributes="Bold"
-                               TextColor="{DynamicResource OnAccentColor}" HorizontalOptions="Center" />
-                    </Border>
-                </VerticalStackLayout>
-            </Border>
-        </Grid>
-
-        <!-- ── Day picker overlay ─────────────────────────────────────────────── -->
-        <Grid IsVisible="{Binding IsDayPickerVisible}">
-            <Grid.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding DismissDayPickerCommand}" />
-            </Grid.GestureRecognizers>
-            <controls:BlurOverlay />
-            <Border BackgroundColor="{DynamicResource CardBackground}"
-                    Style="{StaticResource ModalCard}" StrokeShape="RoundRectangle 20"
-                    HorizontalOptions="Center" VerticalOptions="Center"
-                    MaximumWidthRequest="340" Margin="20,0" Padding="24,24">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer />
-                </Border.GestureRecognizers>
-                <VerticalStackLayout Spacing="18">
-                    <Label Text="Pick a day" FontSize="17" FontAttributes="Bold"
-                           TextColor="{DynamicResource TextPrimary}" />
-                    <Border BackgroundColor="{DynamicResource PageBackground}"
-                            Stroke="{DynamicResource CardBorder}"
-                            StrokeThickness="0.8" StrokeShape="RoundRectangle 12" Padding="12,4">
-                        <DatePicker Date="{Binding PickerDay}" Format="MMMM dd, yyyy"
-                                    FontSize="14" TextColor="{DynamicResource TextPrimary}"
-                                    BackgroundColor="Transparent"
-                                    MaximumDate="{x:Static sys:DateTime.Today}" />
-                    </Border>
-                    <Border BackgroundColor="{DynamicResource AccentColor}"
-                            StrokeThickness="0" StrokeShape="RoundRectangle 980" Padding="0,13">
-                        <Border.Behaviors>
-                            <behaviors:PressScaleBehavior />
-                        </Border.Behaviors>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding ConfirmDayPickerCommand}" />
-                        </Border.GestureRecognizers>
-                        <Label Text="Apply" FontSize="14" FontAttributes="Bold"
                                TextColor="{DynamicResource OnAccentColor}" HorizontalOptions="Center" />
                     </Border>
                 </VerticalStackLayout>

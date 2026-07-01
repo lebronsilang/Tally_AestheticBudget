@@ -218,6 +218,11 @@ public partial class ThemesViewModel : ObservableObject
     private async Task ApplyThemeAsync(string themeId)
     {
         _themeService.ApplyTheme(themeId);
+
+        // Sync only the current month to match the new preset
+        await _themeService.SetMonthlyThemeAsync(MonthlyYear, DateTime.Now.Month, themeId);
+
+        await LoadMonthlyThemesAsync();
         await Shell.Current.GoToAsync("//ThemesPage");
         foreach (var card in ThemeCards)
             card.IsActive = card.Id == themeId;

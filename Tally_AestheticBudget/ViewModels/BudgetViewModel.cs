@@ -492,20 +492,12 @@ public partial class BudgetViewModel : ObservableObject
         };
     }
 
-    private async Task ApplyContextualThemeAsync()
+    private Task ApplyContextualThemeAsync()
     {
-        if (_activeFilter != BudgetFilterMode.Month)
-        {
-            _themeService.RevertToGlobal();
-            return;
-        }
-        try
-        {
-            var monthlyId = await _themeService.GetMonthlyThemeIdAsync(PickerYear, _selectedMonth);
-            if (!string.IsNullOrEmpty(monthlyId)) _themeService.ApplyMonthlyPreview(monthlyId);
-            else _themeService.RevertToGlobal();
-        }
-        catch { /* DB issue — stay on global */ }
+        // Global preset always takes priority — monthly theme assignments are
+        // decorative (shown on the Themes page) but never override the active preset.
+        _themeService.RevertToGlobal();
+        return Task.CompletedTask;
     }
 
     private static DateTime GetMondayOfCurrentWeek()

@@ -990,28 +990,12 @@ public partial class FeedViewModel : ObservableObject
 
     private List<FeedCardItem> _pendingItems = [];
 
-    private async Task ApplyContextualThemeAsync()
+    private Task ApplyContextualThemeAsync()
     {
-        if (_activeFilter != FilterMode.Month)
-        {
-            _themeService.RevertToGlobal();
-            return;
-        }
-
-        try
-        {
-            var monthlyId = await _themeService.GetMonthlyThemeIdAsync(
-                PickerYear, _selectedPickerMonth);
-
-            if (!string.IsNullOrEmpty(monthlyId))
-                _themeService.ApplyMonthlyPreview(monthlyId);
-            else
-                _themeService.RevertToGlobal();
-        }
-        catch
-        {
-            // DB issue — stay on global
-        }
+        // Global preset always takes priority — monthly theme assignments are
+        // decorative (shown on the Themes page) but never override the active preset.
+        _themeService.RevertToGlobal();
+        return Task.CompletedTask;
     }
 
     private async Task LoadFeedAsync()
