@@ -295,6 +295,10 @@ public partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     private async Task ClearExpenses()
     {
+        bool confirmed = await Shell.Current.DisplayAlertAsync(
+            "Clear Expenses", "This will permanently delete all expense entries from your feed. This cannot be undone.", "Delete", "Cancel");
+        if (!confirmed) return;
+
         await _expenses.DeleteAllAsync();
         _dataChanged.NotifyExpensesChanged();
         IsClearDataVisible = false;
@@ -303,6 +307,10 @@ public partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     private async Task ClearGroceries()
     {
+        bool confirmed = await Shell.Current.DisplayAlertAsync(
+            "Clear Grocery List", "This will permanently delete all grocery items. This cannot be undone.", "Delete", "Cancel");
+        if (!confirmed) return;
+
         await _grocery.DeleteAllAsync();
         _dataChanged.NotifyGroceryChanged();
         IsClearDataVisible = false;
@@ -311,6 +319,10 @@ public partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     private async Task ClearWishlist()
     {
+        bool confirmed = await Shell.Current.DisplayAlertAsync(
+            "Clear Wishlist", "This will permanently delete all dream board items. This cannot be undone.", "Delete", "Cancel");
+        if (!confirmed) return;
+
         await _wishes.DeleteAllAsync();
         _dataChanged.NotifyWishlistChanged();
         IsClearDataVisible = false;
@@ -319,6 +331,10 @@ public partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     private async Task ClearAll()
     {
+        bool confirmed = await Shell.Current.DisplayAlertAsync(
+            "Clear Everything", "This will permanently delete all expenses, grocery items, and wishlist items. This cannot be undone.", "Delete", "Cancel");
+        if (!confirmed) return;
+
         await _expenses.DeleteAllAsync();
         await _grocery.DeleteAllAsync();
         await _wishes.DeleteAllAsync();

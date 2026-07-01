@@ -508,10 +508,6 @@
                                 </Border>
                             </Grid>
 
-                            <Grid>
-
-                            </Grid>
-
                             <BoxView HeightRequest="0.5" Color="{DynamicResource CardBorder}"
                                  Margin="20,0" />
 
