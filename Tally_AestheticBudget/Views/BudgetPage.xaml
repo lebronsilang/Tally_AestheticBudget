@@ -346,29 +346,26 @@
             </ScrollView>
 
             <!-- ── Row 1, Layout B: two-column donut + list (donut ON, wide window) ── -->
-            <Grid Grid.Row="1" ColumnDefinitions="2*,3*"
-                  IsVisible="{Binding ShowWideDonut}">
+            <ScrollView Grid.Row="1" IsVisible="{Binding ShowWideDonut}">
+                <Grid ColumnDefinitions="2*,3*" VerticalOptions="Start">
 
-                <!-- Col 0: Donut ring chart (fixed, non-scrolling) -->
-                <Border Grid.Column="0"
+                    <!-- Col 0: Donut ring chart -->
+                    <Border Grid.Column="0"
                         BackgroundColor="{DynamicResource CardBackground}"
                         Stroke="{DynamicResource CardBorder}"
                         StrokeThickness="1" StrokeShape="RoundRectangle 20"
                         Margin="16,16,8,16" Padding="12">
-                    <GraphicsView x:Name="DonutView"
+                        <GraphicsView x:Name="DonutView"
                                   Drawable="{Binding DonutDrawable}"
-                                  HeightRequest="400"
-                                  VerticalOptions="Start" />
-                </Border>
+                                  SizeChanged="OnDonutViewSizeChanged" />
+                    </Border>
 
                 <!-- Col 1: Category list (scrolling) -->
-                <ScrollView Grid.Column="1">
-                    <VerticalStackLayout Padding="8,16,16,40" Spacing="12">
-                        <CollectionView ItemsSource="{Binding BudgetItems}" SelectionMode="None">
-                            <CollectionView.ItemsLayout>
-                                <LinearItemsLayout Orientation="Vertical" ItemSpacing="7" />
-                            </CollectionView.ItemsLayout>
-                            <CollectionView.ItemTemplate>
+                    <!-- Col 1: Category list -->
+                    <VerticalStackLayout Grid.Column="1" Padding="8,16,16,40" Spacing="12">
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding BudgetItems}"
+                                             Spacing="0">
+                            <BindableLayout.ItemTemplate>
                                 <DataTemplate x:DataType="models:BudgetCategoryItem">
                                     <Border BackgroundColor="{DynamicResource CardBackground}"
                                             Stroke="{DynamicResource CardBorder}"
@@ -474,16 +471,15 @@
                                         </VerticalStackLayout>
                                     </Border>
                                 </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
                     </VerticalStackLayout>
-                </ScrollView>
 
-            </Grid>
-        
+                </Grid>
+            </ScrollView>
 
-        <!-- ── Row 1, Layout C: stacked donut above list (donut ON, narrow window) ── -->
-        <ScrollView Grid.Row="1" IsVisible="{Binding ShowNarrowDonut}">
+            <!-- ── Row 1, Layout C: stacked donut above list (donut ON, narrow window) ── -->
+            <ScrollView Grid.Row="1" IsVisible="{Binding ShowNarrowDonut}">
             <VerticalStackLayout Padding="0,0,0,40" Spacing="12">
 
                 <!-- Donut card, full page width -->
@@ -491,20 +487,17 @@
                             Stroke="{DynamicResource CardBorder}"
                             StrokeThickness="1" StrokeShape="RoundRectangle 20"
                             Margin="16,16,16,0" Padding="12">
-                    <GraphicsView x:Name="DonutViewNarrow"
+                        <GraphicsView x:Name="DonutViewNarrow"
                                       Drawable="{Binding DonutDrawable}"
-                                      HeightRequest="300" />
-                </Border>
+                                      SizeChanged="OnDonutViewNarrowSizeChanged" />
+                    </Border>
 
-                <!-- Category list -->
-                <CollectionView ItemsSource="{Binding BudgetItems}" SelectionMode="None"
-                                    Margin="16,0,16,0">
-                    <CollectionView.ItemsLayout>
-                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="7" />
-                    </CollectionView.ItemsLayout>
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="models:BudgetCategoryItem">
-                            <Border BackgroundColor="{DynamicResource CardBackground}"
+                    <!-- Category list -->
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding BudgetItems}"
+                                     Margin="16,0,16,0" Spacing="0">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:BudgetCategoryItem">
+                                <Border BackgroundColor="{DynamicResource CardBackground}"
                                         Stroke="{DynamicResource CardBorder}"
                                         StrokeThickness="0.5" StrokeShape="RoundRectangle 18"
                                         Padding="18,16" Margin="0,0,0,16">
@@ -607,15 +600,15 @@
                                     </VerticalStackLayout>
                                 </VerticalStackLayout>
                             </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
 
-            </VerticalStackLayout>
-        </ScrollView>
+                </VerticalStackLayout>
+            </ScrollView>
 
-    </Grid>
-    <!-- end main layout Grid -->
+        </Grid>
+        <!-- end main layout Grid -->
 
         <!-- ── Total editor overlay ───────────────────────────────────────────── -->
         <Grid IsVisible="{Binding IsTotalEditVisible}">

@@ -37,10 +37,9 @@ public partial class BudgetPage : ContentPage
     {
         base.OnDisappearing();
         _themeService.ThemeChanged -= OnThemeChanged;
+        _viewModel.DonutDrawable.Invalidated -= OnDonutDataChanged;  // prevent leak
         _viewModel.OnPageDisappearing();
     }
-
-    // ── Donut invalidation ────────────────────────────────────────────────────
 
     // ── Responsive layout ─────────────────────────────────────────────────────
 
@@ -50,6 +49,28 @@ public partial class BudgetPage : ContentPage
         // Below 700 dp the side-by-side donut column becomes too cramped;
         // switch to the stacked (donut-above-list) layout instead.
         _viewModel.IsNarrowBudgetLayout = width < 700;
+    }
+
+    // ── Dynamic donut sizing ──────────────────────────────────────────────────
+
+    /// <summary>
+    /// Layout B (wide): sets the donut height equal to the column width so the
+    /// chart always fills a perfect square, scaling with any window resize.
+    /// </summary>
+    private void OnDonutViewSizeChanged(object sender, EventArgs e)
+    {
+        if (DonutView?.Width > 0)
+            DonutView.HeightRequest = DonutView.Width;
+    }
+
+    /// <summary>
+    /// Layout C (narrow): same square-aspect logic, applied to the full-width
+    /// stacked donut.
+    /// </summary>
+    private void OnDonutViewNarrowSizeChanged(object sender, EventArgs e)
+    {
+        if (DonutViewNarrow?.Width > 0)
+            DonutViewNarrow.HeightRequest = DonutViewNarrow.Width;
     }
 
     // ── Donut invalidation ────────────────────────────────────────────────────
