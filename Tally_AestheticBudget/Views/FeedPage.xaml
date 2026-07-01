@@ -59,8 +59,8 @@
                     Stroke="{DynamicResource CardBorder}"
                     StrokeThickness="1" StrokeShape="RoundRectangle 20"
                     Padding="20,18,20,16"
-                    Margin="16,16,16,0">
-                                <VerticalStackLayout Spacing="0">
+                    Margin="16,16,16,16">
+                                <VerticalStackLayout Spacing="14">
                                     <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
                                         <VerticalStackLayout Grid.Column="0" Spacing="2">
                                             <Label Text="My Spending Journal"
