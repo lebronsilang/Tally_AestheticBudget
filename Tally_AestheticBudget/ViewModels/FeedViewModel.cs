@@ -194,6 +194,7 @@ public partial class FeedViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(NewIsHealthSelected))]
     [NotifyPropertyChangedFor(nameof(NewIsFunSelected))]
     [NotifyPropertyChangedFor(nameof(NewIsOtherSelected))]
+    [NotifyPropertyChangedFor(nameof(NewIsGrocerySelected))]
     private ExpenseCategory _newSelectedCategory = ExpenseCategory.Food;
 
     public bool NewIsFoodSelected => NewSelectedCategory == ExpenseCategory.Food;
@@ -202,6 +203,7 @@ public partial class FeedViewModel : ObservableObject
     public bool NewIsHealthSelected => NewSelectedCategory == ExpenseCategory.Health;
     public bool NewIsFunSelected => NewSelectedCategory == ExpenseCategory.Fun;
     public bool NewIsOtherSelected => NewSelectedCategory == ExpenseCategory.Other;
+    public bool NewIsGrocerySelected => NewSelectedCategory == ExpenseCategory.Grocery;
     public bool NewHasPhoto => !string.IsNullOrEmpty(NewPhotoPath);
 
     [RelayCommand]
@@ -331,6 +333,7 @@ public partial class FeedViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(EditIsHealthSelected))]
     [NotifyPropertyChangedFor(nameof(EditIsFunSelected))]
     [NotifyPropertyChangedFor(nameof(EditIsOtherSelected))]
+    [NotifyPropertyChangedFor(nameof(EditIsGrocerySelected))]
     private ExpenseCategory _editSelectedCategory = ExpenseCategory.Food;
 
     private ExpenseCategory _selectedCategory = ExpenseCategory.Food;
@@ -341,6 +344,7 @@ public partial class FeedViewModel : ObservableObject
     public bool EditIsHealthSelected => EditSelectedCategory == ExpenseCategory.Health;
     public bool EditIsFunSelected => EditSelectedCategory == ExpenseCategory.Fun;
     public bool EditIsOtherSelected => EditSelectedCategory == ExpenseCategory.Other;
+    public bool EditIsGrocerySelected => EditSelectedCategory == ExpenseCategory.Grocery;
     public bool EditHasPhoto => !string.IsNullOrEmpty(EditPhotoPath);
 
     // ── Category picker (filter) ──────────────────────────────────────────────
@@ -1084,12 +1088,16 @@ public partial class FeedViewModel : ObservableObject
         OnPropertyChanged(nameof(NewIsShoppingSelected));
         OnPropertyChanged(nameof(NewIsHealthSelected));
         OnPropertyChanged(nameof(NewIsFunSelected));
+        OnPropertyChanged(nameof(NewIsGrocerySelected));
+        OnPropertyChanged(nameof(NewIsOtherSelected));
 
         OnPropertyChanged(nameof(EditIsFoodSelected));
         OnPropertyChanged(nameof(EditIsTransportSelected));
         OnPropertyChanged(nameof(EditIsShoppingSelected));
         OnPropertyChanged(nameof(EditIsHealthSelected));
         OnPropertyChanged(nameof(EditIsFunSelected));
+        OnPropertyChanged(nameof(EditIsGrocerySelected));
+        OnPropertyChanged(nameof(EditIsOtherSelected));
 
         foreach (var m in MonthOptions) m.RaiseThemeBindings();
         foreach (var w in WeekOptions) w.RaiseThemeBindings();

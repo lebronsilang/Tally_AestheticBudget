@@ -554,7 +554,31 @@
 
                                             </HorizontalStackLayout>
                                         </Border>
-                                        <Border BackgroundColor="{Binding NewIsOtherSelected, Converter={StaticResource BoolToChipBg}}"
+                                                <Border BackgroundColor="{Binding NewIsGrocerySelected, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding NewIsGrocerySelected, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+                                        Padding="12,6" Margin="0,0,6,6">
+                                                    <Border.Behaviors>
+                                                        <behaviors:PressScaleBehavior />
+                                                    </Border.Behaviors>
+                                                    <Border.GestureRecognizers>
+                                                        <TapGestureRecognizer Command="{Binding SelectNewCategoryCommand}" CommandParameter="Grocery" />
+                                                    </Border.GestureRecognizers>
+                                                    <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+
+                                                        <Label Style="{StaticResource PhosphorIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.Grocery}"
+                                           FontSize="14"
+                                           TextColor="{Binding NewIsGrocerySelected, Converter={StaticResource BoolToIconColor}}"  />
+
+                                                        <Label Text="Grocery"
+                                           FontSize="12"
+                                           VerticalOptions="Center"
+                                           TextColor="{Binding NewIsGrocerySelected, Converter={StaticResource BoolToChipText}}" />
+
+                                                    </HorizontalStackLayout>
+                                                </Border>
+                                                <Border BackgroundColor="{Binding NewIsOtherSelected, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding NewIsOtherSelected, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
                                         Padding="12,6" Margin="0,0,6,6">
@@ -1052,7 +1076,31 @@
 
                                             </HorizontalStackLayout>
                                         </Border>
-                                        <Border BackgroundColor="{Binding EditIsOtherSelected, Converter={StaticResource BoolToChipBg}}"
+                                                <Border BackgroundColor="{Binding EditIsGrocerySelected, Converter={StaticResource BoolToChipBg}}"
+                                        Stroke="{Binding EditIsGrocerySelected, Converter={StaticResource BoolToChipBorder}}"
+                                        StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
+                                        Padding="12,6" Margin="0,0,6,6">
+                                                    <Border.Behaviors>
+                                                        <behaviors:PressScaleBehavior />
+                                                    </Border.Behaviors>
+                                                    <Border.GestureRecognizers>
+                                                        <TapGestureRecognizer Command="{Binding SelectEditCategoryCommand}" CommandParameter="Grocery" />
+                                                    </Border.GestureRecognizers>
+                                                    <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+
+                                                        <Label Style="{StaticResource PhosphorIcon}"
+                                           Text="{x:Static ph:PhosphorIcons.Grocery}"
+                                           FontSize="14"
+                                           TextColor="{Binding EditIsGrocerySelected, Converter={StaticResource BoolToIconColor}}"  />
+
+                                                        <Label Text="Grocery"
+                                           FontSize="12"
+                                           VerticalOptions="Center"
+                                           TextColor="{Binding EditIsGrocerySelected, Converter={StaticResource BoolToChipText}}" />
+
+                                                    </HorizontalStackLayout>
+                                                </Border>
+                                                <Border BackgroundColor="{Binding EditIsOtherSelected, Converter={StaticResource BoolToChipBg}}"
                                         Stroke="{Binding EditIsOtherSelected, Converter={StaticResource BoolToChipBorder}}"
                                         StrokeShape="RoundRectangle 980" StrokeThickness="0.8"
                                         Padding="12,6" Margin="0,0,6,6">
