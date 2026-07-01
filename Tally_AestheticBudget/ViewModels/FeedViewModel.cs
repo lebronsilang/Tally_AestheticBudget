@@ -92,7 +92,7 @@ public partial class FeedViewModel : ObservableObject
     public string ThisYearLabel => $"This Year ({DateTime.Now.Year})";
 
     public bool HasNoEntries => !IsLoading && FeedItems.Count == 0;
-    public bool HasEntries => true;
+    public bool HasEntries => !IsLoading && FeedItems.Count > 0;
 
     // ── Filter state ──────────────────────────────────────────────────────────
 

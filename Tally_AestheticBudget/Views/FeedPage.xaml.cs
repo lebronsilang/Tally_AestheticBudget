@@ -31,15 +31,8 @@ public partial class FeedPage : ContentPage
         BindingContext = viewModel;
 
         // When the filter changes, reset grid state so it is rebuilt correctly.
-        _viewModel.FilterChanged += () =>
-        {
-            MainThread.BeginInvokeOnMainThread(ClearMasonryGrid);
-        };
-
-        _viewModel.ColumnsRebuilt += () =>
-        {
-            MainThread.BeginInvokeOnMainThread(RebuildMasonryGrid);
-        };
+        _viewModel.FilterChanged += OnFilterChanged;
+        _viewModel.ColumnsRebuilt += OnColumnsRebuilt;
 
         // When bar data changes, repaint the inline chart.
         _viewModel.BarDrawable.Invalidated += OnBarDataChanged;
@@ -65,9 +58,21 @@ public partial class FeedPage : ContentPage
         base.OnDisappearing();
 
         _themeService.ThemeChanged -= OnThemeChanged;
+        _viewModel.FilterChanged -= OnFilterChanged;
+        _viewModel.ColumnsRebuilt -= OnColumnsRebuilt;
 
         if (BindingContext is FeedViewModel vm)
             vm.OnPageDisappearing();
+    }
+
+    private void OnFilterChanged()
+    {
+        MainThread.BeginInvokeOnMainThread(ClearMasonryGrid);
+    }
+
+    private void OnColumnsRebuilt()
+    {
+        MainThread.BeginInvokeOnMainThread(RebuildMasonryGrid);
     }
 
     // ── Bar chart — theme and invalidation ───────────────────────────────────
@@ -509,8 +514,8 @@ public partial class FeedPage : ContentPage
                 FontSize = 14,
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center,
-                TextColor = (Application.Current?.Resources["OnAccentColor"] as Color) ?? Colors.White
             };
+            editBtnLabel.SetDynamicResource(Label.TextColorProperty, "OnAccentColor");
             editBtn.Content = editBtnLabel;
 
             var editTap = new TapGestureRecognizer();
