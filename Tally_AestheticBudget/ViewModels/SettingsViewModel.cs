@@ -185,21 +185,9 @@ public partial class SettingsViewModel : ObservableObject
     partial void OnShowDateChanged(bool value) { _settings.ShowDate = value; _dataChanged.NotifySettingsChanged(); }
 
 
-    //
-
+    [ObservableProperty]
     private bool _allotRemaining;
-    public bool AllotRemaining
-    {
-        get => _allotRemaining;
-        set
-        {
-            if (SetProperty(ref _allotRemaining, value))
-            {
-                _settings.AllotRemainingToUnallocated = value;
-                _dataChanged.NotifyBudgetChanged();
-            }
-        }
-    }
+    partial void OnAllotRemainingChanged(bool value) { _settings.AllotRemainingToUnallocated = value; _dataChanged.NotifyBudgetChanged(); }
 
     // ── Wishlist toggles ──────────────────────────────────────────────────────
 

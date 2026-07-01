@@ -132,6 +132,12 @@ public partial class GroceryViewModel : ObservableObject
     [RelayCommand]
     private async Task DeleteItemAsync(GroceryItem item)
     {
+        bool confirmed = await Shell.Current.DisplayAlertAsync(
+            "Delete Item",
+            $"Remove \"{item.Name}\" from your list?",
+            "Delete", "Cancel");
+        if (!confirmed) return;
+
         await _groceryService.DeleteItemAsync(item.Id);
         _allItems.Remove(item);
         UpdateStats();

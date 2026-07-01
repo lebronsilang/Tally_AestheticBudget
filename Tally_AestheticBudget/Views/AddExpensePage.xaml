@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:Tally_AestheticBudget.ViewModels"
     xmlns:behaviors="clr-namespace:Tally_AestheticBudget.Behaviors"
+    xmlns:ph="clr-namespace:Tally_AestheticBudget.Helpers"
     x:DataType="vm:AddExpenseViewModel"
     Shell.NavBarIsVisible="True"
     BackgroundColor="#80000000">
@@ -41,7 +42,7 @@
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding CancelCommand}" />
                             </Border.GestureRecognizers>
-                            <Label Text="✕" FontSize="13" TextColor="{DynamicResource TextSecondary}"
+                            <Label Text="{x:Static ph:PhosphorIcons.X}" FontFamily="PhosphorIcons" FontSize="13" TextColor="{DynamicResource TextSecondary}"
                                    HorizontalOptions="Center" VerticalOptions="Center" />
                         </Border>
                     </Grid>

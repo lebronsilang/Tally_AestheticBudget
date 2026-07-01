@@ -216,7 +216,7 @@
                                        TextColor="{DynamicResource AccentColor}"
                                        VerticalOptions="Center" />
 
-                                            <Label Grid.Column="3" Text="✕" FontSize="15"
+                                            <Label Grid.Column="3" Text="{x:Static ph:PhosphorIcons.X}" FontFamily="PhosphorIcons" FontSize="15"
                                        TextColor="{DynamicResource TextSecondary}"
                                        VerticalOptions="Center">
                                                 <Label.Behaviors>
@@ -265,7 +265,7 @@
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding DismissAddModalCommand}" />
                                         </Border.GestureRecognizers>
-                                        <Label Text="✕" FontSize="12"
+                                        <Label Text="{x:Static ph:PhosphorIcons.X}" FontFamily="PhosphorIcons" FontSize="12"
                                    TextColor="{DynamicResource TextSecondary}"
                                    HorizontalOptions="Center" VerticalOptions="Center" />
                                     </Border>

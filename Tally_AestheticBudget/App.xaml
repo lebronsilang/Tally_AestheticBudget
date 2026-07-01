@@ -28,7 +28,6 @@
             <Color x:Key="OnAccentColor">#FFFFFF</Color>
 
             <!-- ── Converters ─────────────────────────────────────────────── -->
-            <converters:CategoryToColorConverter      x:Key="CategoryToColor" />
             <converters:CategoryToDotColorConverter   x:Key="CategoryToDot" />
             <converters:DateToDisplayConverter        x:Key="DateToDisplay" />
             <converters:BoolToChipBgConverter         x:Key="BoolToChipBg" />

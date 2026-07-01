@@ -118,7 +118,7 @@
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding ShowDayPickerCommand}" />
                                         </Border.GestureRecognizers>
-                                        <Label Text="▾" FontSize="11"
+                                        <Label Text="{x:Static ph:PhosphorIcons.CaretDown}" FontFamily="PhosphorIcons" FontSize="11"
                                                TextColor="{Binding IsFilterDay, Converter={StaticResource BoolToChipText}}"
                                                VerticalOptions="Center" />
                                     </Border>
@@ -150,7 +150,7 @@
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding ShowWeekPickerCommand}" />
                                         </Border.GestureRecognizers>
-                                        <Label Text="▾" FontSize="11"
+                                        <Label Text="{x:Static ph:PhosphorIcons.CaretDown}" FontFamily="PhosphorIcons" FontSize="11"
                                                TextColor="{Binding IsFilterWeek, Converter={StaticResource BoolToChipText}}"
                                                VerticalOptions="Center" />
                                     </Border>
@@ -182,7 +182,7 @@
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding ShowMonthPickerCommand}" />
                                         </Border.GestureRecognizers>
-                                        <Label Text="▾" FontSize="11"
+                                        <Label Text="{x:Static ph:PhosphorIcons.CaretDown}" FontFamily="PhosphorIcons" FontSize="11"
                                                TextColor="{Binding IsFilterMonth, Converter={StaticResource BoolToChipText}}"
                                                VerticalOptions="Center" />
                                     </Border>
@@ -214,7 +214,7 @@
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding ShowYearPickerCommand}" />
                                         </Border.GestureRecognizers>
-                                        <Label Text="▾" FontSize="11"
+                                        <Label Text="{x:Static ph:PhosphorIcons.CaretDown}" FontFamily="PhosphorIcons" FontSize="11"
                                                TextColor="{Binding IsFilterYear, Converter={StaticResource BoolToChipText}}"
                                                VerticalOptions="Center" />
                                     </Border>

@@ -16,15 +16,6 @@ internal static class ThemeColors
     }
 }
 
-// Category label color — accent matching .card-cat in your CSS
-public class CategoryToColorConverter : IValueConverter
-{
-    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-        => Color.FromArgb(App.CurrentAccent);
-
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        => throw new NotImplementedException();
-}
 
 // Category dot color — soft muted tones for the small dot beside the label
 public class CategoryToDotColorConverter : IValueConverter
