@@ -18,7 +18,17 @@ public partial class FeedViewModel : ObservableObject
     private readonly IUnsplashService _unsplash;
     private bool _themeSubscribed;
 
-    public int CurrentColumnCount { get; set; } = 2;
+    private int _currentColumnCount = 2;
+    public int CurrentColumnCount
+    {
+        get => _currentColumnCount;
+        set
+        {
+            System.Diagnostics.Debug.WriteLine(
+                $"[Masonry] {DateTime.Now:HH:mm:ss.fff} CurrentColumnCount WRITE {_currentColumnCount} -> {value}");
+            _currentColumnCount = value;
+        }
+    }
 
     // View mode (masonry vs. list) — refreshed from settings on each appear.
     private bool _isListView;
@@ -1007,6 +1017,8 @@ public partial class FeedViewModel : ObservableObject
 
     private async Task LoadFeedAsync()
     {
+        System.Diagnostics.Debug.WriteLine(
+            $"[Masonry] {DateTime.Now:HH:mm:ss.fff} LoadFeedAsync START, CurrentColumnCount={CurrentColumnCount}, filter={_activeFilter}");
         FilterChanged?.Invoke();
         IsLoading = true;
         try
@@ -1045,8 +1057,18 @@ public partial class FeedViewModel : ObservableObject
             BarDrawable.MaxValue = pts.Count > 0 ? pts.Max(p => p.Value) : 0;
             BarDrawable.Points = pts;
 
+            System.Diagnostics.Debug.WriteLine(
+                $"[Masonry] {DateTime.Now:HH:mm:ss.fff} LoadFeedAsync gate check — CurrentColumnCount={CurrentColumnCount}, pendingItems={_pendingItems.Count}, filter={_activeFilter}");
+
             if (CurrentColumnCount > 0)
+            {
                 DistributeIntoColumns(_pendingItems, CurrentColumnCount);
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine(
+                    $"[Masonry] {DateTime.Now:HH:mm:ss.fff} GATE BLOCKED — DistributeIntoColumns skipped, CurrentColumnCount={CurrentColumnCount}");
+            }
 
             await ApplyContextualThemeAsync();
         }

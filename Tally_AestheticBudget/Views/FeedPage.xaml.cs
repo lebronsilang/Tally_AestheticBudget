@@ -30,11 +30,7 @@ public partial class FeedPage : ContentPage
         _themeService = themeService;
         BindingContext = viewModel;
 
-        // When the filter changes, reset grid state so it is rebuilt correctly.
-        _viewModel.FilterChanged += OnFilterChanged;
-        _viewModel.ColumnsRebuilt += OnColumnsRebuilt;
-
-        // When bar data changes, repaint the inline chart.
+        // When bar data changes, repaint the inline chart
         _viewModel.BarDrawable.Invalidated += OnBarDataChanged;
     }
 
@@ -44,8 +40,14 @@ public partial class FeedPage : ContentPage
     {
         base.OnAppearing();
 
-        // Subscribe before awaiting to avoid missing ThemeChanged during load.
+        // Subscribe before awaiting to avoid missing events fired during load.
+        // FilterChanged/ColumnsRebuilt are unsubscribed in OnDisappearing below,
+        // so — like ThemeChanged — they must be rebuilt here every appearance,
+        // or masonry rebuilds silently stop firing after the first navigation
+        // away from this page.
         _themeService.ThemeChanged += OnThemeChanged;
+        _viewModel.FilterChanged += OnFilterChanged;
+        _viewModel.ColumnsRebuilt += OnColumnsRebuilt;
 
         // Sync bar colors with the currently active theme.
         ApplyBarTheme();
@@ -67,11 +69,15 @@ public partial class FeedPage : ContentPage
 
     private void OnFilterChanged()
     {
+        System.Diagnostics.Debug.WriteLine(
+            $"[Masonry] {DateTime.Now:HH:mm:ss.fff} OnFilterChanged — enqueueing ClearMasonryGrid");
         MainThread.BeginInvokeOnMainThread(ClearMasonryGrid);
     }
 
     private void OnColumnsRebuilt()
     {
+        System.Diagnostics.Debug.WriteLine(
+            $"[Masonry] {DateTime.Now:HH:mm:ss.fff} OnColumnsRebuilt — enqueueing RebuildMasonryGrid");
         MainThread.BeginInvokeOnMainThread(RebuildMasonryGrid);
     }
 
@@ -123,6 +129,9 @@ public partial class FeedPage : ContentPage
         var newColumnCount = GetColumnCount(width);
         _calculatedColumnWidth = (width - (10 * (newColumnCount + 1))) / newColumnCount;
 
+        System.Diagnostics.Debug.WriteLine(
+            $"[Masonry] {DateTime.Now:HH:mm:ss.fff} MasonryGrid_SizeChanged — width={width:F1}, newColumnCount={newColumnCount}, lastColumnCount={_lastColumnCount}, gridPopulated={_gridPopulated}");
+
         _viewModel.CurrentColumnCount = newColumnCount;
 
         if (newColumnCount == _lastColumnCount && _gridPopulated) return;
@@ -142,6 +151,8 @@ public partial class FeedPage : ContentPage
 
     private void ClearMasonryGrid()
     {
+        System.Diagnostics.Debug.WriteLine(
+            $"[Masonry] {DateTime.Now:HH:mm:ss.fff} ClearMasonryGrid EXECUTING");
         MasonryGrid.ColumnDefinitions.Clear();
         MasonryGrid.Children.Clear();
         _gridPopulated = false;
@@ -150,8 +161,15 @@ public partial class FeedPage : ContentPage
 
     private void RebuildMasonryGrid()
     {
+        System.Diagnostics.Debug.WriteLine(
+            $"[Masonry] {DateTime.Now:HH:mm:ss.fff} RebuildMasonryGrid EXECUTING, columnCount={_viewModel.Columns.Count}");
         var columns = _viewModel.Columns;
-        if (columns.Count == 0) return;
+        if (columns.Count == 0)
+        {
+            System.Diagnostics.Debug.WriteLine(
+                $"[Masonry] {DateTime.Now:HH:mm:ss.fff} RebuildMasonryGrid bailing — zero columns");
+            return;
+        }
 
         // Tag this rebuild so a stale delayed callback below (from a rebuild that
         // got superseded before its 16ms timer fired) can detect it's outdated and
@@ -181,7 +199,12 @@ public partial class FeedPage : ContentPage
         // THEN bind the items so images measure against real constrained width.
         Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(16), () =>
         {
-            if (gen != _masonryRebuildGen) return;
+            if (gen != _masonryRebuildGen)
+            {
+                System.Diagnostics.Debug.WriteLine(
+                    $"[Masonry] {DateTime.Now:HH:mm:ss.fff} RebuildMasonryGrid delayed callback STALE (gen={gen}, current={_masonryRebuildGen}) — bailing");
+                return;
+            }
 
             var count = Math.Min(columns.Count, MasonryGrid.Children.Count);
             for (int i = 0; i < count; i++)
