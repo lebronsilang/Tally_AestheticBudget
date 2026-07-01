@@ -54,7 +54,7 @@
                                 Stroke="{DynamicResource CardBorder}"
                                 StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,0">
                             <Entry Text="{Binding Title}" Placeholder="e.g. Lunch with friends"
-                                   PlaceholderColor="#C0C0C5" FontSize="13"
+                                   PlaceholderColor="{DynamicResource TextSecondary}" FontSize="13"
                                    TextColor="{DynamicResource TextPrimary}"
                                    BackgroundColor="Transparent" HeightRequest="40" />
                         </Border>
@@ -68,7 +68,7 @@
                                 Stroke="{DynamicResource CardBorder}"
                                 StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,0">
                             <Entry Text="{Binding AmountText}" Placeholder="0.00"
-                                   PlaceholderColor="#C0C0C5" Keyboard="Numeric" FontSize="13"
+                                   PlaceholderColor="{DynamicResource TextSecondary}" Keyboard="Numeric" FontSize="13"
                                    TextColor="{DynamicResource TextPrimary}"
                                    BackgroundColor="Transparent" HeightRequest="40" />
                         </Border>
@@ -168,7 +168,7 @@
                                 Stroke="{DynamicResource CardBorder}"
                                 StrokeThickness="0.8" StrokeShape="RoundRectangle 10" Padding="12,0">
                             <Entry Text="{Binding Note}" Placeholder="Any extra details..."
-                                   PlaceholderColor="#C0C0C5" FontSize="13"
+                                   PlaceholderColor="{DynamicResource TextSecondary}" FontSize="13"
                                    TextColor="{DynamicResource TextPrimary}"
                                    BackgroundColor="Transparent" HeightRequest="40" />
                         </Border>

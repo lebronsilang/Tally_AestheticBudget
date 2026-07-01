@@ -280,7 +280,7 @@
                                 Padding="16,0">
                                         <Entry Text="{Binding NewItemName}"
                                    Placeholder="e.g. Eggs, Shampoo..."
-                                   PlaceholderColor="#C0C0C5" FontSize="15"
+                                   PlaceholderColor="{DynamicResource TextSecondary}" FontSize="15"
                                    TextColor="{DynamicResource TextPrimary}"
                                    BackgroundColor="Transparent" HeightRequest="46" />
                                     </Border>
@@ -295,7 +295,7 @@
                                     StrokeThickness="0.8" StrokeShape="RoundRectangle 12"
                                     Padding="16,0">
                                             <Entry Text="{Binding NewItemPrice}" Placeholder="0.00"
-                                       PlaceholderColor="#C0C0C5" Keyboard="Numeric"
+                                       PlaceholderColor="{DynamicResource TextSecondary}" Keyboard="Numeric"
                                        FontSize="15" TextColor="{DynamicResource TextPrimary}"
                                        BackgroundColor="Transparent" HeightRequest="46" />
                                         </Border>
@@ -308,7 +308,7 @@
                                     StrokeThickness="0.8" StrokeShape="RoundRectangle 12"
                                     Padding="16,0">
                                             <Entry Text="{Binding NewItemQuantity}" Placeholder="1"
-                                       PlaceholderColor="#C0C0C5" Keyboard="Numeric"
+                                       PlaceholderColor="{DynamicResource TextSecondary}" Keyboard="Numeric"
                                        FontSize="15" TextColor="{DynamicResource TextPrimary}"
                                        BackgroundColor="Transparent" HeightRequest="46" />
                                         </Border>
