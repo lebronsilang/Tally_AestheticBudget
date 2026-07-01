@@ -418,7 +418,7 @@
                                 </VerticalStackLayout>
 
                                 <VerticalStackLayout Spacing="5">
-                                    <Label Text="Amount (₱)" FontSize="11" FontAttributes="Bold"
+                                            <Label Text="{Binding AmountFieldLabel}" FontSize="11" FontAttributes="Bold"
                                    TextColor="{DynamicResource TextPrimary}" />
                                     <Border BackgroundColor="{DynamicResource PageBackground}"
                                     Stroke="{DynamicResource CardBorder}"
@@ -920,7 +920,7 @@
                                 </VerticalStackLayout>
 
                                 <VerticalStackLayout Spacing="5">
-                                    <Label Text="Amount (₱)" FontSize="11" FontAttributes="Bold"
+                                    <Label Text="{Binding AmountFieldLabel}" FontSize="11" FontAttributes="Bold"
                                    TextColor="{DynamicResource TextPrimary}" />
                                     <Border BackgroundColor="{DynamicResource PageBackground}"
                                     Stroke="{DynamicResource CardBorder}"

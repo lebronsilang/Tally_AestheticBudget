@@ -53,6 +53,7 @@ public partial class FeedViewModel : ObservableObject
             IsDirty = true;
             OnPropertyChanged(nameof(ExpensePanelOnLeft));
             OnPropertyChanged(nameof(ShowFeedBar));
+            OnPropertyChanged(nameof(AmountFieldLabel));
         };
     }
 
@@ -66,6 +67,8 @@ public partial class FeedViewModel : ObservableObject
 
     /// <summary>Whether to show the bar chart above the feed.</summary>
     public bool ShowFeedBar => _settings.ShowFeedBar;
+
+    public string AmountFieldLabel => $"Amount ({_settings.CurrencySymbol})";
 
     // ── Feed items ────────────────────────────────────────────────────────────
 
